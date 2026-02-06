@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import Logo from '@/components/shared/Logo';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const role = searchParams.get('role') || 'rider';
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,80 +30,72 @@ const LoginPage: React.FC = () => {
       });
     } else {
       toast.success('Connexion réussie !');
-      navigate('/rider');
+      navigate(role === 'driver' ? '/tatfleet/radar' : '/caby');
     }
 
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Left side - Illustration (desktop only) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary items-center justify-center p-12">
-        <div className="text-center text-primary-foreground">
-          <div className="text-8xl mb-8">🚕</div>
-          <h1 className="text-4xl font-bold mb-4">Caby</h1>
-          <p className="text-xl opacity-80">
-            Votre trajet, notre passion
-          </p>
-        </div>
+    <div className="min-h-screen bg-caby-black flex flex-col">
+      {/* Header */}
+      <div className="p-6">
+        <Link to="/">
+          <Logo size="sm" />
+        </Link>
       </div>
 
-      {/* Right side - Login form */}
+      {/* Content */}
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md">
-          {/* Mobile logo */}
-          <div className="lg:hidden text-center mb-8">
-            <div className="text-6xl mb-4">🚕</div>
-            <h1 className="text-2xl font-bold">Caby</h1>
-          </div>
-
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold mb-2">Bienvenue</h2>
-            <p className="text-muted-foreground">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-display font-bold text-white mb-2">
+              {role === 'driver' ? 'Espace Chauffeur' : 'Bienvenue'}
+            </h2>
+            <p className="text-caby-muted">
               Connectez-vous pour continuer
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-caby-muted text-sm">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-caby-muted" />
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="votre@email.com"
-                  className="pl-10 h-12"
+                  className="h-14 pl-12 bg-caby-card border-caby-border text-white placeholder:text-caby-muted/50 rounded-2xl focus:border-caby-gold focus:ring-caby-gold"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password" className="text-caby-muted text-sm">Mot de passe</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-caby-muted" />
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="pl-10 pr-10 h-12"
+                  className="h-14 pl-12 pr-12 bg-caby-card border-caby-border text-white placeholder:text-caby-muted/50 rounded-2xl focus:border-caby-gold focus:ring-caby-gold"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
                 >
                   {showPassword ? (
-                    <EyeOff className="w-5 h-5 text-muted-foreground" />
+                    <EyeOff className="w-5 h-5 text-caby-muted" />
                   ) : (
-                    <Eye className="w-5 h-5 text-muted-foreground" />
+                    <Eye className="w-5 h-5 text-caby-muted" />
                   )}
                 </button>
               </div>
@@ -109,7 +104,7 @@ const LoginPage: React.FC = () => {
             <div className="flex justify-end">
               <Link
                 to="/auth/forgot-password"
-                className="text-sm text-accent hover:underline"
+                className="text-sm text-caby-gold hover:underline"
               >
                 Mot de passe oublié ?
               </Link>
@@ -117,11 +112,11 @@ const LoginPage: React.FC = () => {
 
             <Button
               type="submit"
-              className="w-full h-12 text-lg"
+              className="w-full h-14 btn-gold rounded-2xl text-lg font-bold shadow-gold-glow"
               disabled={loading}
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
                   Se connecter
@@ -132,16 +127,20 @@ const LoginPage: React.FC = () => {
           </form>
 
           {/* Divider */}
-          <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-border" />
-            <span className="text-sm text-muted-foreground">ou</span>
-            <div className="flex-1 h-px bg-border" />
+          <div className="flex items-center gap-4 my-8">
+            <div className="flex-1 h-px bg-caby-border" />
+            <span className="text-sm text-caby-muted">ou</span>
+            <div className="flex-1 h-px bg-caby-border" />
           </div>
 
           {/* Social login */}
           <div className="space-y-3">
-            <Button variant="outline" className="w-full h-12" type="button">
-              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+            <Button 
+              variant="outline" 
+              className="w-full h-14 rounded-2xl border-caby-border text-white hover:bg-caby-card hover:border-caby-gold/50" 
+              type="button"
+            >
+              <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -162,8 +161,12 @@ const LoginPage: React.FC = () => {
               Continuer avec Google
             </Button>
 
-            <Button variant="outline" className="w-full h-12" type="button">
-              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+            <Button 
+              variant="outline" 
+              className="w-full h-14 rounded-2xl border-caby-border text-white hover:bg-caby-card hover:border-caby-gold/50" 
+              type="button"
+            >
+              <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
               </svg>
               Continuer avec Apple
@@ -171,9 +174,9 @@ const LoginPage: React.FC = () => {
           </div>
 
           {/* Sign up link */}
-          <p className="text-center mt-8 text-muted-foreground">
+          <p className="text-center mt-10 text-caby-muted">
             Pas encore de compte ?{' '}
-            <Link to="/auth/register" className="text-accent font-semibold hover:underline">
+            <Link to={`/auth/register?role=${role}`} className="text-caby-gold font-semibold hover:underline">
               S'inscrire
             </Link>
           </p>
