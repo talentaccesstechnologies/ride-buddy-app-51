@@ -1,114 +1,77 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* VTC App Design System - Uber-inspired */
+/* CABY Premium Design System - Dark, Minimalist, Premium */
 
 @layer base {
   :root {
-    /* Core Colors - Clean Black & White with Electric Blue accent */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 7%;
+    /* Caby Premium Dark Palette */
+    --caby-black: 0 0% 4%;
+    --caby-dark: 0 0% 7%;
+    --caby-card: 240 5% 12%;
+    --caby-border: 240 4% 18%;
+    --caby-text: 0 0% 96%;
+    --caby-muted: 0 0% 56%;
     
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 7%;
+    /* Accent Gold */
+    --caby-gold: 43 65% 58%;
+    --caby-gold-light: 43 70% 69%;
     
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 7%;
+    /* Status Colors */
+    --caby-green: 142 71% 50%;
+    --caby-red: 0 100% 62%;
+    --caby-blue: 211 100% 50%;
+    --caby-purple: 270 60% 55%;
     
-    /* Primary - Deep Black */
-    --primary: 0 0% 7%;
-    --primary-foreground: 0 0% 100%;
+    /* Semantic Mapping */
+    --background: var(--caby-black);
+    --foreground: var(--caby-text);
     
-    /* Secondary - Light Gray */
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 7%;
+    --card: var(--caby-card);
+    --card-foreground: var(--caby-text);
     
-    /* Muted - Soft Gray */
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --popover: var(--caby-dark);
+    --popover-foreground: var(--caby-text);
     
-    /* Accent - Electric Blue (Uber-style) */
-    --accent: 213 94% 50%;
-    --accent-foreground: 0 0% 100%;
+    --primary: var(--caby-gold);
+    --primary-foreground: 0 0% 4%;
     
-    /* Success - Green */
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
+    --secondary: var(--caby-card);
+    --secondary-foreground: var(--caby-text);
     
-    /* Warning - Amber */
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 7%;
+    --muted: var(--caby-card);
+    --muted-foreground: var(--caby-muted);
     
-    /* Destructive - Red */
-    --destructive: 0 84% 60%;
+    --accent: var(--caby-gold);
+    --accent-foreground: 0 0% 4%;
+    
+    --success: var(--caby-green);
+    --success-foreground: 0 0% 4%;
+    
+    --warning: 43 96% 56%;
+    --warning-foreground: 0 0% 4%;
+    
+    --destructive: var(--caby-red);
     --destructive-foreground: 0 0% 100%;
     
-    /* UI Elements */
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 213 94% 50%;
-    --radius: 0.75rem;
+    --border: var(--caby-border);
+    --input: var(--caby-border);
+    --ring: var(--caby-gold);
     
-    /* Map overlay */
-    --overlay: 0 0% 0% / 0.4;
+    --radius: 1rem;
     
     /* Sidebar */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 25%;
-    --sidebar-primary: 0 0% 7%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 95%;
-    --sidebar-accent-foreground: 0 0% 7%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 213 94% 50%;
-  }
-
-  .dark {
-    --background: 0 0% 7%;
-    --foreground: 0 0% 98%;
-    
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 98%;
-    
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 98%;
-    
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 7%;
-    
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 98%;
-    
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
-    
-    --accent: 213 94% 50%;
-    --accent-foreground: 0 0% 100%;
-    
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
-    
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 7%;
-    
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 100%;
-    
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 213 94% 50%;
-    
-    --sidebar-background: 0 0% 7%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 213 94% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 213 94% 50%;
+    --sidebar-background: var(--caby-dark);
+    --sidebar-foreground: var(--caby-text);
+    --sidebar-primary: var(--caby-gold);
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: var(--caby-card);
+    --sidebar-accent-foreground: var(--caby-text);
+    --sidebar-border: var(--caby-border);
+    --sidebar-ring: var(--caby-gold);
   }
 }
 
@@ -118,81 +81,129 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   }
 }
 
 @layer components {
-  /* Bottom Sheet animations */
-  .bottom-sheet {
-    @apply fixed bottom-0 left-0 right-0 bg-background rounded-t-3xl shadow-2xl;
-    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-  }
-  
-  /* Pulse animation for location marker */
-  .pulse-ring {
-    animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  
-  @keyframes pulse-ring {
-    0%, 100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.5);
-      opacity: 0;
-    }
-  }
-  
-  /* Car marker animation */
-  .car-marker {
-    animation: car-bounce 0.5s ease-in-out;
-  }
-  
-  @keyframes car-bounce {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-5px);
-    }
-  }
-  
-  /* Searching radar animation */
-  .radar-pulse {
+  /* Radar Animation */
+  .radar-ring {
     animation: radar-pulse 2s ease-out infinite;
   }
   
   @keyframes radar-pulse {
     0% {
-      transform: scale(0);
+      transform: scale(0.3);
       opacity: 0.8;
     }
     100% {
-      transform: scale(4);
+      transform: scale(2);
       opacity: 0;
     }
   }
   
-  /* Gradient overlays */
-  .gradient-overlay-bottom {
-    background: linear-gradient(to top, hsl(var(--background)) 0%, transparent 100%);
+  .radar-ring-delayed-1 {
+    animation-delay: 0.5s;
   }
   
-  .gradient-overlay-top {
-    background: linear-gradient(to bottom, hsl(var(--background)) 0%, transparent 100%);
+  .radar-ring-delayed-2 {
+    animation-delay: 1s;
+  }
+  
+  .radar-ring-delayed-3 {
+    animation-delay: 1.5s;
+  }
+  
+  /* Pulse glow for online status */
+  .pulse-glow-green {
+    animation: pulse-glow-green 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-glow-green {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.7);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(48, 209, 88, 0);
+    }
+  }
+  
+  /* Gold gradient button */
+  .btn-gold {
+    @apply bg-gradient-to-r from-[hsl(var(--caby-gold))] to-[hsl(var(--caby-gold-light))] text-black font-bold;
+  }
+  
+  .btn-gold:hover {
+    @apply brightness-110;
+  }
+  
+  /* Card premium */
+  .card-premium {
+    @apply bg-[hsl(var(--caby-card))] border border-[hsl(var(--caby-border))] rounded-[2rem];
+  }
+  
+  /* Legal status badges */
+  .badge-legal-green {
+    @apply bg-[hsl(var(--caby-green))]/20 text-[hsl(var(--caby-green))] border border-[hsl(var(--caby-green))]/30;
+  }
+  
+  .badge-legal-red {
+    @apply bg-[hsl(var(--caby-red))]/20 text-[hsl(var(--caby-red))] border border-[hsl(var(--caby-red))]/30 animate-pulse;
+  }
+  
+  /* Course type badges */
+  .badge-private-client {
+    @apply bg-[hsl(var(--caby-blue))] text-white;
+  }
+  
+  .badge-network-dispatch {
+    @apply bg-[hsl(var(--caby-purple))] text-white;
+  }
+  
+  .badge-caby-direct {
+    @apply bg-gradient-to-r from-[hsl(var(--caby-gold))] to-[hsl(var(--caby-gold-light))] text-black;
+  }
+  
+  /* Timer progress bar */
+  .timer-bar {
+    @apply h-1 bg-[hsl(var(--caby-border))] rounded-full overflow-hidden;
+  }
+  
+  .timer-bar-fill {
+    @apply h-full bg-[hsl(var(--caby-gold))] transition-all duration-1000 ease-linear;
+  }
+  
+  .timer-bar-fill.expiring {
+    @apply bg-[hsl(var(--caby-red))];
   }
 }
 
 @layer utilities {
-  /* Safe area for mobile */
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
   
   .safe-area-top {
     padding-top: env(safe-area-inset-top, 0);
+  }
+  
+  /* Text gold gradient */
+  .text-gold-gradient {
+    @apply bg-gradient-to-r from-[hsl(var(--caby-gold))] to-[hsl(var(--caby-gold-light))] bg-clip-text text-transparent;
+  }
+  
+  /* Scrollbar styling */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
