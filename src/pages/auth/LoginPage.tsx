@@ -38,8 +38,8 @@ const LoginPage: React.FC = () => {
       {/* Left side - Illustration (desktop only) */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary items-center justify-center p-12">
         <div className="text-center text-primary-foreground">
-          <div className="text-8xl mb-8">🚗</div>
-          <h1 className="text-4xl font-bold mb-4">VTC App</h1>
+          <div className="text-8xl mb-8">🚕</div>
+          <h1 className="text-4xl font-bold mb-4">Caby</h1>
           <p className="text-xl opacity-80">
             Votre trajet, notre passion
           </p>
@@ -51,8 +51,8 @@ const LoginPage: React.FC = () => {
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-8">
-            <div className="text-6xl mb-4">🚗</div>
-            <h1 className="text-2xl font-bold">VTC App</h1>
+            <div className="text-6xl mb-4">🚕</div>
+            <h1 className="text-2xl font-bold">Caby</h1>
           </div>
 
           <div className="text-center mb-8">
