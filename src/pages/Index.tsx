@@ -10,10 +10,10 @@ const Index: React.FC = () => {
       {/* Hero section */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
         {/* Logo */}
-        <div className="text-8xl mb-6 animate-fade-in">🚗</div>
+        <div className="text-8xl mb-6 animate-fade-in">🚕</div>
         
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          VTC App
+          Caby
         </h1>
         
         <p className="text-xl text-muted-foreground max-w-md mb-12">
@@ -57,7 +57,7 @@ const Index: React.FC = () => {
 
       {/* Footer */}
       <footer className="p-6 text-center text-sm text-muted-foreground safe-area-bottom">
-        <p>© 2026 VTC App. Tous droits réservés.</p>
+        <p>© 2026 Caby. Tous droits réservés.</p>
       </footer>
     </div>
   );
