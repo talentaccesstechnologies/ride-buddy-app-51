@@ -14,6 +14,154 @@ export type Database = {
   }
   public: {
     Tables: {
+      dispatch_queue: {
+        Row: {
+          affiliated_driver_id: string | null
+          assigned_at: string | null
+          assigned_driver_id: string | null
+          attempt_count: number | null
+          created_at: string | null
+          current_offered_to: string | null
+          current_search_radius_km: number | null
+          drivers_contacted: string[] | null
+          drivers_declined: string[] | null
+          expires_at: string | null
+          id: string
+          max_attempts: number | null
+          max_search_radius_km: number | null
+          offer_expires_at: string | null
+          offered_at: string | null
+          pickup_lat: number
+          pickup_lng: number
+          priority: number | null
+          ride_id: string
+          source: string | null
+          status: string | null
+          updated_at: string | null
+          vehicle_type_required: string | null
+        }
+        Insert: {
+          affiliated_driver_id?: string | null
+          assigned_at?: string | null
+          assigned_driver_id?: string | null
+          attempt_count?: number | null
+          created_at?: string | null
+          current_offered_to?: string | null
+          current_search_radius_km?: number | null
+          drivers_contacted?: string[] | null
+          drivers_declined?: string[] | null
+          expires_at?: string | null
+          id?: string
+          max_attempts?: number | null
+          max_search_radius_km?: number | null
+          offer_expires_at?: string | null
+          offered_at?: string | null
+          pickup_lat: number
+          pickup_lng: number
+          priority?: number | null
+          ride_id: string
+          source?: string | null
+          status?: string | null
+          updated_at?: string | null
+          vehicle_type_required?: string | null
+        }
+        Update: {
+          affiliated_driver_id?: string | null
+          assigned_at?: string | null
+          assigned_driver_id?: string | null
+          attempt_count?: number | null
+          created_at?: string | null
+          current_offered_to?: string | null
+          current_search_radius_km?: number | null
+          drivers_contacted?: string[] | null
+          drivers_declined?: string[] | null
+          expires_at?: string | null
+          id?: string
+          max_attempts?: number | null
+          max_search_radius_km?: number | null
+          offer_expires_at?: string | null
+          offered_at?: string | null
+          pickup_lat?: number
+          pickup_lng?: number
+          priority?: number | null
+          ride_id?: string
+          source?: string | null
+          status?: string | null
+          updated_at?: string | null
+          vehicle_type_required?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dispatch_queue_affiliated_driver_id_fkey"
+            columns: ["affiliated_driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dispatch_queue_assigned_driver_id_fkey"
+            columns: ["assigned_driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dispatch_queue_current_offered_to_fkey"
+            columns: ["current_offered_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dispatch_queue_ride_id_fkey"
+            columns: ["ride_id"]
+            isOneToOne: false
+            referencedRelation: "rides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driver_availability_log: {
+        Row: {
+          created_at: string | null
+          driver_id: string
+          duration_minutes: number | null
+          earnings_during_session: number | null
+          id: string
+          rides_during_session: number | null
+          went_offline_at: string | null
+          went_online_at: string
+        }
+        Insert: {
+          created_at?: string | null
+          driver_id: string
+          duration_minutes?: number | null
+          earnings_during_session?: number | null
+          id?: string
+          rides_during_session?: number | null
+          went_offline_at?: string | null
+          went_online_at: string
+        }
+        Update: {
+          created_at?: string | null
+          driver_id?: string
+          duration_minutes?: number | null
+          earnings_during_session?: number | null
+          id?: string
+          rides_during_session?: number | null
+          went_offline_at?: string | null
+          went_online_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_availability_log_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       driver_profiles: {
         Row: {
           created_at: string | null
@@ -85,6 +233,124 @@ export type Database = {
           },
         ]
       }
+      driver_zones: {
+        Row: {
+          center_lat: number
+          center_lng: number
+          created_at: string | null
+          driver_id: string
+          id: string
+          is_active: boolean | null
+          priority: number | null
+          radius_km: number | null
+          zone_name: string
+        }
+        Insert: {
+          center_lat: number
+          center_lng: number
+          created_at?: string | null
+          driver_id: string
+          id?: string
+          is_active?: boolean | null
+          priority?: number | null
+          radius_km?: number | null
+          zone_name: string
+        }
+        Update: {
+          center_lat?: number
+          center_lng?: number
+          created_at?: string | null
+          driver_id?: string
+          id?: string
+          is_active?: boolean | null
+          priority?: number | null
+          radius_km?: number | null
+          zone_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_zones_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      netting_ledger: {
+        Row: {
+          created_at: string | null
+          creditor_driver_id: string
+          debtor_driver_id: string
+          dispatch_id: string
+          id: string
+          netting_amount: number
+          netting_rate: number
+          ride_amount: number
+          ride_id: string | null
+          settled_at: string | null
+          settlement_method: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          creditor_driver_id: string
+          debtor_driver_id: string
+          dispatch_id: string
+          id?: string
+          netting_amount: number
+          netting_rate: number
+          ride_amount: number
+          ride_id?: string | null
+          settled_at?: string | null
+          settlement_method?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          creditor_driver_id?: string
+          debtor_driver_id?: string
+          dispatch_id?: string
+          id?: string
+          netting_amount?: number
+          netting_rate?: number
+          ride_amount?: number
+          ride_id?: string | null
+          settled_at?: string | null
+          settlement_method?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "netting_ledger_creditor_driver_id_fkey"
+            columns: ["creditor_driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "netting_ledger_debtor_driver_id_fkey"
+            columns: ["debtor_driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "netting_ledger_dispatch_id_fkey"
+            columns: ["dispatch_id"]
+            isOneToOne: false
+            referencedRelation: "private_dispatch"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "netting_ledger_ride_id_fkey"
+            columns: ["ride_id"]
+            isOneToOne: false
+            referencedRelation: "rides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string | null
@@ -120,6 +386,148 @@ export type Database = {
           {
             foreignKeyName: "notifications_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pricing_rules: {
+        Row: {
+          base_fare: number
+          cancellation_fee: number | null
+          id: string
+          is_active: boolean | null
+          minimum_fare: number
+          night_surcharge: number | null
+          per_km_rate: number
+          per_minute_rate: number
+          updated_at: string | null
+          vehicle_type: string
+          waiting_per_minute: number | null
+          weekend_surcharge: number | null
+        }
+        Insert: {
+          base_fare: number
+          cancellation_fee?: number | null
+          id?: string
+          is_active?: boolean | null
+          minimum_fare: number
+          night_surcharge?: number | null
+          per_km_rate: number
+          per_minute_rate: number
+          updated_at?: string | null
+          vehicle_type: string
+          waiting_per_minute?: number | null
+          weekend_surcharge?: number | null
+        }
+        Update: {
+          base_fare?: number
+          cancellation_fee?: number | null
+          id?: string
+          is_active?: boolean | null
+          minimum_fare?: number
+          night_surcharge?: number | null
+          per_km_rate?: number
+          per_minute_rate?: number
+          updated_at?: string | null
+          vehicle_type?: string
+          waiting_per_minute?: number | null
+          weekend_surcharge?: number | null
+        }
+        Relationships: []
+      }
+      private_dispatch: {
+        Row: {
+          client_display_name: string | null
+          created_at: string | null
+          dropoff_address: string
+          dropoff_lat: number | null
+          dropoff_lng: number | null
+          estimated_price: number | null
+          expires_at: string | null
+          id: string
+          netting_amount: number | null
+          netting_rate: number | null
+          netting_settled: boolean | null
+          notes: string | null
+          pickup_address: string
+          pickup_lat: number
+          pickup_lng: number
+          receiver_driver_id: string | null
+          ride_id: string | null
+          scheduled_time: string | null
+          sender_driver_id: string
+          status: string | null
+          updated_at: string | null
+          vehicle_type_required: string | null
+        }
+        Insert: {
+          client_display_name?: string | null
+          created_at?: string | null
+          dropoff_address: string
+          dropoff_lat?: number | null
+          dropoff_lng?: number | null
+          estimated_price?: number | null
+          expires_at?: string | null
+          id?: string
+          netting_amount?: number | null
+          netting_rate?: number | null
+          netting_settled?: boolean | null
+          notes?: string | null
+          pickup_address: string
+          pickup_lat: number
+          pickup_lng: number
+          receiver_driver_id?: string | null
+          ride_id?: string | null
+          scheduled_time?: string | null
+          sender_driver_id: string
+          status?: string | null
+          updated_at?: string | null
+          vehicle_type_required?: string | null
+        }
+        Update: {
+          client_display_name?: string | null
+          created_at?: string | null
+          dropoff_address?: string
+          dropoff_lat?: number | null
+          dropoff_lng?: number | null
+          estimated_price?: number | null
+          expires_at?: string | null
+          id?: string
+          netting_amount?: number | null
+          netting_rate?: number | null
+          netting_settled?: boolean | null
+          notes?: string | null
+          pickup_address?: string
+          pickup_lat?: number
+          pickup_lng?: number
+          receiver_driver_id?: string | null
+          ride_id?: string | null
+          scheduled_time?: string | null
+          sender_driver_id?: string
+          status?: string | null
+          updated_at?: string | null
+          vehicle_type_required?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "private_dispatch_receiver_driver_id_fkey"
+            columns: ["receiver_driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "private_dispatch_ride_id_fkey"
+            columns: ["ride_id"]
+            isOneToOne: false
+            referencedRelation: "rides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "private_dispatch_sender_driver_id_fkey"
+            columns: ["sender_driver_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -340,12 +748,147 @@ export type Database = {
           },
         ]
       }
+      surge_zones: {
+        Row: {
+          center_lat: number
+          center_lng: number
+          created_at: string | null
+          ends_at: string | null
+          id: string
+          is_active: boolean | null
+          radius_km: number | null
+          reason: string | null
+          starts_at: string | null
+          surge_multiplier: number | null
+          zone_name: string
+        }
+        Insert: {
+          center_lat: number
+          center_lng: number
+          created_at?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          radius_km?: number | null
+          reason?: string | null
+          starts_at?: string | null
+          surge_multiplier?: number | null
+          zone_name: string
+        }
+        Update: {
+          center_lat?: number
+          center_lng?: number
+          created_at?: string | null
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          radius_km?: number | null
+          reason?: string | null
+          starts_at?: string | null
+          surge_multiplier?: number | null
+          zone_name?: string
+        }
+        Relationships: []
+      }
+      tatfleet_sync_log: {
+        Row: {
+          attempts: number | null
+          created_at: string | null
+          driver_id: string
+          error_message: string | null
+          id: string
+          last_attempt_at: string | null
+          max_attempts: number | null
+          next_retry_at: string | null
+          payload: Json
+          response_body: Json | null
+          response_status: number | null
+          ride_id: string
+          status: string | null
+          tatfleet_reference_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          attempts?: number | null
+          created_at?: string | null
+          driver_id: string
+          error_message?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          max_attempts?: number | null
+          next_retry_at?: string | null
+          payload: Json
+          response_body?: Json | null
+          response_status?: number | null
+          ride_id: string
+          status?: string | null
+          tatfleet_reference_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          attempts?: number | null
+          created_at?: string | null
+          driver_id?: string
+          error_message?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          max_attempts?: number | null
+          next_retry_at?: string | null
+          payload?: Json
+          response_body?: Json | null
+          response_status?: number | null
+          ride_id?: string
+          status?: string | null
+          tatfleet_reference_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tatfleet_sync_log_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tatfleet_sync_log_ride_id_fkey"
+            columns: ["ride_id"]
+            isOneToOne: false
+            referencedRelation: "rides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_distance_km: {
+        Args: { lat1: number; lat2: number; lng1: number; lng2: number }
+        Returns: number
+      }
+      earth: { Args: never; Returns: number }
+      find_nearest_drivers: {
+        Args: {
+          p_exclude_drivers?: string[]
+          p_lat: number
+          p_limit?: number
+          p_lng: number
+          p_radius_km?: number
+          p_vehicle_type?: string
+        }
+        Returns: {
+          current_lat: number
+          current_lng: number
+          distance_km: number
+          driver_id: string
+          driver_name: string
+          rating: number
+          user_id: string
+          vehicle_type: string
+        }[]
+      }
     }
     Enums: {
       payment_status:
