@@ -1,6 +1,8 @@
 import React from 'react';
 import { MapPin, Navigation } from 'lucide-react';
 import { SimulatedDriver } from '@/types';
+import { APP_CONFIG } from '@/config/app.config';
+import GoogleMapView from './GoogleMap';
 
 interface MapPlaceholderProps {
   latitude: number;
@@ -13,12 +15,15 @@ interface MapPlaceholderProps {
   dropoffLng?: number;
 }
 
-const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
-  latitude,
-  longitude,
-  nearbyDrivers = [],
-  showRoute = false,
-}) => {
+const MapPlaceholder: React.FC<MapPlaceholderProps> = (props) => {
+  // If Google Maps API key is available, use real map
+  if (APP_CONFIG.GOOGLE_MAPS_API_KEY) {
+    return <GoogleMapView {...props} />;
+  }
+
+  // Fallback: simulated map
+  const { latitude, longitude, nearbyDrivers = [], showRoute = false } = props;
+
   return (
     <div className="relative w-full h-full bg-gradient-to-br from-secondary to-muted overflow-hidden">
       {/* Simulated map grid */}
@@ -61,14 +66,13 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
       {/* Current location marker */}
       <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
         <div className="relative">
-          {/* Pulse ring */}
           <div className="absolute -inset-4 bg-accent/30 rounded-full pulse-ring" />
           <div className="absolute -inset-2 bg-accent/50 rounded-full" />
           <div className="w-4 h-4 bg-accent rounded-full border-2 border-white shadow-lg" />
         </div>
       </div>
 
-      {/* Route visualization (if showing route) */}
+      {/* Route visualization */}
       {showRoute && (
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
           <path
