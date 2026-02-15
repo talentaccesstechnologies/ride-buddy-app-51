@@ -41,7 +41,7 @@ const categories: ServiceCategory[] = [
     label: 'Éducation & Entreprises',
     emoji: '🎓',
     items: [
-      { id: 'school', icon: GraduationCap, title: 'Caby School', desc: 'Transports scolaires sécurisés & sorties', badge: 'Suivi parental', route: null },
+      { id: 'school', icon: GraduationCap, title: 'Caby School', desc: 'Crèches, écoles, collèges, lycées & universités du canton', badge: 'Suivi parental', route: '/caby/search' },
       { id: 'business', icon: Building2, title: 'Caby Business', desc: 'Solutions PME & Banques · Facturation centralisée', route: null },
     ],
   },
