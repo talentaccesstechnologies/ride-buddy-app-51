@@ -22,17 +22,20 @@ const demoCourses: RadarCourse[] = [
     id: 'demo-1',
     type: 'private_client',
     source: 'qr_code',
-    clientDisplayName: 'Jean-Luc Gauthier',
+    clientDisplayName: 'Sophie',
     clientIsProtected: false,
-    pickupAddress: 'Gare de Genève-Cornavin',
-    pickupLat: 46.2100,
-    pickupLng: 6.1426,
-    dropoffAddress: 'Route de la Capite 12, Cologny',
-    dropoffLat: 46.2186,
-    dropoffLng: 6.1837,
-    estimatedPrice: 42,
-    estimatedDistance: 5.8,
-    estimatedDuration: 14,
+    clientAvatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
+    clientRating: 4.9,
+    clientNote: 'Client régulier - Trajet aéroport habituel',
+    pickupAddress: 'Rue du Rhône, Genève',
+    pickupLat: 46.2017,
+    pickupLng: 6.1468,
+    dropoffAddress: 'Aéroport de Genève',
+    dropoffLat: 46.2381,
+    dropoffLng: 6.1089,
+    estimatedPrice: 85,
+    estimatedDistance: 15.2,
+    estimatedDuration: 22,
     vehicleTypeRequired: 'premium',
     expiresAt: new Date(Date.now() + 30000),
     createdAt: new Date(Date.now() - 10000),
@@ -261,6 +264,8 @@ const DriverRadarPage: React.FC = () => {
                   course={course}
                   onShare={handleShare}
                   onExpire={handleExpire}
+                  onAccept={handleSwipeRight}
+                  onReject={handleSwipeLeft}
                 />
               </SwipeableCard>
             ))}
