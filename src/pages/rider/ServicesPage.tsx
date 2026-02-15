@@ -25,15 +25,16 @@ const categories: ServiceCategory[] = [
     items: [
       { id: 'ride', icon: Car, title: 'Caby Ride', desc: 'Course classique avec chauffeur privé', badge: 'Populaire', route: '/caby/search' },
       { id: 'tricycle', icon: Bike, title: 'Caby Tricycle', desc: 'Tricycle électrique 2 places · Centre-ville', route: '/caby/search' },
-      { id: 'van', icon: Bus, title: 'Caby Van', desc: 'Groupes & sorties · Jusqu\'à 7 passagers', route: null },
+      { id: 'van', icon: Bus, title: 'Caby Van', desc: 'Groupes & sorties · Jusqu\'à 7 passagers', route: '/caby/search' },
     ],
   },
   {
     label: 'Santé & Soins',
     emoji: '🏥',
     items: [
-      { id: 'care', icon: Ambulance, title: 'Caby Care', desc: 'Transport de patients · Hôpitaux & IMAD', badge: 'Certifié TATFleet Safety', route: null },
+      { id: 'care', icon: Ambulance, title: 'Caby Care', desc: 'Transport médical · Hôpitaux, centres médicaux & médecins', badge: 'Certifié TATFleet Safety', route: '/caby/search' },
       { id: 'health', icon: FlaskConical, title: 'Caby Health Logistix', desc: 'Analyses médicales · Vaccins · Médicaments', badge: 'Chaîne du froid garantie', route: null },
+      { id: 'vet', icon: Heart, title: 'Caby Vet', desc: 'Transport vétérinaire · Cliniques & urgences animales', badge: 'Soins animaux', route: '/caby/search' },
     ],
   },
   {
