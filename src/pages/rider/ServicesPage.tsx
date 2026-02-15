@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car, ChevronRight, Truck, Heart, GraduationCap, Building2, Package, Bike, Bus, Ambulance, FlaskConical, ShieldCheck } from 'lucide-react';
+import { Car, ChevronRight, Truck, Heart, GraduationCap, Building2, Package, Bike, Bus, Ambulance, FlaskConical, ShieldCheck, KeyRound, Wine, Shirt, PawPrint, ShoppingBag } from 'lucide-react';
 import BottomNav from '@/components/rider/BottomNav';
 
 interface ServiceItem {
@@ -50,6 +50,17 @@ const categories: ServiceCategory[] = [
     emoji: '📦',
     items: [
       { id: 'express', icon: Package, title: 'Caby Express', desc: 'Colis e-commerce (Zalando, Amazon, Temu…), plis & livraisons classiques', badge: 'Express 30 min', route: '/caby/express' },
+    ],
+  },
+  {
+    label: 'Services Premium',
+    emoji: '✨',
+    items: [
+      { id: 'secure', icon: KeyRound, title: 'Caby Secure', desc: 'Clés, passeports, contrats originaux · Transport ultra-sécurisé', badge: 'Certifié TATFleet', route: '/caby/search' },
+      { id: 'gourmet', icon: Wine, title: 'Caby Gourmet', desc: 'Vins fins & spiritueux · Livraison soignée depuis cavistes partenaires', badge: 'Certifié TATFleet', route: '/caby/search' },
+      { id: 'laundry', icon: Shirt, title: 'Caby Laundry', desc: 'Pressing à domicile · Ramassage matin, livraison soir', badge: 'Certifié TATFleet', route: '/caby/search' },
+      { id: 'pet', icon: PawPrint, title: 'Caby Pet', desc: 'Transport d\'animaux seul · Vétérinaire & toilettage', badge: 'Certifié TATFleet', route: '/caby/search' },
+      { id: 'concierge', icon: ShoppingBag, title: 'Caby Concierge', desc: 'Click & Collect de luxe · Personal Shopper logistique', badge: 'Certifié TATFleet', route: '/caby/search' },
     ],
   },
 ];
