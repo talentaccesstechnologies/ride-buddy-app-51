@@ -35,6 +35,7 @@ import RideCheckPage from "./pages/rider/safety/RideCheckPage";
 import SafetyTipsPage from "./pages/rider/safety/SafetyTipsPage";
 import TeenSafetyPage from "./pages/rider/safety/TeenSafetyPage";
 import SafetyAtCabyPage from "./pages/rider/safety/SafetyAtCabyPage";
+import InboxPage from "./pages/rider/InboxPage";
 
 // TATFleet (Driver) pages
 import DriverRadarPage from "./pages/tatfleet/DriverRadarPage";
@@ -79,6 +80,7 @@ const App = () => (
               <Route path="/caby/account/safety/tips" element={<SafetyTipsPage />} />
               <Route path="/caby/account/safety/teen" element={<TeenSafetyPage />} />
               <Route path="/caby/account/safety/about" element={<SafetyAtCabyPage />} />
+              <Route path="/caby/account/inbox" element={<InboxPage />} />
               
               {/* Legacy rider routes - redirect to /caby */}
               <Route path="/rider" element={<Navigate to="/caby" replace />} />
