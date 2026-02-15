@@ -29,7 +29,10 @@ const AccountPage: React.FC = () => {
     <div className="min-h-screen bg-background pb-20">
       <div className="px-5 pt-14 pb-6">
         {/* Profile header - Uber style */}
-        <div className="flex items-center justify-between mb-6">
+        <button
+          onClick={() => navigate('/caby/account/settings')}
+          className="flex items-center justify-between mb-6 w-full text-left"
+        >
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{profile?.full_name || 'Utilisateur'}</h1>
             <div className="flex items-center gap-1.5 mt-1">
@@ -43,7 +46,7 @@ const AccountPage: React.FC = () => {
               {profile?.full_name?.[0] || 'U'}
             </AvatarFallback>
           </Avatar>
-        </div>
+        </button>
 
         {/* 4 action buttons - 2x2 grid like Uber */}
         <div className="grid grid-cols-2 gap-3 mb-5">
