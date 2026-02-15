@@ -42,6 +42,7 @@ import InboxPage from "./pages/rider/InboxPage";
 import DriverRadarPage from "./pages/tatfleet/DriverRadarPage";
 import DriverHelpPage from "./pages/tatfleet/DriverHelpPage";
 import DriverLogisticsPage from "./pages/tatfleet/DriverLogisticsPage";
+import DriverClubPage from "./pages/tatfleet/DriverClubPage";
 
 const queryClient = new QueryClient();
 
@@ -94,6 +95,7 @@ const App = () => (
               <Route path="/tatfleet/radar" element={<DriverRadarPage />} />
               <Route path="/tatfleet/help" element={<DriverHelpPage />} />
               <Route path="/tatfleet/logistics" element={<DriverLogisticsPage />} />
+              <Route path="/tatfleet/club" element={<DriverClubPage />} />
 
               {/* 404 */}
               <Route path="*" element={<NotFound />} />
