@@ -33,7 +33,7 @@ const categories: ServiceCategory[] = [
     emoji: '🏥',
     items: [
       { id: 'care', icon: Ambulance, title: 'Caby Care', desc: 'Transport médical · Hôpitaux, centres médicaux & médecins', badge: 'Certifié TATFleet Safety', route: '/caby/search' },
-      { id: 'health', icon: FlaskConical, title: 'Caby Health Logistix', desc: 'Analyses médicales · Vaccins · Médicaments', badge: 'Chaîne du froid garantie', route: null },
+      { id: 'health', icon: FlaskConical, title: 'Caby Health Logistix', desc: 'Transport d\'analyses entre hôpitaux & laboratoires (Unilabs, Dynalabs)', badge: 'Chaîne du froid garantie', route: '/caby/search' },
       { id: 'vet', icon: Heart, title: 'Caby Vet', desc: 'Transport vétérinaire · Cliniques & urgences animales', badge: 'Soins animaux', route: '/caby/search' },
     ],
   },
