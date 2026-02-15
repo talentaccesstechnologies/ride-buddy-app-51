@@ -1,132 +1,119 @@
 import React from 'react';
-import { CreditCard, Wallet, Tag, Plus, FileText, ChevronRight, Trash2 } from 'lucide-react';
+import { CreditCard, Wallet, TrendingUp, ArrowDownLeft, ArrowUpRight, Plus, Tag, ChevronRight } from 'lucide-react';
 import BottomNav from '@/components/rider/BottomNav';
 import RiderHeader from '@/components/rider/RiderHeader';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 const PaymentPage: React.FC = () => {
-  const paymentMethods = [
-    { id: '1', type: 'card', brand: 'Visa', lastFour: '4242', isDefault: true },
-    { id: '2', type: 'card', brand: 'Mastercard', lastFour: '8888', isDefault: false },
+  const transactions = [
+    { id: '1', label: 'Course – Gare Cornavin', amount: -18.50, date: '15 Jan', type: 'debit' },
+    { id: '2', label: 'Recharge portefeuille', amount: 50.00, date: '14 Jan', type: 'credit' },
+    { id: '3', label: 'Course – Aéroport GVA', amount: -35.00, date: '12 Jan', type: 'debit' },
   ];
 
-  const promos = [
-    { id: '1', code: 'BIENVENUE10', description: '-10% sur votre première course', expires: '31 Jan 2026' },
+  const paymentMethods = [
+    { id: '1', brand: 'Visa', lastFour: '4242', isDefault: true },
+    { id: '2', brand: 'Mastercard', lastFour: '8888', isDefault: false },
   ];
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <RiderHeader title="Paiement" />
+      <RiderHeader title="Portefeuille" />
 
-      <div className="pt-16 px-4 space-y-6">
-        {/* Payment Methods */}
+      <div className="pt-16 px-4 space-y-5">
+        {/* Balance card */}
+        <div className="bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 rounded-xl p-5">
+          <div className="flex items-center gap-2 mb-1">
+            <Wallet className="w-4 h-4 text-primary" />
+            <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Solde</span>
+          </div>
+          <p className="text-3xl font-bold">31.50 <span className="text-lg font-medium text-muted-foreground">CHF</span></p>
+          <div className="flex gap-2 mt-4">
+            <Button size="sm" className="flex-1 bg-primary text-primary-foreground">
+              <Plus className="w-4 h-4 mr-1" />
+              Recharger
+            </Button>
+            <Button size="sm" variant="outline" className="flex-1">
+              <TrendingUp className="w-4 h-4 mr-1" />
+              Détails
+            </Button>
+          </div>
+        </div>
+
+        {/* Recent transactions */}
         <section>
-          <h2 className="text-lg font-semibold mb-3">Méthodes de paiement</h2>
+          <h2 className="text-sm font-semibold mb-3 text-muted-foreground uppercase tracking-wider">Transactions récentes</h2>
+          <div className="space-y-2">
+            {transactions.map((tx) => (
+              <div
+                key={tx.id}
+                className="flex items-center gap-3 bg-card border border-border rounded-xl p-3"
+              >
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                  tx.type === 'credit' 
+                    ? 'bg-[hsl(var(--caby-green))]/15' 
+                    : 'bg-card border border-border'
+                }`}>
+                  {tx.type === 'credit' 
+                    ? <ArrowDownLeft className="w-4 h-4 text-[hsl(var(--caby-green))]" />
+                    : <ArrowUpRight className="w-4 h-4 text-muted-foreground" />
+                  }
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{tx.label}</p>
+                  <p className="text-xs text-muted-foreground">{tx.date}</p>
+                </div>
+                <span className={`text-sm font-bold ${
+                  tx.type === 'credit' ? 'text-[hsl(var(--caby-green))]' : ''
+                }`}>
+                  {tx.type === 'credit' ? '+' : ''}{tx.amount.toFixed(2)} CHF
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Payment methods */}
+        <section>
+          <h2 className="text-sm font-semibold mb-3 text-muted-foreground uppercase tracking-wider">Moyens de paiement</h2>
           <div className="space-y-2">
             {paymentMethods.map((method) => (
               <div
                 key={method.id}
-                className="flex items-center gap-3 p-4 bg-card border border-border rounded-xl"
+                className="flex items-center gap-3 p-3 bg-card border border-border rounded-xl"
               >
-                <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
-                  <CreditCard className="w-5 h-5" />
+                <div className="w-9 h-9 bg-card border border-border rounded-xl flex items-center justify-center">
+                  <CreditCard className="w-4 h-4 text-muted-foreground" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium">{method.brand}</span>
+                    <span className="text-sm font-medium">{method.brand}</span>
                     {method.isDefault && (
-                      <Badge variant="secondary" className="text-xs">Par défaut</Badge>
+                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Par défaut</Badge>
                     )}
                   </div>
-                  <span className="text-sm text-muted-foreground">•••• {method.lastFour}</span>
+                  <span className="text-xs text-muted-foreground">•••• {method.lastFour}</span>
                 </div>
-                <button className="p-2 hover:bg-secondary rounded-lg transition-colors">
-                  <Trash2 className="w-4 h-4 text-muted-foreground" />
-                </button>
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </div>
             ))}
 
-            {/* Cash option */}
-            <div className="flex items-center gap-3 p-4 bg-card border border-border rounded-xl">
-              <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
-                <span className="text-xl">💵</span>
-              </div>
-              <div className="flex-1">
-                <span className="font-medium">Espèces</span>
-                <p className="text-sm text-muted-foreground">Payez directement au chauffeur</p>
-              </div>
-            </div>
-
-            <Button variant="outline" className="w-full mt-2">
-              <Plus className="w-4 h-4 mr-2" />
+            <Button variant="outline" size="sm" className="w-full mt-1">
+              <Plus className="w-4 h-4 mr-1" />
               Ajouter une carte
             </Button>
           </div>
         </section>
 
-        {/* Wallet */}
+        {/* Promo */}
         <section>
-          <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-            <Wallet className="w-5 h-5" />
-            Portefeuille
-          </h2>
-          <div className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground rounded-xl p-5">
-            <p className="text-sm opacity-80">Solde disponible</p>
-            <p className="text-3xl font-bold mt-1">0,00 €</p>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="mt-4"
-            >
-              Recharger
-            </Button>
-          </div>
-        </section>
-
-        {/* Promo Codes */}
-        <section>
-          <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-            <Tag className="w-5 h-5" />
-            Codes promo
-          </h2>
-
-          <div className="flex gap-2 mb-3">
-            <input
-              type="text"
-              placeholder="Entrer un code promo"
-              className="flex-1 h-12 px-4 bg-secondary rounded-xl border-0 focus:ring-2 focus:ring-accent"
-            />
-            <Button className="h-12">Appliquer</Button>
-          </div>
-
-          {promos.length > 0 && (
-            <div className="space-y-2">
-              {promos.map((promo) => (
-                <div
-                  key={promo.id}
-                  className="flex items-center gap-3 p-4 bg-card border border-border rounded-xl"
-                >
-                  <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                    <Tag className="w-5 h-5 text-accent" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium">{promo.code}</p>
-                    <p className="text-sm text-muted-foreground">{promo.description}</p>
-                    <p className="text-xs text-muted-foreground mt-1">Expire le {promo.expires}</p>
-                  </div>
-                </div>
-              ))}
+          <button className="w-full flex items-center gap-3 p-3 bg-card border border-border rounded-xl">
+            <div className="w-9 h-9 bg-primary/15 rounded-xl flex items-center justify-center">
+              <Tag className="w-4 h-4 text-primary" />
             </div>
-          )}
-        </section>
-
-        {/* Invoices */}
-        <section>
-          <button className="w-full flex items-center gap-3 p-4 bg-card border border-border rounded-xl">
-            <FileText className="w-5 h-5" />
-            <span className="flex-1 text-left font-medium">Factures</span>
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            <span className="flex-1 text-left text-sm font-medium">Codes promo</span>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </button>
         </section>
       </div>

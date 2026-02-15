@@ -8,13 +8,13 @@
 
 @layer base {
   :root {
-    /* Caby Premium Dark Palette */
-    --caby-black: 0 0% 4%;
-    --caby-dark: 0 0% 7%;
-    --caby-card: 240 5% 12%;
-    --caby-border: 240 4% 18%;
+    /* Caby Premium Dark Palette - Pure Black */
+    --caby-black: 0 0% 0%;
+    --caby-dark: 0 0% 4%;
+    --caby-card: 0 0% 7%;
+    --caby-border: 0 0% 14%;
     --caby-text: 0 0% 96%;
-    --caby-muted: 0 0% 56%;
+    --caby-muted: 0 0% 50%;
     
     /* Accent Gold */
     --caby-gold: 43 65% 58%;
@@ -37,7 +37,7 @@
     --popover-foreground: var(--caby-text);
     
     --primary: var(--caby-gold);
-    --primary-foreground: 0 0% 4%;
+    --primary-foreground: 0 0% 0%;
     
     --secondary: var(--caby-card);
     --secondary-foreground: var(--caby-text);
@@ -46,13 +46,13 @@
     --muted-foreground: var(--caby-muted);
     
     --accent: var(--caby-gold);
-    --accent-foreground: 0 0% 4%;
+    --accent-foreground: 0 0% 0%;
     
     --success: var(--caby-green);
-    --success-foreground: 0 0% 4%;
+    --success-foreground: 0 0% 0%;
     
     --warning: 43 96% 56%;
-    --warning-foreground: 0 0% 4%;
+    --warning-foreground: 0 0% 0%;
     
     --destructive: var(--caby-red);
     --destructive-foreground: 0 0% 100%;
@@ -61,7 +61,7 @@
     --input: var(--caby-border);
     --ring: var(--caby-gold);
     
-    --radius: 1rem;
+    --radius: 0.75rem;
     
     /* Sidebar */
     --sidebar-background: var(--caby-dark);

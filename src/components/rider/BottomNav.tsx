@@ -1,17 +1,17 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Clock, CreditCard, User } from 'lucide-react';
+import { Home, Clock, Wallet, User } from 'lucide-react';
 
 const BottomNav: React.FC = () => {
   const navItems = [
-    { to: '/rider', icon: Home, label: 'Accueil', end: true },
-    { to: '/rider/activity', icon: Clock, label: 'Activité' },
-    { to: '/rider/payment', icon: CreditCard, label: 'Paiement' },
-    { to: '/rider/account', icon: User, label: 'Compte' },
+    { to: '/caby', icon: Home, label: 'Home', end: true },
+    { to: '/caby/activity', icon: Clock, label: 'Activité' },
+    { to: '/caby/payment', icon: Wallet, label: 'Portefeuille' },
+    { to: '/caby/account', icon: User, label: 'Profil' },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border safe-area-bottom z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-lg border-t border-border safe-area-bottom z-50">
       <div className="flex items-center justify-around h-16">
         {navItems.map((item) => (
           <NavLink
@@ -27,7 +27,7 @@ const BottomNav: React.FC = () => {
             }
           >
             <item.icon className="w-5 h-5" />
-            <span className="text-xs font-medium">{item.label}</span>
+            <span className="text-[10px] font-medium">{item.label}</span>
           </NavLink>
         ))}
       </div>
