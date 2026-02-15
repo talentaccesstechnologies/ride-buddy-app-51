@@ -4,7 +4,7 @@ import {
   HelpCircle,
   Wallet,
   Shield,
-  Mail,
+  Inbox,
   Leaf,
   Gift,
   ChevronRight,
@@ -25,10 +25,17 @@ const AccountPage: React.FC = () => {
     navigate('/auth/login');
   };
 
+  const quickActions = [
+    { icon: HelpCircle, label: 'Aide', route: '/caby/account/help' },
+    { icon: Wallet, label: 'Portefeuille', route: '/caby/account/wallet' },
+    { icon: Shield, label: 'Sécurité', route: '/caby/account/safety' },
+    { icon: Inbox, label: 'Boîte de réception', route: '/caby/account/inbox' },
+  ];
+
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-24">
       <div className="px-5 pt-14 pb-6">
-        {/* Profile header - Uber style */}
+        {/* Profile header */}
         <button
           onClick={() => navigate('/caby/account/settings')}
           className="flex items-center justify-between mb-6 w-full text-left"
@@ -48,56 +55,36 @@ const AccountPage: React.FC = () => {
           </Avatar>
         </button>
 
-        {/* 4 action buttons - 2x2 grid like Uber */}
+        {/* 4 action modules - 2x2 grid */}
         <div className="grid grid-cols-2 gap-3 mb-5">
-          <button
-            onClick={() => navigate('/caby/account/help')}
-            className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
-          >
-            <HelpCircle className="w-5 h-5 text-muted-foreground" />
-            <span className="font-medium text-sm">Aide</span>
-          </button>
-          <button
-            onClick={() => navigate('/caby/payment')}
-            className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
-          >
-            <Wallet className="w-5 h-5 text-muted-foreground" />
-            <span className="font-medium text-sm">Portefeuille</span>
-          </button>
-          <button
-            onClick={() => navigate('/caby/account/security')}
-            className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
-          >
-            <Shield className="w-5 h-5 text-muted-foreground" />
-            <span className="font-medium text-sm">Sécurité</span>
-          </button>
-          <button
-            onClick={() => navigate('/caby/account/messages')}
-            className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
-          >
-            <Mail className="w-5 h-5 text-muted-foreground" />
-            <span className="font-medium text-sm">Messages</span>
-          </button>
+          {quickActions.map((action) => (
+            <button
+              key={action.label}
+              onClick={() => navigate(action.route)}
+              className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
+            >
+              <action.icon className="w-5 h-5 text-muted-foreground" />
+              <span className="font-medium text-sm">{action.label}</span>
+            </button>
+          ))}
         </div>
 
-        {/* Large info tiles - Uber style stacked cards */}
+        {/* Info tiles */}
         <div className="space-y-3">
-          {/* Caby Premium promo tile */}
           <button className="w-full flex items-center gap-4 bg-card border border-border rounded-xl p-5 text-left hover:border-primary/30 transition-colors">
             <div className="flex-1">
               <p className="font-bold text-base">Économisez 42.52 CHF avec Caby Premium</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Vous auriez économisé 2.8x le coût de Caby Premium ces 30 derniers jours
+                Vous auriez économisé 2.8x le coût ces 30 derniers jours
               </p>
             </div>
             <div className="text-3xl flex-shrink-0">💰</div>
           </button>
 
-          {/* Safety check-up tile */}
           <button className="w-full flex items-center gap-4 bg-card border border-border rounded-xl p-5 text-left hover:border-primary/30 transition-colors">
             <div className="flex-1">
               <p className="font-bold text-base">Bilan sécurité</p>
-              <p className="text-sm text-muted-foreground mt-1">Découvrez comment rendre vos courses plus sûres</p>
+              <p className="text-sm text-muted-foreground mt-1">Rendez vos courses plus sûres</p>
             </div>
             <div className="relative w-12 h-12 flex-shrink-0">
               <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
@@ -108,16 +95,14 @@ const AccountPage: React.FC = () => {
             </div>
           </button>
 
-          {/* CO2 tile */}
           <button className="w-full flex items-center justify-between bg-card border border-border rounded-xl p-5 text-left hover:border-primary/30 transition-colors">
-            <p className="font-bold text-base">Estimation CO₂ économisée</p>
+            <p className="font-bold text-base">CO₂ économisé</p>
             <div className="flex items-center gap-2">
               <Leaf className="w-5 h-5 text-[hsl(var(--caby-green))]" />
               <span className="text-xl font-bold">1'740 g</span>
             </div>
           </button>
 
-          {/* Referral tile */}
           <button className="w-full flex items-center gap-4 bg-card border border-border rounded-xl p-5 text-left hover:border-primary/30 transition-colors">
             <div className="flex-1">
               <p className="font-bold text-base">Invitez vos amis sur Caby</p>
