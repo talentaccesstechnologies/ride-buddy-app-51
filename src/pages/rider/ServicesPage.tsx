@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car, ChevronRight, Truck, Heart, GraduationCap, Building2, Package, Bike, Bus, Ambulance, FlaskConical, ShieldCheck, KeyRound, Wine, Shirt, PawPrint, ShoppingBag } from 'lucide-react';
+import { Car, ChevronRight, Truck, Heart, GraduationCap, Building2, Package, Bike, Bus, Ambulance, FlaskConical, ShieldCheck, KeyRound, Wine, Shirt, PawPrint, ShoppingBag, Zap } from 'lucide-react';
 import BottomNav from '@/components/rider/BottomNav';
 
 interface ServiceItem {
@@ -26,6 +26,7 @@ const categories: ServiceCategory[] = [
       { id: 'ride', icon: Car, title: 'Caby Ride', desc: 'Course classique avec chauffeur privé', badge: 'Populaire', route: '/caby/search' },
       { id: 'tricycle', icon: Bike, title: 'Caby Tricycle', desc: 'Tricycle électrique 2 places · Centre-ville', route: '/caby/search' },
       { id: 'van', icon: Bus, title: 'Caby Van', desc: 'Groupes & sorties · Jusqu\'à 7 passagers', route: '/caby/search' },
+      { id: 'moto', icon: Zap, title: 'Caby Moto', desc: 'Le trajet le plus rapide · Casque & charlotte inclus', badge: 'Casque & Gants inclus', route: '/caby/search' },
     ],
   },
   {
