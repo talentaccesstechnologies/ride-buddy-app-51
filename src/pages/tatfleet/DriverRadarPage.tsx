@@ -12,6 +12,7 @@ import RadarEmptyState from '@/components/tatfleet/RadarEmptyState';
 import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
 import LegalBlockOverlay from '@/components/tatfleet/LegalBlockOverlay';
 import TransferModal from '@/components/tatfleet/TransferModal';
+import MotoSafetyChecklist from '@/components/tatfleet/MotoSafetyChecklist';
 import Logo from '@/components/shared/Logo';
 
 // Demo data
@@ -108,6 +109,7 @@ const DriverRadarPage: React.FC = () => {
   const [legalStatus, setLegalStatus] = useState<LegalStatus>('green');
   const [courses, setCourses] = useState<RadarCourse[]>([]);
   const [transferCourse, setTransferCourse] = useState<RadarCourse | null>(null);
+  const [motoCheckCourse, setMotoCheckCourse] = useState<RadarCourse | null>(null);
   const [driverMode, setDriverMode] = useState<'passenger' | 'logistics'>('passenger');
   const [stats, setStats] = useState({
     todayRides: 3,
@@ -162,14 +164,27 @@ const DriverRadarPage: React.FC = () => {
     const course = courses.find(c => c.id === courseId);
     if (!course) return;
 
+    // If moto course, show safety checklist first
+    if (course.vehicleTypeRequired === 'moto') {
+      setMotoCheckCourse(course);
+      return;
+    }
+
     toast.success('Course acceptée !', {
       description: `${course.pickupAddress} → ${course.dropoffAddress}`,
     });
 
     setCourses(prev => prev.filter(c => c.id !== courseId));
-    // In real app: navigate to active ride page
-    // navigate(`/tatfleet/ride-active/${courseId}`);
   }, [courses]);
+
+  const handleMotoCheckConfirm = useCallback(() => {
+    if (!motoCheckCourse) return;
+    toast.success('Course Moto acceptée !', {
+      description: `Équipement vérifié · ${motoCheckCourse.pickupAddress}`,
+    });
+    setCourses(prev => prev.filter(c => c.id !== motoCheckCourse.id));
+    setMotoCheckCourse(null);
+  }, [motoCheckCourse]);
 
   const handleTransfer = useCallback((courseId: string) => {
     const course = courses.find(c => c.id === courseId);
@@ -282,6 +297,14 @@ const DriverRadarPage: React.FC = () => {
           driverName="Mohamed"
           onConfirm={handleConfirmTransfer}
           onClose={() => setTransferCourse(null)}
+        />
+      )}
+
+      {/* Moto safety checklist */}
+      {motoCheckCourse && (
+        <MotoSafetyChecklist
+          onConfirm={handleMotoCheckConfirm}
+          onClose={() => setMotoCheckCourse(null)}
         />
       )}
     </div>
