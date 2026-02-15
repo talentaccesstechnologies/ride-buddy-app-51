@@ -75,14 +75,14 @@ const LandingPage: React.FC = () => {
             src={riderImage}
             alt="Passager premium"
             className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
-            style={{ filter: isDriver ? 'brightness(0.4) saturate(0.3)' : 'brightness(0.6) saturate(1.2)' }}
+            style={{ filter: isDriver ? 'brightness(0.4) saturate(0.3)' : 'brightness(0.65) saturate(1.4)' }}
           />
           <div
             className="absolute inset-0 transition-all duration-700"
             style={{
               background: isDriver
                 ? 'linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.9))'
-                : 'linear-gradient(to bottom, rgba(0,122,255,0.15), rgba(0,60,180,0.25), rgba(0,0,0,0.8))',
+                : 'linear-gradient(to bottom, rgba(0,122,255,0.3), rgba(0,80,220,0.35), rgba(0,0,0,0.7))',
             }}
           />
           {/* Blue accent line when active */}
@@ -111,14 +111,14 @@ const LandingPage: React.FC = () => {
             src={driverImage}
             alt="Chauffeur professionnel"
             className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
-            style={{ filter: !isDriver ? 'brightness(0.4) saturate(0.3)' : 'brightness(0.6) saturate(1.2)' }}
+            style={{ filter: !isDriver ? 'brightness(0.4) saturate(0.3)' : 'brightness(0.65) saturate(1.4)' }}
           />
           <div
             className="absolute inset-0 transition-all duration-700"
             style={{
               background: !isDriver
                 ? 'linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.9))'
-                : 'linear-gradient(to top, rgba(212,175,55,0.15), rgba(180,140,30,0.2), rgba(0,0,0,0.8))',
+                : 'linear-gradient(to top, rgba(212,175,55,0.3), rgba(200,160,40,0.35), rgba(0,0,0,0.7))',
             }}
           />
           {/* Gold accent line when active */}
