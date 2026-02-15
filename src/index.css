@@ -169,6 +169,14 @@
     @apply bg-gradient-to-r from-[hsl(var(--caby-gold))] to-[hsl(var(--caby-gold-light))] text-black;
   }
   
+  .badge-livraison {
+    @apply bg-[hsl(var(--caby-green))]/90 text-black;
+  }
+  
+  .badge-uber-sync {
+    @apply bg-white/90 text-black;
+  }
+  
   /* Timer progress bar */
   .timer-bar {
     @apply h-1 bg-[hsl(var(--caby-border))] rounded-full overflow-hidden;

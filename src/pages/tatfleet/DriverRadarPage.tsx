@@ -1,18 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Package, Car } from 'lucide-react';
+import { Shield, Package } from 'lucide-react';
 import { toast } from 'sonner';
 import { RadarCourse, LegalStatus } from '@/types/radar.types';
 import { APP_CONFIG } from '@/config/app.config';
 import RadarHeader from '@/components/tatfleet/RadarHeader';
 import RadarToggle from '@/components/tatfleet/RadarToggle';
 import RadarAnimation from '@/components/tatfleet/RadarAnimation';
-import CourseCard from '@/components/tatfleet/CourseCard';
 import RadarEmptyState from '@/components/tatfleet/RadarEmptyState';
 import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
 import LegalBlockOverlay from '@/components/tatfleet/LegalBlockOverlay';
 import TransferModal from '@/components/tatfleet/TransferModal';
 import MotoSafetyChecklist from '@/components/tatfleet/MotoSafetyChecklist';
+import SwipeableCard from '@/components/tatfleet/SwipeableCard';
+import SwipeableCourseCard from '@/components/tatfleet/SwipeableCourseCard';
 import Logo from '@/components/shared/Logo';
 
 // Demo data
@@ -35,17 +36,50 @@ const demoCourses: RadarCourse[] = [
     vehicleTypeRequired: 'premium',
     expiresAt: new Date(Date.now() + 30000),
     createdAt: new Date(Date.now() - 10000),
-    meta: {
-      date: new Date().toISOString(),
-      source: 'qr_code',
-      sujet: 'Course privée',
-      lien: '',
-      description: 'Client affilié QR',
-      eligible: true,
-    },
+    meta: { date: new Date().toISOString(), source: 'qr_code', sujet: 'Course privée', lien: '', description: 'Client affilié QR', eligible: true },
   },
   {
     id: 'demo-2',
+    type: 'caby_direct',
+    source: 'caby_app',
+    clientDisplayName: 'Sophie Müller',
+    clientIsProtected: false,
+    pickupAddress: 'Rue du Rhône 48, Genève',
+    pickupLat: 46.2017,
+    pickupLng: 6.1468,
+    dropoffAddress: 'CERN, Meyrin',
+    dropoffLat: 46.2330,
+    dropoffLng: 6.0557,
+    estimatedPrice: 38,
+    estimatedDistance: 9.2,
+    estimatedDuration: 16,
+    vehicleTypeRequired: 'standard',
+    expiresAt: new Date(Date.now() + 15000),
+    createdAt: new Date(Date.now() - 5000),
+    meta: { date: new Date().toISOString(), source: 'caby_app', sujet: 'Caby Ride', lien: '', description: 'Commande Caby App', eligible: true },
+  },
+  {
+    id: 'demo-3',
+    type: 'livraison',
+    source: 'caby_app',
+    clientDisplayName: 'Zalando Express',
+    clientIsProtected: false,
+    pickupAddress: 'Hub Logistique Lancy',
+    pickupLat: 46.1800,
+    pickupLng: 6.1200,
+    dropoffAddress: 'Rue de Carouge 90, Genève',
+    dropoffLat: 46.1950,
+    dropoffLng: 6.1400,
+    estimatedPrice: 15,
+    estimatedDistance: 3.1,
+    estimatedDuration: 8,
+    vehicleTypeRequired: 'standard',
+    expiresAt: new Date(Date.now() + 60000),
+    createdAt: new Date(Date.now() - 30000),
+    meta: { date: new Date().toISOString(), source: 'caby_app', sujet: 'Livraison', lien: '', description: 'Forfait livraison', eligible: true },
+  },
+  {
+    id: 'demo-4',
     type: 'network_dispatch',
     source: 'private_dispatch',
     clientDisplayName: 'Client de Domingo M.',
@@ -65,57 +99,19 @@ const demoCourses: RadarCourse[] = [
     senderDriverName: 'Domingo M.',
     expiresAt: new Date(Date.now() + 300000),
     createdAt: new Date(Date.now() - 60000),
-    meta: {
-      date: new Date().toISOString(),
-      source: 'private_dispatch',
-      sujet: 'Dispatch réseau',
-      lien: '',
-      description: 'Transféré par Domingo',
-      eligible: true,
-    },
-  },
-  {
-    id: 'demo-3',
-    type: 'caby_direct',
-    source: 'caby_app',
-    clientDisplayName: 'Sophie Müller',
-    clientIsProtected: false,
-    pickupAddress: 'Rue du Rhône 48, Genève',
-    pickupLat: 46.2017,
-    pickupLng: 6.1468,
-    dropoffAddress: 'CERN, Meyrin',
-    dropoffLat: 46.2330,
-    dropoffLng: 6.0557,
-    estimatedPrice: 38,
-    estimatedDistance: 9.2,
-    estimatedDuration: 16,
-    vehicleTypeRequired: 'standard',
-    expiresAt: new Date(Date.now() + 15000),
-    createdAt: new Date(Date.now() - 5000),
-    meta: {
-      date: new Date().toISOString(),
-      source: 'caby_app',
-      sujet: 'Course directe',
-      lien: '',
-      description: 'Commande Caby App',
-      eligible: true,
-    },
+    meta: { date: new Date().toISOString(), source: 'private_dispatch', sujet: 'Dispatch réseau', lien: '', description: 'Transféré par Domingo', eligible: true },
   },
 ];
 
 const DriverRadarPage: React.FC = () => {
   const navigate = useNavigate();
   const [isOnline, setIsOnline] = useState(false);
-  const [legalStatus, setLegalStatus] = useState<LegalStatus>('green');
+  const [legalStatus] = useState<LegalStatus>('green');
   const [courses, setCourses] = useState<RadarCourse[]>([]);
   const [transferCourse, setTransferCourse] = useState<RadarCourse | null>(null);
   const [motoCheckCourse, setMotoCheckCourse] = useState<RadarCourse | null>(null);
   const [driverMode, setDriverMode] = useState<'passenger' | 'logistics'>('passenger');
-  const [stats, setStats] = useState({
-    todayRides: 3,
-    todayEarnings: 145,
-    onlineMinutes: 127,
-  });
+  const [stats] = useState({ todayRides: 3, todayEarnings: 145, onlineMinutes: 127 });
 
   const handleSwitchMode = () => {
     if (driverMode === 'passenger') {
@@ -125,24 +121,19 @@ const DriverRadarPage: React.FC = () => {
     }
   };
 
-  // Sort courses by priority
+  // Sort by priority
   const sortedCourses = [...courses].sort((a, b) => {
-    const priority = { private_client: 0, network_dispatch: 1, caby_direct: 2 };
-    return priority[a.type] - priority[b.type];
+    const priority: Record<string, number> = { private_client: 0, network_dispatch: 1, caby_direct: 2, livraison: 3, uber_sync: 4 };
+    return (priority[a.type] ?? 5) - (priority[b.type] ?? 5);
   });
 
   const handleToggleOnline = useCallback((value: boolean) => {
     if (legalStatus === 'red') {
-      toast.error('Documents expirés', {
-        description: 'Mettez à jour vos documents pour reprendre l\'activité',
-      });
+      toast.error('Documents expirés', { description: "Mettez à jour vos documents pour reprendre l'activité" });
       return;
     }
-
     setIsOnline(value);
-    
     if (value) {
-      // Load demo courses after a short delay
       setTimeout(() => {
         setCourses(demoCourses.map(c => ({
           ...c,
@@ -150,43 +141,32 @@ const DriverRadarPage: React.FC = () => {
           createdAt: new Date(),
         })));
       }, 2000);
-      
-      toast.success('Radar activé', {
-        description: 'Vous recevrez les courses à proximité',
-      });
+      toast.success('Radar activé', { description: 'Vous recevrez les courses à proximité' });
     } else {
       setCourses([]);
       toast.info('Radar désactivé');
     }
   }, [legalStatus]);
 
-  const handleAccept = useCallback((courseId: string) => {
+  const handleSwipeRight = useCallback((courseId: string) => {
     const course = courses.find(c => c.id === courseId);
     if (!course) return;
 
-    // If moto course, show safety checklist first
     if (course.vehicleTypeRequired === 'moto') {
       setMotoCheckCourse(course);
       return;
     }
 
-    toast.success('Course acceptée !', {
-      description: `${course.pickupAddress} → ${course.dropoffAddress}`,
-    });
-
+    toast.success('Course acceptée !', { description: `${course.pickupAddress} → ${course.dropoffAddress}` });
     setCourses(prev => prev.filter(c => c.id !== courseId));
   }, [courses]);
 
-  const handleMotoCheckConfirm = useCallback(() => {
-    if (!motoCheckCourse) return;
-    toast.success('Course Moto acceptée !', {
-      description: `Équipement vérifié · ${motoCheckCourse.pickupAddress}`,
-    });
-    setCourses(prev => prev.filter(c => c.id !== motoCheckCourse.id));
-    setMotoCheckCourse(null);
-  }, [motoCheckCourse]);
+  const handleSwipeLeft = useCallback((courseId: string) => {
+    setCourses(prev => prev.filter(c => c.id !== courseId));
+    toast.info('Course ignorée');
+  }, []);
 
-  const handleTransfer = useCallback((courseId: string) => {
+  const handleShare = useCallback((courseId: string) => {
     const course = courses.find(c => c.id === courseId);
     if (course) {
       setTransferCourse(course);
@@ -194,25 +174,33 @@ const DriverRadarPage: React.FC = () => {
   }, [courses]);
 
   const handleConfirmTransfer = useCallback(async (courseId: string, notes: string) => {
-    toast.success('Course transférée au réseau ✓', {
-      description: 'Vos collègues la verront dans leur radar',
-    });
-    
+    const course = courses.find(c => c.id === courseId);
+    if (course) {
+      const commission = course.estimatedPrice * 0.10;
+      toast.success('Course partagée au Club Privé ✓', {
+        description: `Rétrocession de ${commission.toFixed(0)} ${APP_CONFIG.DEFAULT_CURRENCY} si exécutée`,
+      });
+    }
     setCourses(prev => prev.filter(c => c.id !== courseId));
     setTransferCourse(null);
-  }, []);
+  }, [courses]);
 
   const handleExpire = useCallback((courseId: string) => {
     setCourses(prev => prev.filter(c => c.id !== courseId));
     toast.info('Course expirée');
   }, []);
 
+  const handleMotoCheckConfirm = useCallback(() => {
+    if (!motoCheckCourse) return;
+    toast.success('Course Moto acceptée !', { description: `Équipement vérifié · ${motoCheckCourse.pickupAddress}` });
+    setCourses(prev => prev.filter(c => c.id !== motoCheckCourse.id));
+    setMotoCheckCourse(null);
+  }, [motoCheckCourse]);
+
   return (
-    <div className="min-h-screen bg-caby-black pb-20">
-      {/* Legal block overlay */}
+    <div className="min-h-screen bg-background pb-20">
       {legalStatus === 'red' && <LegalBlockOverlay />}
 
-      {/* Header */}
       <RadarHeader
         isOnline={isOnline}
         legalStatus={legalStatus}
@@ -220,26 +208,34 @@ const DriverRadarPage: React.FC = () => {
         onNotificationClick={() => navigate('/tatfleet/notifications')}
       />
 
-      {/* Toggle */}
       <RadarToggle
         isOnline={isOnline}
         onToggle={handleToggleOnline}
         disabled={legalStatus === 'red'}
       />
 
-      {/* Mode toggle */}
+      {/* Mode toggle + title */}
       <div className="px-4 mb-4 flex items-center gap-3">
-        <h1 className="text-2xl font-display font-bold text-white flex-1">
+        <h1 className="text-2xl font-display font-bold text-foreground flex-1">
           Radar de Courses
         </h1>
         <button
           onClick={handleSwitchMode}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[hsl(var(--caby-card))] border border-[hsl(var(--caby-border))] text-xs font-semibold"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border text-xs font-semibold"
         >
           <Package className="w-3.5 h-3.5 text-primary" />
           <span className="text-primary">Mode Colis</span>
         </button>
       </div>
+
+      {/* Course count */}
+      {isOnline && sortedCourses.length > 0 && (
+        <div className="px-4 mb-3">
+          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+            {sortedCourses.length} course{sortedCourses.length > 1 ? 's' : ''} disponible{sortedCourses.length > 1 ? 's' : ''}
+          </p>
+        </div>
+      )}
 
       {/* Content */}
       <div className="px-4">
@@ -250,16 +246,23 @@ const DriverRadarPage: React.FC = () => {
           </>
         )}
 
+        {/* Tinder-style stacked cards */}
         {isOnline && sortedCourses.length > 0 && (
-          <div className="space-y-4">
-            {sortedCourses.map((course) => (
-              <CourseCard
+          <div className="relative" style={{ height: '480px' }}>
+            {sortedCourses.slice(0, 3).map((course, index) => (
+              <SwipeableCard
                 key={course.id}
-                course={course}
-                onAccept={handleAccept}
-                onTransfer={handleTransfer}
-                onExpire={handleExpire}
-              />
+                isTop={index === 0}
+                index={index}
+                onSwipeRight={() => handleSwipeRight(course.id)}
+                onSwipeLeft={() => handleSwipeLeft(course.id)}
+              >
+                <SwipeableCourseCard
+                  course={course}
+                  onShare={handleShare}
+                  onExpire={handleExpire}
+                />
+              </SwipeableCard>
             ))}
           </div>
         )}
@@ -267,7 +270,7 @@ const DriverRadarPage: React.FC = () => {
         {!isOnline && (
           <div className="text-center py-16">
             <Logo size="lg" showTagline className="mb-8 opacity-30" />
-            <p className="text-caby-muted">
+            <p className="text-muted-foreground">
               Activez le radar pour recevoir des courses
             </p>
           </div>
@@ -276,21 +279,19 @@ const DriverRadarPage: React.FC = () => {
 
       {/* Footer branding */}
       <div className="fixed bottom-20 left-0 right-0 flex items-center justify-center gap-4 py-2 opacity-30">
-        <div className="flex items-center gap-1 text-[10px] text-caby-muted">
+        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
           <Shield className="w-3 h-3" />
           <span>TATFleet LSE Certified</span>
         </div>
         {!APP_CONFIG.IS_TEST_MODE && (
-          <span className="text-[8px] font-mono text-caby-muted">
+          <span className="text-[8px] font-mono text-muted-foreground">
             ENCRYPTED_STREAM_V2_ACTIVE
           </span>
         )}
       </div>
 
-      {/* Bottom navigation */}
       <DriverBottomNav />
 
-      {/* Transfer modal */}
       {transferCourse && (
         <TransferModal
           course={transferCourse}
@@ -300,7 +301,6 @@ const DriverRadarPage: React.FC = () => {
         />
       )}
 
-      {/* Moto safety checklist */}
       {motoCheckCourse && (
         <MotoSafetyChecklist
           onConfirm={handleMotoCheckConfirm}
