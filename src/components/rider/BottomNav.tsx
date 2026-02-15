@@ -1,13 +1,14 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Clock, Wallet, User } from 'lucide-react';
+import { Home, LayoutGrid, Clock, Tag, User } from 'lucide-react';
 
 const BottomNav: React.FC = () => {
   const navItems = [
     { to: '/caby', icon: Home, label: 'Home', end: true },
+    { to: '/caby/services', icon: LayoutGrid, label: 'Services' },
     { to: '/caby/activity', icon: Clock, label: 'Activité' },
-    { to: '/caby/payment', icon: Wallet, label: 'Portefeuille' },
-    { to: '/caby/account', icon: User, label: 'Profil' },
+    { to: '/caby/offers', icon: Tag, label: 'Offres' },
+    { to: '/caby/account', icon: User, label: 'Compte' },
   ];
 
   return (
@@ -19,7 +20,7 @@ const BottomNav: React.FC = () => {
             to={item.to}
             end={item.end}
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-1 px-4 py-2 transition-colors ${
+              `flex flex-col items-center justify-center gap-1 px-3 py-2 transition-colors ${
                 isActive
                   ? 'text-primary'
                   : 'text-muted-foreground hover:text-foreground'

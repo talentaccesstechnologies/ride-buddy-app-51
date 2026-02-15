@@ -20,7 +20,9 @@ import RiderSearch from "./pages/rider/RiderSearch";
 import ConfirmRide from "./pages/rider/ConfirmRide";
 import SearchingDriver from "./pages/rider/SearchingDriver";
 import TripTracking from "./pages/rider/TripTracking";
+import ServicesPage from "./pages/rider/ServicesPage";
 import ActivityPage from "./pages/rider/ActivityPage";
+import OffersPage from "./pages/rider/OffersPage";
 import PaymentPage from "./pages/rider/PaymentPage";
 import AccountPage from "./pages/rider/AccountPage";
 import AccountSettingsPage from "./pages/rider/AccountSettingsPage";
@@ -54,11 +56,13 @@ const App = () => (
               <Route path="/caby/confirm" element={<ConfirmRide />} />
               <Route path="/caby/searching" element={<SearchingDriver />} />
               <Route path="/caby/trip" element={<TripTracking />} />
+              <Route path="/caby/services" element={<ServicesPage />} />
               <Route path="/caby/activity" element={<ActivityPage />} />
-              <Route path="/caby/payment" element={<PaymentPage />} />
+              <Route path="/caby/offers" element={<OffersPage />} />
               <Route path="/caby/account" element={<AccountPage />} />
               <Route path="/caby/account/settings" element={<AccountSettingsPage />} />
               <Route path="/caby/account/help" element={<HelpPage />} />
+              <Route path="/caby/account/wallet" element={<PaymentPage />} />
               
               {/* Legacy rider routes - redirect to /caby */}
               <Route path="/rider" element={<Navigate to="/caby" replace />} />
