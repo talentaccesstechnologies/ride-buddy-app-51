@@ -42,14 +42,14 @@ const categories: ServiceCategory[] = [
     emoji: '🎓',
     items: [
       { id: 'school', icon: GraduationCap, title: 'Caby School', desc: 'Crèches, écoles, collèges, lycées & universités du canton', badge: 'Suivi parental', route: '/caby/search' },
-      { id: 'business', icon: Building2, title: 'Caby Business', desc: 'Solutions PME & Banques · Facturation centralisée', route: null },
+      { id: 'business', icon: Building2, title: 'Caby Business', desc: 'PME & entreprises sous contrat · Facturation centralisée', route: '/caby/search' },
     ],
   },
   {
     label: 'Livraison Pro',
     emoji: '📦',
     items: [
-      { id: 'express', icon: Package, title: 'Caby Express', desc: 'Colis, plis confidentiels · Livraison rapide', badge: 'Express 30 min', route: null },
+      { id: 'express', icon: Package, title: 'Caby Express', desc: 'Colis e-commerce (Zalando, Amazon, Temu…), plis & livraisons classiques', badge: 'Suivi en temps réel', route: '/caby/search' },
     ],
   },
 ];
