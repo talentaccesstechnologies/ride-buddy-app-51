@@ -1,5 +1,5 @@
 // Course Types
-export type CourseType = 'private_client' | 'network_dispatch' | 'caby_direct';
+export type CourseType = 'private_client' | 'network_dispatch' | 'caby_direct' | 'livraison' | 'uber_sync';
 export type CourseSource = 'caby_app' | 'qr_code' | 'whatsapp_parsed' | 'private_dispatch' | 'phone';
 export type VehicleType = 'standard' | 'premium' | 'van' | 'moto';
 export type LegalStatus = 'green' | 'red';
