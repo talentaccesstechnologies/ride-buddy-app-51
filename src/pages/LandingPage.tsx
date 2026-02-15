@@ -1,225 +1,127 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Shield } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import Logo from '@/components/shared/Logo';
 import riderImage from '@/assets/rider-mode.jpg';
 import driverImage from '@/assets/driver-mode.jpg';
 
-type Mode = 'rider' | 'driver';
-
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<Mode>(() => {
-    return (localStorage.getItem('caby_preferred_mode') as Mode) || 'rider';
-  });
-  const [credential, setCredential] = useState('');
-  const [transitioning, setTransitioning] = useState(false);
+  const [pressedZone, setPressedZone] = useState<'rider' | 'driver' | null>(null);
 
-  const isDriver = mode === 'driver';
-
-  const selectMode = (m: Mode) => {
-    if (m === mode) return;
-    setTransitioning(true);
-    setTimeout(() => {
-      setMode(m);
-      localStorage.setItem('caby_preferred_mode', m);
-      setTimeout(() => setTransitioning(false), 600);
-    }, 150);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!credential.trim()) return;
+  const handleSelect = (mode: 'rider' | 'driver') => {
+    setPressedZone(mode);
     localStorage.setItem('caby_preferred_mode', mode);
-    navigate(`/auth/login?role=${mode}&id=${encodeURIComponent(credential)}`);
+    setTimeout(() => {
+      navigate(mode === 'rider' ? '/auth/login?role=rider' : '/auth/login?role=driver');
+    }, 400);
   };
-
-  // Dynamic accent color
-  const accent = isDriver ? '#D4AF37' : '#007AFF';
-  const accentGlow = isDriver
-    ? 'shadow-[0_0_60px_rgba(212,175,55,0.25)]'
-    : 'shadow-[0_0_60px_rgba(0,122,255,0.25)]';
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
-      {/* Full-page color overlay for transition effect */}
-      <div
-        className="absolute inset-0 z-30 pointer-events-none transition-opacity duration-500"
-        style={{
-          background: `radial-gradient(circle at 50% 50%, ${accent}22 0%, transparent 70%)`,
-          opacity: transitioning ? 1 : 0,
-        }}
-      />
-
-      {/* Ambient glow — follows mode */}
-      <div
-        className="absolute inset-0 z-0 transition-all duration-1000 ease-in-out pointer-events-none"
-        style={{
-          background: isDriver
-            ? 'radial-gradient(ellipse at 50% 80%, rgba(212,175,55,0.08) 0%, transparent 60%)'
-            : 'radial-gradient(ellipse at 50% 20%, rgba(0,122,255,0.08) 0%, transparent 60%)',
-        }}
-      />
-
-      {/* Double-Face Visual */}
-      <div className="relative flex-1 min-h-0 flex flex-col z-10">
-        {/* Top half — Rider */}
-        <div
-          className={`relative flex-1 overflow-hidden transition-all duration-700 ease-in-out ${
-            isDriver ? 'flex-[0.35]' : 'flex-[0.65]'
-          }`}
-        >
-          <img
-            src={riderImage}
-            alt="Passager premium"
-            className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
-            style={{ filter: isDriver ? 'brightness(0.4) saturate(0.3)' : 'brightness(0.65) saturate(1.4)' }}
-          />
-          <div
-            className="absolute inset-0 transition-all duration-700"
-            style={{
-              background: isDriver
-                ? 'linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.9))'
-                : 'linear-gradient(to bottom, rgba(0,122,255,0.3), rgba(0,80,220,0.35), rgba(0,0,0,0.7))',
-            }}
-          />
-          {/* Blue accent line when active */}
-          {!isDriver && (
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-0.5 rounded-full animate-fade-in"
-              style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }}
-            />
-          )}
-          {!isDriver && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-sm font-medium tracking-widest uppercase animate-fade-in"
-                style={{ color: `${accent}BB` }}>
-                Voyagez sereinement
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Bottom half — Driver */}
-        <div
-          className={`relative flex-1 overflow-hidden transition-all duration-700 ease-in-out ${
-            isDriver ? 'flex-[0.65]' : 'flex-[0.35]'
-          }`}
-        >
-          <img
-            src={driverImage}
-            alt="Chauffeur professionnel"
-            className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
-            style={{ filter: !isDriver ? 'brightness(0.4) saturate(0.3)' : 'brightness(0.65) saturate(1.4)' }}
-          />
-          <div
-            className="absolute inset-0 transition-all duration-700"
-            style={{
-              background: !isDriver
-                ? 'linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.9))'
-                : 'linear-gradient(to top, rgba(212,175,55,0.3), rgba(200,160,40,0.35), rgba(0,0,0,0.7))',
-            }}
-          />
-          {/* Gold accent line when active */}
-          {isDriver && (
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-0.5 rounded-full animate-fade-in"
-              style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }}
-            />
-          )}
-          {isDriver && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-sm font-medium tracking-widest uppercase animate-fade-in"
-                style={{ color: `${accent}CC` }}>
-                Roulez avec fierté
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Center Toggle Overlay */}
-        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-          <div className="pointer-events-auto">
-            {/* Logo */}
-            <div className="mb-6 flex justify-center">
-              <Logo size="lg" />
-            </div>
-
-            {/* The Switch */}
-            <div
-              className={`flex rounded-2xl overflow-hidden backdrop-blur-xl transition-all duration-700 ${accentGlow}`}
-              style={{ border: `1px solid ${accent}33` }}
-            >
-              <button
-                onClick={() => selectMode('rider')}
-                className="px-8 py-4 text-base font-bold tracking-wide transition-all duration-500"
-                style={{
-                  background: !isDriver ? accent : 'transparent',
-                  color: !isDriver ? '#FFFFFF' : '#888',
-                }}
-              >
-                COMMANDER
-              </button>
-              <button
-                onClick={() => selectMode('driver')}
-                className="px-8 py-4 text-base font-bold tracking-wide transition-all duration-500"
-                style={{
-                  background: isDriver ? accent : 'transparent',
-                  color: isDriver ? '#000000' : '#888',
-                }}
-              >
-                ROULER
-              </button>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-black flex flex-col relative overflow-hidden">
+      {/* Logo centré */}
+      <div className="absolute top-0 left-0 right-0 z-30 flex justify-center pt-8">
+        <Logo size="lg" />
       </div>
 
-      {/* Bottom Section — Unified Login */}
-      <div className="relative z-10 bg-background px-6 pt-8 pb-6 safe-area-bottom">
-        <form onSubmit={handleSubmit} className="max-w-sm mx-auto space-y-4">
-          <Input
-            value={credential}
-            onChange={(e) => setCredential(e.target.value)}
-            placeholder="Numéro de mobile ou Email"
-            className="h-14 rounded-2xl bg-card text-foreground text-center text-base placeholder:text-muted-foreground transition-all duration-500"
-            style={{ borderColor: `${accent}44` }}
-          />
-          <Button
-            type="submit"
-            disabled={!credential.trim()}
-            className="w-full h-14 rounded-2xl text-lg font-bold transition-all duration-500"
+      {/* Zone CLIENT (Haut) */}
+      <button
+        className="relative flex-1 overflow-hidden cursor-pointer border-none outline-none text-left"
+        onPointerDown={() => setPressedZone('rider')}
+        onPointerUp={() => handleSelect('rider')}
+        onPointerLeave={() => setPressedZone(null)}
+      >
+        <img
+          src={riderImage}
+          alt="Passager premium"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Overlay Bleu Cyan */}
+        <div
+          className="absolute inset-0 transition-opacity duration-300"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(0,122,255,0.45), rgba(0,80,220,0.5), rgba(0,0,0,0.7))',
+            opacity: pressedZone === 'rider' ? 0 : 1,
+          }}
+        />
+        {/* CTA */}
+        <div className="absolute inset-0 flex flex-col items-center justify-end pb-10 z-10">
+          <p className="text-xs font-medium tracking-[0.3em] uppercase mb-4 text-white/60">
+            Voyagez sereinement
+          </p>
+          <div
+            className="flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-bold tracking-wide text-white transition-all duration-300"
             style={{
-              background: accent,
-              color: isDriver ? '#000000' : '#FFFFFF',
-              boxShadow: `0 0 30px ${accent}33`,
+              background: '#007AFF',
+              boxShadow: pressedZone === 'rider'
+                ? '0 0 60px rgba(0,122,255,0.8)'
+                : '0 0 30px rgba(0,122,255,0.4)',
             }}
           >
-            {isDriver ? 'JE ME CONNECTE POUR CONDUIRE' : 'JE COMMANDE UNE COURSE'}
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Button>
-
-          {isDriver && (
-            <button
-              type="button"
-              onClick={() => navigate('/auth/register?role=driver')}
-              className="block mx-auto text-xs transition-colors mt-1"
-              style={{ color: `${accent}99` }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = accent)}
-              onMouseLeave={(e) => (e.currentTarget.style.color = `${accent}99`)}
-            >
-              Pas encore chauffeur ? <span className="underline">Devenir partenaire TATFleet</span>
-            </button>
-          )}
-        </form>
-
-        {/* Reassurance footer */}
-        <div className="mt-8 text-center">
-          <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-            <Shield className="w-3.5 h-3.5 transition-colors duration-500" style={{ color: accent }} />
-            Propulsé par TATFleet — La garantie d'un transport certifié et humain.
-          </p>
+            JE COMMANDE UNE COURSE
+            <ArrowRight className="w-5 h-5" />
+          </div>
         </div>
+      </button>
+
+      {/* Séparateur */}
+      <div className="relative z-20 h-px bg-white/10" />
+
+      {/* Zone CHAUFFEUR (Bas) */}
+      <button
+        className="relative flex-1 overflow-hidden cursor-pointer border-none outline-none text-left"
+        onPointerDown={() => setPressedZone('driver')}
+        onPointerUp={() => handleSelect('driver')}
+        onPointerLeave={() => setPressedZone(null)}
+      >
+        <img
+          src={driverImage}
+          alt="Chauffeur professionnel"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Overlay Or Ambre */}
+        <div
+          className="absolute inset-0 transition-opacity duration-300"
+          style={{
+            background: 'linear-gradient(to top, rgba(212,175,55,0.45), rgba(200,160,40,0.5), rgba(0,0,0,0.7))',
+            opacity: pressedZone === 'driver' ? 0 : 1,
+          }}
+        />
+        {/* CTA */}
+        <div className="absolute inset-0 flex flex-col items-center justify-end pb-8 z-10">
+          <p className="text-xs font-medium tracking-[0.3em] uppercase mb-4 text-white/60">
+            Roulez avec fierté
+          </p>
+          <div
+            className="flex items-center gap-2 px-8 py-4 rounded-2xl text-base font-bold tracking-wide text-black transition-all duration-300"
+            style={{
+              background: '#D4AF37',
+              boxShadow: pressedZone === 'driver'
+                ? '0 0 60px rgba(212,175,55,0.8)'
+                : '0 0 30px rgba(212,175,55,0.4)',
+            }}
+          >
+            JE ME CONNECTE POUR CONDUIRE
+            <ArrowRight className="w-5 h-5" />
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate('/auth/register?role=driver');
+            }}
+            className="mt-3 text-xs text-[#D4AF37]/60 hover:text-[#D4AF37] transition-colors"
+          >
+            Pas encore chauffeur ? <span className="underline">Devenir partenaire TATFleet</span>
+          </button>
+        </div>
+      </button>
+
+      {/* Footer */}
+      <div className="relative z-10 bg-black px-6 py-4">
+        <p className="flex items-center justify-center gap-2 text-xs text-white/40">
+          <Shield className="w-3.5 h-3.5 text-[#D4AF37]" />
+          Propulsé par TATFleet — La garantie d'un transport certifié et humain.
+        </p>
       </div>
     </div>
   );
