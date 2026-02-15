@@ -13,6 +13,9 @@ export interface RadarCourse {
   // Client (peut être masqué par firewall)
   clientDisplayName: string;
   clientIsProtected: boolean;
+  clientAvatarUrl?: string;
+  clientRating?: number;
+  clientNote?: string;
   
   // Trajet
   pickupAddress: string;

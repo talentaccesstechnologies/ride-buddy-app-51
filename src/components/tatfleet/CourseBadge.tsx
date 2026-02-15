@@ -41,8 +41,8 @@ const CourseBadge: React.FC<CourseBadgeProps> = ({ type }) => {
   return (
     <div
       className={`
-        absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full
-        text-[10px] font-bold uppercase tracking-wide
+        flex items-center gap-1.5 px-3 py-1.5 rounded-full
+        text-[10px] font-bold uppercase tracking-wide flex-shrink-0
         ${config.className}
       `}
     >
