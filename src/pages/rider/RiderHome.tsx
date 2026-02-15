@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { generateNearbyDrivers } from '@/lib/simulatedDrivers';
+import { useMapAlerts } from '@/hooks/useMapAlerts';
 import MapPlaceholder from '@/components/maps/MapPlaceholder';
 import BottomSheet from '@/components/rider/BottomSheet';
 import RiderHeader from '@/components/rider/RiderHeader';
@@ -8,6 +9,7 @@ import BottomNav from '@/components/rider/BottomNav';
 
 const RiderHome: React.FC = () => {
   const { latitude, longitude, loading } = useGeolocation();
+  const { alerts, reportAlert } = useMapAlerts();
 
   // Generate simulated nearby drivers
   const nearbyDrivers = useMemo(() => {
@@ -39,6 +41,9 @@ const RiderHome: React.FC = () => {
           latitude={latitude || 48.8566}
           longitude={longitude || 2.3522}
           nearbyDrivers={nearbyDrivers}
+          alerts={alerts}
+          onReportAlert={reportAlert}
+          showAlertFAB={true}
         />
       </div>
 

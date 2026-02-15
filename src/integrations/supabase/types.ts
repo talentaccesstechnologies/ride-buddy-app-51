@@ -277,6 +277,39 @@ export type Database = {
           },
         ]
       }
+      map_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          expires_at: string
+          id: string
+          is_active: boolean
+          lat: number
+          lng: number
+          reporter_id: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          lat: number
+          lng: number
+          reporter_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          lat?: number
+          lng?: number
+          reporter_id?: string
+        }
+        Relationships: []
+      }
       netting_ledger: {
         Row: {
           created_at: string | null
