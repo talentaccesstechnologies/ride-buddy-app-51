@@ -1,1 +1,4 @@
 project_id = "ieadcoshvrneworulelp"
+
+[functions.merchant-deliveries]
+verify_jwt = false

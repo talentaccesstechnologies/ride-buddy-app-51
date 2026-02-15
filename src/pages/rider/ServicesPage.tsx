@@ -49,7 +49,7 @@ const categories: ServiceCategory[] = [
     label: 'Livraison Pro',
     emoji: '📦',
     items: [
-      { id: 'express', icon: Package, title: 'Caby Express', desc: 'Colis e-commerce (Zalando, Amazon, Temu…), plis & livraisons classiques', badge: 'Suivi en temps réel', route: '/caby/search' },
+      { id: 'express', icon: Package, title: 'Caby Express', desc: 'Colis e-commerce (Zalando, Amazon, Temu…), plis & livraisons classiques', badge: 'Express 30 min', route: '/caby/express' },
     ],
   },
 ];

@@ -14,6 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
+      deliveries: {
+        Row: {
+          allow_door_drop: boolean | null
+          created_at: string | null
+          delivered_at: string | null
+          driver_id: string | null
+          dropoff_address: string
+          dropoff_lat: number
+          dropoff_lng: number
+          estimated_price: number | null
+          final_price: number | null
+          id: string
+          is_scheduled: boolean | null
+          merchant_id: string | null
+          merchant_order_ref: string | null
+          package_description: string | null
+          package_size: string | null
+          picked_up_at: string | null
+          pickup_address: string
+          pickup_lat: number
+          pickup_lng: number
+          pin_code: string | null
+          pin_verified: boolean | null
+          proof_photo_url: string | null
+          rider_id: string
+          scheduled_slot_end: string | null
+          scheduled_slot_start: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          allow_door_drop?: boolean | null
+          created_at?: string | null
+          delivered_at?: string | null
+          driver_id?: string | null
+          dropoff_address: string
+          dropoff_lat: number
+          dropoff_lng: number
+          estimated_price?: number | null
+          final_price?: number | null
+          id?: string
+          is_scheduled?: boolean | null
+          merchant_id?: string | null
+          merchant_order_ref?: string | null
+          package_description?: string | null
+          package_size?: string | null
+          picked_up_at?: string | null
+          pickup_address: string
+          pickup_lat: number
+          pickup_lng: number
+          pin_code?: string | null
+          pin_verified?: boolean | null
+          proof_photo_url?: string | null
+          rider_id: string
+          scheduled_slot_end?: string | null
+          scheduled_slot_start?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          allow_door_drop?: boolean | null
+          created_at?: string | null
+          delivered_at?: string | null
+          driver_id?: string | null
+          dropoff_address?: string
+          dropoff_lat?: number
+          dropoff_lng?: number
+          estimated_price?: number | null
+          final_price?: number | null
+          id?: string
+          is_scheduled?: boolean | null
+          merchant_id?: string | null
+          merchant_order_ref?: string | null
+          package_description?: string | null
+          package_size?: string | null
+          picked_up_at?: string | null
+          pickup_address?: string
+          pickup_lat?: number
+          pickup_lng?: number
+          pin_code?: string | null
+          pin_verified?: boolean | null
+          proof_photo_url?: string | null
+          rider_id?: string
+          scheduled_slot_end?: string | null
+          scheduled_slot_start?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       dispatch_queue: {
         Row: {
           affiliated_driver_id: string | null
@@ -307,6 +397,33 @@ export type Database = {
           lat?: number
           lng?: number
           reporter_id?: string
+        }
+        Relationships: []
+      }
+      merchants: {
+        Row: {
+          api_key: string
+          contact_email: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+        }
+        Insert: {
+          api_key: string
+          contact_email?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+        }
+        Update: {
+          api_key?: string
+          contact_email?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
         }
         Relationships: []
       }
