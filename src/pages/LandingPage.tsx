@@ -11,14 +11,22 @@ type Mode = 'rider' | 'driver';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<Mode>('rider');
+  const [mode, setMode] = useState<Mode>(() => {
+    return (localStorage.getItem('caby_preferred_mode') as Mode) || 'rider';
+  });
   const [credential, setCredential] = useState('');
 
   const isDriver = mode === 'driver';
 
+  const selectMode = (m: Mode) => {
+    setMode(m);
+    localStorage.setItem('caby_preferred_mode', m);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!credential.trim()) return;
+    localStorage.setItem('caby_preferred_mode', mode);
     navigate(`/auth/login?role=${mode}&id=${encodeURIComponent(credential)}`);
   };
 
@@ -79,7 +87,7 @@ const LandingPage: React.FC = () => {
             {/* The Switch */}
             <div className="flex rounded-2xl overflow-hidden border border-border bg-card/80 backdrop-blur-xl">
               <button
-                onClick={() => setMode('rider')}
+                onClick={() => selectMode('rider')}
                 className={`px-8 py-4 text-base font-bold tracking-wide transition-all duration-500 ${
                   !isDriver
                     ? 'bg-[hsl(var(--caby-blue))] text-white shadow-lg'
@@ -89,7 +97,7 @@ const LandingPage: React.FC = () => {
                 COMMANDER
               </button>
               <button
-                onClick={() => setMode('driver')}
+                onClick={() => selectMode('driver')}
                 className={`px-8 py-4 text-base font-bold tracking-wide transition-all duration-500 ${
                   isDriver
                     ? 'btn-gold shadow-lg'
@@ -119,12 +127,22 @@ const LandingPage: React.FC = () => {
             className={`w-full h-14 rounded-2xl text-lg font-bold transition-all duration-500 ${
               isDriver
                 ? 'btn-gold shadow-[0_0_30px_hsl(var(--caby-gold)/0.3)]'
-                : 'bg-[hsl(var(--caby-blue))] hover:bg-[hsl(var(--caby-blue))]/90 text-white shadow-[0_0_30px_hsl(var(--caby-blue)/0.3)]'
+                : 'bg-background text-white border border-[hsl(var(--caby-blue))]/60 hover:border-[hsl(var(--caby-blue))] shadow-[0_0_20px_hsl(var(--caby-blue)/0.15)]'
             }`}
           >
-            {isDriver ? 'Accéder à TATFleet' : 'Continuer'}
+            {isDriver ? 'JE ME CONNECTE POUR CONDUIRE' : 'JE COMMANDE UNE COURSE'}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
+
+          {isDriver && (
+            <button
+              type="button"
+              onClick={() => navigate('/auth/register?role=driver')}
+              className="block mx-auto text-xs text-muted-foreground hover:text-primary transition-colors mt-1"
+            >
+              Pas encore chauffeur ? <span className="underline">Devenir partenaire TATFleet</span>
+            </button>
+          )}
         </form>
 
         {/* Reassurance footer */}
