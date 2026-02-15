@@ -45,7 +45,7 @@ const LandingPage: React.FC = () => {
           }}
         />
         {/* CTA */}
-        <div className="absolute inset-0 flex flex-col items-center justify-end pb-10 z-10">
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
           <p className="text-xs font-medium tracking-[0.3em] uppercase mb-4 text-white/60">
             Voyagez sereinement
           </p>
@@ -88,7 +88,7 @@ const LandingPage: React.FC = () => {
           }}
         />
         {/* CTA */}
-        <div className="absolute inset-0 flex flex-col items-center justify-end pb-8 z-10">
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
           <p className="text-xs font-medium tracking-[0.3em] uppercase mb-4 text-white/60">
             Roulez avec fierté
           </p>
