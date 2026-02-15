@@ -15,12 +15,18 @@ const LandingPage: React.FC = () => {
     return (localStorage.getItem('caby_preferred_mode') as Mode) || 'rider';
   });
   const [credential, setCredential] = useState('');
+  const [transitioning, setTransitioning] = useState(false);
 
   const isDriver = mode === 'driver';
 
   const selectMode = (m: Mode) => {
-    setMode(m);
-    localStorage.setItem('caby_preferred_mode', m);
+    if (m === mode) return;
+    setTransitioning(true);
+    setTimeout(() => {
+      setMode(m);
+      localStorage.setItem('caby_preferred_mode', m);
+      setTimeout(() => setTransitioning(false), 600);
+    }, 150);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -30,10 +36,35 @@ const LandingPage: React.FC = () => {
     navigate(`/auth/login?role=${mode}&id=${encodeURIComponent(credential)}`);
   };
 
+  // Dynamic accent color
+  const accent = isDriver ? '#D4AF37' : '#007AFF';
+  const accentGlow = isDriver
+    ? 'shadow-[0_0_60px_rgba(212,175,55,0.25)]'
+    : 'shadow-[0_0_60px_rgba(0,122,255,0.25)]';
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+      {/* Full-page color overlay for transition effect */}
+      <div
+        className="absolute inset-0 z-30 pointer-events-none transition-opacity duration-500"
+        style={{
+          background: `radial-gradient(circle at 50% 50%, ${accent}22 0%, transparent 70%)`,
+          opacity: transitioning ? 1 : 0,
+        }}
+      />
+
+      {/* Ambient glow — follows mode */}
+      <div
+        className="absolute inset-0 z-0 transition-all duration-1000 ease-in-out pointer-events-none"
+        style={{
+          background: isDriver
+            ? 'radial-gradient(ellipse at 50% 80%, rgba(212,175,55,0.08) 0%, transparent 60%)'
+            : 'radial-gradient(ellipse at 50% 20%, rgba(0,122,255,0.08) 0%, transparent 60%)',
+        }}
+      />
+
       {/* Double-Face Visual */}
-      <div className="relative flex-1 min-h-0 flex flex-col">
+      <div className="relative flex-1 min-h-0 flex flex-col z-10">
         {/* Top half — Rider */}
         <div
           className={`relative flex-1 overflow-hidden transition-all duration-700 ease-in-out ${
@@ -43,12 +74,27 @@ const LandingPage: React.FC = () => {
           <img
             src={riderImage}
             alt="Passager premium"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
+            style={{ filter: isDriver ? 'brightness(0.4) saturate(0.3)' : 'brightness(0.7) saturate(1)' }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-transparent to-background" />
+          <div
+            className="absolute inset-0 transition-all duration-700"
+            style={{
+              background: isDriver
+                ? 'linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.9))'
+                : 'linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8))',
+            }}
+          />
+          {/* Blue accent line when active */}
+          {!isDriver && (
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-0.5 rounded-full animate-fade-in"
+              style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }}
+            />
+          )}
           {!isDriver && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-foreground/70 text-sm font-medium tracking-widest uppercase animate-fade-in">
+              <p className="text-sm font-medium tracking-widest uppercase animate-fade-in"
+                style={{ color: `${accent}BB` }}>
                 Voyagez sereinement
               </p>
             </div>
@@ -64,12 +110,27 @@ const LandingPage: React.FC = () => {
           <img
             src={driverImage}
             alt="Chauffeur professionnel"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
+            style={{ filter: !isDriver ? 'brightness(0.4) saturate(0.3)' : 'brightness(0.7) saturate(1)' }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background" />
+          <div
+            className="absolute inset-0 transition-all duration-700"
+            style={{
+              background: !isDriver
+                ? 'linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.9))'
+                : 'linear-gradient(to top, rgba(0,0,0,0.3), rgba(0,0,0,0.8))',
+            }}
+          />
+          {/* Gold accent line when active */}
+          {isDriver && (
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-0.5 rounded-full animate-fade-in"
+              style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }}
+            />
+          )}
           {isDriver && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-primary/80 text-sm font-medium tracking-widest uppercase animate-fade-in">
+              <p className="text-sm font-medium tracking-widest uppercase animate-fade-in"
+                style={{ color: `${accent}CC` }}>
                 Roulez avec fierté
               </p>
             </div>
@@ -79,30 +140,33 @@ const LandingPage: React.FC = () => {
         {/* Center Toggle Overlay */}
         <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
           <div className="pointer-events-auto">
-            {/* Logo above toggle */}
+            {/* Logo */}
             <div className="mb-6 flex justify-center">
               <Logo size="lg" />
             </div>
 
             {/* The Switch */}
-            <div className="flex rounded-2xl overflow-hidden border border-border bg-card/80 backdrop-blur-xl">
+            <div
+              className={`flex rounded-2xl overflow-hidden backdrop-blur-xl transition-all duration-700 ${accentGlow}`}
+              style={{ border: `1px solid ${accent}33` }}
+            >
               <button
                 onClick={() => selectMode('rider')}
-                className={`px-8 py-4 text-base font-bold tracking-wide transition-all duration-500 ${
-                  !isDriver
-                    ? 'bg-[hsl(var(--caby-blue))] text-white shadow-lg'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
+                className="px-8 py-4 text-base font-bold tracking-wide transition-all duration-500"
+                style={{
+                  background: !isDriver ? accent : 'transparent',
+                  color: !isDriver ? '#FFFFFF' : '#888',
+                }}
               >
                 COMMANDER
               </button>
               <button
                 onClick={() => selectMode('driver')}
-                className={`px-8 py-4 text-base font-bold tracking-wide transition-all duration-500 ${
-                  isDriver
-                    ? 'btn-gold shadow-lg'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
+                className="px-8 py-4 text-base font-bold tracking-wide transition-all duration-500"
+                style={{
+                  background: isDriver ? accent : 'transparent',
+                  color: isDriver ? '#000000' : '#888',
+                }}
               >
                 ROULER
               </button>
@@ -113,22 +177,23 @@ const LandingPage: React.FC = () => {
 
       {/* Bottom Section — Unified Login */}
       <div className="relative z-10 bg-background px-6 pt-8 pb-6 safe-area-bottom">
-        {/* Unified input */}
         <form onSubmit={handleSubmit} className="max-w-sm mx-auto space-y-4">
           <Input
             value={credential}
             onChange={(e) => setCredential(e.target.value)}
             placeholder="Numéro de mobile ou Email"
-            className="h-14 rounded-2xl bg-card border-border text-foreground text-center text-base placeholder:text-muted-foreground"
+            className="h-14 rounded-2xl bg-card text-foreground text-center text-base placeholder:text-muted-foreground transition-all duration-500"
+            style={{ borderColor: `${accent}44` }}
           />
           <Button
             type="submit"
             disabled={!credential.trim()}
-            className={`w-full h-14 rounded-2xl text-lg font-bold transition-all duration-500 ${
-              isDriver
-                ? 'btn-gold shadow-[0_0_30px_hsl(var(--caby-gold)/0.3)]'
-                : 'bg-background text-white border border-[hsl(var(--caby-blue))]/60 hover:border-[hsl(var(--caby-blue))] shadow-[0_0_20px_hsl(var(--caby-blue)/0.15)]'
-            }`}
+            className="w-full h-14 rounded-2xl text-lg font-bold transition-all duration-500"
+            style={{
+              background: accent,
+              color: isDriver ? '#000000' : '#FFFFFF',
+              boxShadow: `0 0 30px ${accent}33`,
+            }}
           >
             {isDriver ? 'JE ME CONNECTE POUR CONDUIRE' : 'JE COMMANDE UNE COURSE'}
             <ArrowRight className="w-5 h-5 ml-2" />
@@ -138,7 +203,10 @@ const LandingPage: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate('/auth/register?role=driver')}
-              className="block mx-auto text-xs text-muted-foreground hover:text-primary transition-colors mt-1"
+              className="block mx-auto text-xs transition-colors mt-1"
+              style={{ color: `${accent}99` }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = accent)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = `${accent}99`)}
             >
               Pas encore chauffeur ? <span className="underline">Devenir partenaire TATFleet</span>
             </button>
@@ -148,7 +216,7 @@ const LandingPage: React.FC = () => {
         {/* Reassurance footer */}
         <div className="mt-8 text-center">
           <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-            <Shield className="w-3.5 h-3.5 text-primary" />
+            <Shield className="w-3.5 h-3.5 transition-colors duration-500" style={{ color: accent }} />
             Propulsé par TATFleet — La garantie d'un transport certifié et humain.
           </p>
         </div>
