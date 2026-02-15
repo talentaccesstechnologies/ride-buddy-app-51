@@ -24,6 +24,7 @@ import ActivityPage from "./pages/rider/ActivityPage";
 import PaymentPage from "./pages/rider/PaymentPage";
 import AccountPage from "./pages/rider/AccountPage";
 import AccountSettingsPage from "./pages/rider/AccountSettingsPage";
+import HelpPage from "./pages/rider/HelpPage";
 
 // TATFleet (Driver) pages
 import DriverRadarPage from "./pages/tatfleet/DriverRadarPage";
@@ -56,6 +57,7 @@ const App = () => (
               <Route path="/caby/payment" element={<PaymentPage />} />
               <Route path="/caby/account" element={<AccountPage />} />
               <Route path="/caby/account/settings" element={<AccountSettingsPage />} />
+              <Route path="/caby/account/help" element={<HelpPage />} />
               
               {/* Legacy rider routes - redirect to /caby */}
               <Route path="/rider" element={<Navigate to="/caby" replace />} />
