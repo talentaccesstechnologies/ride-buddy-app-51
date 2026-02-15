@@ -28,6 +28,7 @@ import HelpPage from "./pages/rider/HelpPage";
 
 // TATFleet (Driver) pages
 import DriverRadarPage from "./pages/tatfleet/DriverRadarPage";
+import DriverHelpPage from "./pages/tatfleet/DriverHelpPage";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,7 @@ const App = () => (
               {/* TATFleet - Driver Interface */}
               <Route path="/tatfleet" element={<Navigate to="/tatfleet/radar" replace />} />
               <Route path="/tatfleet/radar" element={<DriverRadarPage />} />
+              <Route path="/tatfleet/help" element={<DriverHelpPage />} />
 
               {/* 404 */}
               <Route path="*" element={<NotFound />} />
