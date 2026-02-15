@@ -4,12 +4,11 @@ import {
   HelpCircle,
   Wallet,
   Shield,
-  MessageSquare,
+  Mail,
   Leaf,
   Gift,
   ChevronRight,
   Star,
-  Settings,
   LogOut,
 } from 'lucide-react';
 import BottomNav from '@/components/rider/BottomNav';
@@ -21,13 +20,6 @@ const AccountPage: React.FC = () => {
   const navigate = useNavigate();
   const { profile, signOut } = useAuth();
 
-  const quickActions = [
-    { icon: HelpCircle, label: 'Aide', path: '/caby/account/help', color: 'bg-[hsl(var(--caby-blue))]/15 text-[hsl(var(--caby-blue))]' },
-    { icon: Wallet, label: 'Portefeuille', path: '/caby/payment', color: 'bg-primary/15 text-primary' },
-    { icon: Shield, label: 'Sécurité', path: '/caby/account/security', color: 'bg-[hsl(var(--caby-green))]/15 text-[hsl(var(--caby-green))]' },
-    { icon: MessageSquare, label: 'Messages', path: '/caby/account/messages', color: 'bg-[hsl(var(--caby-purple))]/15 text-[hsl(var(--caby-purple))]' },
-  ];
-
   const handleSignOut = async () => {
     await signOut();
     navigate('/auth/login');
@@ -35,76 +27,100 @@ const AccountPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Header with profile */}
       <div className="px-5 pt-14 pb-6">
+        {/* Profile header - Uber style */}
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <Avatar className="w-14 h-14 border-2 border-border">
-              <AvatarImage src={profile?.avatar_url || undefined} />
-              <AvatarFallback className="text-lg bg-card">
-                {profile?.full_name?.[0] || 'U'}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <h1 className="text-xl font-bold">{profile?.full_name || 'Utilisateur'}</h1>
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <Star className="w-3.5 h-3.5 fill-warning text-warning" />
-                <span className="font-medium">4.93</span>
-              </div>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">{profile?.full_name || 'Utilisateur'}</h1>
+            <div className="flex items-center gap-1.5 mt-1">
+              <Star className="w-4 h-4 fill-foreground text-foreground" />
+              <span className="text-sm font-medium">4.93</span>
             </div>
           </div>
+          <Avatar className="w-16 h-16 border border-border">
+            <AvatarImage src={profile?.avatar_url || undefined} />
+            <AvatarFallback className="text-xl bg-muted text-muted-foreground">
+              {profile?.full_name?.[0] || 'U'}
+            </AvatarFallback>
+          </Avatar>
+        </div>
+
+        {/* 4 action buttons - 2x2 grid like Uber */}
+        <div className="grid grid-cols-2 gap-3 mb-5">
           <button
-            onClick={() => navigate('/caby/account/settings')}
-            className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center"
+            onClick={() => navigate('/caby/account/help')}
+            className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
           >
-            <Settings className="w-5 h-5 text-muted-foreground" />
+            <HelpCircle className="w-5 h-5 text-muted-foreground" />
+            <span className="font-medium text-sm">Aide</span>
+          </button>
+          <button
+            onClick={() => navigate('/caby/payment')}
+            className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
+          >
+            <Wallet className="w-5 h-5 text-muted-foreground" />
+            <span className="font-medium text-sm">Portefeuille</span>
+          </button>
+          <button
+            onClick={() => navigate('/caby/account/security')}
+            className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
+          >
+            <Shield className="w-5 h-5 text-muted-foreground" />
+            <span className="font-medium text-sm">Sécurité</span>
+          </button>
+          <button
+            onClick={() => navigate('/caby/account/messages')}
+            className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
+          >
+            <Mail className="w-5 h-5 text-muted-foreground" />
+            <span className="font-medium text-sm">Messages</span>
           </button>
         </div>
 
-        {/* Quick action grid */}
-        <div className="grid grid-cols-4 gap-3 mb-6">
-          {quickActions.map((action) => (
-            <button
-              key={action.label}
-              onClick={() => navigate(action.path)}
-              className="flex flex-col items-center gap-2 bg-card border border-border rounded-xl p-3 hover:border-primary/30 transition-colors"
-            >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${action.color}`}>
-                <action.icon className="w-5 h-5" />
-              </div>
-              <span className="text-[11px] font-medium text-muted-foreground">{action.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Info tiles */}
+        {/* Large info tiles - Uber style stacked cards */}
         <div className="space-y-3">
-          {/* CO2 Tile */}
-          <button
-            className="w-full flex items-center gap-4 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors text-left"
-          >
-            <div className="w-12 h-12 rounded-xl bg-[hsl(var(--caby-green))]/15 flex items-center justify-center">
-              <Leaf className="w-6 h-6 text-[hsl(var(--caby-green))]" />
-            </div>
+          {/* Caby Premium promo tile */}
+          <button className="w-full flex items-center gap-4 bg-card border border-border rounded-xl p-5 text-left hover:border-primary/30 transition-colors">
             <div className="flex-1">
-              <p className="font-semibold text-sm">Estimation CO₂ économisée</p>
-              <p className="text-xs text-muted-foreground mt-0.5">12.4 kg de CO₂ en moins ce mois</p>
+              <p className="font-bold text-base">Économisez 42.52 CHF avec Caby Premium</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Vous auriez économisé 2.8x le coût de Caby Premium ces 30 derniers jours
+              </p>
             </div>
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            <div className="text-3xl flex-shrink-0">💰</div>
           </button>
 
-          {/* Referral Tile */}
-          <button
-            className="w-full flex items-center gap-4 bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors text-left"
-          >
-            <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center">
-              <Gift className="w-6 h-6 text-primary" />
-            </div>
+          {/* Safety check-up tile */}
+          <button className="w-full flex items-center gap-4 bg-card border border-border rounded-xl p-5 text-left hover:border-primary/30 transition-colors">
             <div className="flex-1">
-              <p className="font-semibold text-sm">Parrainage</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Invitez un ami et gagnez 10 CHF chacun</p>
+              <p className="font-bold text-base">Bilan sécurité</p>
+              <p className="text-sm text-muted-foreground mt-1">Découvrez comment rendre vos courses plus sûres</p>
             </div>
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            <div className="relative w-12 h-12 flex-shrink-0">
+              <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
+                <circle cx="24" cy="24" r="20" fill="none" stroke="hsl(var(--border))" strokeWidth="3" />
+                <circle cx="24" cy="24" r="20" fill="none" stroke="hsl(var(--caby-blue))" strokeWidth="3" strokeDasharray="125.6" strokeDashoffset="104.7" strokeLinecap="round" />
+              </svg>
+              <span className="absolute inset-0 flex items-center justify-center text-xs font-bold">1/6</span>
+            </div>
+          </button>
+
+          {/* CO2 tile */}
+          <button className="w-full flex items-center justify-between bg-card border border-border rounded-xl p-5 text-left hover:border-primary/30 transition-colors">
+            <p className="font-bold text-base">Estimation CO₂ économisée</p>
+            <div className="flex items-center gap-2">
+              <Leaf className="w-5 h-5 text-[hsl(var(--caby-green))]" />
+              <span className="text-xl font-bold">1'740 g</span>
+            </div>
+          </button>
+
+          {/* Referral tile */}
+          <button className="w-full flex items-center gap-4 bg-card border border-border rounded-xl p-5 text-left hover:border-primary/30 transition-colors">
+            <div className="flex-1">
+              <p className="font-bold text-base">Invitez vos amis sur Caby</p>
+              <p className="text-sm text-muted-foreground mt-1">Obtenez 50% de réduction sur 5 courses</p>
+            </div>
+            <Gift className="w-8 h-8 text-primary flex-shrink-0" />
           </button>
         </div>
 
