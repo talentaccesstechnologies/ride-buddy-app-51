@@ -17,6 +17,10 @@ export type Database = {
       deliveries: {
         Row: {
           allow_door_drop: boolean | null
+          barcode: string | null
+          barcode_scanned_delivery: boolean | null
+          barcode_scanned_pickup: boolean | null
+          batch_id: string | null
           created_at: string | null
           delivered_at: string | null
           driver_id: string | null
@@ -46,6 +50,10 @@ export type Database = {
         }
         Insert: {
           allow_door_drop?: boolean | null
+          barcode?: string | null
+          barcode_scanned_delivery?: boolean | null
+          barcode_scanned_pickup?: boolean | null
+          batch_id?: string | null
           created_at?: string | null
           delivered_at?: string | null
           driver_id?: string | null
@@ -75,6 +83,10 @@ export type Database = {
         }
         Update: {
           allow_door_drop?: boolean | null
+          barcode?: string | null
+          barcode_scanned_delivery?: boolean | null
+          barcode_scanned_pickup?: boolean | null
+          batch_id?: string | null
           created_at?: string | null
           delivered_at?: string | null
           driver_id?: string | null
@@ -100,6 +112,53 @@ export type Database = {
           scheduled_slot_end?: string | null
           scheduled_slot_start?: string | null
           status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deliveries_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "delivery_batches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      delivery_batches: {
+        Row: {
+          completed_at: string | null
+          completed_deliveries: number | null
+          created_at: string | null
+          driver_id: string
+          id: string
+          optimized_route: Json | null
+          started_at: string | null
+          status: string | null
+          total_deliveries: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_deliveries?: number | null
+          created_at?: string | null
+          driver_id: string
+          id?: string
+          optimized_route?: Json | null
+          started_at?: string | null
+          status?: string | null
+          total_deliveries?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          completed_deliveries?: number | null
+          created_at?: string | null
+          driver_id?: string
+          id?: string
+          optimized_route?: Json | null
+          started_at?: string | null
+          status?: string | null
+          total_deliveries?: number | null
           updated_at?: string | null
         }
         Relationships: []

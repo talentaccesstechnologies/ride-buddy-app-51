@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield } from 'lucide-react';
+import { Shield, Package, Car } from 'lucide-react';
 import { toast } from 'sonner';
 import { RadarCourse, LegalStatus } from '@/types/radar.types';
 import { APP_CONFIG } from '@/config/app.config';
@@ -108,11 +108,20 @@ const DriverRadarPage: React.FC = () => {
   const [legalStatus, setLegalStatus] = useState<LegalStatus>('green');
   const [courses, setCourses] = useState<RadarCourse[]>([]);
   const [transferCourse, setTransferCourse] = useState<RadarCourse | null>(null);
+  const [driverMode, setDriverMode] = useState<'passenger' | 'logistics'>('passenger');
   const [stats, setStats] = useState({
     todayRides: 3,
     todayEarnings: 145,
     onlineMinutes: 127,
   });
+
+  const handleSwitchMode = () => {
+    if (driverMode === 'passenger') {
+      navigate('/tatfleet/logistics');
+    } else {
+      setDriverMode('passenger');
+    }
+  };
 
   // Sort courses by priority
   const sortedCourses = [...courses].sort((a, b) => {
@@ -203,11 +212,18 @@ const DriverRadarPage: React.FC = () => {
         disabled={legalStatus === 'red'}
       />
 
-      {/* Title */}
-      <div className="px-4 mb-4">
-        <h1 className="text-2xl font-display font-bold text-white">
+      {/* Mode toggle */}
+      <div className="px-4 mb-4 flex items-center gap-3">
+        <h1 className="text-2xl font-display font-bold text-white flex-1">
           Radar de Courses
         </h1>
+        <button
+          onClick={handleSwitchMode}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[hsl(var(--caby-card))] border border-[hsl(var(--caby-border))] text-xs font-semibold"
+        >
+          <Package className="w-3.5 h-3.5 text-primary" />
+          <span className="text-primary">Mode Colis</span>
+        </button>
       </div>
 
       {/* Content */}
