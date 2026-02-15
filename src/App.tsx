@@ -28,6 +28,13 @@ import AccountPage from "./pages/rider/AccountPage";
 import AccountSettingsPage from "./pages/rider/AccountSettingsPage";
 import HelpPage from "./pages/rider/HelpPage";
 import SafetyPage from "./pages/rider/SafetyPage";
+import SafetyPreferencesPage from "./pages/rider/safety/SafetyPreferencesPage";
+import TrustedContactsPage from "./pages/rider/safety/TrustedContactsPage";
+import VerifyTripPage from "./pages/rider/safety/VerifyTripPage";
+import RideCheckPage from "./pages/rider/safety/RideCheckPage";
+import SafetyTipsPage from "./pages/rider/safety/SafetyTipsPage";
+import TeenSafetyPage from "./pages/rider/safety/TeenSafetyPage";
+import SafetyAtCabyPage from "./pages/rider/safety/SafetyAtCabyPage";
 
 // TATFleet (Driver) pages
 import DriverRadarPage from "./pages/tatfleet/DriverRadarPage";
@@ -65,6 +72,13 @@ const App = () => (
               <Route path="/caby/account/help" element={<HelpPage />} />
               <Route path="/caby/account/wallet" element={<PaymentPage />} />
               <Route path="/caby/account/safety" element={<SafetyPage />} />
+              <Route path="/caby/account/safety/preferences" element={<SafetyPreferencesPage />} />
+              <Route path="/caby/account/safety/contacts" element={<TrustedContactsPage />} />
+              <Route path="/caby/account/safety/verify" element={<VerifyTripPage />} />
+              <Route path="/caby/account/safety/ridecheck" element={<RideCheckPage />} />
+              <Route path="/caby/account/safety/tips" element={<SafetyTipsPage />} />
+              <Route path="/caby/account/safety/teen" element={<TeenSafetyPage />} />
+              <Route path="/caby/account/safety/about" element={<SafetyAtCabyPage />} />
               
               {/* Legacy rider routes - redirect to /caby */}
               <Route path="/rider" element={<Navigate to="/caby" replace />} />
