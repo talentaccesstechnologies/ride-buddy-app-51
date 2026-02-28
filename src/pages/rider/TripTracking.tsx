@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Phone, MessageCircle, Info, Star, X, Share2, Shield } from 'lucide-react';
+import { Phone, MessageCircle, Info, Star, Share2, Shield } from 'lucide-react';
 import { useRide } from '@/contexts/RideContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { APP_CONFIG } from '@/config/app.config';
+import LiveTrackingMap from '@/components/maps/LiveTrackingMap';
+import MapPlaceholder from '@/components/maps/MapPlaceholder';
 
 type TripStatus = 'arriving' | 'in_progress' | 'completed';
 
@@ -42,13 +45,18 @@ const TripTracking: React.FC = () => {
 
   const handleFinish = () => {
     resetRide();
-    navigate('/rider');
+    navigate('/caby');
   };
 
   if (!currentDriver) {
-    navigate('/rider');
+    navigate('/caby');
     return null;
   }
+
+  const hasGoogleMaps = !!APP_CONFIG.GOOGLE_MAPS_API_KEY;
+  const hasPositions = pickup && dropoff;
+  // Use a simulated rideId for demo purposes
+  const rideId = `demo-${currentDriver.id}`;
 
   const steps = [
     { label: 'Chauffeur en route', completed: true, active: status === 'arriving' },
@@ -58,43 +66,21 @@ const TripTracking: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Map area */}
-      <div className="h-[45vh] bg-gradient-to-br from-secondary to-muted relative">
-        {/* Car animation */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="relative">
-            {status === 'arriving' && (
-              <>
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-3xl animate-bounce">
-                  🚗
-                </div>
-                <div className="w-4 h-4 bg-success rounded-full shadow-lg" />
-              </>
-            )}
-            {status === 'in_progress' && (
-              <div className="flex items-center gap-8">
-                <div className="text-3xl animate-pulse">🚗</div>
-                <div className="w-24 h-1 bg-primary rounded-full relative overflow-hidden">
-                  <div
-                    className="absolute inset-0 bg-accent animate-pulse"
-                    style={{ width: '60%' }}
-                  />
-                </div>
-                <div className="w-4 h-4 bg-destructive rounded-full shadow-lg" />
-              </div>
-            )}
-            {status === 'completed' && (
-              <div className="text-5xl">🎉</div>
-            )}
-          </div>
-        </div>
-
-        {/* ETA bubble */}
-        {status === 'arriving' && (
-          <div className="absolute top-4 right-4 bg-background rounded-xl px-4 py-2 shadow-lg safe-area-top">
-            <p className="text-sm text-muted-foreground">Arrivée dans</p>
-            <p className="text-2xl font-bold">{eta} min</p>
-          </div>
+      {/* Map area - Now with live tracking */}
+      <div className="h-[45vh] relative">
+        {hasGoogleMaps && hasPositions ? (
+          <LiveTrackingMap
+            rideId={rideId}
+            pickupPosition={{ lat: pickup.lat, lng: pickup.lng }}
+            dropoffPosition={{ lat: dropoff.lat, lng: dropoff.lng }}
+            fallbackEta={eta}
+          />
+        ) : (
+          <MapPlaceholder
+            latitude={pickup?.lat ?? APP_CONFIG.DEFAULT_CENTER.lat}
+            longitude={pickup?.lng ?? APP_CONFIG.DEFAULT_CENTER.lng}
+            showRoute={true}
+          />
         )}
       </div>
 
@@ -208,26 +194,14 @@ const TripTracking: React.FC = () => {
               </p>
             </div>
 
-            {/* Star rating */}
             <div className="flex justify-center gap-2 mb-6">
               {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  onClick={() => setRating(star)}
-                  className="p-1"
-                >
-                  <Star
-                    className={`w-10 h-10 ${
-                      star <= rating
-                        ? 'fill-warning text-warning'
-                        : 'text-muted-foreground'
-                    }`}
-                  />
+                <button key={star} onClick={() => setRating(star)} className="p-1">
+                  <Star className={`w-10 h-10 ${star <= rating ? 'fill-warning text-warning' : 'text-muted-foreground'}`} />
                 </button>
               ))}
             </div>
 
-            {/* Trip summary */}
             <div className="bg-secondary rounded-xl p-4 mb-6">
               <div className="flex justify-between mb-2">
                 <span className="text-muted-foreground">Course</span>
@@ -243,21 +217,16 @@ const TripTracking: React.FC = () => {
               </div>
             </div>
 
-            {/* Tip buttons */}
             <div className="mb-6">
               <p className="text-sm text-muted-foreground mb-2">Ajouter un pourboire</p>
               <div className="flex gap-2">
                 {['1€', '2€', '5€', 'Autre'].map((tip) => (
-                  <Button key={tip} variant="outline" className="flex-1">
-                    {tip}
-                  </Button>
+                  <Button key={tip} variant="outline" className="flex-1">{tip}</Button>
                 ))}
               </div>
             </div>
 
-            <Button onClick={handleFinish} className="w-full h-12">
-              Terminé
-            </Button>
+            <Button onClick={handleFinish} className="w-full h-12">Terminé</Button>
           </div>
         </div>
       )}
