@@ -1,224 +1,332 @@
-import React, { useCallback, useMemo, useRef, useEffect } from 'react';
+/**
+ * CABY — LiveTrackingMap
+ * Carte de suivi en temps réel avec TrafficLayer, voiture Caby or animée,
+ * polyline colorée selon le trafic, et bottom sheet infos chauffeur + ETA.
+ */
+
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import {
   GoogleMap,
-  useJsApiLoader,
+  useLoadScript,
+  TrafficLayer,
   Marker,
   Polyline,
-  TrafficLayer,
-} from '@react-google-maps/api';
-import { Navigation } from 'lucide-react';
-import { APP_CONFIG } from '@/config/app.config';
-import { useRideTracking } from '@/hooks/useRideTracking';
-import type { LatLng } from '@/services/googleMaps.service';
+  OverlayView,
+} from "@react-google-maps/api";
+import { useRideTracking } from "@/hooks/useRideTracking";
+import { getTrafficColor, type LatLng } from "@/services/googleMaps.service";
+import { Star, Clock, MapPin, Wifi, WifiOff, Car } from "lucide-react";
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+interface DriverInfo {
+  name: string;
+  avatarUrl?: string;
+  rating: number;
+  vehicleMake: string;
+  vehicleModel: string;
+  vehicleColor: string;
+  vehiclePlate: string;
+}
 
 interface LiveTrackingMapProps {
   rideId: string;
-  pickupPosition: LatLng;
-  dropoffPosition: LatLng;
-  /** Fallback ETA from RideContext when realtime not yet connected */
-  fallbackEta?: number | null;
+  destination: LatLng;
+  pickupLocation?: LatLng;
+  driverInfo: DriverInfo;
+  onDriverArrived?: () => void;
 }
 
-const containerStyle = { width: '100%', height: '100%' };
+// ─── Constantes ───────────────────────────────────────────────────────────────
 
-const mapStyles: google.maps.MapTypeStyle[] = [
-  { featureType: 'landscape', elementType: 'geometry.fill', stylers: [{ color: '#f0ede6' }] },
-  { featureType: 'water', elementType: 'geometry.fill', stylers: [{ color: '#a3d4f7' }] },
-  { featureType: 'road.highway', elementType: 'geometry.fill', stylers: [{ color: '#ffd54f' }] },
-  { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#c6a030' }, { weight: 2 }] },
-  { featureType: 'road.arterial', elementType: 'geometry.fill', stylers: [{ color: '#ffe082' }] },
-  { featureType: 'road.local', elementType: 'geometry.fill', stylers: [{ color: '#ffffff' }] },
-  { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-  { featureType: 'poi.business', stylers: [{ visibility: 'off' }] },
-  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+const GOOGLE_LIBRARIES: ("places" | "geometry")[] = ["places", "geometry"];
+
+const MAP_STYLES = [
+  { featureType: "poi", stylers: [{ visibility: "off" }] },
+  { featureType: "transit", stylers: [{ visibility: "simplified" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#2c2c2c" }] },
+  { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#8c8c8c" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#1a1a2e" }] },
+  { featureType: "landscape", stylers: [{ color: "#1a1a1a" }] },
+  { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#3a3a3a" }] },
 ];
 
-const CABY_GOLD = '#D4AF37';
-
-function createCarSvg(heading: number): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-    <g transform="rotate(${heading}, 24, 24)">
-      <circle cx="24" cy="24" r="20" fill="${CABY_GOLD}" opacity="0.2"/>
-      <circle cx="24" cy="24" r="14" fill="${CABY_GOLD}" stroke="white" stroke-width="2"/>
-      <path d="M24 12 L30 28 L24 24 L18 28 Z" fill="white"/>
-    </g>
-  </svg>`;
-}
-
-function createPulseDotSvg(): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-    <circle cx="16" cy="16" r="14" fill="#007AFF" opacity="0.2">
-      <animate attributeName="r" from="8" to="14" dur="1.5s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" from="0.4" to="0.1" dur="1.5s" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="16" cy="16" r="7" fill="#007AFF" stroke="white" stroke-width="2.5"/>
-  </svg>`;
-}
-
-const trafficColors = {
-  smooth: '#22C55E',
-  moderate: '#F59E0B',
-  heavy: '#EF4444',
+const MAP_OPTIONS: google.maps.MapOptions = {
+  disableDefaultUI: true,
+  zoomControl: false,
+  mapTypeControl: false,
+  streetViewControl: false,
+  fullscreenControl: false,
+  clickableIcons: false,
+  styles: MAP_STYLES,
+  gestureHandling: "greedy",
 };
 
-const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
+function getCarSvgIcon(heading: number): google.maps.Symbol {
+  return {
+    path: "M -10,-18 L 10,-18 L 14,0 L 10,18 L -10,18 L -14,0 Z",
+    fillColor: "#D4AF37",
+    fillOpacity: 1,
+    strokeColor: "#000000",
+    strokeWeight: 1.5,
+    scale: 1.2,
+    rotation: heading,
+    anchor: new google.maps.Point(0, 0),
+  };
+}
+
+// ─── Composant marqueur pulsant ──────────────────────────────────────────────
+
+const PulsingDot: React.FC<{ position: google.maps.LatLngLiteral }> = ({ position }) => (
+  <OverlayView position={position} mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
+    <div className="relative flex items-center justify-center">
+      <div className="absolute w-12 h-12 rounded-full opacity-30 animate-ping" style={{ backgroundColor: "#007AFF" }} />
+      <div className="relative w-5 h-5 rounded-full border-2 border-white shadow-lg" style={{ backgroundColor: "#007AFF" }} />
+    </div>
+  </OverlayView>
+);
+
+// ─── Composant principal ──────────────────────────────────────────────────────
+
+export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
   rideId,
-  pickupPosition,
-  dropoffPosition,
-  fallbackEta,
+  destination,
+  pickupLocation,
+  driverInfo,
+  onDriverArrived,
 }) => {
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: APP_CONFIG.GOOGLE_MAPS_API_KEY,
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const [isBottomSheetExpanded, setIsBottomSheetExpanded] = useState(false);
+
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
+    libraries: GOOGLE_LIBRARIES,
   });
 
-  const {
-    driverPosition,
-    driverHeading,
-    etaMinutes,
-    routePolyline,
-    trafficCondition,
-    isConnected,
-  } = useRideTracking(rideId, dropoffPosition);
+  const tracking = useRideTracking({
+    rideId,
+    destination,
+    onDriverArrived,
+  });
 
-  const mapRef = useRef<google.maps.Map | null>(null);
-  const displayEta = etaMinutes ?? fallbackEta ?? null;
+  const fitBoundsToDriverAndDest = useCallback(() => {
+    if (!mapRef.current || !tracking.driverLat || !tracking.driverLng) return;
 
-  const onLoad = useCallback((map: google.maps.Map) => {
-    mapRef.current = map;
-  }, []);
+    const bounds = new google.maps.LatLngBounds();
+    bounds.extend({ lat: tracking.driverLat, lng: tracking.driverLng });
+    bounds.extend(destination);
+    if (pickupLocation) bounds.extend(pickupLocation);
 
-  // Fit bounds when driver position or route changes
+    mapRef.current.fitBounds(bounds, {
+      top: 60,
+      right: 30,
+      bottom: 220,
+      left: 30,
+    });
+  }, [tracking.driverLat, tracking.driverLng, destination, pickupLocation]);
+
   useEffect(() => {
-    if (!mapRef.current) return;
-    const bounds = new google.maps.LatLngBounds();
-    if (driverPosition) bounds.extend(driverPosition);
-    bounds.extend(pickupPosition);
-    bounds.extend(dropoffPosition);
-    if (bounds.getNorthEast().equals(bounds.getSouthWest())) return;
-    mapRef.current.fitBounds(bounds, { top: 60, bottom: 200, left: 40, right: 40 });
-  }, [driverPosition, pickupPosition, dropoffPosition]);
-
-  const handleRecenter = useCallback(() => {
-    if (!mapRef.current) return;
-    const bounds = new google.maps.LatLngBounds();
-    if (driverPosition) bounds.extend(driverPosition);
-    bounds.extend(pickupPosition);
-    bounds.extend(dropoffPosition);
-    mapRef.current.fitBounds(bounds, { top: 60, bottom: 200, left: 40, right: 40 });
-  }, [driverPosition, pickupPosition, dropoffPosition]);
+    fitBoundsToDriverAndDest();
+  }, [tracking.driverLat, tracking.driverLng, fitBoundsToDriverAndDest]);
 
   if (loadError) {
     return (
-      <div className="w-full h-full bg-muted flex items-center justify-center">
-        <p className="text-muted-foreground text-sm">Erreur de chargement de la carte</p>
+      <div className="flex-1 flex items-center justify-center bg-background">
+        <div className="text-center px-6">
+          <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+          <p className="text-muted-foreground">Carte indisponible</p>
+          <p className="text-xs text-muted-foreground mt-1">Vérifiez votre connexion internet</p>
+        </div>
       </div>
     );
   }
 
   if (!isLoaded) {
     return (
-      <div className="w-full h-full bg-muted flex items-center justify-center">
-        <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="flex-1 flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
-  const routeColor = trafficColors[trafficCondition];
+  const driverPosition =
+    tracking.driverLat && tracking.driverLng
+      ? { lat: tracking.driverLat, lng: tracking.driverLng }
+      : null;
+
+  const polylineColor = getTrafficColor(tracking.trafficCondition || "fluide");
+
+  const destinationIcon: google.maps.Symbol = {
+    path: google.maps.SymbolPath.CIRCLE,
+    fillColor: "#007AFF",
+    fillOpacity: 1,
+    strokeColor: "#FFFFFF",
+    strokeWeight: 2,
+    scale: 10,
+  };
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full flex flex-col">
+      {/* Indicateur connexion */}
+      <div className="absolute top-4 left-4 z-10">
+        {tracking.isConnected ? (
+          <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full">
+            <Wifi className="w-3 h-3 text-green-400" />
+            <span className="text-xs text-white font-medium">En direct</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full">
+            <WifiOff className="w-3 h-3 text-red-400" />
+            <span className="text-xs text-white">Reconnexion...</span>
+          </div>
+        )}
+      </div>
+
+      {/* Badge trafic */}
+      {tracking.trafficCondition && (
+        <div className="absolute top-4 right-4 z-10">
+          <div
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-sm"
+            style={{
+              backgroundColor: `${polylineColor}33`,
+              border: `1px solid ${polylineColor}66`,
+            }}
+          >
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: polylineColor }} />
+            <span className="text-xs font-semibold" style={{ color: polylineColor }}>
+              {tracking.trafficCondition === "fluide"
+                ? "Trafic fluide"
+                : tracking.trafficCondition === "ralenti"
+                ? "Trafic ralenti"
+                : "Trafic bloqué"}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Carte Google Maps */}
       <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={driverPosition || pickupPosition}
+        mapContainerStyle={{ width: "100%", flex: 1 }}
+        center={driverPosition || destination}
         zoom={15}
-        options={{
-          disableDefaultUI: true,
-          styles: mapStyles,
-        }}
-        onLoad={onLoad}
+        options={MAP_OPTIONS}
+        onLoad={(map) => { mapRef.current = map; }}
       >
         <TrafficLayer />
 
-        {/* Route polyline */}
-        {routePolyline.length > 0 && (
-          <Polyline
-            path={routePolyline}
-            options={{
-              strokeColor: routeColor,
-              strokeWeight: 5,
-              strokeOpacity: 0.85,
-            }}
-          />
-        )}
-
-        {/* Driver marker - animated car */}
         {driverPosition && (
           <Marker
             position={driverPosition}
-            icon={{
-              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(createCarSvg(driverHeading)),
-              scaledSize: new google.maps.Size(48, 48),
-              anchor: new google.maps.Point(24, 24),
-            }}
+            icon={getCarSvgIcon(tracking.driverHeading)}
+            title={`${driverInfo.name} — ${driverInfo.vehicleMake} ${driverInfo.vehicleModel}`}
             zIndex={10}
           />
         )}
 
-        {/* Pickup marker - pulsing blue dot */}
-        <Marker
-          position={pickupPosition}
-          icon={{
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(createPulseDotSvg()),
-            scaledSize: new google.maps.Size(32, 32),
-            anchor: new google.maps.Point(16, 16),
-          }}
-          zIndex={5}
-        />
+        {pickupLocation && <PulsingDot position={pickupLocation} />}
 
-        {/* Destination marker */}
-        <Marker
-          position={dropoffPosition}
-          zIndex={5}
-        />
+        <Marker position={destination} icon={destinationIcon} title="Destination" zIndex={5} />
+
+        {tracking.routePoints.length > 1 && (
+          <Polyline
+            path={tracking.routePoints}
+            options={{
+              strokeColor: polylineColor,
+              strokeOpacity: 0.85,
+              strokeWeight: 5,
+              zIndex: 1,
+            }}
+          />
+        )}
       </GoogleMap>
 
-      {/* ETA bubble */}
-      {displayEta !== null && (
-        <div className="absolute top-4 right-4 bg-background/95 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg">
-          <p className="text-xs text-muted-foreground">
-            {isConnected ? 'Arrivée dans' : 'ETA estimé'}
-          </p>
-          <p className="text-2xl font-bold">{displayEta} <span className="text-sm font-normal text-muted-foreground">min</span></p>
-          {isConnected && (
-            <div className="flex items-center gap-1.5 mt-1">
-              <div className={`w-2 h-2 rounded-full`} style={{ backgroundColor: routeColor }} />
-              <span className="text-[10px] text-muted-foreground">
-                {trafficCondition === 'smooth' && 'Trafic fluide'}
-                {trafficCondition === 'moderate' && 'Trafic modéré'}
-                {trafficCondition === 'heavy' && 'Trafic dense'}
-              </span>
+      {/* Bottom Sheet — Infos chauffeur + ETA */}
+      <div
+        className={`
+          absolute bottom-0 left-0 right-0 
+          bg-card border-t border-border 
+          rounded-t-3xl
+          transition-all duration-300 ease-out
+          ${isBottomSheetExpanded ? "h-64" : "h-36"}
+        `}
+        style={{ boxShadow: "0 -4px 30px rgba(0,0,0,0.5)" }}
+      >
+        <button
+          className="absolute top-3 left-1/2 -translate-x-1/2 w-10 h-1 bg-muted rounded-full"
+          onClick={() => setIsBottomSheetExpanded((v) => !v)}
+          aria-label="Expand info panel"
+        />
+
+        <div className="pt-8 px-5">
+          <div className="flex items-center gap-4">
+            <div
+              className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: "#D4AF3720" }}
+            >
+              {driverInfo.avatarUrl ? (
+                <img src={driverInfo.avatarUrl} alt={driverInfo.name} className="w-full h-full object-cover rounded-2xl" />
+              ) : (
+                <Car className="w-6 h-6" style={{ color: "#D4AF37" }} />
+              )}
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-foreground truncate">{driverInfo.name}</p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <Star className="w-3.5 h-3.5 fill-[#D4AF37] text-[#D4AF37]" />
+                <span className="text-xs font-semibold text-foreground">{driverInfo.rating.toFixed(1)}</span>
+                <span className="text-xs text-muted-foreground">
+                  · {driverInfo.vehicleColor} {driverInfo.vehicleMake} {driverInfo.vehicleModel}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground font-mono mt-0.5">{driverInfo.vehiclePlate}</p>
+            </div>
+
+            <div className="text-right flex-shrink-0">
+              <div className="flex items-center gap-1 justify-end">
+                <Clock className="w-4 h-4 text-primary" />
+                <span className="text-2xl font-black text-foreground">{tracking.etaMinutes ?? "—"}</span>
+                <span className="text-sm text-muted-foreground">min</span>
+              </div>
+              {tracking.distanceKm && (
+                <p className="text-xs text-muted-foreground">{tracking.distanceKm} km</p>
+              )}
+            </div>
+          </div>
+
+          {isBottomSheetExpanded && (
+            <div className="mt-4 pt-4 border-t border-border">
+              <div className="flex gap-3">
+                <div className="flex-1 bg-muted rounded-2xl p-3 text-center">
+                  <p className="text-xs text-muted-foreground">Vitesse</p>
+                  <p className="text-lg font-bold text-foreground">
+                    {tracking.driverSpeed ?? "—"}
+                    <span className="text-xs font-normal text-muted-foreground"> km/h</span>
+                  </p>
+                </div>
+                <div className="flex-1 bg-muted rounded-2xl p-3 text-center">
+                  <p className="text-xs text-muted-foreground">Trafic</p>
+                  <p className="text-lg font-bold capitalize" style={{ color: polylineColor }}>
+                    {tracking.trafficCondition ?? "—"}
+                  </p>
+                </div>
+                <div className="flex-1 bg-muted rounded-2xl p-3 text-center">
+                  <p className="text-xs text-muted-foreground">Mise à jour</p>
+                  <p className="text-xs font-semibold text-foreground mt-1">
+                    {tracking.lastUpdateAt
+                      ? tracking.lastUpdateAt.toLocaleTimeString("fr-FR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })
+                      : "—"}
+                  </p>
+                </div>
+              </div>
             </div>
           )}
         </div>
-      )}
-
-      {/* Connection indicator */}
-      <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md">
-        <div className="flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-orange-400 animate-pulse'}`} />
-          <span className="text-[10px] text-muted-foreground">
-            {isConnected ? 'GPS temps réel' : 'Connexion...'}
-          </span>
-        </div>
       </div>
-
-      {/* Recenter */}
-      <button
-        onClick={handleRecenter}
-        className="absolute bottom-4 right-4 w-12 h-12 bg-background rounded-full shadow-lg flex items-center justify-center hover:bg-secondary transition-colors"
-      >
-        <Navigation className="w-5 h-5 text-accent" />
-      </button>
     </div>
   );
 };

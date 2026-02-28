@@ -1,99 +1,195 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+/**
+ * CABY — useRideTracking Hook
+ * Côté CLIENT/PASSAGER uniquement.
+ *
+ * 1. Subscribe au channel Supabase Realtime du chauffeur
+ * 2. Reçoit les positions en temps réel (1/sec)
+ * 3. Recalcule l'ETA via Google Directions API toutes les 30 sec
+ * 4. Expose tout ce dont LiveTrackingMap a besoin
+ */
+
+import { useState, useEffect, useRef, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   calculateRoute,
   decodePolyline,
   type LatLng,
   type RouteResult,
-} from '@/services/googleMaps.service';
+} from "@/services/googleMaps.service";
 
 interface RideTrackingState {
-  driverPosition: LatLng | null;
+  driverLat: number | null;
+  driverLng: number | null;
   driverHeading: number;
-  driverSpeed: number;
+  driverSpeed: number | null;
   etaMinutes: number | null;
-  routePolyline: LatLng[];
-  trafficCondition: 'smooth' | 'moderate' | 'heavy';
+  routePoints: LatLng[];
+  trafficCondition: "fluide" | "ralenti" | "bloque" | null;
+  distanceKm: number | null;
   isConnected: boolean;
-  lastUpdate: number | null;
+  lastUpdateAt: Date | null;
+  error: string | null;
 }
 
-const ETA_REFRESH_INTERVAL = 30_000; // 30 seconds
+interface UseRideTrackingOptions {
+  rideId: string;
+  destination: LatLng;
+  onDriverArrived?: () => void;
+  onConnectionLost?: () => void;
+}
 
-/**
- * Hook for rider-side: subscribes to driver position broadcast and recalculates ETA
- */
-export function useRideTracking(rideId: string | null, destination: LatLng | null) {
+const ETA_REFRESH_INTERVAL_MS = 30_000;
+const ARRIVAL_THRESHOLD_METERS = 150;
+const BROADCAST_CHANNEL_PREFIX = "driver-location";
+
+function distanceMeters(a: LatLng, b: LatLng): number {
+  const R = 6371000;
+  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
+  const sinLat = Math.sin(dLat / 2);
+  const sinLng = Math.sin(dLng / 2);
+  const c =
+    2 *
+    Math.atan2(
+      Math.sqrt(
+        sinLat * sinLat +
+          Math.cos((a.lat * Math.PI) / 180) *
+            Math.cos((b.lat * Math.PI) / 180) *
+            sinLng * sinLng
+      ),
+      Math.sqrt(
+        1 -
+          (sinLat * sinLat +
+            Math.cos((a.lat * Math.PI) / 180) *
+              Math.cos((b.lat * Math.PI) / 180) *
+              sinLng * sinLng)
+      )
+    );
+  return R * c;
+}
+
+export function useRideTracking({
+  rideId,
+  destination,
+  onDriverArrived,
+  onConnectionLost,
+}: UseRideTrackingOptions): RideTrackingState {
   const [state, setState] = useState<RideTrackingState>({
-    driverPosition: null,
+    driverLat: null,
+    driverLng: null,
     driverHeading: 0,
-    driverSpeed: 0,
+    driverSpeed: null,
     etaMinutes: null,
-    routePolyline: [],
-    trafficCondition: 'smooth',
+    routePoints: [],
+    trafficCondition: null,
+    distanceKm: null,
     isConnected: false,
-    lastUpdate: null,
+    lastUpdateAt: null,
+    error: null,
   });
 
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const etaTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const driverPosRef = useRef<LatLng | null>(null);
+  const driverPositionRef = useRef<LatLng | null>(null);
+  const arrivedRef = useRef(false);
+  const connectionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const refreshETA = useCallback(async () => {
-    if (!driverPosRef.current || !destination) return;
+    const pos = driverPositionRef.current;
+    if (!pos) return;
+
     try {
-      const route = await calculateRoute(driverPosRef.current, destination);
-      const etaSeconds = route.durationInTraffic.value;
-      const etaMinutes = Math.ceil(etaSeconds / 60);
+      const route: RouteResult = await calculateRoute(pos, destination);
+      const points = decodePolyline(route.polyline);
 
-      // Determine traffic condition
-      const ratio = route.durationInTraffic.value / route.duration.value;
-      let trafficCondition: 'smooth' | 'moderate' | 'heavy' = 'smooth';
-      if (ratio > 1.5) trafficCondition = 'heavy';
-      else if (ratio > 1.15) trafficCondition = 'moderate';
-
-      const polyline = decodePolyline(route.polyline);
-
-      setState((s) => ({
-        ...s,
-        etaMinutes,
-        routePolyline: polyline,
-        trafficCondition,
+      setState((prev) => ({
+        ...prev,
+        etaMinutes: route.eta_minutes,
+        routePoints: points,
+        trafficCondition: route.traffic_condition,
+        distanceKm: route.distance_km,
       }));
     } catch (err) {
-      console.warn('ETA refresh failed:', err);
+      console.warn("ETA refresh failed:", err);
     }
   }, [destination]);
+
+  const handleDriverPosition = useCallback(
+    (payload: any) => {
+      const { lat, lng, heading, speed } = payload;
+
+      if (connectionTimeoutRef.current) {
+        clearTimeout(connectionTimeoutRef.current);
+      }
+      connectionTimeoutRef.current = setTimeout(() => {
+        setState((prev) => ({ ...prev, isConnected: false }));
+        onConnectionLost?.();
+      }, 10_000);
+
+      const newPos: LatLng = { lat, lng };
+      driverPositionRef.current = newPos;
+
+      setState((prev) => ({
+        ...prev,
+        driverLat: lat,
+        driverLng: lng,
+        driverHeading: heading ?? prev.driverHeading,
+        driverSpeed: speed ?? null,
+        isConnected: true,
+        lastUpdateAt: new Date(),
+        error: null,
+      }));
+
+      if (!arrivedRef.current) {
+        const dist = distanceMeters(newPos, destination);
+        if (dist < ARRIVAL_THRESHOLD_METERS) {
+          arrivedRef.current = true;
+          onDriverArrived?.();
+        }
+      }
+    },
+    [destination, onDriverArrived, onConnectionLost]
+  );
 
   useEffect(() => {
     if (!rideId) return;
 
-    const channel = supabase
-      .channel(`driver-location-${rideId}`)
-      .on('broadcast', { event: 'position' }, (msg) => {
-        const { lat, lng, heading, speed, timestamp } = msg.payload;
-        const pos = { lat, lng };
-        driverPosRef.current = pos;
+    arrivedRef.current = false;
 
-        setState((s) => ({
-          ...s,
-          driverPosition: pos,
-          driverHeading: heading,
-          driverSpeed: speed,
-          isConnected: true,
-          lastUpdate: timestamp,
-        }));
+    const channelName = `${BROADCAST_CHANNEL_PREFIX}-${rideId}`;
+    channelRef.current = supabase
+      .channel(channelName)
+      .on("broadcast", { event: "driver_position" }, ({ payload }) => {
+        handleDriverPosition(payload);
       })
-      .subscribe();
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          setState((prev) => ({ ...prev, isConnected: true, error: null }));
+        } else if (status === "CHANNEL_ERROR") {
+          setState((prev) => ({
+            ...prev,
+            isConnected: false,
+            error: "Connexion au tracking perdue",
+          }));
+        }
+      });
 
-    // Refresh ETA every 30 seconds
-    refreshETA();
-    etaTimerRef.current = setInterval(refreshETA, ETA_REFRESH_INTERVAL);
+    etaTimerRef.current = setInterval(refreshETA, ETA_REFRESH_INTERVAL_MS);
 
     return () => {
-      channel.unsubscribe();
-      if (etaTimerRef.current) clearInterval(etaTimerRef.current);
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
+      if (etaTimerRef.current) {
+        clearInterval(etaTimerRef.current);
+        etaTimerRef.current = null;
+      }
+      if (connectionTimeoutRef.current) {
+        clearTimeout(connectionTimeoutRef.current);
+      }
     };
-  }, [rideId, refreshETA]);
+  }, [rideId, handleDriverPosition, refreshETA]);
 
   return state;
 }

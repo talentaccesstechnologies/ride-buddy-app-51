@@ -1,4 +1,12 @@
-import { supabase } from '@/integrations/supabase/client';
+/**
+ * CABY — Google Maps Service
+ * Appelle les Edge Functions Supabase (jamais l'API Google directement)
+ * La clé API Google ne quitte jamais le serveur.
+ */
+
+import { supabase } from "@/integrations/supabase/client";
+
+// ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface LatLng {
   lat: number;
@@ -6,103 +14,173 @@ export interface LatLng {
 }
 
 export interface RouteResult {
+  eta_minutes: number;
+  distance_km: number;
+  distance_text: string;
+  traffic_condition: "fluide" | "ralenti" | "bloque";
   polyline: string;
-  distance: { text: string; value: number };
-  duration: { text: string; value: number };
-  durationInTraffic: { text: string; value: number };
-  steps: RouteStep[];
-  startAddress: string;
-  endAddress: string;
-}
-
-export interface RouteStep {
-  polyline: string;
-  duration: number;
-  durationInTraffic: number;
-  distance: number;
+  bounds: {
+    northeast: LatLng;
+    southwest: LatLng;
+  };
+  steps: {
+    instruction: string;
+    distance: string;
+    duration: string;
+    maneuver: string | null;
+  }[];
 }
 
 export interface SnappedPosition {
   lat: number;
   lng: number;
-  placeId?: string;
-  originalIndex?: number;
+  heading: number;
+  original_index: number | null;
 }
 
-async function callProxy<T>(action: string, params: Record<string, unknown>): Promise<T> {
-  const { data, error } = await supabase.functions.invoke('google-maps-proxy', {
-    body: { action, params },
-  });
-  if (error) throw new Error(`Google Maps proxy error: ${error.message}`);
-  if (data?.error) throw new Error(data.error);
-  return data as T;
+export interface PlacePrediction {
+  place_id: string;
+  description: string;
+  main_text: string;
+  secondary_text: string;
+  types: string[];
+  distance_meters: number | null;
 }
 
-/**
- * Calculate route with real-time traffic ETA
- */
+export interface PlaceDetails {
+  place_id: string;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  types: string[];
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+export function generateSessionToken(): string {
+  return `session_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+}
+
+export function getTrafficColor(condition: "fluide" | "ralenti" | "bloque"): string {
+  switch (condition) {
+    case "fluide":  return "#34C759";
+    case "ralenti": return "#FF9500";
+    case "bloque":  return "#FF3B30";
+  }
+}
+
+// ─── API Calls ────────────────────────────────────────────────────────────────
+
 export async function calculateRoute(
   origin: LatLng,
   destination: LatLng,
-  avoidTolls = false
+  options?: {
+    waypoints?: LatLng[];
+    avoid?: ("tolls" | "highways" | "ferries")[];
+  }
 ): Promise<RouteResult> {
-  return callProxy<RouteResult>('directions', { origin, destination, avoidTolls });
+  const { data, error } = await supabase.functions.invoke("google-directions", {
+    body: {
+      origin,
+      destination,
+      waypoints: options?.waypoints,
+      avoid: options?.avoid,
+      mode: "driving",
+    },
+  });
+
+  if (error) throw new Error(`Route calculation failed: ${error.message}`);
+  if (!data.success) throw new Error(data.message || "No route found");
+
+  return data as RouteResult;
 }
 
-/**
- * Snap GPS positions to nearest road
- */
-export async function snapToRoad(positions: LatLng[]): Promise<SnappedPosition[]> {
-  const result = await callProxy<{ snappedPositions: SnappedPosition[] }>('snapToRoad', { positions });
-  return result.snappedPositions;
+export async function snapPositionToRoad(
+  positions: LatLng[],
+  interpolate = false
+): Promise<SnappedPosition> {
+  const { data, error } = await supabase.functions.invoke("google-snap-to-road", {
+    body: { positions, interpolate },
+  });
+
+  if (error) throw new Error(`Snap to road failed: ${error.message}`);
+
+  if (data.current_position) return data.current_position as SnappedPosition;
+
+  const points = data.snapped_points as SnappedPosition[];
+  if (points && points.length > 0) return points[points.length - 1];
+
+  throw new Error("No snapped position returned");
 }
 
-/**
- * Snap a single position to nearest road
- */
-export async function nearestRoad(position: LatLng): Promise<SnappedPosition | null> {
-  const result = await callProxy<{ snappedPosition: SnappedPosition | null }>('nearestRoad', { position });
-  return result.snappedPosition;
+export async function searchPlaces(
+  query: string,
+  sessionToken?: string
+): Promise<PlacePrediction[]> {
+  if (query.length < 2) return [];
+
+  const { data, error } = await supabase.functions.invoke("google-places", {
+    method: "GET",
+    body: { type: "autocomplete", q: query, session: sessionToken },
+  });
+
+  if (error) throw new Error(`Places search failed: ${error.message}`);
+
+  return data.predictions as PlacePrediction[];
 }
 
-/**
- * Decode Google encoded polyline into coordinates
- */
+export async function getPlaceDetails(
+  placeId: string,
+  sessionToken?: string
+): Promise<PlaceDetails> {
+  const { data, error } = await supabase.functions.invoke("google-places", {
+    method: "GET",
+    body: { type: "details", place_id: placeId, session: sessionToken },
+  });
+
+  if (error) throw new Error(`Place details failed: ${error.message}`);
+  if (!data.place) throw new Error("Place not found");
+
+  return data.place as PlaceDetails;
+}
+
+// ─── Utilities ────────────────────────────────────────────────────────────────
+
 export function decodePolyline(encoded: string): LatLng[] {
   const points: LatLng[] = [];
-  let index = 0, lat = 0, lng = 0;
+  let index = 0;
+  let lat = 0;
+  let lng = 0;
 
   while (index < encoded.length) {
-    let shift = 0, result = 0, byte: number;
+    let b: number;
+    let shift = 0;
+    let result = 0;
+
     do {
-      byte = encoded.charCodeAt(index++) - 63;
-      result |= (byte & 0x1f) << shift;
+      b = encoded.charCodeAt(index++) - 63;
+      result |= (b & 0x1f) << shift;
       shift += 5;
-    } while (byte >= 0x20);
-    lat += (result & 1) ? ~(result >> 1) : (result >> 1);
+    } while (b >= 0x20);
+
+    const dlat = result & 1 ? ~(result >> 1) : result >> 1;
+    lat += dlat;
 
     shift = 0;
     result = 0;
+
     do {
-      byte = encoded.charCodeAt(index++) - 63;
-      result |= (byte & 0x1f) << shift;
+      b = encoded.charCodeAt(index++) - 63;
+      result |= (b & 0x1f) << shift;
       shift += 5;
-    } while (byte >= 0x20);
-    lng += (result & 1) ? ~(result >> 1) : (result >> 1);
+    } while (b >= 0x20);
 
-    points.push({ lat: lat / 1e5, lng: lng / 1e5 });
+    const dlng = result & 1 ? ~(result >> 1) : result >> 1;
+    lng += dlng;
+
+    points.push({ lat: lat * 1e-5, lng: lng * 1e-5 });
   }
-  return points;
-}
 
-/**
- * Calculate heading between two points in degrees
- */
-export function calculateHeading(from: LatLng, to: LatLng): number {
-  const dLng = ((to.lng - from.lng) * Math.PI) / 180;
-  const fromLat = (from.lat * Math.PI) / 180;
-  const toLat = (to.lat * Math.PI) / 180;
-  const y = Math.sin(dLng) * Math.cos(toLat);
-  const x = Math.cos(fromLat) * Math.sin(toLat) - Math.sin(fromLat) * Math.cos(toLat) * Math.cos(dLng);
-  return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
+  return points;
 }
