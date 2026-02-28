@@ -68,7 +68,7 @@ const TripTracking: React.FC = () => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Map area - Now with live tracking */}
       <div className="h-[45vh] relative">
-        {hasGoogleMaps && hasPositions ? (
+        {hasPositions ? (
           <LiveTrackingMap
             rideId={rideId}
             pickupLocation={{ lat: pickup.lat, lng: pickup.lng }}
