@@ -5,6 +5,7 @@ import { useRide } from '@/contexts/RideContext';
 import { Input } from '@/components/ui/input';
 import { searchPlaces, getPlaceDetails, generateSessionToken } from '@/services/googleMaps.service';
 import { APP_CONFIG } from '@/config/app.config';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SearchResult {
   id: string;
@@ -23,6 +24,15 @@ const RiderSearch: React.FC = () => {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const sessionTokenRef = useRef(generateSessionToken());
+
+  // Diagnostic test
+  useEffect(() => {
+    supabase.functions.invoke("google-places", {
+      body: { type: "autocomplete", q: "Rue du Rhône", session: "test" }
+    }).then(({ data, error }) => {
+      console.log("google-places test:", { data, error });
+    });
+  }, []);
 
   // Set default pickup location (Geneva)
   useEffect(() => {
