@@ -71,9 +71,18 @@ const TripTracking: React.FC = () => {
         {hasGoogleMaps && hasPositions ? (
           <LiveTrackingMap
             rideId={rideId}
-            pickupPosition={{ lat: pickup.lat, lng: pickup.lng }}
-            dropoffPosition={{ lat: dropoff.lat, lng: dropoff.lng }}
-            fallbackEta={eta}
+            pickupLocation={{ lat: pickup.lat, lng: pickup.lng }}
+            destination={{ lat: dropoff.lat, lng: dropoff.lng }}
+            driverInfo={{
+              name: currentDriver.name,
+              avatarUrl: currentDriver.avatar,
+              rating: currentDriver.rating,
+              vehicleMake: currentDriver.vehicle.make,
+              vehicleModel: currentDriver.vehicle.model,
+              vehicleColor: currentDriver.vehicle.color,
+              vehiclePlate: currentDriver.vehicle.plate,
+            }}
+            onDriverArrived={() => setStatus('in_progress')}
           />
         ) : (
           <MapPlaceholder

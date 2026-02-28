@@ -1,111 +1,203 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { nearestRoad, calculateHeading, type LatLng } from '@/services/googleMaps.service';
+/**
+ * CABY — useDriverPosition Hook
+ * Côté CHAUFFEUR uniquement.
+ *
+ * 1. Capture la position GPS du téléphone (1/sec, haute précision)
+ * 2. Recale sur la route via Google Roads API (snap-to-road)
+ * 3. Broadcast la position corrigée vers Supabase Realtime
+ */
 
-interface DriverPositionState {
-  position: LatLng | null;
+import { useState, useEffect, useRef, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { snapPositionToRoad, type LatLng } from "@/services/googleMaps.service";
+
+interface DriverPosition {
+  lat: number;
+  lng: number;
   heading: number;
-  speed: number;
-  error: string | null;
-  isTracking: boolean;
+  speed: number | null;
+  accuracy: number;
+  timestamp: number;
 }
 
-/**
- * Hook for driver-side: watches GPS, snaps to road, broadcasts position via Supabase Realtime
- */
-export function useDriverPosition(rideId: string | null) {
-  const [state, setState] = useState<DriverPositionState>({
-    position: null,
-    heading: 0,
-    speed: 0,
-    error: null,
-    isTracking: false,
-  });
+interface UseDriverPositionReturn {
+  position: DriverPosition | null;
+  isTracking: boolean;
+  error: string | null;
+  startTracking: () => void;
+  stopTracking: () => void;
+}
 
-  const lastPositionRef = useRef<LatLng | null>(null);
+const BROADCAST_CHANNEL_PREFIX = "driver-location";
+const HISTORY_SIZE = 4;
+const SNAP_INTERVAL_MS = 2000;
+
+export function useDriverPosition(rideId: string | null): UseDriverPositionReturn {
+  const [position, setPosition] = useState<DriverPosition | null>(null);
+  const [isTracking, setIsTracking] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const watchIdRef = useRef<number | null>(null);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const positionHistoryRef = useRef<LatLng[]>([]);
+  const lastSnapTimeRef = useRef<number>(0);
+  const lastRawHeadingRef = useRef<number>(0);
 
   const broadcastPosition = useCallback(
-    async (lat: number, lng: number, heading: number, speed: number) => {
-      if (!rideId || !channelRef.current) return;
-      await channelRef.current.send({
-        type: 'broadcast',
-        event: 'position',
-        payload: { lat, lng, heading, speed, timestamp: Date.now() },
+    (pos: DriverPosition) => {
+      if (!channelRef.current || !rideId) return;
+
+      channelRef.current.send({
+        type: "broadcast",
+        event: "driver_position",
+        payload: {
+          lat: pos.lat,
+          lng: pos.lng,
+          heading: pos.heading,
+          speed: pos.speed,
+          accuracy: pos.accuracy,
+          timestamp: pos.timestamp,
+          ride_id: rideId,
+        },
       });
     },
     [rideId]
   );
 
-  useEffect(() => {
-    if (!rideId) return;
+  const handleGeoPosition = useCallback(
+    async (geoPos: GeolocationPosition) => {
+      const rawLat = geoPos.coords.latitude;
+      const rawLng = geoPos.coords.longitude;
+      const rawSpeed = geoPos.coords.speed
+        ? Math.round(geoPos.coords.speed * 3.6)
+        : null;
+      const accuracy = Math.round(geoPos.coords.accuracy);
+      const now = Date.now();
 
-    // Setup channel
-    const channel = supabase.channel(`driver-location-${rideId}`);
-    channel.subscribe();
-    channelRef.current = channel;
+      positionHistoryRef.current.push({ lat: rawLat, lng: rawLng });
+      if (positionHistoryRef.current.length > HISTORY_SIZE) {
+        positionHistoryRef.current.shift();
+      }
 
-    // Start GPS watch
+      let finalLat = rawLat;
+      let finalLng = rawLng;
+      let finalHeading = lastRawHeadingRef.current;
+
+      if (geoPos.coords.heading !== null && !isNaN(geoPos.coords.heading)) {
+        finalHeading = Math.round(geoPos.coords.heading);
+        lastRawHeadingRef.current = finalHeading;
+      }
+
+      if (
+        now - lastSnapTimeRef.current >= SNAP_INTERVAL_MS &&
+        positionHistoryRef.current.length >= 2
+      ) {
+        lastSnapTimeRef.current = now;
+
+        try {
+          const snapped = await snapPositionToRoad(
+            positionHistoryRef.current,
+            false
+          );
+          finalLat = snapped.lat;
+          finalLng = snapped.lng;
+          if (snapped.heading !== undefined) {
+            finalHeading = snapped.heading;
+            lastRawHeadingRef.current = finalHeading;
+          }
+        } catch (snapError) {
+          console.warn("Snap-to-road failed, using raw GPS:", snapError);
+        }
+      }
+
+      const newPosition: DriverPosition = {
+        lat: finalLat,
+        lng: finalLng,
+        heading: finalHeading,
+        speed: rawSpeed,
+        accuracy,
+        timestamp: now,
+      };
+
+      setPosition(newPosition);
+      broadcastPosition(newPosition);
+    },
+    [broadcastPosition]
+  );
+
+  const startTracking = useCallback(() => {
     if (!navigator.geolocation) {
-      setState((s) => ({ ...s, error: 'Geolocation not supported' }));
+      setError("Géolocalisation non supportée sur cet appareil");
       return;
     }
 
-    const watchId = navigator.geolocation.watchPosition(
-      async (pos) => {
-        const rawPosition: LatLng = {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        };
+    if (!rideId) {
+      setError("rideId requis pour le tracking");
+      return;
+    }
 
-        // Try snap-to-road, fallback to raw
-        let snapped = rawPosition;
-        try {
-          const result = await nearestRoad(rawPosition);
-          if (result) snapped = { lat: result.lat, lng: result.lng };
-        } catch {
-          // Use raw position on error
+    setError(null);
+
+    const channelName = `${BROADCAST_CHANNEL_PREFIX}-${rideId}`;
+    channelRef.current = supabase.channel(channelName, {
+      config: { broadcast: { self: false } },
+    });
+    channelRef.current.subscribe();
+
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      handleGeoPosition,
+      (geoError) => {
+        console.error("Geolocation error:", geoError);
+        switch (geoError.code) {
+          case geoError.PERMISSION_DENIED:
+            setError("Accès à la localisation refusé. Activez-le dans les paramètres.");
+            break;
+          case geoError.POSITION_UNAVAILABLE:
+            setError("Position GPS indisponible");
+            break;
+          case geoError.TIMEOUT:
+            setError("Timeout GPS — vérifiez votre signal");
+            break;
         }
-
-        // Calculate heading from last position
-        let heading = state.heading;
-        if (lastPositionRef.current) {
-          heading = calculateHeading(lastPositionRef.current, snapped);
-        }
-
-        const speed = pos.coords.speed ?? 0;
-        lastPositionRef.current = snapped;
-
-        setState({
-          position: snapped,
-          heading,
-          speed,
-          error: null,
-          isTracking: true,
-        });
-
-        broadcastPosition(snapped.lat, snapped.lng, heading, speed);
-      },
-      (err) => {
-        setState((s) => ({ ...s, error: err.message }));
       },
       {
         enableHighAccuracy: true,
         maximumAge: 1000,
-        timeout: 5000,
+        timeout: 10000,
       }
     );
 
-    watchIdRef.current = watchId;
+    setIsTracking(true);
+  }, [rideId, handleGeoPosition]);
 
-    return () => {
-      if (watchIdRef.current !== null) navigator.geolocation.clearWatch(watchIdRef.current);
-      channel.unsubscribe();
+  const stopTracking = useCallback(() => {
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+
+    if (channelRef.current) {
+      supabase.removeChannel(channelRef.current);
       channelRef.current = null;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rideId]);
+    }
 
-  return state;
+    positionHistoryRef.current = [];
+    setIsTracking(false);
+    setPosition(null);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      stopTracking();
+    };
+  }, [stopTracking]);
+
+  useEffect(() => {
+    if (isTracking) {
+      stopTracking();
+      if (rideId) startTracking();
+    }
+  }, [rideId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return { position, isTracking, error, startTracking, stopTracking };
 }
