@@ -1,13 +1,11 @@
 /**
  * CABY — Edge Function : google-places
  * Proxy sécurisé vers Google Places API
- * Autocomplete d'adresses biaisé sur Genève (CH)
+ * Accepte POST avec body JSON (supabase.functions.invoke envoie toujours POST)
  *
- * GET  /functions/v1/google-places?q=Rue+du+Rhône&type=autocomplete
- * GET  /functions/v1/google-places?place_id=ChIJ...&type=details
- *
- * Returns autocomplete: { predictions: [{place_id, description, main_text, secondary_text}] }
- * Returns details:      { place: {place_id, name, address, lat, lng} }
+ * POST body: { type: "autocomplete", q: "Rue du Rhône", session: "..." }
+ * POST body: { type: "details", place_id: "ChIJ...", session: "..." }
+ * POST body: { type: "nearby", lat: 46.2, lng: 6.1, place_type: "airport", radius: "5000" }
  */
 
 const corsHeaders = {
@@ -16,18 +14,17 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Biais géographique centré sur Genève
 const GENEVA_LOCATION = "46.2044,6.1432";
-const GENEVA_RADIUS = 50000; // 50km — couvre arc lémanique + aéroport
+const GENEVA_RADIUS = 50000;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  if (req.method !== "GET") {
+  if (req.method !== "POST") {
     return new Response(
-      JSON.stringify({ error: "Method not allowed" }),
+      JSON.stringify({ error: "Method not allowed. Use POST with JSON body." }),
       { status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
@@ -40,15 +37,13 @@ Deno.serve(async (req) => {
     );
   }
 
-  const url = new URL(req.url);
-  const type = url.searchParams.get("type") || "autocomplete";
-
   try {
-    // ─────────────────────────────────────────────
-    // MODE 1 : Autocomplete — suggestions en live
-    // ─────────────────────────────────────────────
+    const body = await req.json();
+    const type = body.type || "autocomplete";
+
+    // ── Autocomplete ──
     if (type === "autocomplete") {
-      const query = url.searchParams.get("q");
+      const query = body.q;
       if (!query || query.length < 2) {
         return new Response(
           JSON.stringify({ predictions: [] }),
@@ -56,7 +51,7 @@ Deno.serve(async (req) => {
         );
       }
 
-      const sessionToken = url.searchParams.get("session") || "";
+      const sessionToken = body.session || "";
 
       const placesUrl =
         `https://maps.googleapis.com/maps/api/place/autocomplete/json` +
@@ -74,7 +69,7 @@ Deno.serve(async (req) => {
       const data = await response.json();
 
       if (data.status !== "OK" && data.status !== "ZERO_RESULTS") {
-        console.error("Places Autocomplete error:", data.status);
+        console.error("Places Autocomplete error:", data.status, data.error_message);
         return new Response(
           JSON.stringify({ predictions: [], error: data.status }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -96,11 +91,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    // ─────────────────────────────────────────────
-    // MODE 2 : Place Details — lat/lng d'un place_id
-    // ─────────────────────────────────────────────
+    // ── Place Details ──
     if (type === "details") {
-      const placeId = url.searchParams.get("place_id");
+      const placeId = body.place_id;
       if (!placeId) {
         return new Response(
           JSON.stringify({ error: "place_id is required" }),
@@ -108,7 +101,7 @@ Deno.serve(async (req) => {
         );
       }
 
-      const sessionToken = url.searchParams.get("session") || "";
+      const sessionToken = body.session || "";
 
       const detailsUrl =
         `https://maps.googleapis.com/maps/api/place/details/json` +
@@ -122,7 +115,7 @@ Deno.serve(async (req) => {
       const data = await response.json();
 
       if (data.status !== "OK") {
-        console.error("Place Details error:", data.status);
+        console.error("Place Details error:", data.status, data.error_message);
         return new Response(
           JSON.stringify({ error: "Place not found", status: data.status }),
           { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -130,7 +123,6 @@ Deno.serve(async (req) => {
       }
 
       const result = data.result;
-
       return new Response(
         JSON.stringify({
           place: {
@@ -147,15 +139,9 @@ Deno.serve(async (req) => {
       );
     }
 
-    // ─────────────────────────────────────────────
-    // MODE 3 : Nearby Search — lieux proches d'un point
-    // ─────────────────────────────────────────────
+    // ── Nearby Search ──
     if (type === "nearby") {
-      const lat = url.searchParams.get("lat");
-      const lng = url.searchParams.get("lng");
-      const placeType = url.searchParams.get("place_type") || "airport";
-      const radius = url.searchParams.get("radius") || "5000";
-
+      const { lat, lng, place_type, radius } = body;
       if (!lat || !lng) {
         return new Response(
           JSON.stringify({ error: "lat and lng are required" }),
@@ -166,8 +152,8 @@ Deno.serve(async (req) => {
       const nearbyUrl =
         `https://maps.googleapis.com/maps/api/place/nearbysearch/json` +
         `?location=${lat},${lng}` +
-        `&radius=${radius}` +
-        `&type=${placeType}` +
+        `&radius=${radius || 5000}` +
+        `&type=${place_type || "airport"}` +
         `&language=fr` +
         `&key=${googleApiKey}`;
 
