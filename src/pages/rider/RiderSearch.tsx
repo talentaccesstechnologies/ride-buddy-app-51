@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Navigation, Clock, Star, X } from 'lucide-react';
+import { ArrowLeft, MapPin, Navigation, Clock, X } from 'lucide-react';
 import { useRide } from '@/contexts/RideContext';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { searchPlaces, getPlaceDetails, generateSessionToken } from '@/services/googleMaps.service';
+import { APP_CONFIG } from '@/config/app.config';
 
 interface SearchResult {
   id: string;
@@ -13,20 +14,6 @@ interface SearchResult {
   lng: number;
 }
 
-// Simulated search results for demo
-const mockResults: SearchResult[] = [
-  { id: '1', address: 'Gare du Nord, 18 Rue de Dunkerque, 75010 Paris', shortAddress: 'Gare du Nord', lat: 48.8809, lng: 2.3553 },
-  { id: '2', address: 'Tour Eiffel, Champ de Mars, 75007 Paris', shortAddress: 'Tour Eiffel', lat: 48.8584, lng: 2.2945 },
-  { id: '3', address: 'Aéroport Paris-Charles de Gaulle, 95700 Roissy-en-France', shortAddress: 'CDG Airport', lat: 49.0097, lng: 2.5479 },
-  { id: '4', address: 'Gare de Lyon, Place Louis-Armand, 75012 Paris', shortAddress: 'Gare de Lyon', lat: 48.8448, lng: 2.3735 },
-  { id: '5', address: 'La Défense, 92800 Puteaux', shortAddress: 'La Défense', lat: 48.8918, lng: 2.2382 },
-];
-
-const recentSearches: SearchResult[] = [
-  { id: 'r1', address: '25 Rue de Rivoli, 75001 Paris', shortAddress: '25 Rue de Rivoli', lat: 48.8606, lng: 2.3376 },
-  { id: 'r2', address: 'Opéra Garnier, Place de l\'Opéra, 75009 Paris', shortAddress: 'Opéra Garnier', lat: 48.8720, lng: 2.3316 },
-];
-
 const RiderSearch: React.FC = () => {
   const navigate = useNavigate();
   const { pickup, setPickup, setDropoff } = useRide();
@@ -35,20 +22,20 @@ const RiderSearch: React.FC = () => {
   const [activeInput, setActiveInput] = useState<'pickup' | 'dropoff'>('dropoff');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const sessionTokenRef = useRef(generateSessionToken());
 
-  // Set default pickup location
+  // Set default pickup location (Geneva)
   useEffect(() => {
     if (!pickup) {
-      // Default to current position simulation
       setPickup({
         address: 'Position actuelle',
-        lat: 48.8566,
-        lng: 2.3522,
+        lat: APP_CONFIG.DEFAULT_CENTER.lat,
+        lng: APP_CONFIG.DEFAULT_CENTER.lng,
       });
     }
   }, [pickup, setPickup]);
 
-  // Simulated search with debounce
+  // Real Google Places autocomplete
   useEffect(() => {
     if (dropoffInput.length < 2) {
       setSearchResults([]);
@@ -56,37 +43,53 @@ const RiderSearch: React.FC = () => {
     }
 
     setIsSearching(true);
-    const timer = setTimeout(() => {
-      const filtered = mockResults.filter(
-        (r) =>
-          r.address.toLowerCase().includes(dropoffInput.toLowerCase()) ||
-          r.shortAddress.toLowerCase().includes(dropoffInput.toLowerCase())
-      );
-      setSearchResults(filtered.length > 0 ? filtered : mockResults.slice(0, 3));
-      setIsSearching(false);
+    const timer = setTimeout(async () => {
+      try {
+        const predictions = await searchPlaces(dropoffInput, sessionTokenRef.current);
+        setSearchResults(
+          predictions.map((p) => ({
+            id: p.place_id,
+            address: p.description,
+            shortAddress: p.main_text,
+            lat: 0,
+            lng: 0,
+          }))
+        );
+      } catch (e) {
+        console.error('Places search error:', e);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
     }, 300);
 
     return () => clearTimeout(timer);
   }, [dropoffInput]);
 
-  const handleSelectResult = (result: SearchResult) => {
-    if (activeInput === 'dropoff') {
-      setDropoff({
-        address: result.address,
-        lat: result.lat,
-        lng: result.lng,
-      });
-      setDropoffInput(result.shortAddress);
-      // Navigate to confirm ride page
-      navigate('/rider/confirm');
-    } else {
-      setPickup({
-        address: result.address,
-        lat: result.lat,
-        lng: result.lng,
-      });
-      setPickupInput(result.shortAddress);
-      setActiveInput('dropoff');
+  const handleSelectResult = async (result: SearchResult) => {
+    try {
+      const details = await getPlaceDetails(result.id, sessionTokenRef.current);
+      sessionTokenRef.current = generateSessionToken();
+
+      if (activeInput === 'dropoff') {
+        setDropoff({
+          address: details.address,
+          lat: details.lat,
+          lng: details.lng,
+        });
+        setDropoffInput(details.name || result.shortAddress);
+        navigate('/caby/confirm');
+      } else {
+        setPickup({
+          address: details.address,
+          lat: details.lat,
+          lng: details.lng,
+        });
+        setPickupInput(details.name || result.shortAddress);
+        setActiveInput('dropoff');
+      }
+    } catch (e) {
+      console.error('Place details error:', e);
     }
   };
 
@@ -100,7 +103,6 @@ const RiderSearch: React.FC = () => {
     <div className="min-h-screen bg-background">
       {/* Header with inputs */}
       <div className="bg-background border-b border-border p-4 safe-area-top">
-        {/* Back button */}
         <button
           onClick={() => navigate(-1)}
           className="mb-4 flex items-center gap-2 text-muted-foreground"
@@ -109,7 +111,6 @@ const RiderSearch: React.FC = () => {
           <span>Retour</span>
         </button>
 
-        {/* Location inputs */}
         <div className="flex gap-3">
           {/* Timeline dots */}
           <div className="flex flex-col items-center py-3">
@@ -126,15 +127,10 @@ const RiderSearch: React.FC = () => {
                 onChange={(e) => setPickupInput(e.target.value)}
                 onFocus={() => setActiveInput('pickup')}
                 placeholder="Point de départ"
-                className={`h-12 pl-4 pr-10 ${
-                  activeInput === 'pickup' ? 'ring-2 ring-accent' : ''
-                }`}
+                className={`h-12 pl-4 pr-10 ${activeInput === 'pickup' ? 'ring-2 ring-accent' : ''}`}
               />
               {pickupInput && (
-                <button
-                  onClick={() => setPickupInput('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                >
+                <button onClick={() => setPickupInput('')} className="absolute right-3 top-1/2 -translate-y-1/2">
                   <X className="w-4 h-4 text-muted-foreground" />
                 </button>
               )}
@@ -146,16 +142,11 @@ const RiderSearch: React.FC = () => {
                 onChange={(e) => setDropoffInput(e.target.value)}
                 onFocus={() => setActiveInput('dropoff')}
                 placeholder="Où allez-vous ?"
-                className={`h-12 pl-4 pr-10 ${
-                  activeInput === 'dropoff' ? 'ring-2 ring-accent' : ''
-                }`}
+                className={`h-12 pl-4 pr-10 ${activeInput === 'dropoff' ? 'ring-2 ring-accent' : ''}`}
                 autoFocus
               />
               {dropoffInput && (
-                <button
-                  onClick={() => setDropoffInput('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                >
+                <button onClick={() => setDropoffInput('')} className="absolute right-3 top-1/2 -translate-y-1/2">
                   <X className="w-4 h-4 text-muted-foreground" />
                 </button>
               )}
@@ -163,22 +154,9 @@ const RiderSearch: React.FC = () => {
           </div>
 
           {/* Swap button */}
-          <button
-            onClick={swapLocations}
-            className="self-center p-2 hover:bg-secondary rounded-full transition-colors"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-              />
+          <button onClick={swapLocations} className="self-center p-2 hover:bg-secondary rounded-full transition-colors">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
             </svg>
           </button>
         </div>
@@ -186,7 +164,6 @@ const RiderSearch: React.FC = () => {
 
       {/* Results */}
       <div className="p-4">
-        {/* Choose on map option */}
         <button
           onClick={() => navigate('/rider/map-select')}
           className="w-full flex items-center gap-3 p-3 hover:bg-secondary rounded-xl transition-colors mb-4"
@@ -197,7 +174,6 @@ const RiderSearch: React.FC = () => {
           <span className="font-medium">Choisir sur la carte</span>
         </button>
 
-        {/* Search results or recent searches */}
         {isSearching ? (
           <div className="flex items-center justify-center py-8">
             <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -215,43 +191,16 @@ const RiderSearch: React.FC = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium truncate">{result.shortAddress}</p>
-                  <p className="text-sm text-muted-foreground truncate">
-                    {result.address}
-                  </p>
+                  <p className="text-sm text-muted-foreground truncate">{result.address}</p>
                 </div>
               </button>
             ))}
           </div>
-        ) : (
-          <div className="space-y-4">
-            {/* Recent searches */}
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                Recherches récentes
-              </h3>
-              <div className="space-y-1">
-                {recentSearches.map((result) => (
-                  <button
-                    key={result.id}
-                    onClick={() => handleSelectResult(result)}
-                    className="w-full flex items-center gap-3 p-3 hover:bg-secondary rounded-xl transition-colors text-left"
-                  >
-                    <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
-                      <Clock className="w-5 h-5 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{result.shortAddress}</p>
-                      <p className="text-sm text-muted-foreground truncate">
-                        {result.address}
-                      </p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        ) : dropoffInput.length < 2 ? (
+          <p className="text-center text-muted-foreground py-8 text-sm">
+            Tapez au moins 2 caractères pour rechercher
+          </p>
+        ) : null}
       </div>
     </div>
   );
