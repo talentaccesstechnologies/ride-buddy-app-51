@@ -3,5 +3,11 @@ project_id = "ieadcoshvrneworulelp"
 [functions.merchant-deliveries]
 verify_jwt = false
 
-[functions.google-maps-proxy]
+[functions.google-directions]
+verify_jwt = false
+
+[functions.google-snap-to-road]
+verify_jwt = false
+
+[functions.google-places]
 verify_jwt = false
