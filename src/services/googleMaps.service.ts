@@ -121,7 +121,6 @@ export async function searchPlaces(
   if (query.length < 2) return [];
 
   const { data, error } = await supabase.functions.invoke("google-places", {
-    method: "GET",
     body: { type: "autocomplete", q: query, session: sessionToken },
   });
 
@@ -135,7 +134,6 @@ export async function getPlaceDetails(
   sessionToken?: string
 ): Promise<PlaceDetails> {
   const { data, error } = await supabase.functions.invoke("google-places", {
-    method: "GET",
     body: { type: "details", place_id: placeId, session: sessionToken },
   });
 
