@@ -72,7 +72,7 @@ const DriverDashboardPage: React.FC = () => {
   const [hasMoved, setHasMoved] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<PartnerPoint | null>(null);
   const [sheetExpanded, setSheetExpanded] = useState(false);
-  const [todayEarnings] = useState(145);
+  const [todayEarnings, setTodayEarnings] = useState(145);
   const [missionsCount] = useState(3);
   const [incomingRide, setIncomingRide] = useState<IncomingRide | null>(null);
   const [activeRide, setActiveRide] = useState<IncomingRide | null>(null);
@@ -107,15 +107,15 @@ const DriverDashboardPage: React.FC = () => {
     return () => { clearInterval(id); watchIdRef.current = null; };
   }, [isOnline]);
 
-  // Simulate incoming ride 5s after going online
+  // Simulate incoming ride 5s after going online (only if no active ride)
   useEffect(() => {
-    if (isOnline && !incomingRide) {
+    if (isOnline && !incomingRide && !activeRide) {
       simTimerRef.current = setTimeout(() => {
         setIncomingRide(DEMO_RIDE);
       }, 5000);
     }
     return () => { if (simTimerRef.current) clearTimeout(simTimerRef.current); };
-  }, [isOnline, incomingRide]);
+  }, [isOnline, incomingRide, activeRide]);
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
@@ -156,13 +156,19 @@ const DriverDashboardPage: React.FC = () => {
     toast.success('Client notifié de votre arrivée');
   }, []);
 
-  const handleRideComplete = useCallback(() => {
-    const ride = activeRide;
+  const handleRideComplete = useCallback((price: number) => {
     setActiveRide(null);
-    toast.success('Course terminée !', {
-      description: ride ? `${ride.estimatedPrice} CHF · ${ride.dropoffAddress}` : undefined,
-    });
-  }, [activeRide]);
+    setTodayEarnings((prev) => prev + price);
+    toast.success('Gains mis à jour !');
+  }, []);
+
+  const triggerSimulation = useCallback(() => {
+    if (!isOnline) {
+      setIsOnline(true);
+      toast.success('Radar activé');
+    }
+    setIncomingRide(DEMO_RIDE);
+  }, [isOnline]);
 
   const handleRefuseRide = useCallback((id: string) => {
     setIncomingRide(null);
@@ -350,6 +356,16 @@ const DriverDashboardPage: React.FC = () => {
           onToggleExpand={() => setSheetExpanded((v) => !v)}
           onViewMissions={() => navigate('/tatfleet/logistics')}
         />
+
+        {/* Hidden simulation button — triple tap bottom-left corner */}
+        {!activeRide && !incomingRide && (
+          <button
+            onClick={triggerSimulation}
+            className="absolute bottom-20 left-4 z-30 px-3 py-1.5 rounded-full bg-card/80 backdrop-blur-sm border border-border text-[10px] font-mono text-muted-foreground active:scale-95 transition-transform"
+          >
+            🧪 Simuler course
+          </button>
+        )}
       </div>
 
       <DriverBottomNav />
