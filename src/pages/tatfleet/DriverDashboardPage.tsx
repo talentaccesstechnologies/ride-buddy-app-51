@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { GoogleMap, Circle, Marker, InfoWindow } from '@react-google-maps/api';
+import { GoogleMap, Circle, Marker, InfoWindow, Polyline } from '@react-google-maps/api';
 import { Wifi, WifiOff, Package, Locate, Car } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -229,7 +229,15 @@ const DriverDashboardPage: React.FC = () => {
     if (!course) return;
     setIncomingCourses(prev => prev.filter(c => c.id !== courseId));
     setAcceptedCourse(course);
-  }, [incomingCourses]);
+    // Fit map to show pickup + dropoff
+    if (mapRef.current) {
+      const bounds = new google.maps.LatLngBounds();
+      bounds.extend({ lat: course.pickupLat, lng: course.pickupLng });
+      bounds.extend({ lat: course.dropoffLat, lng: course.dropoffLng });
+      if (position) bounds.extend(position);
+      mapRef.current.fitBounds(bounds, { top: 60, bottom: 280, left: 40, right: 40 });
+    }
+  }, [incomingCourses, position]);
 
   const handleCourseRefuse = useCallback((courseId: string) => {
     setIncomingCourses(prev => prev.filter(c => c.id !== courseId));
@@ -367,7 +375,7 @@ const DriverDashboardPage: React.FC = () => {
           })()}
 
           {/* Radar circle */}
-          {isOnline && (
+          {isOnline && !acceptedCourse && (
             <Circle
               center={position}
               radius={RADAR_RADIUS_M}
@@ -378,7 +386,45 @@ const DriverDashboardPage: React.FC = () => {
             />
           )}
 
-          {/* Partner markers — only in colis mode */}
+          {/* Accepted course: pickup marker, dropoff marker, polyline */}
+          {acceptedCourse && (
+            <>
+              {/* Pickup marker — green */}
+              <Marker
+                position={{ lat: acceptedCourse.pickupLat, lng: acceptedCourse.pickupLng }}
+                icon={{
+                  url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="36" height="46" viewBox="0 0 36 46"><path d="M18 44C18 44 2 28 2 16C2 7.2 9.2 0 18 0S34 7.2 34 16C34 28 18 44 18 44Z" fill="#22C55E" stroke="white" stroke-width="2"/><circle cx="18" cy="16" r="6" fill="white"/><text x="18" y="20" text-anchor="middle" font-size="10" font-weight="bold" fill="#22C55E">A</text></svg>')}`,
+                  scaledSize: new google.maps.Size(36, 46),
+                  anchor: new google.maps.Point(18, 46),
+                }}
+                zIndex={100}
+              />
+              {/* Dropoff marker — red */}
+              <Marker
+                position={{ lat: acceptedCourse.dropoffLat, lng: acceptedCourse.dropoffLng }}
+                icon={{
+                  url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="36" height="46" viewBox="0 0 36 46"><path d="M18 44C18 44 2 28 2 16C2 7.2 9.2 0 18 0S34 7.2 34 16C34 28 18 44 18 44Z" fill="#EF4444" stroke="white" stroke-width="2"/><circle cx="18" cy="16" r="6" fill="white"/><text x="18" y="20" text-anchor="middle" font-size="10" font-weight="bold" fill="#EF4444">B</text></svg>')}`,
+                  scaledSize: new google.maps.Size(36, 46),
+                  anchor: new google.maps.Point(18, 46),
+                }}
+                zIndex={100}
+              />
+              {/* Route polyline */}
+              <Polyline
+                path={[
+                  { lat: acceptedCourse.pickupLat, lng: acceptedCourse.pickupLng },
+                  { lat: acceptedCourse.dropoffLat, lng: acceptedCourse.dropoffLng },
+                ]}
+                options={{
+                  strokeColor: '#3B82F6',
+                  strokeOpacity: 0.9,
+                  strokeWeight: 5,
+                  geodesic: true,
+                }}
+              />
+            </>
+          )}
+
           {isColisMode && PARTNER_POINTS.map((pt) => (
             <Marker
               key={pt.id}
@@ -410,33 +456,35 @@ const DriverDashboardPage: React.FC = () => {
           )}
         </GoogleMap>
 
-        {/* ── Overlay: Online toggle ── */}
-        <div className="absolute top-14 left-1/2 -translate-x-1/2 z-20">
-          <button
-            onClick={toggleOnline}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full shadow-lg backdrop-blur-md border transition-all active:scale-95 ${
-              isOnline
-                ? 'bg-[hsl(var(--caby-green))]/90 border-[hsl(var(--caby-green))]/50 text-white'
-                : 'bg-white/90 border-gray-200 text-gray-600'
-            }`}
-          >
-            {isOnline ? (
-              <>
-                <Wifi className="w-4 h-4" />
-                <span className="text-sm font-bold">EN LIGNE</span>
-                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              </>
-            ) : (
-              <>
-                <WifiOff className="w-4 h-4" />
-                <span className="text-sm font-bold">HORS LIGNE</span>
-              </>
-            )}
-          </button>
-        </div>
+        {/* ── Overlay: Online toggle — hidden during accepted ride ── */}
+        {!acceptedCourse && (
+          <div className="absolute top-14 left-1/2 -translate-x-1/2 z-20">
+            <button
+              onClick={toggleOnline}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-full shadow-lg backdrop-blur-md border transition-all active:scale-95 ${
+                isOnline
+                  ? 'bg-[hsl(var(--caby-green))]/90 border-[hsl(var(--caby-green))]/50 text-white'
+                  : 'bg-white/90 border-gray-200 text-gray-600'
+              }`}
+            >
+              {isOnline ? (
+                <>
+                  <Wifi className="w-4 h-4" />
+                  <span className="text-sm font-bold">EN LIGNE</span>
+                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                </>
+              ) : (
+                <>
+                  <WifiOff className="w-4 h-4" />
+                  <span className="text-sm font-bold">HORS LIGNE</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
 
         {/* Zone badge */}
-        {isOnline && (
+        {isOnline && !acceptedCourse && (
           <div className="absolute top-28 left-1/2 -translate-x-1/2 z-20">
             <span className="text-[10px] font-semibold text-green-700 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full border border-green-300 shadow-sm">
               🟢 Zone active · 5 km
@@ -445,22 +493,24 @@ const DriverDashboardPage: React.FC = () => {
         )}
 
         {/* ── Overlay: Colis mode toggle ── */}
-        <div className="absolute top-14 right-4 z-20">
-          <button
-            onClick={toggleColisMode}
-            className={`flex items-center gap-1.5 px-3 py-2.5 rounded-full shadow-lg backdrop-blur-md border transition-all active:scale-95 ${
-              isColisMode
-                ? 'bg-[hsl(var(--caby-gold))] border-[hsl(var(--caby-gold))]/50 text-black'
-                : 'bg-card/90 border-border text-muted-foreground'
-            }`}
-          >
-            {isColisMode ? <Package className="w-4 h-4" /> : <Car className="w-4 h-4" />}
-            <span className="text-xs font-bold">{isColisMode ? 'Colis' : 'Ride'}</span>
-          </button>
-        </div>
+        {!acceptedCourse && (
+          <div className="absolute top-14 right-4 z-20">
+            <button
+              onClick={toggleColisMode}
+              className={`flex items-center gap-1.5 px-3 py-2.5 rounded-full shadow-lg backdrop-blur-md border transition-all active:scale-95 ${
+                isColisMode
+                  ? 'bg-[hsl(var(--caby-gold))] border-[hsl(var(--caby-gold))]/50 text-black'
+                  : 'bg-card/90 border-border text-muted-foreground'
+              }`}
+            >
+              {isColisMode ? <Package className="w-4 h-4" /> : <Car className="w-4 h-4" />}
+              <span className="text-xs font-bold">{isColisMode ? 'Colis' : 'Ride'}</span>
+            </button>
+          </div>
+        )}
 
         {/* Legend — only in colis mode */}
-        {isColisMode && (
+        {isColisMode && !acceptedCourse && (
           <div className="absolute top-28 right-4 z-20 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg p-3 space-y-1.5 border border-gray-200">
             <div className="flex items-center gap-2 text-[11px] font-medium text-gray-700"><span className="w-3 h-3 rounded-full bg-orange-500" /> Express</div>
             <div className="flex items-center gap-2 text-[11px] font-medium text-gray-700"><span className="w-3 h-3 rounded-full bg-blue-500" /> Laundry</div>
@@ -469,7 +519,7 @@ const DriverDashboardPage: React.FC = () => {
         )}
 
         {/* Recenter button */}
-        {hasMoved && (
+        {hasMoved && !acceptedCourse && (
           <button
             onClick={handleRecenter}
             className="absolute bottom-[300px] right-4 z-20 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md border border-gray-200 shadow-lg flex items-center justify-center active:scale-95 transition-transform"
@@ -478,17 +528,19 @@ const DriverDashboardPage: React.FC = () => {
           </button>
         )}
 
-        {/* ── Bottom Sheet ── */}
-        <DriverDashboardSheet
-          isOnline={isOnline}
-          isColisMode={isColisMode}
-          missionsCount={isOnline ? missionsCount : 0}
-          todayEarnings={todayEarnings}
-          dailyGoal={400}
-          expanded={sheetExpanded}
-          onToggleExpand={() => setSheetExpanded((v) => !v)}
-          onViewMissions={() => navigate('/tatfleet/logistics')}
-        />
+        {/* ── Bottom Sheet — hidden during accepted ride ── */}
+        {!acceptedCourse && (
+          <DriverDashboardSheet
+            isOnline={isOnline}
+            isColisMode={isColisMode}
+            missionsCount={isOnline ? missionsCount : 0}
+            todayEarnings={todayEarnings}
+            dailyGoal={400}
+            expanded={sheetExpanded}
+            onToggleExpand={() => setSheetExpanded((v) => !v)}
+            onViewMissions={() => navigate('/tatfleet/logistics')}
+          />
+        )}
 
         {/* Hidden simulation button — triple tap bottom-left corner */}
         {!activeRide && !incomingRide && incomingCourses.length === 0 && !acceptedCourse && (
