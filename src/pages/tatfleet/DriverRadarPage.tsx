@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Package } from 'lucide-react';
 import { toast } from 'sonner';
+import { AnimatePresence } from 'framer-motion';
 import { RadarCourse, LegalStatus } from '@/types/radar.types';
 import { APP_CONFIG } from '@/config/app.config';
 import RadarHeader from '@/components/tatfleet/RadarHeader';
@@ -12,95 +13,157 @@ import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
 import LegalBlockOverlay from '@/components/tatfleet/LegalBlockOverlay';
 import MotoSafetyChecklist from '@/components/tatfleet/MotoSafetyChecklist';
 import IncomingRideCard from '@/components/tatfleet/IncomingRideCard';
+import AcceptedRideOverlay from '@/components/tatfleet/AcceptedRideOverlay';
 import Logo from '@/components/shared/Logo';
 
-// Demo data
+const makeMeta = (source: string, sujet: string, desc: string) => ({
+  date: new Date().toISOString(), source: source as any, sujet, lien: '', description: desc, eligible: true,
+});
+
+// 10 courses: 5 private_client + 5 pool général (caby_direct)
 const demoCourses: RadarCourse[] = [
+  // === 5 CLIENTS PRIVÉS ===
   {
-    id: 'demo-1',
-    type: 'private_client',
-    source: 'qr_code',
-    clientDisplayName: 'Sophie',
-    clientIsProtected: false,
+    id: 'priv-1', type: 'private_client', source: 'qr_code',
+    clientDisplayName: 'Sophie Laurent',
     clientAvatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
-    clientRating: 4.9,
-    clientNote: 'Client régulier - Trajet aéroport habituel',
-    pickupAddress: 'Rue du Rhône, Genève',
-    pickupLat: 46.2017,
-    pickupLng: 6.1468,
-    dropoffAddress: 'Aéroport de Genève',
-    dropoffLat: 46.2381,
-    dropoffLng: 6.1089,
-    estimatedPrice: 85,
-    estimatedDistance: 15.2,
-    estimatedDuration: 22,
-    vehicleTypeRequired: 'premium',
-    expiresAt: new Date(Date.now() + 30000),
-    createdAt: new Date(Date.now() - 10000),
-    meta: { date: new Date().toISOString(), source: 'qr_code', sujet: 'Course privée', lien: '', description: 'Client affilié QR', eligible: true },
-  },
-  {
-    id: 'demo-2',
-    type: 'caby_direct',
-    source: 'caby_app',
-    clientDisplayName: 'Sophie Müller',
-    clientIsProtected: false,
+    clientIsProtected: false, clientRating: 4.9,
+    clientNote: 'Client régulier — aéroport',
     pickupAddress: 'Rue du Rhône 48, Genève',
-    pickupLat: 46.2017,
-    pickupLng: 6.1468,
-    dropoffAddress: 'CERN, Meyrin',
-    dropoffLat: 46.2330,
-    dropoffLng: 6.0557,
-    estimatedPrice: 38,
-    estimatedDistance: 9.2,
-    estimatedDuration: 16,
-    vehicleTypeRequired: 'standard',
-    expiresAt: new Date(Date.now() + 15000),
-    createdAt: new Date(Date.now() - 5000),
-    meta: { date: new Date().toISOString(), source: 'caby_app', sujet: 'Caby Ride', lien: '', description: 'Commande Caby App', eligible: true },
+    pickupLat: 46.2017, pickupLng: 6.1468,
+    dropoffAddress: 'Aéroport de Genève (GVA)',
+    dropoffLat: 46.2381, dropoffLng: 6.1089,
+    estimatedPrice: 72, estimatedDistance: 12.4, estimatedDuration: 18,
+    vehicleTypeRequired: 'premium',
+    expiresAt: new Date(Date.now() + 30000), createdAt: new Date(),
+    meta: makeMeta('qr_code', 'Course privée', 'Client affilié QR'),
   },
   {
-    id: 'demo-3',
-    type: 'livraison',
-    source: 'caby_app',
-    clientDisplayName: 'Zalando Express',
-    clientIsProtected: false,
-    pickupAddress: 'Hub Logistique Lancy',
-    pickupLat: 46.1800,
-    pickupLng: 6.1200,
-    dropoffAddress: 'Rue de Carouge 90, Genève',
-    dropoffLat: 46.1950,
-    dropoffLng: 6.1400,
-    estimatedPrice: 15,
-    estimatedDistance: 3.1,
-    estimatedDuration: 8,
+    id: 'priv-2', type: 'private_client', source: 'qr_code',
+    clientDisplayName: 'Marc Dupont',
+    clientAvatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    clientIsProtected: false, clientRating: 4.7,
+    clientNote: 'Toujours ponctuel',
+    pickupAddress: 'Place Bel-Air, Genève',
+    pickupLat: 46.2022, pickupLng: 6.1430,
+    dropoffAddress: 'Hôpital Universitaire (HUG)',
+    dropoffLat: 46.1929, dropoffLng: 6.1496,
+    estimatedPrice: 18, estimatedDistance: 2.8, estimatedDuration: 7,
     vehicleTypeRequired: 'standard',
-    expiresAt: new Date(Date.now() + 60000),
-    createdAt: new Date(Date.now() - 30000),
-    meta: { date: new Date().toISOString(), source: 'caby_app', sujet: 'Livraison', lien: '', description: 'Forfait livraison', eligible: true },
+    expiresAt: new Date(Date.now() + 30000), createdAt: new Date(),
+    meta: makeMeta('qr_code', 'Course privée', 'Client fidèle'),
   },
   {
-    id: 'demo-4',
-    type: 'network_dispatch',
-    source: 'private_dispatch',
-    clientDisplayName: 'Client de Domingo M.',
-    clientIsProtected: true,
-    pickupAddress: 'Aéroport de Genève (GVA)',
-    pickupLat: 46.2381,
-    pickupLng: 6.1089,
-    dropoffAddress: 'Place du Marché, Nyon',
-    dropoffLat: 46.3833,
-    dropoffLng: 6.2398,
-    estimatedPrice: 85,
-    estimatedDistance: 28.4,
-    estimatedDuration: 32,
+    id: 'priv-3', type: 'private_client', source: 'phone',
+    clientDisplayName: 'Émilie Favre',
+    clientAvatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+    clientIsProtected: false, clientRating: 5.0,
+    clientNote: 'VIP — Hôtel Président Wilson',
+    pickupAddress: 'Hôtel Président Wilson, Quai Wilson',
+    pickupLat: 46.2130, pickupLng: 6.1560,
+    dropoffAddress: 'Centre commercial Balexert',
+    dropoffLat: 46.2190, dropoffLng: 6.1100,
+    estimatedPrice: 35, estimatedDistance: 6.1, estimatedDuration: 14,
+    vehicleTypeRequired: 'premium',
+    expiresAt: new Date(Date.now() + 30000), createdAt: new Date(),
+    meta: makeMeta('phone', 'Course privée', 'Appel direct VIP'),
+  },
+  {
+    id: 'priv-4', type: 'private_client', source: 'qr_code',
+    clientDisplayName: 'Jean-Pierre Morel',
+    clientIsProtected: false, clientRating: 4.6,
+    pickupAddress: 'Gare de Cornavin, Genève',
+    pickupLat: 46.2100, pickupLng: 6.1420,
+    dropoffAddress: 'Palexpo, Grand-Saconnex',
+    dropoffLat: 46.2335, dropoffLng: 6.1120,
+    estimatedPrice: 28, estimatedDistance: 5.3, estimatedDuration: 11,
     vehicleTypeRequired: 'standard',
-    networkCommission: 8.50,
-    netPriceForDriver: 76.50,
-    senderDriverName: 'Domingo M.',
-    expiresAt: new Date(Date.now() + 300000),
-    createdAt: new Date(Date.now() - 60000),
-    meta: { date: new Date().toISOString(), source: 'private_dispatch', sujet: 'Dispatch réseau', lien: '', description: 'Transféré par Domingo', eligible: true },
+    expiresAt: new Date(Date.now() + 30000), createdAt: new Date(),
+    meta: makeMeta('qr_code', 'Course privée', 'Client QR habituel'),
+  },
+  {
+    id: 'priv-5', type: 'private_client', source: 'qr_code',
+    clientDisplayName: 'Nadia Benali',
+    clientAvatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
+    clientIsProtected: false, clientRating: 4.8,
+    clientNote: 'Préfère la musique classique',
+    pickupAddress: 'Rue de la Servette 72, Genève',
+    pickupLat: 46.2140, pickupLng: 6.1340,
+    dropoffAddress: 'ONU — Palais des Nations',
+    dropoffLat: 46.2265, dropoffLng: 6.1400,
+    estimatedPrice: 22, estimatedDistance: 3.6, estimatedDuration: 9,
+    vehicleTypeRequired: 'standard',
+    expiresAt: new Date(Date.now() + 30000), createdAt: new Date(),
+    meta: makeMeta('qr_code', 'Course privée', 'Client privé régulier'),
+  },
+
+  // === 5 POOL GÉNÉRAL ===
+  {
+    id: 'pool-1', type: 'caby_direct', source: 'caby_app',
+    clientDisplayName: 'Thomas R.',
+    clientIsProtected: false, clientRating: 4.5,
+    pickupAddress: 'Plainpalais, Genève',
+    pickupLat: 46.1967, pickupLng: 6.1420,
+    dropoffAddress: 'Carouge, Place du Marché',
+    dropoffLat: 46.1835, dropoffLng: 6.1395,
+    estimatedPrice: 15, estimatedDistance: 2.1, estimatedDuration: 6,
+    vehicleTypeRequired: 'standard',
+    expiresAt: new Date(Date.now() + 20000), createdAt: new Date(),
+    meta: makeMeta('caby_app', 'Caby Ride', 'Pool général'),
+  },
+  {
+    id: 'pool-2', type: 'caby_direct', source: 'caby_app',
+    clientDisplayName: 'Laura M.',
+    clientAvatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
+    clientIsProtected: false, clientRating: 4.3,
+    pickupAddress: 'Eaux-Vives, Genève',
+    pickupLat: 46.2020, pickupLng: 6.1630,
+    dropoffAddress: 'Champel, Av. de Champel 45',
+    dropoffLat: 46.1910, dropoffLng: 6.1530,
+    estimatedPrice: 19, estimatedDistance: 3.2, estimatedDuration: 8,
+    vehicleTypeRequired: 'standard',
+    expiresAt: new Date(Date.now() + 20000), createdAt: new Date(),
+    meta: makeMeta('caby_app', 'Caby Ride', 'Pool général'),
+  },
+  {
+    id: 'pool-3', type: 'caby_direct', source: 'caby_app',
+    clientDisplayName: 'Ahmed K.',
+    clientIsProtected: false, clientRating: 4.1,
+    pickupAddress: 'Jonction, Bd Carl-Vogt',
+    pickupLat: 46.1980, pickupLng: 6.1350,
+    dropoffAddress: 'Vernier, Route de Meyrin 150',
+    dropoffLat: 46.2170, dropoffLng: 6.0900,
+    estimatedPrice: 25, estimatedDistance: 5.8, estimatedDuration: 13,
+    vehicleTypeRequired: 'standard',
+    expiresAt: new Date(Date.now() + 20000), createdAt: new Date(),
+    meta: makeMeta('caby_app', 'Caby Ride', 'Pool général'),
+  },
+  {
+    id: 'pool-4', type: 'caby_direct', source: 'caby_app',
+    clientDisplayName: 'Isabelle C.',
+    clientAvatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
+    clientIsProtected: false, clientRating: 4.8,
+    pickupAddress: 'Pâquis, Rue de Berne 12',
+    pickupLat: 46.2110, pickupLng: 6.1480,
+    dropoffAddress: 'Lancy, Ch. des Palettes 18',
+    dropoffLat: 46.1820, dropoffLng: 6.1190,
+    estimatedPrice: 32, estimatedDistance: 6.9, estimatedDuration: 15,
+    vehicleTypeRequired: 'standard',
+    expiresAt: new Date(Date.now() + 20000), createdAt: new Date(),
+    meta: makeMeta('caby_app', 'Caby Ride', 'Pool général'),
+  },
+  {
+    id: 'pool-5', type: 'caby_direct', source: 'caby_app',
+    clientDisplayName: 'Nicolas B.',
+    clientIsProtected: false, clientRating: 4.4,
+    pickupAddress: 'Acacias, Rue des Acacias',
+    pickupLat: 46.1920, pickupLng: 6.1330,
+    dropoffAddress: 'Thônex, Rue de Genève 60',
+    dropoffLat: 46.1950, dropoffLng: 6.1980,
+    estimatedPrice: 28, estimatedDistance: 7.5, estimatedDuration: 17,
+    vehicleTypeRequired: 'standard',
+    expiresAt: new Date(Date.now() + 20000), createdAt: new Date(),
+    meta: makeMeta('caby_app', 'Caby Ride', 'Pool général'),
   },
 ];
 
@@ -110,8 +173,9 @@ const DriverRadarPage: React.FC = () => {
   const [legalStatus] = useState<LegalStatus>('green');
   const [courses, setCourses] = useState<RadarCourse[]>([]);
   const [motoCheckCourse, setMotoCheckCourse] = useState<RadarCourse | null>(null);
+  const [acceptedCourse, setAcceptedCourse] = useState<RadarCourse | null>(null);
   const [driverMode, setDriverMode] = useState<'passenger' | 'logistics'>('passenger');
-  const [stats] = useState({ todayRides: 3, todayEarnings: 145, onlineMinutes: 127 });
+  const [stats, setStats] = useState({ todayRides: 3, todayEarnings: 145, onlineMinutes: 127 });
 
   const handleSwitchMode = () => {
     if (driverMode === 'passenger') {
@@ -136,7 +200,7 @@ const DriverRadarPage: React.FC = () => {
       setTimeout(() => {
         setCourses(demoCourses.map(c => ({
           ...c,
-          expiresAt: new Date(Date.now() + (c.type === 'private_client' ? 30000 : c.type === 'caby_direct' ? 15000 : 300000)),
+          expiresAt: new Date(Date.now() + (c.type === 'private_client' ? 30000 : 20000)),
           createdAt: new Date(),
         })));
       }, 2000);
@@ -154,9 +218,20 @@ const DriverRadarPage: React.FC = () => {
       setMotoCheckCourse(course);
       return;
     }
-    toast.success('Course acceptée !', { description: `${course.pickupAddress} → ${course.dropoffAddress}` });
     setCourses(prev => prev.filter(c => c.id !== courseId));
+    setAcceptedCourse(course);
   }, [courses]);
+
+  const handleAcceptComplete = useCallback(() => {
+    if (acceptedCourse) {
+      setStats(prev => ({
+        ...prev,
+        todayRides: prev.todayRides + 1,
+        todayEarnings: prev.todayEarnings + acceptedCourse.estimatedPrice,
+      }));
+    }
+    setAcceptedCourse(null);
+  }, [acceptedCourse]);
 
   const handleRefuse = useCallback((courseId: string) => {
     setCourses(prev => prev.filter(c => c.id !== courseId));
@@ -187,8 +262,8 @@ const DriverRadarPage: React.FC = () => {
 
   const handleMotoCheckConfirm = useCallback(() => {
     if (!motoCheckCourse) return;
-    toast.success('Course Moto acceptée !', { description: `Équipement vérifié · ${motoCheckCourse.pickupAddress}` });
     setCourses(prev => prev.filter(c => c.id !== motoCheckCourse.id));
+    setAcceptedCourse(motoCheckCourse);
     setMotoCheckCourse(null);
   }, [motoCheckCourse]);
 
@@ -231,14 +306,13 @@ const DriverRadarPage: React.FC = () => {
       )}
 
       <div className="px-4">
-        {isOnline && courses.length === 0 && (
+        {isOnline && courses.length === 0 && !acceptedCourse && (
           <>
             <RadarAnimation isActive={true} />
             <RadarEmptyState stats={stats} />
           </>
         )}
 
-        {/* Tinder-style full-screen cards */}
         {isOnline && sortedCourses.length > 0 && (
           <div className="relative" style={{ height: '520px' }}>
             {sortedCourses.slice(0, 3).map((course, index) => (
@@ -287,6 +361,16 @@ const DriverRadarPage: React.FC = () => {
           onClose={() => setMotoCheckCourse(null)}
         />
       )}
+
+      {/* Accepted ride simulation overlay */}
+      <AnimatePresence>
+        {acceptedCourse && (
+          <AcceptedRideOverlay
+            course={acceptedCourse}
+            onComplete={handleAcceptComplete}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
