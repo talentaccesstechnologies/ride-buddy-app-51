@@ -6,7 +6,6 @@ import SuperDriverBadgeCard from '@/components/tatfleet/SuperDriverBadgeCard';
 import ScoreBreakdown from '@/components/tatfleet/ScoreBreakdown';
 import LevelHistory from '@/components/tatfleet/LevelHistory';
 import MonthlyLeaderboard, { type LeaderboardEntry } from '@/components/tatfleet/MonthlyLeaderboard';
-import DriverPhotoUpload from '@/components/tatfleet/DriverPhotoUpload';
 import { type DriverLevel } from '@/lib/driverLevels';
 
 // ── Mock data ──
@@ -32,16 +31,16 @@ const AVATAR_COLORS = [
 ];
 
 const MOCK_LEADERBOARD: LeaderboardEntry[] = [
-  { rank: 1, driverName: 'Moussa Diallo', initials: 'MD', avatarColor: AVATAR_COLORS[0], driverCity: 'Genève', score: 94, rating: 4.97, rides: 185, isWinner: true },
-  { rank: 2, driverName: 'Alexandre Koné', initials: 'AK', avatarColor: AVATAR_COLORS[1], driverCity: 'Carouge', score: 91, rating: 4.93, rides: 172 },
-  { rank: 3, driverName: 'Youssef Benali', initials: 'YB', avatarColor: AVATAR_COLORS[2], driverCity: 'Vernier', score: 88, rating: 4.90, rides: 158 },
-  { rank: 4, driverName: 'Jean-Paul Müller', initials: 'JM', avatarColor: AVATAR_COLORS[3], driverCity: 'Lancy', score: 85, rating: 4.87, rides: 127, isCurrentUser: true },
-  { rank: 5, driverName: 'Pierre Lugrin', initials: 'PL', avatarColor: AVATAR_COLORS[4], driverCity: 'Meyrin', score: 82, rating: 4.85, rides: 145 },
-  { rank: 6, driverName: 'David Rouiller', initials: 'DR', avatarColor: AVATAR_COLORS[5], driverCity: 'Onex', score: 80, rating: 4.82, rides: 130 },
-  { rank: 7, driverName: 'Samuel Tettamanti', initials: 'ST', avatarColor: AVATAR_COLORS[6], driverCity: 'Thônex', score: 78, rating: 4.80, rides: 118 },
-  { rank: 8, driverName: 'Marc Auberson', initials: 'MA', avatarColor: AVATAR_COLORS[7], driverCity: 'Chêne-Bourg', score: 75, rating: 4.78, rides: 110 },
-  { rank: 9, driverName: 'Nicolas Favre', initials: 'NF', avatarColor: AVATAR_COLORS[8], driverCity: 'Plan-les-Ouates', score: 72, rating: 4.75, rides: 105 },
-  { rank: 10, driverName: 'Karim Sadki', initials: 'KS', avatarColor: AVATAR_COLORS[9], driverCity: 'Bernex', score: 70, rating: 4.72, rides: 95 },
+  { rank: 1, driverName: 'Moussa Diallo', initials: 'MD', avatarColor: AVATAR_COLORS[0], driverAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face', driverCity: 'Genève', score: 94, rating: 4.97, rides: 185, isWinner: true },
+  { rank: 2, driverName: 'Alexandre Koné', initials: 'AK', avatarColor: AVATAR_COLORS[1], driverAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face', driverCity: 'Carouge', score: 91, rating: 4.93, rides: 172 },
+  { rank: 3, driverName: 'Youssef Benali', initials: 'YB', avatarColor: AVATAR_COLORS[2], driverAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face', driverCity: 'Vernier', score: 88, rating: 4.90, rides: 158 },
+  { rank: 4, driverName: 'Jean-Paul Müller', initials: 'JM', avatarColor: AVATAR_COLORS[3], driverAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face', driverCity: 'Lancy', score: 85, rating: 4.87, rides: 127, isCurrentUser: true },
+  { rank: 5, driverName: 'Pierre Lugrin', initials: 'PL', avatarColor: AVATAR_COLORS[4], driverAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face', driverCity: 'Meyrin', score: 82, rating: 4.85, rides: 145 },
+  { rank: 6, driverName: 'David Rouiller', initials: 'DR', avatarColor: AVATAR_COLORS[5], driverAvatar: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face', driverCity: 'Onex', score: 80, rating: 4.82, rides: 130 },
+  { rank: 7, driverName: 'Samuel Tettamanti', initials: 'ST', avatarColor: AVATAR_COLORS[6], driverAvatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face', driverCity: 'Thônex', score: 78, rating: 4.80, rides: 118 },
+  { rank: 8, driverName: 'Marc Auberson', initials: 'MA', avatarColor: AVATAR_COLORS[7], driverAvatar: 'https://images.unsplash.com/photo-1480455624313-e29b44bbafae?w=150&h=150&fit=crop&crop=face', driverCity: 'Chêne-Bourg', score: 75, rating: 4.78, rides: 110 },
+  { rank: 9, driverName: 'Nicolas Favre', initials: 'NF', avatarColor: AVATAR_COLORS[8], driverAvatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&h=150&fit=crop&crop=face', driverCity: 'Plan-les-Ouates', score: 72, rating: 4.75, rides: 105 },
+  { rank: 10, driverName: 'Karim Sadki', initials: 'KS', avatarColor: AVATAR_COLORS[9], driverAvatar: 'https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=150&h=150&fit=crop&crop=face', driverCity: 'Bernex', score: 70, rating: 4.72, rides: 95 },
 ];
 
 const currentMonthFr = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date());
@@ -202,15 +201,6 @@ const DriverClubPage: React.FC = () => {
                 Versé automatiquement sur votre prochain paiement
               </p>
             </div>
-          </div>
-
-          {/* Photo upload */}
-          <div className="px-5">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-1 h-4 rounded-full bg-muted-foreground/30" />
-              <h3 className="text-sm font-display font-bold text-foreground">Mon Profil</h3>
-            </div>
-            <DriverPhotoUpload />
           </div>
 
           {/* Quarterly History */}
