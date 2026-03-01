@@ -50,6 +50,9 @@ import DriverDashboardPage from "./pages/cabyDriver/DriverDashboardPage";
 import DriverProfilePage from "./pages/cabyDriver/DriverProfilePage";
 import DriverEarningsPage from "./pages/cabyDriver/DriverEarningsPage";
 import InvitePage from "./pages/InvitePage";
+import PartnerLoginPage from "./pages/partner/PartnerLoginPage";
+import PartnerDashboardPage from "./pages/partner/PartnerDashboardPage";
+import { PartnerProvider } from "@/contexts/PartnerContext";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -58,6 +61,7 @@ const App = () => (
       <GoogleMapsProvider>
       <AuthProvider>
         <RideProvider>
+          <PartnerProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -118,10 +122,16 @@ const App = () => (
               {/* Invite */}
               <Route path="/invite/:code" element={<InvitePage />} />
 
+              {/* Partner */}
+              <Route path="/partner/login" element={<PartnerLoginPage />} />
+              <Route path="/partner/dashboard" element={<PartnerDashboardPage />} />
+              <Route path="/partner" element={<Navigate to="/partner/login" replace />} />
+
               {/* 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
+          </PartnerProvider>
         </RideProvider>
       </AuthProvider>
       </GoogleMapsProvider>
