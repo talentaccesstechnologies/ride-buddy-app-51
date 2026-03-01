@@ -219,8 +219,13 @@ const DriverDashboardPage: React.FC = () => {
   };
 
   const toggleColisMode = () => {
+    if (driverMode.mode === 'ride') {
+      // Switching TO colis → navigate to colis flow
+      navigate('/caby/driver/colis');
+      return;
+    }
     driverMode.toggleMode();
-    if (driverMode.mode === 'colis') setSelectedPoint(null);
+    setSelectedPoint(null);
   };
 
   // Tinder card handlers
@@ -538,7 +543,7 @@ const DriverDashboardPage: React.FC = () => {
             dailyGoal={400}
             expanded={sheetExpanded}
             onToggleExpand={() => setSheetExpanded((v) => !v)}
-            onViewMissions={() => navigate('/caby/driver/logistics')}
+            onViewMissions={() => navigate('/caby/driver/colis')}
           />
         )}
 
