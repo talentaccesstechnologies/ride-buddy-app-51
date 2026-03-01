@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_driver_affiliations: {
+        Row: {
+          client_id: string
+          created_at: string
+          driver_id: string
+          id: string
+          invite_code: string | null
+          last_ride_at: string | null
+          source: string
+          total_revenue: number
+          total_rides: number
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          driver_id: string
+          id?: string
+          invite_code?: string | null
+          last_ride_at?: string | null
+          source?: string
+          total_revenue?: number
+          total_rides?: number
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          driver_id?: string
+          id?: string
+          invite_code?: string | null
+          last_ride_at?: string | null
+          source?: string
+          total_revenue?: number
+          total_rides?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_driver_affiliations_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_driver_affiliations_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deliveries: {
         Row: {
           allow_door_drop: boolean | null
@@ -304,6 +355,41 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "driver_availability_log_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driver_invite_codes: {
+        Row: {
+          code: string
+          created_at: string
+          driver_id: string
+          id: string
+          is_active: boolean
+          uses_count: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          driver_id: string
+          id?: string
+          is_active?: boolean
+          uses_count?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          driver_id?: string
+          id?: string
+          is_active?: boolean
+          uses_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_invite_codes_driver_id_fkey"
             columns: ["driver_id"]
             isOneToOne: false
             referencedRelation: "profiles"
