@@ -22,6 +22,7 @@ interface GoogleMapProps {
 const containerStyle = {
   width: '100%',
   height: '100%',
+  colorScheme: 'light' as const,
 };
 
 // Waze-inspired map style: vivid cartoon-like colors

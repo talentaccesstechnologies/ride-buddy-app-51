@@ -18,7 +18,7 @@ import QueueToleranceOverlay from '@/components/cabyDriver/QueueToleranceOverlay
 import { type IncomingRide } from '@/components/cabyDriver/IncomingRideOverlay';
 
 const RADAR_RADIUS_M = 5000;
-const containerStyle: React.CSSProperties = { width: '100%', height: '100%' };
+const containerStyle: React.CSSProperties = { width: '100%', height: '100%', colorScheme: 'light' };
 
 /* ── Partner points ── */
 interface PartnerPoint {

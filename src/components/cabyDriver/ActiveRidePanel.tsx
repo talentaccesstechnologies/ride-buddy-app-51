@@ -20,7 +20,7 @@ interface Props {
   onSimulatedPositionChange?: (pos: { lat: number; lng: number }) => void;
 }
 
-const containerStyle: React.CSSProperties = { width: '100%', height: '100%' };
+const containerStyle: React.CSSProperties = { width: '100%', height: '100%', colorScheme: 'light' };
 
 const PICKUP_ICON = (() => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 32 42"><path d="M16 40 C16 40 2 26 2 14 C2 6.3 8.3 0 16 0 S30 6.3 30 14 C30 26 16 40 16 40Z" fill="#22C55E" stroke="white" stroke-width="2"/><circle cx="16" cy="14" r="6" fill="white"/></svg>`;
