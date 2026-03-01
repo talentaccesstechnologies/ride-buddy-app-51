@@ -138,9 +138,9 @@ const DriverLogisticsPage: React.FC = () => {
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="px-5 pt-14 pb-4">
-        <button onClick={() => navigate('/caby/driver/radar')} className="flex items-center gap-2 text-muted-foreground mb-4">
+        <button onClick={() => navigate('/caby/driver/dashboard')} className="flex items-center gap-2 text-muted-foreground mb-4">
           <ArrowLeft className="w-5 h-5" />
-          <span className="text-sm">Radar</span>
+          <span className="text-sm">Dashboard</span>
         </button>
         <div className="flex items-center gap-3 mb-2">
           <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center">
