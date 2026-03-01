@@ -11,7 +11,7 @@ interface ConfirmRideMapProps {
   polyline?: string;
 }
 
-const containerStyle = { width: '100%', height: '100%' };
+const containerStyle = { width: '100%', height: '100%', colorScheme: 'light' as const };
 
 const ConfirmRideMap: React.FC<ConfirmRideMapProps> = ({
   pickupLat, pickupLng, dropoffLat, dropoffLng, polyline,

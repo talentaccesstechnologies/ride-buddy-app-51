@@ -6,7 +6,7 @@ import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 import DriverBottomNav from '@/components/cabyDriver/DriverBottomNav';
 
 const RADAR_RADIUS_M = 5000;
-const containerStyle: React.CSSProperties = { width: '100%', height: '100%' };
+const containerStyle: React.CSSProperties = { width: '100%', height: '100%', colorScheme: 'light' };
 
 interface PartnerPoint {
   id: string;

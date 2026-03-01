@@ -203,7 +203,7 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
 
       {/* Carte Google Maps */}
       <GoogleMap
-        mapContainerStyle={{ width: "100%", flex: 1 }}
+        mapContainerStyle={{ width: "100%", flex: 1, colorScheme: 'light' as const }}
         center={driverPosition || destination}
         zoom={15}
         options={MAP_OPTIONS}

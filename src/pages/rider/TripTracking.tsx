@@ -387,7 +387,7 @@ const TripTracking: React.FC = () => {
       {/* Full-screen map */}
       {isLoaded && (
         <GoogleMap
-          mapContainerStyle={{ width: '100%', height: '100%' }}
+          mapContainerStyle={{ width: '100%', height: '100%', colorScheme: 'light' as const }}
           center={driverPos || pickupPos}
           zoom={15}
           options={MAP_OPTIONS}

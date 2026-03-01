@@ -186,7 +186,7 @@ const SearchingDriver: React.FC = () => {
       {/* Google Maps background */}
       {isLoaded && (
         <GoogleMap
-          mapContainerStyle={{ width: '100%', height: '100%' }}
+          mapContainerStyle={{ width: '100%', height: '100%', colorScheme: 'light' as const }}
           center={pickupPos}
           zoom={15}
           options={MAP_OPTIONS}
