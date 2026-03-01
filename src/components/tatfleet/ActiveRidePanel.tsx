@@ -12,10 +12,12 @@ interface Props {
   ride: IncomingRide;
   driverPosition: { lat: number; lng: number };
   driverMode: DriverMode;
+  simulate?: boolean;
   onArrived: () => void;
   onComplete: (price: number) => void;
   onCancel: () => void;
   onAcceptNextMission?: (mission: QueuedMission) => void;
+  onSimulatedPositionChange?: (pos: { lat: number; lng: number }) => void;
 }
 
 const containerStyle: React.CSSProperties = { width: '100%', height: '100%' };
@@ -30,11 +32,35 @@ const DROPOFF_ICON = (() => {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 })();
 
-const createDriverArrow = (heading: number): string => {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
-    <circle cx="22" cy="22" r="20" fill="rgba(59,130,246,0.15)" stroke="rgba(59,130,246,0.3)" stroke-width="1"/>
-    <circle cx="22" cy="22" r="12" fill="#3B82F6" stroke="white" stroke-width="3"/>
-    <polygon points="22,6 18,16 26,16" fill="#3B82F6" stroke="white" stroke-width="1.5" transform="rotate(${heading},22,22)"/>
+const createDriverCarIcon = (heading: number = 0): string => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+    <defs>
+      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000" flood-opacity="0.35"/>
+      </filter>
+      <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#D4B45C"/>
+        <stop offset="50%" stop-color="#C9A84C"/>
+        <stop offset="100%" stop-color="#A8893A"/>
+      </linearGradient>
+      <linearGradient id="windshield" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1a1a2e"/>
+        <stop offset="100%" stop-color="#2d2d44"/>
+      </linearGradient>
+    </defs>
+    <g transform="rotate(${heading}, 24, 24)" filter="url(#shadow)">
+      <rect x="14" y="6" width="20" height="36" rx="8" ry="8" fill="url(#carBody)" stroke="#B8993F" stroke-width="0.8"/>
+      <rect x="16.5" y="16" width="15" height="14" rx="4" ry="4" fill="url(#windshield)" opacity="0.9"/>
+      <rect x="17.5" y="12" width="13" height="6" rx="3" ry="2" fill="url(#windshield)" opacity="0.85"/>
+      <rect x="17.5" y="30" width="13" height="5" rx="3" ry="2" fill="url(#windshield)" opacity="0.75"/>
+      <rect x="16" y="7" width="5" height="2.5" rx="1" fill="#FFF8DC" opacity="0.95"/>
+      <rect x="27" y="7" width="5" height="2.5" rx="1" fill="#FFF8DC" opacity="0.95"/>
+      <rect x="16" y="38.5" width="5" height="2" rx="1" fill="#E74C3C" opacity="0.85"/>
+      <rect x="27" y="38.5" width="5" height="2" rx="1" fill="#E74C3C" opacity="0.85"/>
+      <ellipse cx="12.5" cy="18" rx="2" ry="1.2" fill="#C9A84C" stroke="#B8993F" stroke-width="0.4"/>
+      <ellipse cx="35.5" cy="18" rx="2" ry="1.2" fill="#C9A84C" stroke="#B8993F" stroke-width="0.4"/>
+      <line x1="24" y1="8" x2="24" y2="11" stroke="#B8993F" stroke-width="0.6" opacity="0.5"/>
+    </g>
   </svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 };
@@ -69,7 +95,7 @@ const haversineM = (a: { lat: number; lng: number }, b: { lat: number; lng: numb
   return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
 };
 
-const ActiveRidePanel: React.FC<Props> = ({ ride, driverPosition, driverMode, onArrived, onComplete, onCancel, onAcceptNextMission }) => {
+const ActiveRidePanel: React.FC<Props> = ({ ride, driverPosition, driverMode, simulate = false, onArrived, onComplete, onCancel, onAcceptNextMission, onSimulatedPositionChange }) => {
   const { isLoaded } = useGoogleMaps();
   const [phase, setPhase] = useState<RidePhase>('pickup');
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
@@ -80,49 +106,100 @@ const ActiveRidePanel: React.FC<Props> = ({ ride, driverPosition, driverMode, on
   const [showNextTeaser, setShowNextTeaser] = useState(false);
   const [rating, setRating] = useState(0);
   const [isFollowing, setIsFollowing] = useState(true);
+  const [simPos, setSimPos] = useState<{ lat: number; lng: number } | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const completionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevPosRef = useRef(driverPosition);
   const lastRouteKeyRef = useRef('');
+  const simIndexRef = useRef(0);
+  const simPathRef = useRef<{ lat: number; lng: number }[]>([]);
+  const simIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // The effective position used for display (simulated or real)
+  const effectivePos = simulate && simPos ? simPos : driverPosition;
 
   const destination = phase === 'pickup'
     ? { lat: ride.pickupLat, lng: ride.pickupLng }
     : { lat: ride.dropoffLat, lng: ride.dropoffLng };
 
+  // ── Route simulation: move driver along decoded path ──
+  useEffect(() => {
+    if (!simulate || !directions || phase === 'completed') return;
+    const path = directions.routes[0]?.overview_path;
+    if (!path || path.length === 0) return;
+
+    // Subsample: insert intermediate points for smoother movement
+    const points: { lat: number; lng: number }[] = [];
+    for (let i = 0; i < path.length - 1; i++) {
+      const a = { lat: path[i].lat(), lng: path[i].lng() };
+      const b = { lat: path[i + 1].lat(), lng: path[i + 1].lng() };
+      const dist = haversineM(a, b);
+      const segments = Math.max(1, Math.floor(dist / 30)); // ~30m per step
+      for (let j = 0; j < segments; j++) {
+        const t = j / segments;
+        points.push({ lat: a.lat + (b.lat - a.lat) * t, lng: a.lng + (b.lng - a.lng) * t });
+      }
+    }
+    points.push({ lat: path[path.length - 1].lat(), lng: path[path.length - 1].lng() });
+
+    simPathRef.current = points;
+    simIndexRef.current = 0;
+    setSimPos(points[0]);
+
+    simIntervalRef.current = setInterval(() => {
+      const idx = simIndexRef.current + 1;
+      if (idx >= points.length) {
+        if (simIntervalRef.current) clearInterval(simIntervalRef.current);
+        return;
+      }
+      simIndexRef.current = idx;
+      const newPos = points[idx];
+      setSimPos(newPos);
+      onSimulatedPositionChange?.(newPos);
+    }, 200); // Move every 200ms for fast visible simulation
+
+    return () => { if (simIntervalRef.current) clearInterval(simIntervalRef.current); };
+  }, [simulate, directions, phase]);
+
+  // Clean up simulation on unmount
+  useEffect(() => {
+    return () => { if (simIntervalRef.current) clearInterval(simIntervalRef.current); };
+  }, []);
+
   // Compute heading from movement
   useEffect(() => {
     const prev = prevPosRef.current;
-    const dx = driverPosition.lng - prev.lng;
-    const dy = driverPosition.lat - prev.lat;
+    const dx = effectivePos.lng - prev.lng;
+    const dy = effectivePos.lat - prev.lat;
     if (Math.abs(dx) > 0.00001 || Math.abs(dy) > 0.00001) {
       const angle = (Math.atan2(dx, dy) * 180) / Math.PI;
       setHeading(angle);
     }
-    prevPosRef.current = driverPosition;
-  }, [driverPosition]);
+    prevPosRef.current = effectivePos;
+  }, [effectivePos]);
 
   // Follow driver position on map
   useEffect(() => {
     if (!mapRef.current || !isFollowing) return;
-    mapRef.current.panTo(driverPosition);
+    mapRef.current.panTo(effectivePos);
     if (mapRef.current.getZoom()! < 16) mapRef.current.setZoom(16);
     if (mapRef.current.getHeading && heading !== 0) {
-      // heading property is only available on vector maps; graceful fallback
       try { (mapRef.current as any).setHeading?.(heading); } catch {}
     }
-  }, [driverPosition, isFollowing, heading]);
+  }, [effectivePos, isFollowing, heading]);
 
-  // Compute / recompute route
+  // Compute / recompute route (only on initial + phase change, not every sim tick)
   useEffect(() => {
     if (!isLoaded || phase === 'completed') return;
-    const routeKey = `${phase}-${driverPosition.lat.toFixed(4)}-${driverPosition.lng.toFixed(4)}`;
+    const pos = simulate && simPos ? simPos : driverPosition;
+    const routeKey = `${phase}-${pos.lat.toFixed(3)}-${pos.lng.toFixed(3)}`;
     // Avoid spamming: only recompute if moved significantly or phase changed
     if (routeKey === lastRouteKeyRef.current) return;
     lastRouteKeyRef.current = routeKey;
 
     const service = new google.maps.DirectionsService();
     service.route(
-      { origin: driverPosition, destination, travelMode: google.maps.TravelMode.DRIVING },
+      { origin: pos, destination, travelMode: google.maps.TravelMode.DRIVING },
       (result, status) => {
         if (status === 'OK' && result) {
           setDirections(result);
@@ -145,7 +222,7 @@ const ActiveRidePanel: React.FC<Props> = ({ ride, driverPosition, driverMode, on
         }
       }
     );
-  }, [isLoaded, phase, driverPosition.lat, driverPosition.lng, destination.lat, destination.lng]);
+  }, [isLoaded, phase, driverPosition.lat, driverPosition.lng, destination.lat, destination.lng, simulate, simPos]);
 
   // Advance current step based on proximity to step endpoints
   useEffect(() => {
@@ -156,7 +233,7 @@ const ActiveRidePanel: React.FC<Props> = ({ ride, driverPosition, driverMode, on
     for (let i = currentStepIdx; i < leg.steps.length; i++) {
       const stepEnd = leg.steps[i].end_location;
       if (!stepEnd) continue;
-      const dist = haversineM(driverPosition, { lat: stepEnd.lat(), lng: stepEnd.lng() });
+      const dist = haversineM(effectivePos, { lat: stepEnd.lat(), lng: stepEnd.lng() });
       if (dist < 50) {
         // Passed this step
         if (i + 1 < leg.steps.length) {
@@ -167,7 +244,7 @@ const ActiveRidePanel: React.FC<Props> = ({ ride, driverPosition, driverMode, on
         break;
       }
     }
-  }, [driverPosition, directions, navSteps, currentStepIdx]);
+  }, [effectivePos, directions, navSteps, currentStepIdx]);
 
   // Show "next ride" teaser after 3s in trip phase
   useEffect(() => {
@@ -203,7 +280,7 @@ const ActiveRidePanel: React.FC<Props> = ({ ride, driverPosition, driverMode, on
   const nextStep = navSteps[currentStepIdx + 1] || null;
   const initials = ride.clientName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 
-  const driverIcon = useMemo(() => createDriverArrow(heading), [heading]);
+  const driverIcon = useMemo(() => createDriverCarIcon(heading), [heading]);
 
   if (!isLoaded) return null;
 
@@ -269,7 +346,7 @@ const ActiveRidePanel: React.FC<Props> = ({ ride, driverPosition, driverMode, on
         <GoogleMap
           mapContainerStyle={containerStyle}
           zoom={16}
-          center={driverPosition}
+          center={effectivePos}
           onLoad={(map) => { mapRef.current = map; }}
           onDragStart={() => setIsFollowing(false)}
           options={{
@@ -283,10 +360,10 @@ const ActiveRidePanel: React.FC<Props> = ({ ride, driverPosition, driverMode, on
             ],
           }}
         >
-          {/* Driver arrow marker */}
+          {/* Driver car icon */}
           <Marker
-            position={driverPosition}
-            icon={{ url: driverIcon, scaledSize: new google.maps.Size(44, 44), anchor: new google.maps.Point(22, 22) }}
+            position={effectivePos}
+            icon={{ url: driverIcon, scaledSize: new google.maps.Size(48, 48), anchor: new google.maps.Point(24, 24) }}
             zIndex={999}
           />
           {/* Destination marker */}

@@ -82,22 +82,22 @@ const createDriverCarIcon = (heading: number = 0): string => {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 };
 
-/* ── Demo incoming ride ── */
+/* ── Demo incoming ride — Gare des Eaux-Vives → Dardagny ── */
 const DEMO_RIDE: IncomingRide = {
   id: 'sim-1',
   clientName: 'Sophie Müller',
   clientPhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
-  pickupAddress: 'Rue du Rhône 48, Genève',
-  pickupLat: 46.2017,
-  pickupLng: 6.1468,
-  dropoffAddress: 'Aéroport de Genève (GVA)',
-  dropoffLat: 46.2381,
-  dropoffLng: 6.1089,
-  distanceFromDriver: 1.2,
-  estimatedPrice: 45,
+  pickupAddress: 'Gare des Eaux-Vives, Genève',
+  pickupLat: 46.1985,
+  pickupLng: 6.1615,
+  dropoffAddress: 'Chemin du Rail 5, La Plaine, Dardagny',
+  dropoffLat: 46.1780,
+  dropoffLng: 6.0053,
+  distanceFromDriver: 0.8,
+  estimatedPrice: 52,
   serviceType: 'standard',
-  estimatedDuration: 18,
-  estimatedDistance: 12.4,
+  estimatedDuration: 25,
+  estimatedDistance: 18.6,
 };
 
 /* ── Page ── */
@@ -449,9 +449,11 @@ const DriverDashboardPage: React.FC = () => {
           ride={activeRide}
           driverPosition={position}
           driverMode={driverMode.mode}
+          simulate
           onArrived={handleRideArrived}
           onComplete={handleRideComplete}
           onCancel={() => { setActiveRide(null); toast.info('Course annulée'); }}
+          onSimulatedPositionChange={(pos) => setPosition(pos)}
           onAcceptNextMission={(mission) => {
             driverMode.acceptQueuedMission(mission);
             toast.success('Mission suivante réservée !');
