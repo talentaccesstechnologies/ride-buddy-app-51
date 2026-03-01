@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Phone, X, Star, Shield, ChevronUp, ChevronDown, Award } from 'lucide-react';
+import { Phone, X, Star, Shield, ChevronUp, ChevronDown, Award, Download } from 'lucide-react';
 import { useRide } from '@/contexts/RideContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -353,6 +353,25 @@ const TripTracking: React.FC = () => {
               ))}
             </div>
           </div>
+
+          <Button
+            variant="outline"
+            className="w-full h-11 rounded-2xl text-sm mb-3"
+            onClick={() => {
+              // Generate a simple text receipt
+              const receipt = `CABY — Facture\n\nChauffeur: ${currentDriver.name}\nVéhicule: ${currentDriver.vehicle.make} ${currentDriver.vehicle.model}\nPlaque: ${currentDriver.vehicle.plate}\n\nDistance: ${estimatedDistance} km\nDurée: ${estimatedDuration} min\nMontant: ${estimatedPrice?.toFixed(2)} CHF\n\nMerci d'avoir choisi Caby !`;
+              const blob = new Blob([receipt], { type: 'text/plain' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `facture-caby-${Date.now()}.txt`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Télécharger la facture
+          </Button>
 
           <Button onClick={handleFinish} className="w-full h-12 rounded-2xl text-base font-bold">
             Terminé
