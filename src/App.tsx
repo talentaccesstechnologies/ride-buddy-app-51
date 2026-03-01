@@ -43,6 +43,7 @@ import InboxPage from "./pages/rider/InboxPage";
 import DriverRadarPage from "./pages/cabyDriver/DriverRadarPage";
 import DriverHelpPage from "./pages/cabyDriver/DriverHelpPage";
 import DriverLogisticsPage from "./pages/cabyDriver/DriverLogisticsPage";
+import DriverColisFlowPage from "./pages/cabyDriver/DriverColisFlowPage";
 import DriverClubPage from "./pages/cabyDriver/DriverClubPage";
 import DriverMapPage from "./pages/cabyDriver/DriverMapPage";
 import DriverDashboardPage from "./pages/cabyDriver/DriverDashboardPage";
@@ -109,6 +110,7 @@ const App = () => (
               <Route path="/caby/driver/dashboard" element={<DriverDashboardPage />} />
               <Route path="/caby/driver/help" element={<DriverHelpPage />} />
               <Route path="/caby/driver/logistics" element={<DriverLogisticsPage />} />
+              <Route path="/caby/driver/colis" element={<DriverColisFlowPage />} />
               <Route path="/caby/driver/club" element={<DriverClubPage />} />
               <Route path="/caby/driver/profile" element={<DriverProfilePage />} />
               <Route path="/caby/driver/earnings" element={<DriverEarningsPage />} />
