@@ -90,6 +90,10 @@ const App = () => (
               <Route path="/rider" element={<Navigate to="/caby" replace />} />
               <Route path="/rider/*" element={<Navigate to="/caby" replace />} />
 
+              {/* Legacy driver routes - redirect to /tatfleet */}
+              <Route path="/driver" element={<Navigate to="/tatfleet/radar" replace />} />
+              <Route path="/driver/*" element={<Navigate to="/tatfleet/radar" replace />} />
+
               {/* TATFleet - Driver Interface */}
               <Route path="/tatfleet" element={<Navigate to="/tatfleet/radar" replace />} />
               <Route path="/tatfleet/radar" element={<DriverRadarPage />} />
