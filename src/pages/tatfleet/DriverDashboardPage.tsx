@@ -110,6 +110,7 @@ const DriverDashboardPage: React.FC = () => {
   const isColisMode = driverMode.mode === 'colis';
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
   const [driverHeading, setDriverHeading] = useState(0);
+  const [mapZoom, setMapZoom] = useState(14);
   const prevPositionRef = useRef<{ lat: number; lng: number } | null>(null);
   const [hasMoved, setHasMoved] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<PartnerPoint | null>(null);
@@ -270,6 +271,7 @@ const DriverDashboardPage: React.FC = () => {
           zoom={14}
           onLoad={onMapLoad}
           onDragEnd={() => setHasMoved(true)}
+          onZoomChanged={() => { if (mapRef.current) setMapZoom(mapRef.current.getZoom() || 14); }}
           options={{
             disableDefaultUI: true,
             zoomControl: false,
@@ -280,12 +282,17 @@ const DriverDashboardPage: React.FC = () => {
             ],
           }}
         >
-          {/* Driver car icon */}
-          <Marker
-            position={position}
-            icon={{ url: createDriverCarIcon(driverHeading), scaledSize: new google.maps.Size(48, 48), anchor: new google.maps.Point(24, 24) }}
-            zIndex={999}
-          />
+          {/* Driver car icon — size adapts to zoom */}
+          {(() => {
+            const size = mapZoom >= 18 ? 64 : mapZoom >= 16 ? 56 : mapZoom >= 14 ? 48 : mapZoom >= 12 ? 40 : 32;
+            return (
+              <Marker
+                position={position}
+                icon={{ url: createDriverCarIcon(driverHeading), scaledSize: new google.maps.Size(size, size), anchor: new google.maps.Point(size / 2, size / 2) }}
+                zIndex={999}
+              />
+            );
+          })()}
 
           {/* Radar circle */}
           {isOnline && (
