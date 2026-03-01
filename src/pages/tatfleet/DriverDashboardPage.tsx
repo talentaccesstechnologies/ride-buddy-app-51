@@ -7,12 +7,15 @@ import { AnimatePresence } from 'framer-motion';
 import { APP_CONFIG } from '@/config/app.config';
 import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 import { useDriverMode } from '@/hooks/useDriverMode';
+import { RadarCourse } from '@/types/radar.types';
 import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
 import DriverDashboardSheet from '@/components/tatfleet/DriverDashboardSheet';
-import IncomingRideOverlay, { type IncomingRide } from '@/components/tatfleet/IncomingRideOverlay';
+import IncomingRideCard from '@/components/tatfleet/IncomingRideCard';
+import AcceptedRideOverlay from '@/components/tatfleet/AcceptedRideOverlay';
 import ActiveRidePanel from '@/components/tatfleet/ActiveRidePanel';
 import ModeSwitchSuggestion from '@/components/tatfleet/ModeSwitchSuggestion';
 import QueueToleranceOverlay from '@/components/tatfleet/QueueToleranceOverlay';
+import { type IncomingRide } from '@/components/tatfleet/IncomingRideOverlay';
 
 const RADAR_RADIUS_M = 5000;
 const containerStyle: React.CSSProperties = { width: '100%', height: '100%' };
@@ -82,22 +85,33 @@ const createDriverCarIcon = (heading: number = 0): string => {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 };
 
-/* ── Demo incoming ride — Gare des Eaux-Vives → Dardagny ── */
+/* ── 10 Demo courses: 5 private + 5 pool ── */
+const makeMeta = (source: string, sujet: string, desc: string) => ({
+  date: new Date().toISOString(), source: source as any, sujet, lien: '', description: desc, eligible: true,
+});
+
+const DEMO_COURSES: RadarCourse[] = [
+  // 5 CLIENTS PRIVÉS
+  { id: 'p1', type: 'private_client', source: 'qr_code', clientDisplayName: 'Sophie Laurent', clientIsProtected: false, clientRating: 4.9, clientAvatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face', pickupAddress: 'Rue du Rhône 48, Genève', pickupLat: 46.2017, pickupLng: 6.1468, dropoffAddress: 'Aéroport de Genève (GVA)', dropoffLat: 46.2381, dropoffLng: 6.1089, estimatedPrice: 72, estimatedDistance: 12.4, estimatedDuration: 18, vehicleTypeRequired: 'premium', expiresAt: new Date(), createdAt: new Date(), meta: makeMeta('qr_code', 'Course privée', 'Client QR') },
+  { id: 'p2', type: 'private_client', source: 'qr_code', clientDisplayName: 'Marc Dupont', clientIsProtected: false, clientRating: 4.7, clientAvatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face', pickupAddress: 'Place Bel-Air, Genève', pickupLat: 46.2022, pickupLng: 6.1430, dropoffAddress: 'Hôpital Universitaire (HUG)', dropoffLat: 46.1929, dropoffLng: 6.1496, estimatedPrice: 18, estimatedDistance: 2.8, estimatedDuration: 7, vehicleTypeRequired: 'standard', expiresAt: new Date(), createdAt: new Date(), meta: makeMeta('qr_code', 'Course privée', 'Client fidèle') },
+  { id: 'p3', type: 'private_client', source: 'phone', clientDisplayName: 'Émilie Favre', clientIsProtected: false, clientRating: 5.0, clientAvatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face', clientNote: 'VIP — Hôtel Président Wilson', pickupAddress: 'Hôtel Président Wilson, Quai Wilson', pickupLat: 46.2130, pickupLng: 6.1560, dropoffAddress: 'Centre commercial Balexert', dropoffLat: 46.2190, dropoffLng: 6.1100, estimatedPrice: 35, estimatedDistance: 6.1, estimatedDuration: 14, vehicleTypeRequired: 'premium', expiresAt: new Date(), createdAt: new Date(), meta: makeMeta('phone', 'Course privée', 'VIP') },
+  { id: 'p4', type: 'private_client', source: 'qr_code', clientDisplayName: 'Jean-Pierre Morel', clientIsProtected: false, clientRating: 4.6, pickupAddress: 'Gare de Cornavin, Genève', pickupLat: 46.2100, pickupLng: 6.1420, dropoffAddress: 'Palexpo, Grand-Saconnex', dropoffLat: 46.2335, dropoffLng: 6.1120, estimatedPrice: 28, estimatedDistance: 5.3, estimatedDuration: 11, vehicleTypeRequired: 'standard', expiresAt: new Date(), createdAt: new Date(), meta: makeMeta('qr_code', 'Course privée', 'Client habituel') },
+  { id: 'p5', type: 'private_client', source: 'qr_code', clientDisplayName: 'Nadia Benali', clientIsProtected: false, clientRating: 4.8, clientAvatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face', pickupAddress: 'Rue de la Servette 72, Genève', pickupLat: 46.2140, pickupLng: 6.1340, dropoffAddress: 'ONU — Palais des Nations', dropoffLat: 46.2265, dropoffLng: 6.1400, estimatedPrice: 22, estimatedDistance: 3.6, estimatedDuration: 9, vehicleTypeRequired: 'standard', expiresAt: new Date(), createdAt: new Date(), meta: makeMeta('qr_code', 'Course privée', 'Client régulier') },
+  // 5 POOL GÉNÉRAL
+  { id: 'g1', type: 'caby_direct', source: 'caby_app', clientDisplayName: 'Thomas R.', clientIsProtected: false, clientRating: 4.5, pickupAddress: 'Plainpalais, Genève', pickupLat: 46.1967, pickupLng: 6.1420, dropoffAddress: 'Carouge, Place du Marché', dropoffLat: 46.1835, dropoffLng: 6.1395, estimatedPrice: 15, estimatedDistance: 2.1, estimatedDuration: 6, vehicleTypeRequired: 'standard', expiresAt: new Date(), createdAt: new Date(), meta: makeMeta('caby_app', 'Caby Ride', 'Pool général') },
+  { id: 'g2', type: 'caby_direct', source: 'caby_app', clientDisplayName: 'Laura M.', clientIsProtected: false, clientRating: 4.3, clientAvatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face', pickupAddress: 'Eaux-Vives, Genève', pickupLat: 46.2020, pickupLng: 6.1630, dropoffAddress: 'Champel, Av. de Champel 45', dropoffLat: 46.1910, dropoffLng: 6.1530, estimatedPrice: 19, estimatedDistance: 3.2, estimatedDuration: 8, vehicleTypeRequired: 'standard', expiresAt: new Date(), createdAt: new Date(), meta: makeMeta('caby_app', 'Caby Ride', 'Pool général') },
+  { id: 'g3', type: 'caby_direct', source: 'caby_app', clientDisplayName: 'Ahmed K.', clientIsProtected: false, clientRating: 4.1, pickupAddress: 'Jonction, Bd Carl-Vogt', pickupLat: 46.1980, pickupLng: 6.1350, dropoffAddress: 'Vernier, Route de Meyrin 150', dropoffLat: 46.2170, dropoffLng: 6.0900, estimatedPrice: 25, estimatedDistance: 5.8, estimatedDuration: 13, vehicleTypeRequired: 'standard', expiresAt: new Date(), createdAt: new Date(), meta: makeMeta('caby_app', 'Caby Ride', 'Pool général') },
+  { id: 'g4', type: 'caby_direct', source: 'caby_app', clientDisplayName: 'Isabelle C.', clientIsProtected: false, clientRating: 4.8, clientAvatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face', pickupAddress: 'Pâquis, Rue de Berne 12', pickupLat: 46.2110, pickupLng: 6.1480, dropoffAddress: 'Lancy, Ch. des Palettes 18', dropoffLat: 46.1820, dropoffLng: 6.1190, estimatedPrice: 32, estimatedDistance: 6.9, estimatedDuration: 15, vehicleTypeRequired: 'standard', expiresAt: new Date(), createdAt: new Date(), meta: makeMeta('caby_app', 'Caby Ride', 'Pool général') },
+  { id: 'g5', type: 'caby_direct', source: 'caby_app', clientDisplayName: 'Nicolas B.', clientIsProtected: false, clientRating: 4.4, pickupAddress: 'Acacias, Rue des Acacias', pickupLat: 46.1920, pickupLng: 6.1330, dropoffAddress: 'Thônex, Rue de Genève 60', dropoffLat: 46.1950, dropoffLng: 6.1980, estimatedPrice: 28, estimatedDistance: 7.5, estimatedDuration: 17, vehicleTypeRequired: 'standard', expiresAt: new Date(), createdAt: new Date(), meta: makeMeta('caby_app', 'Caby Ride', 'Pool général') },
+];
+
+/* ── Legacy DEMO_RIDE for ActiveRidePanel compatibility ── */
 const DEMO_RIDE: IncomingRide = {
-  id: 'sim-1',
-  clientName: 'Sophie Müller',
+  id: 'sim-1', clientName: 'Sophie Müller',
   clientPhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
-  pickupAddress: 'Gare des Eaux-Vives, Genève',
-  pickupLat: 46.1985,
-  pickupLng: 6.1615,
-  dropoffAddress: 'Chemin du Rail 5, La Plaine, Dardagny',
-  dropoffLat: 46.1780,
-  dropoffLng: 6.0053,
-  distanceFromDriver: 0.8,
-  estimatedPrice: 52,
-  serviceType: 'standard',
-  estimatedDuration: 25,
-  estimatedDistance: 18.6,
+  pickupAddress: 'Gare des Eaux-Vives, Genève', pickupLat: 46.1985, pickupLng: 6.1615,
+  dropoffAddress: 'Chemin du Rail 5, La Plaine, Dardagny', dropoffLat: 46.1780, dropoffLng: 6.0053,
+  distanceFromDriver: 0.8, estimatedPrice: 52, serviceType: 'standard', estimatedDuration: 25, estimatedDistance: 18.6,
 };
 
 /* ── Page ── */
@@ -119,6 +133,8 @@ const DriverDashboardPage: React.FC = () => {
   const [missionsCount] = useState(3);
   const [incomingRide, setIncomingRide] = useState<IncomingRide | null>(null);
   const [activeRide, setActiveRide] = useState<IncomingRide | null>(null);
+  const [incomingCourses, setIncomingCourses] = useState<RadarCourse[]>([]);
+  const [acceptedCourse, setAcceptedCourse] = useState<RadarCourse | null>(null);
 
   const mapRef = useRef<google.maps.Map | null>(null);
   const watchIdRef = useRef<number | null>(null);
@@ -162,15 +178,23 @@ const DriverDashboardPage: React.FC = () => {
     return () => { clearInterval(id); watchIdRef.current = null; };
   }, [isOnline]);
 
-  // Simulate incoming ride 5s after going online (only in ride mode, no active ride)
+  // Simulate incoming courses 3s after going online
   useEffect(() => {
-    if (isOnline && !incomingRide && !activeRide && driverMode.mode === 'ride') {
+    if (isOnline && incomingCourses.length === 0 && !activeRide && !acceptedCourse && driverMode.mode === 'ride') {
       simTimerRef.current = setTimeout(() => {
-        setIncomingRide(DEMO_RIDE);
-      }, 5000);
+        // Shuffle and load all 10 courses with fresh expiry times
+        const shuffled = [...DEMO_COURSES]
+          .sort(() => Math.random() - 0.5)
+          .map(c => ({
+            ...c,
+            expiresAt: new Date(Date.now() + (c.type === 'private_client' ? 30000 : 20000)),
+            createdAt: new Date(),
+          }));
+        setIncomingCourses(shuffled);
+      }, 3000);
     }
     return () => { if (simTimerRef.current) clearTimeout(simTimerRef.current); };
-  }, [isOnline, incomingRide, activeRide, driverMode.mode]);
+  }, [isOnline, incomingCourses.length, activeRide, acceptedCourse, driverMode.mode]);
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
@@ -188,7 +212,7 @@ const DriverDashboardPage: React.FC = () => {
   const toggleOnline = () => {
     const next = !isOnline;
     setIsOnline(next);
-    if (!next) setIncomingRide(null);
+    if (!next) { setIncomingCourses([]); setIncomingRide(null); }
     toast[next ? 'success' : 'info'](next ? 'Radar activé' : 'Radar désactivé', {
       description: next ? 'Vous recevrez les courses à proximité' : undefined,
     });
@@ -196,9 +220,51 @@ const DriverDashboardPage: React.FC = () => {
 
   const toggleColisMode = () => {
     driverMode.toggleMode();
-    if (driverMode.mode === 'colis') setSelectedPoint(null); // will become ride after toggle
+    if (driverMode.mode === 'colis') setSelectedPoint(null);
   };
 
+  // Tinder card handlers
+  const handleCourseAccept = useCallback((courseId: string) => {
+    const course = incomingCourses.find(c => c.id === courseId);
+    if (!course) return;
+    setIncomingCourses(prev => prev.filter(c => c.id !== courseId));
+    setAcceptedCourse(course);
+  }, [incomingCourses]);
+
+  const handleCourseRefuse = useCallback((courseId: string) => {
+    setIncomingCourses(prev => prev.filter(c => c.id !== courseId));
+    toast.info('Course refusée — passée au chauffeur suivant');
+  }, []);
+
+  const handleCourseShareToClub = useCallback((courseId: string) => {
+    const course = incomingCourses.find(c => c.id === courseId);
+    if (!course) return;
+    const members = Math.floor(Math.random() * 8) + 3;
+    toast.success('Envoyé à votre Club', {
+      description: `${members} membres notifiés · Rétrocession ${(course.estimatedPrice * 0.10).toFixed(0)} ${APP_CONFIG.DEFAULT_CURRENCY}`,
+      icon: '🏆',
+    });
+    setIncomingCourses(prev => prev.filter(c => c.id !== courseId));
+  }, [incomingCourses]);
+
+  const handleCourseExpire = useCallback((courseId: string) => {
+    const course = incomingCourses.find(c => c.id === courseId);
+    setIncomingCourses(prev => prev.filter(c => c.id !== courseId));
+    if (course?.type === 'private_client') {
+      toast.info('Course client privé redistribuée au Club', { icon: '🔄' });
+    } else {
+      toast.info('Course transmise au chauffeur suivant');
+    }
+  }, [incomingCourses]);
+
+  const handleAcceptedComplete = useCallback(() => {
+    if (acceptedCourse) {
+      setTodayEarnings(prev => prev + acceptedCourse.estimatedPrice);
+    }
+    setAcceptedCourse(null);
+  }, [acceptedCourse]);
+
+  // Legacy handlers for ActiveRidePanel
   const handleAcceptRide = useCallback((id: string) => {
     if (incomingRide) setActiveRide(incomingRide);
     setIncomingRide(null);
@@ -213,7 +279,6 @@ const DriverDashboardPage: React.FC = () => {
     setActiveRide(null);
     setTodayEarnings((prev) => prev + price);
     toast.success('Gains mis à jour !');
-    // Check for mode switch suggestion after completing a ride
     setTimeout(() => driverMode.checkModeSuggestion(), 3000);
   }, [driverMode]);
 
@@ -222,7 +287,14 @@ const DriverDashboardPage: React.FC = () => {
       setIsOnline(true);
       toast.success('Radar activé');
     }
-    setIncomingRide(DEMO_RIDE);
+    const shuffled = [...DEMO_COURSES]
+      .sort(() => Math.random() - 0.5)
+      .map(c => ({
+        ...c,
+        expiresAt: new Date(Date.now() + (c.type === 'private_client' ? 30000 : 20000)),
+        createdAt: new Date(),
+      }));
+    setIncomingCourses(shuffled);
   }, [isOnline]);
 
   const handleRefuseRide = useCallback((id: string) => {
@@ -419,26 +491,55 @@ const DriverDashboardPage: React.FC = () => {
         />
 
         {/* Hidden simulation button — triple tap bottom-left corner */}
-        {!activeRide && !incomingRide && (
+        {!activeRide && !incomingRide && incomingCourses.length === 0 && !acceptedCourse && (
           <button
             onClick={triggerSimulation}
             className="absolute bottom-20 left-4 z-30 px-3 py-1.5 rounded-full bg-card/80 backdrop-blur-sm border border-border text-[10px] font-mono text-muted-foreground active:scale-95 transition-transform"
           >
-            🧪 Simuler course
+            🧪 Simuler courses
           </button>
         )}
       </div>
 
       <DriverBottomNav />
 
-      {/* ── Incoming ride overlay ── */}
+      {/* ── Tinder-style incoming ride cards ── */}
       <AnimatePresence>
-        {incomingRide && (
-          <IncomingRideOverlay
-            ride={incomingRide}
-            onAccept={handleAcceptRide}
-            onRefuse={handleRefuseRide}
-            onExpire={handleExpireRide}
+        {incomingCourses.length > 0 && !acceptedCourse && (
+          <div className="fixed inset-0 z-50 flex flex-col">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <div className="relative flex-1 flex flex-col">
+              <div className="px-4 pt-12 pb-2">
+                <p className="text-xs text-white/70 font-semibold uppercase tracking-wider text-center">
+                  {incomingCourses.length} course{incomingCourses.length > 1 ? 's' : ''} disponible{incomingCourses.length > 1 ? 's' : ''}
+                </p>
+              </div>
+              <div className="flex-1 px-4 pb-4 relative" style={{ minHeight: '520px' }}>
+                {incomingCourses.slice(0, 3).map((course, index) => (
+                  <IncomingRideCard
+                    key={course.id}
+                    course={course}
+                    isPrivateClient={course.type === 'private_client'}
+                    isTop={index === 0}
+                    index={index}
+                    onAccept={handleCourseAccept}
+                    onRefuse={handleCourseRefuse}
+                    onShareToClub={handleCourseShareToClub}
+                    onExpire={handleCourseExpire}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Accepted ride simulation overlay ── */}
+      <AnimatePresence>
+        {acceptedCourse && (
+          <AcceptedRideOverlay
+            course={acceptedCourse}
+            onComplete={handleAcceptedComplete}
           />
         )}
       </AnimatePresence>
