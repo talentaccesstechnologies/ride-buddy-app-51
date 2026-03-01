@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Car, ChevronRight, Truck, Heart, GraduationCap, Building2, Package, Bike, Bus, Ambulance, FlaskConical, ShieldCheck, KeyRound, Wine, Shirt, PawPrint, ShoppingBag, Zap } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
 import BottomNav from '@/components/rider/BottomNav';
 
 interface ServiceItem {
   id: string;
-  icon: React.ElementType;
   title: string;
   desc: string;
   badge?: string;
-  route: string | null;
+  badgeColor?: string;
+  image: string;
+  route: string;
 }
 
 interface ServiceCategory {
@@ -20,91 +22,237 @@ interface ServiceCategory {
 
 const categories: ServiceCategory[] = [
   {
-    label: 'Mobilité Urbaine',
+    label: 'MOBILITÉ URBAINE',
     emoji: '🚗',
     items: [
-      { id: 'ride', icon: Car, title: 'Caby Ride', desc: 'Course classique avec chauffeur privé', badge: 'Populaire', route: '/caby/search' },
-      { id: 'tricycle', icon: Bike, title: 'Caby Tricycle', desc: 'Tricycle électrique 2 places · Centre-ville', route: '/caby/search' },
-      { id: 'van', icon: Bus, title: 'Caby Van', desc: 'Groupes & sorties · Jusqu\'à 7 passagers', route: '/caby/search' },
-      { id: 'moto', icon: Zap, title: 'Caby Moto', desc: 'Le trajet le plus rapide · Casque & charlotte inclus', badge: 'Casque & Gants inclus', route: '/caby/search' },
+      {
+        id: 'ride',
+        title: 'Caby Ride',
+        desc: 'Course classique avec chauffeur privé',
+        badge: 'Populaire',
+        badgeColor: 'bg-primary text-primary-foreground',
+        image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&q=80',
+        route: '/caby/search',
+      },
+      {
+        id: 'tricycle',
+        title: 'Caby Tricycle',
+        desc: 'Tricycle électrique 2 places · Centre-ville',
+        badge: 'Éco',
+        badgeColor: 'bg-emerald-500 text-white',
+        image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80',
+        route: '/caby/search',
+      },
+      {
+        id: 'van',
+        title: 'Caby Van',
+        desc: 'Groupes & sorties · Jusqu\'à 7 passagers',
+        image: 'https://images.unsplash.com/photo-1609520778163-a16fb3862581?w=800&q=80',
+        route: '/caby/search',
+      },
+      {
+        id: 'moto',
+        title: 'Caby Moto',
+        desc: 'Le trajet le plus rapide · Casque inclus',
+        badge: 'Express',
+        badgeColor: 'bg-orange-500 text-white',
+        image: 'https://images.unsplash.com/photo-1558980664-769d59546b3d?w=800&q=80',
+        route: '/caby/search',
+      },
     ],
   },
   {
-    label: 'Santé & Soins',
+    label: 'SANTÉ & SOINS',
     emoji: '🏥',
     items: [
-      { id: 'care', icon: Ambulance, title: 'Caby Care', desc: 'Transport médical · Hôpitaux, centres médicaux & médecins', badge: 'Certifié Caby Safety', route: '/caby/search' },
-      { id: 'health', icon: FlaskConical, title: 'Caby Health Logistix', desc: 'Transport d\'analyses entre hôpitaux & laboratoires (Unilabs, Dynalabs)', badge: 'Chaîne du froid garantie', route: '/caby/search' },
-      { id: 'vet', icon: Heart, title: 'Caby Vet', desc: 'Transport vétérinaire · Cliniques & urgences animales', badge: 'Soins animaux', route: '/caby/search' },
+      {
+        id: 'care',
+        title: 'Caby Care',
+        desc: 'Transport médical · Hôpitaux & centres médicaux',
+        badge: 'Certifié',
+        badgeColor: 'bg-red-500 text-white',
+        image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&q=80',
+        route: '/caby/search',
+      },
+      {
+        id: 'health',
+        title: 'Caby Health Logistix',
+        desc: 'Analyses entre hôpitaux & laboratoires',
+        badge: 'Chaîne du froid',
+        badgeColor: 'bg-sky-500 text-white',
+        image: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&q=80',
+        route: '/caby/search',
+      },
+      {
+        id: 'vet',
+        title: 'Caby Vet',
+        desc: 'Transport vétérinaire · Cliniques & urgences',
+        badge: 'Soins animaux',
+        badgeColor: 'bg-pink-500 text-white',
+        image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&q=80',
+        route: '/caby/search',
+      },
     ],
   },
   {
-    label: 'Éducation & Entreprises',
+    label: 'ÉDUCATION & ENTREPRISES',
     emoji: '🎓',
     items: [
-      { id: 'school', icon: GraduationCap, title: 'Caby School', desc: 'Crèches, écoles, collèges, lycées & universités du canton', badge: 'Suivi parental', route: '/caby/search' },
-      { id: 'business', icon: Building2, title: 'Caby Business', desc: 'PME & entreprises sous contrat · Facturation centralisée', route: '/caby/search' },
+      {
+        id: 'school',
+        title: 'Caby School',
+        desc: 'Transport scolaire sécurisé · Suivi parental',
+        badge: 'Suivi parental',
+        badgeColor: 'bg-amber-500 text-white',
+        image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&q=80',
+        route: '/caby/search',
+      },
+      {
+        id: 'business',
+        title: 'Caby Business',
+        desc: 'PME & entreprises · Facturation centralisée',
+        image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80',
+        route: '/caby/search',
+      },
     ],
   },
   {
-    label: 'Livraison Pro',
+    label: 'LIVRAISON PRO',
     emoji: '📦',
     items: [
-      { id: 'express', icon: Package, title: 'Caby Express', desc: 'Colis e-commerce (Zalando, Amazon, Temu…), plis & livraisons classiques', badge: 'Express 30 min', route: '/caby/express' },
+      {
+        id: 'express',
+        title: 'Caby Express',
+        desc: 'Colis e-commerce, plis & livraisons classiques',
+        badge: 'Express 30 min',
+        badgeColor: 'bg-primary text-primary-foreground',
+        image: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=800&q=80',
+        route: '/caby/express',
+      },
     ],
   },
   {
-    label: 'Services Premium',
-    emoji: '✨',
+    label: 'SERVICES PREMIUM',
+    emoji: '⭐',
     items: [
-      { id: 'secure', icon: KeyRound, title: 'Caby Secure', desc: 'Clés, passeports, contrats originaux · Transport ultra-sécurisé', badge: 'Certifié Caby', route: '/caby/search' },
-      { id: 'gourmet', icon: Wine, title: 'Caby Gourmet', desc: 'Vins fins & spiritueux · Livraison soignée depuis cavistes partenaires', badge: 'Certifié Caby', route: '/caby/search' },
-      { id: 'laundry', icon: Shirt, title: 'Caby Laundry', desc: 'Pressing à domicile · Ramassage matin, livraison soir', badge: 'Certifié Caby', route: '/caby/search' },
-      { id: 'pet', icon: PawPrint, title: 'Caby Pet', desc: 'Transport d\'animaux seul · Vétérinaire & toilettage', badge: 'Certifié Caby', route: '/caby/search' },
-      { id: 'concierge', icon: ShoppingBag, title: 'Caby Concierge', desc: 'Click & Collect de luxe · Personal Shopper logistique', badge: 'Certifié Caby', route: '/caby/search' },
+      {
+        id: 'secure',
+        title: 'Caby Secure',
+        desc: 'Clés, passeports, contrats · Ultra-sécurisé',
+        badge: 'Certifié Caby',
+        badgeColor: 'bg-[hsl(43,75%,52%)] text-black',
+        image: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=800&q=80',
+        route: '/caby/search',
+      },
+      {
+        id: 'gourmet',
+        title: 'Caby Gourmet',
+        desc: 'Vins fins & spiritueux · Cavistes partenaires',
+        badge: 'Certifié Caby',
+        badgeColor: 'bg-[hsl(43,75%,52%)] text-black',
+        image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80',
+        route: '/caby/search',
+      },
+      {
+        id: 'laundry',
+        title: 'Caby Laundry',
+        desc: 'Pressing à domicile · Matin → soir',
+        badge: 'Certifié Caby',
+        badgeColor: 'bg-[hsl(43,75%,52%)] text-black',
+        image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=800&q=80',
+        route: '/caby/search',
+      },
+      {
+        id: 'pet',
+        title: 'Caby Pet',
+        desc: 'Transport d\'animaux · Vétérinaire & toilettage',
+        badge: 'Certifié Caby',
+        badgeColor: 'bg-[hsl(43,75%,52%)] text-black',
+        image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80',
+        route: '/caby/search',
+      },
+      {
+        id: 'concierge',
+        title: 'Caby Concierge',
+        desc: 'Click & Collect de luxe · Personal Shopper',
+        badge: 'Certifié Caby',
+        badgeColor: 'bg-[hsl(43,75%,52%)] text-black',
+        image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80',
+        route: '/caby/search',
+      },
     ],
   },
 ];
+
+const ServiceCard: React.FC<{ service: ServiceItem; index: number; onTap: () => void }> = ({ service, index, onTap }) => (
+  <motion.button
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: index * 0.04, duration: 0.3 }}
+    whileTap={{ scale: 0.98 }}
+    onClick={onTap}
+    className="relative w-full h-[140px] rounded-2xl overflow-hidden shadow-lg group text-left"
+  >
+    {/* Background image */}
+    <img
+      src={service.image}
+      alt={service.title}
+      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+      loading="lazy"
+    />
+
+    {/* Dark overlay with gold tint */}
+    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/50 to-black/20" />
+    <div className="absolute inset-0 bg-[hsl(43,75%,52%)]/5" />
+
+    {/* Badge */}
+    {service.badge && (
+      <div className="absolute top-3 left-3">
+        <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${service.badgeColor || 'bg-primary text-primary-foreground'}`}>
+          {service.badge}
+        </span>
+      </div>
+    )}
+
+    {/* Content */}
+    <div className="absolute bottom-0 left-0 right-0 p-4">
+      <h3 className="text-base font-bold text-white">{service.title}</h3>
+      <p className="text-[11px] text-white/70 mt-0.5 line-clamp-1">{service.desc}</p>
+    </div>
+  </motion.button>
+);
+
+const CategoryHeader: React.FC<{ emoji: string; label: string }> = ({ emoji, label }) => (
+  <div className="flex items-center gap-3 mb-3">
+    <span className="text-lg">{emoji}</span>
+    <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-[hsl(43,75%,52%)]">{label}</h2>
+    <div className="flex-1 h-px bg-gradient-to-r from-[hsl(43,75%,52%)]/40 to-transparent" />
+  </div>
+);
 
 const ServicesPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <div className="px-5 pt-14 pb-6">
-        <h1 className="text-3xl font-bold tracking-tight mb-1">Services</h1>
-        <p className="text-sm text-muted-foreground mb-6">Notre gamme complète de mobilité premium</p>
+      <div className="px-4 pt-14 pb-6">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="text-3xl font-bold tracking-tight mb-1">Services</h1>
+          <p className="text-sm text-muted-foreground mb-8">Notre gamme complète de mobilité premium</p>
+        </motion.div>
 
-        <div className="space-y-7">
+        <div className="space-y-8">
           {categories.map((cat) => (
             <section key={cat.label}>
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
-                <span>{cat.emoji}</span> {cat.label}
-              </h2>
-              <div className="space-y-2.5">
-                {cat.items.map((s) => (
-                  <button
+              <CategoryHeader emoji={cat.emoji} label={cat.label} />
+              <div className="space-y-3">
+                {cat.items.map((s, i) => (
+                  <ServiceCard
                     key={s.id}
-                    onClick={() => s.route && navigate(s.route)}
-                    disabled={!s.route}
-                    className="w-full flex items-center gap-4 bg-card border border-border rounded-2xl p-4 text-left hover:border-primary/30 transition-colors disabled:opacity-60"
-                  >
-                    <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
-                      <s.icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="font-bold text-sm">{s.title}</p>
-                        {s.badge && (
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/15 text-primary">
-                            {s.badge}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-0.5 truncate">{s.desc}</p>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  </button>
+                    service={s}
+                    index={i}
+                    onTap={() => navigate(s.route)}
+                  />
                 ))}
               </div>
             </section>
@@ -112,13 +260,18 @@ const ServicesPage: React.FC = () => {
         </div>
 
         {/* Trust banner */}
-        <div className="mt-8 flex items-center gap-3 bg-card border border-border rounded-2xl p-4">
-          <ShieldCheck className="w-8 h-8 text-primary flex-shrink-0" />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mt-10 flex items-center gap-3 rounded-2xl border border-[hsl(43,75%,52%)]/20 bg-[hsl(43,75%,52%)]/5 p-4"
+        >
+          <ShieldCheck className="w-8 h-8 text-[hsl(43,75%,52%)] flex-shrink-0" />
           <div>
             <p className="font-bold text-sm">Tous nos services sont certifiés Caby</p>
             <p className="text-xs text-muted-foreground mt-0.5">Chauffeurs salariés · Assurances professionnelles · Conformité LTVTC Genève</p>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       <BottomNav />
