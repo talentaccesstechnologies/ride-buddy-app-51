@@ -7,12 +7,12 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import {
   GoogleMap,
-  useLoadScript,
   TrafficLayer,
   Marker,
   Polyline,
   OverlayView,
 } from "@react-google-maps/api";
+import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
 import { useRideTracking } from "@/hooks/useRideTracking";
 import { getTrafficColor, type LatLng } from "@/services/googleMaps.service";
 import { Star, Clock, MapPin, Wifi, WifiOff, Car } from "lucide-react";
@@ -98,10 +98,7 @@ export const LiveTrackingMap: React.FC<LiveTrackingMapProps> = ({
   const mapRef = useRef<google.maps.Map | null>(null);
   const [isBottomSheetExpanded, setIsBottomSheetExpanded] = useState(false);
 
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
-    libraries: GOOGLE_LIBRARIES,
-  });
+  const { isLoaded, loadError } = useGoogleMaps();
 
   const tracking = useRideTracking({
     rideId,

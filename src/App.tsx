@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { RideProvider } from "@/contexts/RideContext";
+import { GoogleMapsProvider } from "@/contexts/GoogleMapsContext";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -49,6 +50,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <GoogleMapsProvider>
       <AuthProvider>
         <RideProvider>
           <Toaster />
@@ -107,6 +109,7 @@ const App = () => (
           </BrowserRouter>
         </RideProvider>
       </AuthProvider>
+      </GoogleMapsProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

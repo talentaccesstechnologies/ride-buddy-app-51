@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { GoogleMap as GoogleMapComponent, useJsApiLoader, Marker, Circle } from '@react-google-maps/api';
+import { GoogleMap as GoogleMapComponent, Marker, Circle } from '@react-google-maps/api';
 import { Navigation, Plus, ShieldAlert, Construction, X } from 'lucide-react';
 import { SimulatedDriver } from '@/types';
-import { APP_CONFIG } from '@/config/app.config';
+import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 import { MapAlert } from '@/types/map.types';
 
 interface GoogleMapProps {
@@ -120,9 +120,7 @@ const GoogleMapView: React.FC<GoogleMapProps> = ({
   onReportAlert,
   showAlertFAB = false,
 }) => {
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: APP_CONFIG.GOOGLE_MAPS_API_KEY,
-  });
+  const { isLoaded, loadError } = useGoogleMaps();
 
   const [showAlertMenu, setShowAlertMenu] = useState(false);
 
@@ -140,7 +138,7 @@ const GoogleMapView: React.FC<GoogleMapProps> = ({
   const handleRecenter = useCallback(() => {
     if (mapRef.current) {
       mapRef.current.panTo(center);
-      mapRef.current.setZoom(APP_CONFIG.DEFAULT_ZOOM);
+      mapRef.current.setZoom(14);
     }
   }, [center]);
 
@@ -172,7 +170,7 @@ const GoogleMapView: React.FC<GoogleMapProps> = ({
       <GoogleMapComponent
         mapContainerStyle={containerStyle}
         center={center}
-        zoom={APP_CONFIG.DEFAULT_ZOOM}
+        zoom={14}
         options={mapOptions}
         onLoad={onLoad}
       >
