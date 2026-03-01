@@ -1,93 +1,44 @@
-import React from 'react';
-import { Shield, Star, Trophy, TrendingUp, XCircle, Clock, Eye, Zap, Crown, Car, Percent, ChevronRight, Award, Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, Clock, Trophy, TrendingUp, Sparkles, DollarSign, Calendar } from 'lucide-react';
 import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
 import DriverPrivateClients from '@/components/tatfleet/DriverPrivateClients';
+import SuperDriverBadgeCard from '@/components/tatfleet/SuperDriverBadgeCard';
+import ScoreBreakdown from '@/components/tatfleet/ScoreBreakdown';
+import LevelHistory from '@/components/tatfleet/LevelHistory';
+import MonthlyLeaderboard, { type LeaderboardEntry } from '@/components/tatfleet/MonthlyLeaderboard';
+import { type DriverLevel } from '@/lib/driverLevels';
 
-// ── Super Driver Criteria ──
-interface Criterion {
-  label: string;
-  description: string;
-  icon: React.ElementType;
-  current: number;
-  target: number;
-  unit: string;
-  isInverse?: boolean; // true = lower is better (e.g. cancellation rate)
-  format?: (v: number) => string;
-}
+// ── Mock data (will be replaced by Supabase queries) ──
+const MOCK_DRIVER = {
+  level: 'super' as DriverLevel,
+  rating: 4.87,
+  acceptance: 92,
+  cancellation: 0.5,
+  punctuality: 96,
+  totalRides: 127,
+  quarter: '2026-Q1',
+};
 
-const criteria: Criterion[] = [
-  {
-    label: 'Expérience',
-    description: '100 courses sur les 12 derniers mois',
-    icon: Car,
-    current: 127,
-    target: 100,
-    unit: 'courses',
-    format: (v) => `${v}`,
-  },
-  {
-    label: 'Réactivité',
-    description: 'Taux d\'acceptation ≥ 90%',
-    icon: Zap,
-    current: 92,
-    target: 90,
-    unit: '%',
-    format: (v) => `${v}%`,
-  },
-  {
-    label: 'Fiabilité',
-    description: 'Taux d\'annulation < 1%',
-    icon: XCircle,
-    current: 0.5,
-    target: 1,
-    unit: '%',
-    isInverse: true,
-    format: (v) => `${v}%`,
-  },
-  {
-    label: 'Excellence',
-    description: 'Note globale ≥ 4.8/5',
-    icon: Star,
-    current: 4.9,
-    target: 4.8,
-    unit: '/5',
-    format: (v) => `${v.toFixed(1)}`,
-  },
+const MOCK_HISTORY = [
+  { quarter: '2026-Q1', level: 'super' as DriverLevel, rating: 4.87, acceptance: 92, cancellation: 0.5, rides: 127 },
+  { quarter: '2025-Q4', level: 'certified' as DriverLevel, rating: 4.65, acceptance: 85, cancellation: 1.2, rides: 98 },
+  { quarter: '2025-Q3', level: 'certified' as DriverLevel, rating: 4.52, acceptance: 82, cancellation: 1.8, rides: 74 },
 ];
 
-// ── Rewards ──
-const rewards = [
-  { icon: Eye, title: 'Visibilité accrue', description: 'Votre profil apparaît en priorité sur le réseau Caby.' },
-  { icon: Crown, title: 'Accès prioritaire', description: 'Priorité sur les courses privées et aéroport.' },
-  { icon: Percent, title: 'Réduction TATFleet', description: 'Bonus sur les frais de portage salarial.' },
-  { icon: Sparkles, title: 'Badge Super Driver', description: 'Badge doré visible par tous les clients.' },
+const MOCK_LEADERBOARD: LeaderboardEntry[] = [
+  { rank: 1, driverName: 'Moussa D.', score: 94, rating: 4.97, rides: 185, isWinner: true },
+  { rank: 2, driverName: 'Alexandre K.', score: 91, rating: 4.93, rides: 172 },
+  { rank: 3, driverName: 'Youssef B.', score: 88, rating: 4.90, rides: 158 },
+  { rank: 4, driverName: 'Jean-Paul M.', score: 85, rating: 4.87, rides: 127, isCurrentUser: true },
+  { rank: 5, driverName: 'Pierre L.', score: 82, rating: 4.85, rides: 145 },
+  { rank: 6, driverName: 'David R.', score: 80, rating: 4.82, rides: 130 },
+  { rank: 7, driverName: 'Samuel T.', score: 78, rating: 4.80, rides: 118 },
+  { rank: 8, driverName: 'Marc A.', score: 75, rating: 4.78, rides: 110 },
+  { rank: 9, driverName: 'Nicolas F.', score: 72, rating: 4.75, rides: 105 },
+  { rank: 10, driverName: 'Karim S.', score: 70, rating: 4.72, rides: 95 },
 ];
 
-// ── Helpers ──
-const getStatus = (c: Criterion): 'eligible' | 'progress' | 'ineligible' => {
-  if (c.isInverse) {
-    if (c.current < c.target) return 'eligible';
-    if (c.current <= c.target * 1.5) return 'progress';
-    return 'ineligible';
-  }
-  if (c.current >= c.target) return 'eligible';
-  if (c.current >= c.target * 0.75) return 'progress';
-  return 'ineligible';
-};
-
-const statusConfig = {
-  eligible: { color: 'text-[hsl(var(--caby-green))]', bg: 'bg-[hsl(var(--caby-green))]/15', border: 'border-[hsl(var(--caby-green))]/30', label: 'Éligible', barColor: 'bg-[hsl(var(--caby-green))]' },
-  progress: { color: 'text-[hsl(var(--caby-gold))]', bg: 'bg-[hsl(var(--caby-gold))]/15', border: 'border-[hsl(var(--caby-gold))]/30', label: 'En progression', barColor: 'bg-[hsl(var(--caby-gold))]' },
-  ineligible: { color: 'text-[hsl(var(--caby-red))]', bg: 'bg-[hsl(var(--caby-red))]/15', border: 'border-[hsl(var(--caby-red))]/30', label: 'Non éligible', barColor: 'bg-[hsl(var(--caby-red))]' },
-};
-
-const getProgressPercent = (c: Criterion) => {
-  if (c.isInverse) {
-    // For inverse: 0% cancellation = 100% progress, target% = threshold
-    return Math.min(((c.target - c.current) / c.target) * 100 + 50, 100);
-  }
-  return Math.min((c.current / c.target) * 100, 100);
-};
+const currentMonthFr = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date());
 
 // ── Next evaluation ──
 const getNextEvaluation = () => {
@@ -98,201 +49,167 @@ const getNextEvaluation = () => {
   return { date: formatter.format(nextQuarter), days: diffDays };
 };
 
+type Tab = 'dashboard' | 'leaderboard' | 'clients';
+
 const DriverClubPage: React.FC = () => {
-  const allEligible = criteria.every(c => getStatus(c) === 'eligible');
-  const eligibleCount = criteria.filter(c => getStatus(c) === 'eligible').length;
+  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const nextEval = getNextEvaluation();
+
+  const tabs: { key: Tab; label: string }[] = [
+    { key: 'dashboard', label: 'SuperDriver' },
+    { key: 'leaderboard', label: 'Classement' },
+    { key: 'clients', label: 'Clients' },
+  ];
+
+  // Estimate Driver of Month bonus
+  const currentRank = MOCK_LEADERBOARD.find(e => e.isCurrentUser)?.rank || 0;
+  const pointsToFirst = currentRank > 1
+    ? MOCK_LEADERBOARD[0].score - (MOCK_LEADERBOARD.find(e => e.isCurrentUser)?.score || 0)
+    : 0;
 
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="px-5 pt-14 pb-2">
         <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Programme</p>
-        <h1 className="text-2xl font-display font-bold text-foreground mt-1">Super Driver</h1>
+        <h1 className="text-2xl font-display font-bold text-foreground mt-1">Club & SuperDriver</h1>
       </div>
 
-      {/* Status Badge Card */}
-      <div className="px-5 mt-4 mb-6">
-        <div className={`relative overflow-hidden rounded-3xl p-6 ${
-          allEligible
-            ? 'bg-gradient-to-br from-[hsl(var(--caby-gold))] via-[hsl(var(--caby-gold-light))] to-[hsl(var(--caby-gold))]'
-            : 'bg-gradient-to-br from-card via-muted to-card border border-border'
-        }`}>
-          {/* Shimmer effect */}
-          {allEligible && (
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.2)_0%,transparent_60%)]" />
-            </div>
-          )}
-
-          <div className="relative z-10 flex items-center gap-4">
-            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${
-              allEligible ? 'bg-black/20 backdrop-blur-sm' : 'bg-muted'
-            }`}>
-              {allEligible ? (
-                <Trophy className="w-8 h-8 text-white" />
-              ) : (
-                <Award className="w-8 h-8 text-muted-foreground" />
-              )}
-            </div>
-            <div className="flex-1">
-              <h2 className={`text-lg font-display font-bold ${allEligible ? 'text-black' : 'text-foreground'}`}>
-                {allEligible ? 'Super Driver ✨' : 'En cours de qualification'}
-              </h2>
-              <p className={`text-xs mt-0.5 ${allEligible ? 'text-black/70' : 'text-muted-foreground'}`}>
-                {allEligible
-                  ? 'Félicitations ! Vous avez le statut Super Driver.'
-                  : `${eligibleCount}/4 critères validés`
-                }
-              </p>
-            </div>
-          </div>
-
-          {/* Progress dots */}
-          <div className="relative z-10 flex gap-2 mt-4">
-            {criteria.map((c, i) => {
-              const status = getStatus(c);
-              return (
-                <div key={i} className={`flex-1 h-1.5 rounded-full ${
-                  allEligible
-                    ? 'bg-black/30'
-                    : status === 'eligible'
-                      ? 'bg-[hsl(var(--caby-green))]'
-                      : status === 'progress'
-                        ? 'bg-[hsl(var(--caby-gold))]'
-                        : 'bg-[hsl(var(--caby-red))]/50'
-                }`} />
-              );
-            })}
-          </div>
+      {/* Tab switcher */}
+      <div className="px-5 mt-3 mb-4">
+        <div className="flex gap-1 p-1 bg-muted rounded-2xl">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+                activeTab === tab.key
+                  ? 'bg-card text-foreground shadow-sm'
+                  : 'text-muted-foreground'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Evaluation countdown */}
-      <div className="px-5 mb-6">
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-card border border-border">
-          <div className="w-10 h-10 rounded-xl bg-[hsl(var(--caby-blue))]/15 flex items-center justify-center">
-            <Clock className="w-5 h-5 text-[hsl(var(--caby-blue))]" />
+      {/* ═══ DASHBOARD TAB ═══ */}
+      {activeTab === 'dashboard' && (
+        <div className="space-y-6">
+          {/* Badge Card */}
+          <div className="px-5">
+            <SuperDriverBadgeCard
+              level={MOCK_DRIVER.level}
+              rating={MOCK_DRIVER.rating}
+              acceptance={MOCK_DRIVER.acceptance}
+              cancellation={MOCK_DRIVER.cancellation}
+              quarter={MOCK_DRIVER.quarter}
+            />
           </div>
-          <div className="flex-1">
-            <p className="text-xs text-muted-foreground">Prochaine évaluation</p>
-            <p className="text-sm font-bold text-foreground">{nextEval.date}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-lg font-black text-[hsl(var(--caby-blue))]">{nextEval.days}j</p>
-            <p className="text-[10px] text-muted-foreground">restants</p>
-          </div>
-        </div>
-        <p className="text-[10px] text-muted-foreground text-center mt-2">
-          Performances analysées sur les 12 derniers mois glissants.
-        </p>
-      </div>
 
-      {/* 4 Criteria Gauges */}
-      <div className="px-5 mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-4 rounded-full bg-primary" />
-          <h3 className="text-sm font-display font-bold text-foreground">Critères de Qualification</h3>
-        </div>
-
-        <div className="space-y-3">
-          {criteria.map((c) => {
-            const status = getStatus(c);
-            const config = statusConfig[status];
-            const percent = getProgressPercent(c);
-            const Icon = c.icon;
-
-            return (
-              <div key={c.label} className={`p-4 rounded-2xl border ${config.border} ${config.bg}`}>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className={`w-9 h-9 rounded-xl ${config.bg} flex items-center justify-center`}>
-                    <Icon className={`w-4.5 h-4.5 ${config.color}`} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-bold text-foreground">{c.label}</h4>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${config.bg} ${config.color} border ${config.border}`}>
-                        {config.label}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">{c.description}</p>
-                  </div>
-                </div>
-
-                {/* Progress bar */}
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-700 ${config.barColor}`}
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
-                  <span className={`text-sm font-black ${config.color} min-w-[3rem] text-right`}>
-                    {c.format ? c.format(c.current) : c.current}{!c.format && c.unit}
-                  </span>
-                </div>
-
-                {/* Target indicator */}
-                <p className="text-[10px] text-muted-foreground mt-1.5">
-                  {c.isInverse ? 'Maximum requis' : 'Objectif'} : {c.format ? c.format(c.target) : c.target}{!c.format && c.unit}
-                </p>
+          {/* Evaluation countdown */}
+          <div className="px-5">
+            <div className="flex items-center gap-3 p-3 rounded-2xl bg-card border border-border">
+              <div className="w-10 h-10 rounded-xl bg-[hsl(var(--caby-blue))]/15 flex items-center justify-center">
+                <Clock className="w-5 h-5 text-[hsl(var(--caby-blue))]" />
               </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Exclusive Rewards */}
-      <div className="px-5 mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-4 rounded-full bg-[hsl(var(--caby-gold))]" />
-          <h3 className="text-sm font-display font-bold text-foreground">Avantages Exclusifs</h3>
-          <span className="text-[10px] text-muted-foreground ml-auto">Super Driver</span>
-        </div>
-
-        <div className="space-y-2">
-          {rewards.map((r) => {
-            const Icon = r.icon;
-            return (
-              <div key={r.title} className={`flex items-center gap-3 p-3 rounded-2xl border transition-all ${
-                allEligible
-                  ? 'bg-card border-border'
-                  : 'bg-card/50 border-border/50 opacity-50'
-              }`}>
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  allEligible
-                    ? 'bg-gradient-to-br from-[hsl(var(--caby-gold))] to-[hsl(var(--caby-gold-light))]'
-                    : 'bg-muted'
-                }`}>
-                  <Icon className={`w-5 h-5 ${allEligible ? 'text-black' : 'text-muted-foreground'}`} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-semibold text-foreground">{r.title}</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">{r.description}</p>
-                </div>
-                {allEligible && <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
-                {!allEligible && (
-                  <span className="text-[10px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full flex-shrink-0">
-                    🔒
-                  </span>
-                )}
+              <div className="flex-1">
+                <p className="text-xs text-muted-foreground">Prochaine évaluation</p>
+                <p className="text-sm font-bold text-foreground">{nextEval.date}</p>
               </div>
-            );
-          })}
-        </div>
-      </div>
+              <div className="text-right">
+                <p className="text-lg font-black text-[hsl(var(--caby-blue))]">{nextEval.days}j</p>
+                <p className="text-[10px] text-muted-foreground">restants</p>
+              </div>
+            </div>
+            <p className="text-[10px] text-muted-foreground text-center mt-2">
+              Performances analysées sur les 12 derniers mois glissants
+            </p>
+          </div>
 
-      {/* Mes clients privés */}
-      <div className="px-5 mb-6">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-4 rounded-full bg-primary" />
-          <h3 className="text-sm font-display font-bold text-foreground">Mes Clients Privés</h3>
+          {/* Positive messaging */}
+          <div className="px-5">
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-transparent border border-primary/15">
+              <div className="flex items-start gap-3">
+                <Sparkles className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-bold text-foreground">Votre bilan trimestriel</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Vos points forts : note clients excellente et fiabilité. Continuez à améliorer votre taux d'acceptation pour atteindre SuperDriver Gold !
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Score Breakdown */}
+          <div className="px-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-1 h-4 rounded-full bg-primary" />
+              <h3 className="text-sm font-display font-bold text-foreground">Score Détaillé</h3>
+            </div>
+            <ScoreBreakdown
+              level={MOCK_DRIVER.level}
+              rating={MOCK_DRIVER.rating}
+              acceptance={MOCK_DRIVER.acceptance}
+              cancellation={MOCK_DRIVER.cancellation}
+              punctuality={MOCK_DRIVER.punctuality}
+            />
+          </div>
+
+          {/* Driver of Month estimation */}
+          <div className="px-5">
+            <div className="p-4 rounded-2xl bg-[hsl(var(--caby-gold))]/5 border border-[hsl(var(--caby-gold))]/15">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[hsl(var(--caby-gold))]/15 flex items-center justify-center">
+                  <Trophy className="w-5 h-5 text-[hsl(var(--caby-gold))]" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs text-muted-foreground">Estimation Driver du Mois</p>
+                  <p className="text-sm font-bold text-foreground">
+                    {currentRank === 1 ? '🏆 Vous êtes en tête !' : `#${currentRank} — ${pointsToFirst} pts du 1er`}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-black text-[hsl(var(--caby-gold))]">+500</p>
+                  <p className="text-[10px] text-muted-foreground">CHF bonus</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quarterly History */}
+          <div className="px-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-1 h-4 rounded-full bg-muted-foreground/30" />
+              <h3 className="text-sm font-display font-bold text-foreground">Historique des Niveaux</h3>
+            </div>
+            <LevelHistory history={MOCK_HISTORY} />
+          </div>
         </div>
-        <DriverPrivateClients />
-      </div>
+      )}
+
+      {/* ═══ LEADERBOARD TAB ═══ */}
+      {activeTab === 'leaderboard' && (
+        <div className="px-5">
+          <MonthlyLeaderboard
+            entries={MOCK_LEADERBOARD}
+            currentMonth={currentMonthFr}
+            driverOfMonthName="Moussa D."
+          />
+        </div>
+      )}
+
+      {/* ═══ CLIENTS TAB ═══ */}
+      {activeTab === 'clients' && (
+        <div className="px-5">
+          <DriverPrivateClients />
+        </div>
+      )}
 
       {/* Footer */}
-      <div className="px-5 mt-4 mb-4">
+      <div className="px-5 mt-8 mb-4">
         <div className="flex items-center justify-center gap-4 opacity-30">
           <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
             <Shield className="w-3 h-3" />

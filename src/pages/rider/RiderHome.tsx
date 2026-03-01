@@ -5,6 +5,7 @@ import { useGeolocation } from '@/hooks/useGeolocation';
 import { generateNearbyDrivers } from '@/lib/simulatedDrivers';
 import { useMapAlerts } from '@/hooks/useMapAlerts';
 import BottomNav from '@/components/rider/BottomNav';
+import DriverOfMonthBanner from '@/components/shared/DriverOfMonthBanner';
 import {
   Search, Car, Zap, Ambulance, Package, Bike, Building2,
   ChevronRight, MapPin, ShieldCheck, Truck, Heart
@@ -146,8 +147,17 @@ const RiderHome: React.FC = () => {
         </div>
       </div>
 
+      {/* Driver of the Month */}
+      <div className="px-5 mt-5">
+        <DriverOfMonthBanner
+          driverName="Moussa D."
+          city="Genève"
+          month={new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(new Date())}
+        />
+      </div>
+
       {/* Trust banner */}
-      <div className="px-5 mt-6">
+      <div className="px-5 mt-5">
         <div className="flex items-center gap-3 bg-card border border-border rounded-2xl p-4">
           <ShieldCheck className="w-7 h-7 text-primary flex-shrink-0" />
           <div>
