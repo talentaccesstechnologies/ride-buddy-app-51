@@ -41,10 +41,46 @@ const createPartnerIcon = (type: PartnerPoint['type'], emoji: string): string =>
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 };
 
-const DRIVER_ICON_URL = (() => {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13" fill="rgba(59,130,246,0.2)" stroke="rgba(59,130,246,0.4)" stroke-width="1"/><circle cx="14" cy="14" r="8" fill="#3B82F6" stroke="white" stroke-width="3"/></svg>`;
+const createDriverCarIcon = (heading: number = 0): string => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+    <defs>
+      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000" flood-opacity="0.35"/>
+      </filter>
+      <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#D4B45C"/>
+        <stop offset="50%" stop-color="#C9A84C"/>
+        <stop offset="100%" stop-color="#A8893A"/>
+      </linearGradient>
+      <linearGradient id="windshield" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1a1a2e"/>
+        <stop offset="100%" stop-color="#2d2d44"/>
+      </linearGradient>
+    </defs>
+    <g transform="rotate(${heading}, 24, 24)" filter="url(#shadow)">
+      <!-- Body -->
+      <rect x="14" y="6" width="20" height="36" rx="8" ry="8" fill="url(#carBody)" stroke="#B8993F" stroke-width="0.8"/>
+      <!-- Roof / cabin -->
+      <rect x="16.5" y="16" width="15" height="14" rx="4" ry="4" fill="url(#windshield)" opacity="0.9"/>
+      <!-- Front windshield -->
+      <rect x="17.5" y="12" width="13" height="6" rx="3" ry="2" fill="url(#windshield)" opacity="0.85"/>
+      <!-- Rear window -->
+      <rect x="17.5" y="30" width="13" height="5" rx="3" ry="2" fill="url(#windshield)" opacity="0.75"/>
+      <!-- Headlights -->
+      <rect x="16" y="7" width="5" height="2.5" rx="1" fill="#FFF8DC" opacity="0.95"/>
+      <rect x="27" y="7" width="5" height="2.5" rx="1" fill="#FFF8DC" opacity="0.95"/>
+      <!-- Tail lights -->
+      <rect x="16" y="38.5" width="5" height="2" rx="1" fill="#E74C3C" opacity="0.85"/>
+      <rect x="27" y="38.5" width="5" height="2" rx="1" fill="#E74C3C" opacity="0.85"/>
+      <!-- Side mirrors -->
+      <ellipse cx="12.5" cy="18" rx="2" ry="1.2" fill="#C9A84C" stroke="#B8993F" stroke-width="0.4"/>
+      <ellipse cx="35.5" cy="18" rx="2" ry="1.2" fill="#C9A84C" stroke="#B8993F" stroke-width="0.4"/>
+      <!-- Center line accent -->
+      <line x1="24" y1="8" x2="24" y2="11" stroke="#B8993F" stroke-width="0.6" opacity="0.5"/>
+    </g>
+  </svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-})();
+};
 
 /* ── Demo incoming ride ── */
 const DEMO_RIDE: IncomingRide = {
@@ -73,6 +109,8 @@ const DriverDashboardPage: React.FC = () => {
   const driverMode = useDriverMode(isOnline);
   const isColisMode = driverMode.mode === 'colis';
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
+  const [driverHeading, setDriverHeading] = useState(0);
+  const prevPositionRef = useRef<{ lat: number; lng: number } | null>(null);
   const [hasMoved, setHasMoved] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<PartnerPoint | null>(null);
   const [sheetExpanded, setSheetExpanded] = useState(false);
@@ -102,7 +140,19 @@ const DriverDashboardPage: React.FC = () => {
     }
     const update = () => {
       navigator.geolocation.getCurrentPosition(
-        (p) => setPosition({ lat: p.coords.latitude, lng: p.coords.longitude }),
+        (p) => {
+          const newPos = { lat: p.coords.latitude, lng: p.coords.longitude };
+          if (prevPositionRef.current) {
+            const dLat = newPos.lat - prevPositionRef.current.lat;
+            const dLng = newPos.lng - prevPositionRef.current.lng;
+            if (Math.abs(dLat) > 0.00001 || Math.abs(dLng) > 0.00001) {
+              const angle = (Math.atan2(dLng, dLat) * 180) / Math.PI;
+              setDriverHeading(angle < 0 ? angle + 360 : angle);
+            }
+          }
+          prevPositionRef.current = newPos;
+          setPosition(newPos);
+        },
         () => {}, { enableHighAccuracy: true, timeout: 8000 }
       );
     };
@@ -230,10 +280,10 @@ const DriverDashboardPage: React.FC = () => {
             ],
           }}
         >
-          {/* Driver dot */}
+          {/* Driver car icon */}
           <Marker
             position={position}
-            icon={{ url: DRIVER_ICON_URL, scaledSize: new google.maps.Size(28, 28), anchor: new google.maps.Point(14, 14) }}
+            icon={{ url: createDriverCarIcon(driverHeading), scaledSize: new google.maps.Size(48, 48), anchor: new google.maps.Point(24, 24) }}
             zIndex={999}
           />
 
