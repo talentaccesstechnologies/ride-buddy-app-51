@@ -142,7 +142,7 @@ const LandingPage: React.FC = () => {
             className="mt-3 text-xs transition-colors hover:underline"
             style={{ color: 'rgba(212,175,55,0.6)' }}
           >
-            Pas encore chauffeur ? <span className="underline">Devenir partenaire TATFleet</span>
+            Pas encore chauffeur ? <span className="underline">Devenir partenaire Caby</span>
           </button>
         </div>
       </div>
@@ -151,7 +151,7 @@ const LandingPage: React.FC = () => {
       <div className="absolute bottom-4 left-0 right-0 z-30 text-center">
         <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
           <Shield className="w-3.5 h-3.5 text-muted-foreground" />
-          Propulsé par TATFleet — La garantie d'un transport certifié et humain.
+          Propulsé par Caby — La garantie d'un transport certifié et humain.
         </p>
       </div>
     </div>

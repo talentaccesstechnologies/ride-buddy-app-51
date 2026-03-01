@@ -5,15 +5,15 @@ import { toast } from 'sonner';
 import { AnimatePresence } from 'framer-motion';
 import { RadarCourse, LegalStatus } from '@/types/radar.types';
 import { APP_CONFIG } from '@/config/app.config';
-import RadarHeader from '@/components/tatfleet/RadarHeader';
-import RadarToggle from '@/components/tatfleet/RadarToggle';
-import RadarAnimation from '@/components/tatfleet/RadarAnimation';
-import RadarEmptyState from '@/components/tatfleet/RadarEmptyState';
-import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
-import LegalBlockOverlay from '@/components/tatfleet/LegalBlockOverlay';
-import MotoSafetyChecklist from '@/components/tatfleet/MotoSafetyChecklist';
-import IncomingRideCard from '@/components/tatfleet/IncomingRideCard';
-import AcceptedRideOverlay from '@/components/tatfleet/AcceptedRideOverlay';
+import RadarHeader from '@/components/cabyDriver/RadarHeader';
+import RadarToggle from '@/components/cabyDriver/RadarToggle';
+import RadarAnimation from '@/components/cabyDriver/RadarAnimation';
+import RadarEmptyState from '@/components/cabyDriver/RadarEmptyState';
+import DriverBottomNav from '@/components/cabyDriver/DriverBottomNav';
+import LegalBlockOverlay from '@/components/cabyDriver/LegalBlockOverlay';
+import MotoSafetyChecklist from '@/components/cabyDriver/MotoSafetyChecklist';
+import IncomingRideCard from '@/components/cabyDriver/IncomingRideCard';
+import AcceptedRideOverlay from '@/components/cabyDriver/AcceptedRideOverlay';
 import Logo from '@/components/shared/Logo';
 
 const makeMeta = (source: string, sujet: string, desc: string) => ({
@@ -179,7 +179,7 @@ const DriverRadarPage: React.FC = () => {
 
   const handleSwitchMode = () => {
     if (driverMode === 'passenger') {
-      navigate('/tatfleet/logistics');
+      navigate('/caby/driver/logistics');
     } else {
       setDriverMode('passenger');
     }
@@ -275,7 +275,7 @@ const DriverRadarPage: React.FC = () => {
         isOnline={isOnline}
         legalStatus={legalStatus}
         unreadNotifications={2}
-        onNotificationClick={() => navigate('/tatfleet/notifications')}
+        onNotificationClick={() => navigate('/caby/driver/notifications')}
       />
 
       <RadarToggle
@@ -344,7 +344,7 @@ const DriverRadarPage: React.FC = () => {
       <div className="fixed bottom-20 left-0 right-0 flex items-center justify-center gap-4 py-2 opacity-30">
         <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
           <Shield className="w-3 h-3" />
-          <span>TATFleet LSE Certified</span>
+          <span>Caby LSE Certified</span>
         </div>
         {!APP_CONFIG.IS_TEST_MODE && (
           <span className="text-[8px] font-mono text-muted-foreground">

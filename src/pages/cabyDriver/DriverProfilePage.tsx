@@ -1,8 +1,8 @@
 import React from 'react';
 import { ArrowLeft, Shield, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
-import DriverPhotoUpload from '@/components/tatfleet/DriverPhotoUpload';
+import DriverBottomNav from '@/components/cabyDriver/DriverBottomNav';
+import DriverPhotoUpload from '@/components/cabyDriver/DriverPhotoUpload';
 import { useAuth } from '@/contexts/AuthContext';
 
 const DriverProfilePage: React.FC = () => {
@@ -63,7 +63,7 @@ const DriverProfilePage: React.FC = () => {
         <div className="flex items-center justify-center gap-4 opacity-30">
           <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
             <Shield className="w-3 h-3" />
-            <span>TATFleet LSE Certified</span>
+            <span>Caby LSE Certified</span>
           </div>
         </div>
       </div>

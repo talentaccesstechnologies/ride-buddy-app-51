@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Package, ScanBarcode, Camera, KeyRound, MapPin, CheckCircle2, Clock, Truck, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
+import DriverBottomNav from '@/components/cabyDriver/DriverBottomNav';
 import { toast } from 'sonner';
 
 // Demo batch data
@@ -138,7 +138,7 @@ const DriverLogisticsPage: React.FC = () => {
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="px-5 pt-14 pb-4">
-        <button onClick={() => navigate('/tatfleet/radar')} className="flex items-center gap-2 text-muted-foreground mb-4">
+        <button onClick={() => navigate('/caby/driver/radar')} className="flex items-center gap-2 text-muted-foreground mb-4">
           <ArrowLeft className="w-5 h-5" />
           <span className="text-sm">Radar</span>
         </button>

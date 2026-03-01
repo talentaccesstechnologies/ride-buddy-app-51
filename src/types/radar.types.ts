@@ -41,7 +41,7 @@ export interface RadarCourse {
   createdAt: Date;
   scheduledFor?: Date;
   
-  // Métadonnées TATFleet
+  // Métadonnées Caby Driver
   meta: {
     date: string;
     source: CourseSource;

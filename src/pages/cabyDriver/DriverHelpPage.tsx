@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Car, ChevronRight, Phone, UserX, Wrench, MapPin, Bug, KeyRound, ExternalLink, Clock, Banknote } from 'lucide-react';
-import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
+import DriverBottomNav from '@/components/cabyDriver/DriverBottomNav';
 
 const recentMissions = [
   {
@@ -47,7 +47,7 @@ const DriverHelpPage: React.FC = () => {
       {/* Header */}
       <div className="px-5 pt-12 pb-2">
         <div className="flex items-center justify-between mb-4">
-          <button onClick={() => navigate('/tatfleet/radar')} className="p-1">
+          <button onClick={() => navigate('/caby/driver/dashboard')} className="p-1">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -117,12 +117,12 @@ const DriverHelpPage: React.FC = () => {
           ))}
         </div>
 
-        {/* TATFleet external link */}
+        {/* Caby external link */}
         <button className="w-full flex items-center gap-4 bg-caby-gold/10 border border-caby-gold/30 rounded-xl p-4 text-left hover:bg-caby-gold/20 transition-colors mb-8">
           <ExternalLink className="w-5 h-5 text-caby-gold" />
           <div className="flex-1">
             <p className="font-bold text-sm text-caby-gold">Questions sur mon Salaire & Social</p>
-            <p className="text-xs text-caby-muted mt-0.5">Redirige vers le support TATFleet (payroll, AVS, LPP)</p>
+            <p className="text-xs text-caby-muted mt-0.5">Redirige vers le support Caby (payroll, AVS, LPP)</p>
           </div>
           <ChevronRight className="w-4 h-4 text-caby-gold" />
         </button>

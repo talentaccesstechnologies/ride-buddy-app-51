@@ -39,7 +39,7 @@ const SafetyAtCabyPage: React.FC = () => {
             <Building className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <h2 className="text-xl font-bold">La promesse TATFleet</h2>
+            <h2 className="text-xl font-bold">La promesse Caby</h2>
             <p className="text-xs text-muted-foreground">
               Des standards de sécurité inégalés
             </p>
@@ -47,7 +47,7 @@ const SafetyAtCabyPage: React.FC = () => {
         </div>
 
         <p className="text-sm text-muted-foreground mb-8">
-          Tous nos chauffeurs sont rigoureusement sélectionnés. Chaque chauffeur sur Caby est un salarié de TATFleet, ce qui garantit un niveau de qualité et de conformité supérieur.
+          Tous nos chauffeurs sont rigoureusement sélectionnés. Chaque chauffeur sur Caby est un salarié de Caby, ce qui garantit un niveau de qualité et de conformité supérieur.
         </p>
 
         <div className="space-y-3">
@@ -66,7 +66,7 @@ const SafetyAtCabyPage: React.FC = () => {
 
         <div className="mt-8 bg-card border border-border rounded-xl p-5 text-center">
           <p className="text-xs text-muted-foreground">
-            🔒 TATFleet LSE Certified · Genève, Suisse
+            🔒 Caby LSE Certified · Genève, Suisse
           </p>
         </div>
       </div>

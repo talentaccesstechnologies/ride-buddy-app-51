@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, TrendingUp, Calendar, Wallet, Car, Package, Users, ArrowUp, ArrowDown } from 'lucide-react';
 import { APP_CONFIG } from '@/config/app.config';
-import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
+import DriverBottomNav from '@/components/cabyDriver/DriverBottomNav';
 
 /* ── Simulated data ── */
 interface DayEarnings {

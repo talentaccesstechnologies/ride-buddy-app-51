@@ -33,7 +33,7 @@ const categories: ServiceCategory[] = [
     label: 'Santé & Soins',
     emoji: '🏥',
     items: [
-      { id: 'care', icon: Ambulance, title: 'Caby Care', desc: 'Transport médical · Hôpitaux, centres médicaux & médecins', badge: 'Certifié TATFleet Safety', route: '/caby/search' },
+      { id: 'care', icon: Ambulance, title: 'Caby Care', desc: 'Transport médical · Hôpitaux, centres médicaux & médecins', badge: 'Certifié Caby Safety', route: '/caby/search' },
       { id: 'health', icon: FlaskConical, title: 'Caby Health Logistix', desc: 'Transport d\'analyses entre hôpitaux & laboratoires (Unilabs, Dynalabs)', badge: 'Chaîne du froid garantie', route: '/caby/search' },
       { id: 'vet', icon: Heart, title: 'Caby Vet', desc: 'Transport vétérinaire · Cliniques & urgences animales', badge: 'Soins animaux', route: '/caby/search' },
     ],
@@ -57,11 +57,11 @@ const categories: ServiceCategory[] = [
     label: 'Services Premium',
     emoji: '✨',
     items: [
-      { id: 'secure', icon: KeyRound, title: 'Caby Secure', desc: 'Clés, passeports, contrats originaux · Transport ultra-sécurisé', badge: 'Certifié TATFleet', route: '/caby/search' },
-      { id: 'gourmet', icon: Wine, title: 'Caby Gourmet', desc: 'Vins fins & spiritueux · Livraison soignée depuis cavistes partenaires', badge: 'Certifié TATFleet', route: '/caby/search' },
-      { id: 'laundry', icon: Shirt, title: 'Caby Laundry', desc: 'Pressing à domicile · Ramassage matin, livraison soir', badge: 'Certifié TATFleet', route: '/caby/search' },
-      { id: 'pet', icon: PawPrint, title: 'Caby Pet', desc: 'Transport d\'animaux seul · Vétérinaire & toilettage', badge: 'Certifié TATFleet', route: '/caby/search' },
-      { id: 'concierge', icon: ShoppingBag, title: 'Caby Concierge', desc: 'Click & Collect de luxe · Personal Shopper logistique', badge: 'Certifié TATFleet', route: '/caby/search' },
+      { id: 'secure', icon: KeyRound, title: 'Caby Secure', desc: 'Clés, passeports, contrats originaux · Transport ultra-sécurisé', badge: 'Certifié Caby', route: '/caby/search' },
+      { id: 'gourmet', icon: Wine, title: 'Caby Gourmet', desc: 'Vins fins & spiritueux · Livraison soignée depuis cavistes partenaires', badge: 'Certifié Caby', route: '/caby/search' },
+      { id: 'laundry', icon: Shirt, title: 'Caby Laundry', desc: 'Pressing à domicile · Ramassage matin, livraison soir', badge: 'Certifié Caby', route: '/caby/search' },
+      { id: 'pet', icon: PawPrint, title: 'Caby Pet', desc: 'Transport d\'animaux seul · Vétérinaire & toilettage', badge: 'Certifié Caby', route: '/caby/search' },
+      { id: 'concierge', icon: ShoppingBag, title: 'Caby Concierge', desc: 'Click & Collect de luxe · Personal Shopper logistique', badge: 'Certifié Caby', route: '/caby/search' },
     ],
   },
 ];
@@ -115,7 +115,7 @@ const ServicesPage: React.FC = () => {
         <div className="mt-8 flex items-center gap-3 bg-card border border-border rounded-2xl p-4">
           <ShieldCheck className="w-8 h-8 text-primary flex-shrink-0" />
           <div>
-            <p className="font-bold text-sm">Tous nos services sont certifiés TATFleet</p>
+            <p className="font-bold text-sm">Tous nos services sont certifiés Caby</p>
             <p className="text-xs text-muted-foreground mt-0.5">Chauffeurs salariés · Assurances professionnelles · Conformité LTVTC Genève</p>
           </div>
         </div>

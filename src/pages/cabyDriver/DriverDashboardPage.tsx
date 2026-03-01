@@ -8,14 +8,14 @@ import { APP_CONFIG } from '@/config/app.config';
 import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 import { useDriverMode } from '@/hooks/useDriverMode';
 import { RadarCourse } from '@/types/radar.types';
-import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
-import DriverDashboardSheet from '@/components/tatfleet/DriverDashboardSheet';
-import IncomingRideCard from '@/components/tatfleet/IncomingRideCard';
-import AcceptedRideOverlay from '@/components/tatfleet/AcceptedRideOverlay';
-import ActiveRidePanel from '@/components/tatfleet/ActiveRidePanel';
-import ModeSwitchSuggestion from '@/components/tatfleet/ModeSwitchSuggestion';
-import QueueToleranceOverlay from '@/components/tatfleet/QueueToleranceOverlay';
-import { type IncomingRide } from '@/components/tatfleet/IncomingRideOverlay';
+import DriverBottomNav from '@/components/cabyDriver/DriverBottomNav';
+import DriverDashboardSheet from '@/components/cabyDriver/DriverDashboardSheet';
+import IncomingRideCard from '@/components/cabyDriver/IncomingRideCard';
+import AcceptedRideOverlay from '@/components/cabyDriver/AcceptedRideOverlay';
+import ActiveRidePanel from '@/components/cabyDriver/ActiveRidePanel';
+import ModeSwitchSuggestion from '@/components/cabyDriver/ModeSwitchSuggestion';
+import QueueToleranceOverlay from '@/components/cabyDriver/QueueToleranceOverlay';
+import { type IncomingRide } from '@/components/cabyDriver/IncomingRideOverlay';
 
 const RADAR_RADIUS_M = 5000;
 const containerStyle: React.CSSProperties = { width: '100%', height: '100%' };
@@ -538,7 +538,7 @@ const DriverDashboardPage: React.FC = () => {
             dailyGoal={400}
             expanded={sheetExpanded}
             onToggleExpand={() => setSheetExpanded((v) => !v)}
-            onViewMissions={() => navigate('/tatfleet/logistics')}
+            onViewMissions={() => navigate('/caby/driver/logistics')}
           />
         )}
 

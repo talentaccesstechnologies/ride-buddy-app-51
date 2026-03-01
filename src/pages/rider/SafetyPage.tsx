@@ -59,7 +59,7 @@ const SafetyPage: React.FC = () => {
     {
       icon: Building,
       title: 'Safety at Caby',
-      subtitle: 'Nos protocoles et conformité TATFleet',
+      subtitle: 'Nos protocoles et conformité Caby',
       route: '/caby/account/safety/about',
     },
   ];
