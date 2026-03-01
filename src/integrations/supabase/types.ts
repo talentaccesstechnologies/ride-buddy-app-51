@@ -397,6 +397,168 @@ export type Database = {
           },
         ]
       }
+      driver_levels: {
+        Row: {
+          acceptance_rate: number
+          avg_rating: number
+          cancellation_rate: number
+          commission_rate: number
+          composite_score: number
+          created_at: string
+          driver_id: string
+          evaluated_at: string
+          id: string
+          level: string
+          punctuality_rate: number
+          quarter: string
+          total_rides: number
+        }
+        Insert: {
+          acceptance_rate?: number
+          avg_rating?: number
+          cancellation_rate?: number
+          commission_rate?: number
+          composite_score?: number
+          created_at?: string
+          driver_id: string
+          evaluated_at?: string
+          id?: string
+          level?: string
+          punctuality_rate?: number
+          quarter: string
+          total_rides?: number
+        }
+        Update: {
+          acceptance_rate?: number
+          avg_rating?: number
+          cancellation_rate?: number
+          commission_rate?: number
+          composite_score?: number
+          created_at?: string
+          driver_id?: string
+          evaluated_at?: string
+          id?: string
+          level?: string
+          punctuality_rate?: number
+          quarter?: string
+          total_rides?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_levels_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driver_monthly_scores: {
+        Row: {
+          acceptance_rate: number
+          avg_rating: number
+          club_redistributions: number
+          composite_score: number
+          created_at: string
+          driver_id: string
+          id: string
+          month: string
+          punctuality_rate: number
+          rank: number | null
+          total_rides: number
+        }
+        Insert: {
+          acceptance_rate?: number
+          avg_rating?: number
+          club_redistributions?: number
+          composite_score?: number
+          created_at?: string
+          driver_id: string
+          id?: string
+          month: string
+          punctuality_rate?: number
+          rank?: number | null
+          total_rides?: number
+        }
+        Update: {
+          acceptance_rate?: number
+          avg_rating?: number
+          club_redistributions?: number
+          composite_score?: number
+          created_at?: string
+          driver_id?: string
+          id?: string
+          month?: string
+          punctuality_rate?: number
+          rank?: number | null
+          total_rides?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_monthly_scores_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driver_of_month: {
+        Row: {
+          acceptance_rate: number
+          avg_rating: number
+          badge_expires_at: string | null
+          bonus_amount: number
+          club_redistributions: number
+          commission_rate: number
+          composite_score: number
+          created_at: string
+          driver_id: string
+          id: string
+          month: string
+          punctuality_rate: number
+          total_rides: number
+        }
+        Insert: {
+          acceptance_rate?: number
+          avg_rating?: number
+          badge_expires_at?: string | null
+          bonus_amount?: number
+          club_redistributions?: number
+          commission_rate?: number
+          composite_score?: number
+          created_at?: string
+          driver_id: string
+          id?: string
+          month: string
+          punctuality_rate?: number
+          total_rides?: number
+        }
+        Update: {
+          acceptance_rate?: number
+          avg_rating?: number
+          badge_expires_at?: string | null
+          bonus_amount?: number
+          club_redistributions?: number
+          commission_rate?: number
+          composite_score?: number
+          created_at?: string
+          driver_id?: string
+          id?: string
+          month?: string
+          punctuality_rate?: number
+          total_rides?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_of_month_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       driver_profiles: {
         Row: {
           created_at: string | null
