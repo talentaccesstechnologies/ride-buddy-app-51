@@ -1,11 +1,10 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Radio, Users, Map, Wallet, User } from 'lucide-react';
+import { LayoutDashboard, Users, Wallet, User } from 'lucide-react';
 
 const navItems = [
-  { to: '/tatfleet/radar', icon: Radio, label: 'Radar' },
+  { to: '/tatfleet/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/tatfleet/club', icon: Users, label: 'Club' },
-  { to: '/tatfleet/map', icon: Map, label: 'Carte' },
   { to: '/tatfleet/earnings', icon: Wallet, label: 'Gains' },
   { to: '/tatfleet/profile', icon: User, label: 'Profil' },
 ];

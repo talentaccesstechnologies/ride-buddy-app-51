@@ -45,6 +45,7 @@ import DriverHelpPage from "./pages/tatfleet/DriverHelpPage";
 import DriverLogisticsPage from "./pages/tatfleet/DriverLogisticsPage";
 import DriverClubPage from "./pages/tatfleet/DriverClubPage";
 import DriverMapPage from "./pages/tatfleet/DriverMapPage";
+import DriverDashboardPage from "./pages/tatfleet/DriverDashboardPage";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -97,12 +98,13 @@ const App = () => (
               <Route path="/driver/*" element={<Navigate to="/tatfleet/radar" replace />} />
 
               {/* TATFleet - Driver Interface */}
-              <Route path="/tatfleet" element={<Navigate to="/tatfleet/radar" replace />} />
-              <Route path="/tatfleet/radar" element={<DriverRadarPage />} />
+              <Route path="/tatfleet" element={<Navigate to="/tatfleet/dashboard" replace />} />
+              <Route path="/tatfleet/radar" element={<Navigate to="/tatfleet/dashboard" replace />} />
+              <Route path="/tatfleet/map" element={<Navigate to="/tatfleet/dashboard" replace />} />
+              <Route path="/tatfleet/dashboard" element={<DriverDashboardPage />} />
               <Route path="/tatfleet/help" element={<DriverHelpPage />} />
               <Route path="/tatfleet/logistics" element={<DriverLogisticsPage />} />
               <Route path="/tatfleet/club" element={<DriverClubPage />} />
-              <Route path="/tatfleet/map" element={<DriverMapPage />} />
               {/* 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
