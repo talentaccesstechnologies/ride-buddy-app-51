@@ -22,7 +22,7 @@ const LegalBlockOverlay: React.FC = () => {
         </p>
 
         <Button
-          onClick={() => navigate('/tatfleet/documents')}
+          onClick={() => navigate('/caby/driver/documents')}
           className="w-full btn-gold py-4 rounded-2xl"
         >
           <FileText className="w-5 h-5 mr-2" />

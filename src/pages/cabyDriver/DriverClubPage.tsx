@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Shield, Clock, Trophy, TrendingUp, Sparkles, DollarSign, Calendar } from 'lucide-react';
-import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
-import DriverPrivateClients from '@/components/tatfleet/DriverPrivateClients';
-import SuperDriverBadgeCard from '@/components/tatfleet/SuperDriverBadgeCard';
-import ScoreBreakdown from '@/components/tatfleet/ScoreBreakdown';
-import LevelHistory from '@/components/tatfleet/LevelHistory';
-import MonthlyLeaderboard, { type LeaderboardEntry } from '@/components/tatfleet/MonthlyLeaderboard';
+import DriverBottomNav from '@/components/cabyDriver/DriverBottomNav';
+import DriverPrivateClients from '@/components/cabyDriver/DriverPrivateClients';
+import SuperDriverBadgeCard from '@/components/cabyDriver/SuperDriverBadgeCard';
+import ScoreBreakdown from '@/components/cabyDriver/ScoreBreakdown';
+import LevelHistory from '@/components/cabyDriver/LevelHistory';
+import MonthlyLeaderboard, { type LeaderboardEntry } from '@/components/cabyDriver/MonthlyLeaderboard';
 import { type DriverLevel } from '@/lib/driverLevels';
 
 // ── Mock data ──
@@ -237,7 +237,7 @@ const DriverClubPage: React.FC = () => {
         <div className="flex items-center justify-center gap-4 opacity-30">
           <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
             <Shield className="w-3 h-3" />
-            <span>TATFleet LSE Certified</span>
+            <span>Caby LSE Certified</span>
           </div>
           <span className="text-[8px] font-mono text-muted-foreground">ENCRYPTED_STREAM_V2_ACTIVE</span>
         </div>

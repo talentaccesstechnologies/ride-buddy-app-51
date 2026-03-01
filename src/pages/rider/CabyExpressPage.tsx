@@ -163,7 +163,7 @@ const CabyExpressPage: React.FC = () => {
         <div className="flex items-center gap-3 bg-primary/5 border border-primary/20 rounded-xl p-4">
           <Shield className="w-6 h-6 text-primary flex-shrink-0" />
           <p className="text-xs text-muted-foreground">
-            <span className="font-bold text-foreground">Certifié TATFleet Safety</span> · Chauffeurs vérifiés · Assurance colis incluse
+            <span className="font-bold text-foreground">Certifié Caby Safety</span> · Chauffeurs vérifiés · Assurance colis incluse
           </p>
         </div>
 

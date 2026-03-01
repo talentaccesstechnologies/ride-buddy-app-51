@@ -161,7 +161,7 @@ const RiderHome: React.FC = () => {
         <div className="flex items-center gap-3 bg-card border border-border rounded-2xl p-4">
           <ShieldCheck className="w-7 h-7 text-primary flex-shrink-0" />
           <div>
-            <p className="font-bold text-xs">Tous nos chauffeurs sont certifiés TATFleet</p>
+            <p className="font-bold text-xs">Tous nos chauffeurs sont certifiés Caby</p>
             <p className="text-[10px] text-muted-foreground mt-0.5">
               Salariés · Assurés · Conformes LTVTC Genève
             </p>
@@ -172,7 +172,7 @@ const RiderHome: React.FC = () => {
       {/* Footer branding */}
       <div className="text-center mt-6 mb-4">
         <p className="text-[9px] text-muted-foreground/40 tracking-widest uppercase">
-          TATFleet LSE Certified · ENCRYPTED_STREAM_V2_ACTIVE
+          Caby LSE Certified · ENCRYPTED_STREAM_V2_ACTIVE
         </p>
       </div>
 

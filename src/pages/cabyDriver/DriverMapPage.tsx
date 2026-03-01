@@ -3,7 +3,7 @@ import { GoogleMap, Circle, Marker, InfoWindow } from '@react-google-maps/api';
 import { Locate, Wifi, WifiOff } from 'lucide-react';
 import { APP_CONFIG } from '@/config/app.config';
 import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
-import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
+import DriverBottomNav from '@/components/cabyDriver/DriverBottomNav';
 
 const RADAR_RADIUS_M = 5000;
 const containerStyle: React.CSSProperties = { width: '100%', height: '100%' };

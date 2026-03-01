@@ -69,7 +69,7 @@ const LoginPage: React.FC = () => {
       toast.error('Code invalide', { description: 'Veuillez réessayer.' });
     } else {
       toast.success('Connexion réussie !');
-      navigate(role === 'driver' ? '/tatfleet/radar' : '/caby');
+      navigate(role === 'driver' ? '/caby/driver/dashboard' : '/caby');
     }
   };
 
@@ -82,7 +82,7 @@ const LoginPage: React.FC = () => {
       toast.error('Échec de la connexion', { description: 'Email ou mot de passe incorrect' });
     } else {
       toast.success('Connexion réussie !');
-      navigate(role === 'driver' ? '/tatfleet/radar' : '/caby');
+      navigate(role === 'driver' ? '/caby/driver/dashboard' : '/caby');
     }
   };
 
@@ -375,7 +375,7 @@ const LoginPage: React.FC = () => {
 
           {/* Footer */}
           <p className="text-center mt-6 text-[9px] text-muted-foreground/40 tracking-widest uppercase">
-            TATFleet LSE Certified · ENCRYPTED_STREAM_V2_ACTIVE
+            Caby LSE Certified · ENCRYPTED_STREAM_V2_ACTIVE
           </p>
         </div>
       </div>

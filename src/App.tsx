@@ -39,15 +39,15 @@ import TeenSafetyPage from "./pages/rider/safety/TeenSafetyPage";
 import SafetyAtCabyPage from "./pages/rider/safety/SafetyAtCabyPage";
 import InboxPage from "./pages/rider/InboxPage";
 
-// TATFleet (Driver) pages
-import DriverRadarPage from "./pages/tatfleet/DriverRadarPage";
-import DriverHelpPage from "./pages/tatfleet/DriverHelpPage";
-import DriverLogisticsPage from "./pages/tatfleet/DriverLogisticsPage";
-import DriverClubPage from "./pages/tatfleet/DriverClubPage";
-import DriverMapPage from "./pages/tatfleet/DriverMapPage";
-import DriverDashboardPage from "./pages/tatfleet/DriverDashboardPage";
-import DriverProfilePage from "./pages/tatfleet/DriverProfilePage";
-import DriverEarningsPage from "./pages/tatfleet/DriverEarningsPage";
+// Caby Driver pages
+import DriverRadarPage from "./pages/cabyDriver/DriverRadarPage";
+import DriverHelpPage from "./pages/cabyDriver/DriverHelpPage";
+import DriverLogisticsPage from "./pages/cabyDriver/DriverLogisticsPage";
+import DriverClubPage from "./pages/cabyDriver/DriverClubPage";
+import DriverMapPage from "./pages/cabyDriver/DriverMapPage";
+import DriverDashboardPage from "./pages/cabyDriver/DriverDashboardPage";
+import DriverProfilePage from "./pages/cabyDriver/DriverProfilePage";
+import DriverEarningsPage from "./pages/cabyDriver/DriverEarningsPage";
 import InvitePage from "./pages/InvitePage";
 const queryClient = new QueryClient();
 
@@ -96,20 +96,22 @@ const App = () => (
               <Route path="/rider" element={<Navigate to="/caby" replace />} />
               <Route path="/rider/*" element={<Navigate to="/caby" replace />} />
 
-              {/* Legacy driver routes - redirect to /tatfleet */}
-              <Route path="/driver" element={<Navigate to="/tatfleet/radar" replace />} />
-              <Route path="/driver/*" element={<Navigate to="/tatfleet/radar" replace />} />
+              {/* Legacy driver routes - redirect to /caby/driver */}
+              <Route path="/driver" element={<Navigate to="/caby/driver" replace />} />
+              <Route path="/driver/*" element={<Navigate to="/caby/driver" replace />} />
+              <Route path="/tatfleet" element={<Navigate to="/caby/driver/dashboard" replace />} />
+              <Route path="/tatfleet/*" element={<Navigate to="/caby/driver/dashboard" replace />} />
 
-              {/* TATFleet - Driver Interface */}
-              <Route path="/tatfleet" element={<Navigate to="/tatfleet/dashboard" replace />} />
-              <Route path="/tatfleet/radar" element={<DriverRadarPage />} />
-              <Route path="/tatfleet/map" element={<Navigate to="/tatfleet/dashboard" replace />} />
-              <Route path="/tatfleet/dashboard" element={<DriverDashboardPage />} />
-              <Route path="/tatfleet/help" element={<DriverHelpPage />} />
-              <Route path="/tatfleet/logistics" element={<DriverLogisticsPage />} />
-              <Route path="/tatfleet/club" element={<DriverClubPage />} />
-              <Route path="/tatfleet/profile" element={<DriverProfilePage />} />
-              <Route path="/tatfleet/earnings" element={<DriverEarningsPage />} />
+              {/* Caby Driver Interface */}
+              <Route path="/caby/driver" element={<Navigate to="/caby/driver/dashboard" replace />} />
+              <Route path="/caby/driver/radar" element={<DriverRadarPage />} />
+              <Route path="/caby/driver/map" element={<Navigate to="/caby/driver/dashboard" replace />} />
+              <Route path="/caby/driver/dashboard" element={<DriverDashboardPage />} />
+              <Route path="/caby/driver/help" element={<DriverHelpPage />} />
+              <Route path="/caby/driver/logistics" element={<DriverLogisticsPage />} />
+              <Route path="/caby/driver/club" element={<DriverClubPage />} />
+              <Route path="/caby/driver/profile" element={<DriverProfilePage />} />
+              <Route path="/caby/driver/earnings" element={<DriverEarningsPage />} />
 
               {/* Invite */}
               <Route path="/invite/:code" element={<InvitePage />} />

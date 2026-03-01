@@ -10,7 +10,7 @@ export const APP_CONFIG = {
   DEFAULT_ZOOM: 14,
   COMMISSION_RATE: 0.15,
   NETTING_RATE: 0.10,
-  TATFLEET_WEBHOOK_URL: '/api/tatfleet-sync',
+  CABY_DRIVER_WEBHOOK_URL: '/api/caby-driver-sync',
   GOOGLE_MAPS_API_KEY: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
   STRIPE_KEY: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
   
