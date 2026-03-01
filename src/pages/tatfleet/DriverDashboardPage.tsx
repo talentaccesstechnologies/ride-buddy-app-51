@@ -9,6 +9,7 @@ import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
 import DriverDashboardSheet from '@/components/tatfleet/DriverDashboardSheet';
 import IncomingRideOverlay, { type IncomingRide } from '@/components/tatfleet/IncomingRideOverlay';
+import ActiveRidePanel from '@/components/tatfleet/ActiveRidePanel';
 
 const RADAR_RADIUS_M = 5000;
 const containerStyle: React.CSSProperties = { width: '100%', height: '100%' };
@@ -48,7 +49,11 @@ const DEMO_RIDE: IncomingRide = {
   clientName: 'Sophie Müller',
   clientPhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
   pickupAddress: 'Rue du Rhône 48, Genève',
+  pickupLat: 46.2017,
+  pickupLng: 6.1468,
   dropoffAddress: 'Aéroport de Genève (GVA)',
+  dropoffLat: 46.2381,
+  dropoffLng: 6.1089,
   distanceFromDriver: 1.2,
   estimatedPrice: 45,
   serviceType: 'standard',
@@ -70,6 +75,7 @@ const DriverDashboardPage: React.FC = () => {
   const [todayEarnings] = useState(145);
   const [missionsCount] = useState(3);
   const [incomingRide, setIncomingRide] = useState<IncomingRide | null>(null);
+  const [activeRide, setActiveRide] = useState<IncomingRide | null>(null);
 
   const mapRef = useRef<google.maps.Map | null>(null);
   const watchIdRef = useRef<number | null>(null);
@@ -141,9 +147,22 @@ const DriverDashboardPage: React.FC = () => {
   };
 
   const handleAcceptRide = useCallback((id: string) => {
+    if (incomingRide) setActiveRide(incomingRide);
     setIncomingRide(null);
     toast.success('Course acceptée !', { description: 'Navigation vers le client…' });
+  }, [incomingRide]);
+
+  const handleRideArrived = useCallback(() => {
+    toast.success('Client notifié de votre arrivée');
   }, []);
+
+  const handleRideComplete = useCallback(() => {
+    const ride = activeRide;
+    setActiveRide(null);
+    toast.success('Course terminée !', {
+      description: ride ? `${ride.estimatedPrice} CHF · ${ride.dropoffAddress}` : undefined,
+    });
+  }, [activeRide]);
 
   const handleRefuseRide = useCallback((id: string) => {
     setIncomingRide(null);
@@ -346,6 +365,17 @@ const DriverDashboardPage: React.FC = () => {
           />
         )}
       </AnimatePresence>
+
+      {/* ── Active ride panel ── */}
+      {activeRide && position && (
+        <ActiveRidePanel
+          ride={activeRide}
+          driverPosition={position}
+          onArrived={handleRideArrived}
+          onComplete={handleRideComplete}
+          onCancel={() => { setActiveRide(null); toast.info('Course annulée'); }}
+        />
+      )}
     </div>
   );
 };
