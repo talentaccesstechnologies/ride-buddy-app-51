@@ -10,10 +10,8 @@ import RadarAnimation from '@/components/tatfleet/RadarAnimation';
 import RadarEmptyState from '@/components/tatfleet/RadarEmptyState';
 import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
 import LegalBlockOverlay from '@/components/tatfleet/LegalBlockOverlay';
-import TransferModal from '@/components/tatfleet/TransferModal';
 import MotoSafetyChecklist from '@/components/tatfleet/MotoSafetyChecklist';
-import SwipeableCard from '@/components/tatfleet/SwipeableCard';
-import SwipeableCourseCard from '@/components/tatfleet/SwipeableCourseCard';
+import IncomingRideCard from '@/components/tatfleet/IncomingRideCard';
 import Logo from '@/components/shared/Logo';
 
 // Demo data
@@ -111,7 +109,6 @@ const DriverRadarPage: React.FC = () => {
   const [isOnline, setIsOnline] = useState(false);
   const [legalStatus] = useState<LegalStatus>('green');
   const [courses, setCourses] = useState<RadarCourse[]>([]);
-  const [transferCourse, setTransferCourse] = useState<RadarCourse | null>(null);
   const [motoCheckCourse, setMotoCheckCourse] = useState<RadarCourse | null>(null);
   const [driverMode, setDriverMode] = useState<'passenger' | 'logistics'>('passenger');
   const [stats] = useState({ todayRides: 3, todayEarnings: 145, onlineMinutes: 127 });
@@ -124,7 +121,6 @@ const DriverRadarPage: React.FC = () => {
     }
   };
 
-  // Sort by priority
   const sortedCourses = [...courses].sort((a, b) => {
     const priority: Record<string, number> = { private_client: 0, network_dispatch: 1, caby_direct: 2, livraison: 3, uber_sync: 4 };
     return (priority[a.type] ?? 5) - (priority[b.type] ?? 5);
@@ -151,47 +147,43 @@ const DriverRadarPage: React.FC = () => {
     }
   }, [legalStatus]);
 
-  const handleSwipeRight = useCallback((courseId: string) => {
+  const handleAccept = useCallback((courseId: string) => {
     const course = courses.find(c => c.id === courseId);
     if (!course) return;
-
     if (course.vehicleTypeRequired === 'moto') {
       setMotoCheckCourse(course);
       return;
     }
-
     toast.success('Course acceptée !', { description: `${course.pickupAddress} → ${course.dropoffAddress}` });
     setCourses(prev => prev.filter(c => c.id !== courseId));
   }, [courses]);
 
-  const handleSwipeLeft = useCallback((courseId: string) => {
+  const handleRefuse = useCallback((courseId: string) => {
     setCourses(prev => prev.filter(c => c.id !== courseId));
-    toast.info('Course ignorée');
+    toast.info('Course refusée — passée au chauffeur suivant');
   }, []);
 
-  const handleShare = useCallback((courseId: string) => {
+  const handleShareToClub = useCallback((courseId: string) => {
     const course = courses.find(c => c.id === courseId);
-    if (course) {
-      setTransferCourse(course);
-    }
-  }, [courses]);
-
-  const handleConfirmTransfer = useCallback(async (courseId: string, notes: string) => {
-    const course = courses.find(c => c.id === courseId);
-    if (course) {
-      const commission = course.estimatedPrice * 0.10;
-      toast.success('Course partagée au Club Privé ✓', {
-        description: `Rétrocession de ${commission.toFixed(0)} ${APP_CONFIG.DEFAULT_CURRENCY} si exécutée`,
-      });
-    }
+    if (!course) return;
+    const clubMembers = Math.floor(Math.random() * 8) + 3;
+    const commission = course.estimatedPrice * 0.10;
+    toast.success('Envoyé à votre Club', {
+      description: `${clubMembers} membres notifiés · Rétrocession ${commission.toFixed(0)} ${APP_CONFIG.DEFAULT_CURRENCY}`,
+      icon: '🏆',
+    });
     setCourses(prev => prev.filter(c => c.id !== courseId));
-    setTransferCourse(null);
   }, [courses]);
 
   const handleExpire = useCallback((courseId: string) => {
+    const course = courses.find(c => c.id === courseId);
     setCourses(prev => prev.filter(c => c.id !== courseId));
-    toast.info('Course expirée');
-  }, []);
+    if (course?.type === 'private_client') {
+      toast.info('Course client privé redistribuée au Club', { icon: '🔄' });
+    } else {
+      toast.info('Course transmise au chauffeur suivant');
+    }
+  }, [courses]);
 
   const handleMotoCheckConfirm = useCallback(() => {
     if (!motoCheckCourse) return;
@@ -217,7 +209,6 @@ const DriverRadarPage: React.FC = () => {
         disabled={legalStatus === 'red'}
       />
 
-      {/* Mode toggle + title */}
       <div className="px-4 mb-4 flex items-center gap-3">
         <h1 className="text-2xl font-display font-bold text-foreground flex-1">
           Radar de Courses
@@ -231,7 +222,6 @@ const DriverRadarPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Course count */}
       {isOnline && sortedCourses.length > 0 && (
         <div className="px-4 mb-3">
           <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
@@ -240,7 +230,6 @@ const DriverRadarPage: React.FC = () => {
         </div>
       )}
 
-      {/* Content */}
       <div className="px-4">
         {isOnline && courses.length === 0 && (
           <>
@@ -249,25 +238,21 @@ const DriverRadarPage: React.FC = () => {
           </>
         )}
 
-        {/* Tinder-style stacked cards */}
+        {/* Tinder-style full-screen cards */}
         {isOnline && sortedCourses.length > 0 && (
-          <div className="relative" style={{ height: '480px' }}>
+          <div className="relative" style={{ height: '520px' }}>
             {sortedCourses.slice(0, 3).map((course, index) => (
-              <SwipeableCard
+              <IncomingRideCard
                 key={course.id}
+                course={course}
+                isPrivateClient={course.type === 'private_client'}
                 isTop={index === 0}
                 index={index}
-                onSwipeRight={() => handleSwipeRight(course.id)}
-                onSwipeLeft={() => handleSwipeLeft(course.id)}
-              >
-                <SwipeableCourseCard
-                  course={course}
-                  onShare={handleShare}
-                  onExpire={handleExpire}
-                  onAccept={handleSwipeRight}
-                  onReject={handleSwipeLeft}
-                />
-              </SwipeableCard>
+                onAccept={handleAccept}
+                onRefuse={handleRefuse}
+                onShareToClub={handleShareToClub}
+                onExpire={handleExpire}
+              />
             ))}
           </div>
         )}
@@ -282,7 +267,6 @@ const DriverRadarPage: React.FC = () => {
         )}
       </div>
 
-      {/* Footer branding */}
       <div className="fixed bottom-20 left-0 right-0 flex items-center justify-center gap-4 py-2 opacity-30">
         <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
           <Shield className="w-3 h-3" />
@@ -296,15 +280,6 @@ const DriverRadarPage: React.FC = () => {
       </div>
 
       <DriverBottomNav />
-
-      {transferCourse && (
-        <TransferModal
-          course={transferCourse}
-          driverName="Mohamed"
-          onConfirm={handleConfirmTransfer}
-          onClose={() => setTransferCourse(null)}
-        />
-      )}
 
       {motoCheckCourse && (
         <MotoSafetyChecklist
