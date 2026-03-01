@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useEffect, useRef } from 'react';
-import { GoogleMap, useJsApiLoader, Marker, Polyline } from '@react-google-maps/api';
-import { APP_CONFIG } from '@/config/app.config';
+import { GoogleMap, Marker, Polyline } from '@react-google-maps/api';
+import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 import { LatLng, decodePolyline } from '@/services/googleMaps.service';
 
 interface ConfirmRideMapProps {
@@ -8,22 +8,15 @@ interface ConfirmRideMapProps {
   pickupLng: number;
   dropoffLat: number;
   dropoffLng: number;
-  polyline?: string; // encoded polyline from Directions API
+  polyline?: string;
 }
 
 const containerStyle = { width: '100%', height: '100%' };
 
 const ConfirmRideMap: React.FC<ConfirmRideMapProps> = ({
-  pickupLat,
-  pickupLng,
-  dropoffLat,
-  dropoffLng,
-  polyline,
+  pickupLat, pickupLng, dropoffLat, dropoffLng, polyline,
 }) => {
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: APP_CONFIG.GOOGLE_MAPS_API_KEY,
-  });
-
+  const { isLoaded, loadError } = useGoogleMaps();
   const mapRef = useRef<google.maps.Map | null>(null);
 
   const pickupPos = useMemo(() => ({ lat: pickupLat, lng: pickupLng }), [pickupLat, pickupLng]);
@@ -31,15 +24,11 @@ const ConfirmRideMap: React.FC<ConfirmRideMapProps> = ({
 
   const routePath = useMemo<LatLng[]>(() => {
     if (polyline) return decodePolyline(polyline);
-    // Fallback: straight line
     return [pickupPos, dropoffPos];
   }, [polyline, pickupPos, dropoffPos]);
 
-  const onLoad = useCallback((map: google.maps.Map) => {
-    mapRef.current = map;
-  }, []);
+  const onLoad = useCallback((map: google.maps.Map) => { mapRef.current = map; }, []);
 
-  // Fit bounds to show both markers
   useEffect(() => {
     if (!mapRef.current) return;
     const bounds = new google.maps.LatLngBounds();
@@ -75,47 +64,22 @@ const ConfirmRideMap: React.FC<ConfirmRideMapProps> = ({
         mapTypeControl: false,
         streetViewControl: false,
         fullscreenControl: false,
-        // No custom styles = standard Google Maps look
       }}
       onLoad={onLoad}
     >
-      {/* Pickup marker - green */}
       <Marker
         position={pickupPos}
-        icon={{
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 10,
-          fillColor: '#22C55E',
-          fillOpacity: 1,
-          strokeColor: '#FFFFFF',
-          strokeWeight: 3,
-        }}
+        icon={{ path: google.maps.SymbolPath.CIRCLE, scale: 10, fillColor: '#22C55E', fillOpacity: 1, strokeColor: '#FFFFFF', strokeWeight: 3 }}
         title="Départ"
       />
-
-      {/* Dropoff marker - red */}
       <Marker
         position={dropoffPos}
-        icon={{
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 10,
-          fillColor: '#EF4444',
-          fillOpacity: 1,
-          strokeColor: '#FFFFFF',
-          strokeWeight: 3,
-        }}
+        icon={{ path: google.maps.SymbolPath.CIRCLE, scale: 10, fillColor: '#EF4444', fillOpacity: 1, strokeColor: '#FFFFFF', strokeWeight: 3 }}
         title="Destination"
       />
-
-      {/* Route polyline */}
       <Polyline
         path={routePath}
-        options={{
-          strokeColor: '#3B82F6',
-          strokeOpacity: 0.9,
-          strokeWeight: 5,
-          geodesic: true,
-        }}
+        options={{ strokeColor: '#3B82F6', strokeOpacity: 0.9, strokeWeight: 5, geodesic: true }}
       />
     </GoogleMap>
   );
