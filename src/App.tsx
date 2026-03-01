@@ -105,7 +105,7 @@ const App = () => (
 
               {/* Caby Driver Interface */}
               <Route path="/caby/driver" element={<Navigate to="/caby/driver/dashboard" replace />} />
-              <Route path="/caby/driver/radar" element={<DriverRadarPage />} />
+              <Route path="/caby/driver/radar" element={<Navigate to="/caby/driver/dashboard" replace />} />
               <Route path="/caby/driver/map" element={<Navigate to="/caby/driver/dashboard" replace />} />
               <Route path="/caby/driver/dashboard" element={<DriverDashboardPage />} />
               <Route path="/caby/driver/help" element={<DriverHelpPage />} />
