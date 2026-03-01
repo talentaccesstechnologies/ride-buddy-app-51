@@ -7,7 +7,11 @@ export interface IncomingRide {
   clientName: string;
   clientPhoto?: string;
   pickupAddress: string;
+  pickupLat: number;
+  pickupLng: number;
   dropoffAddress: string;
+  dropoffLat: number;
+  dropoffLng: number;
   distanceFromDriver: number; // km
   estimatedPrice: number;
   serviceType: 'standard' | 'premium' | 'xl' | 'moto';
