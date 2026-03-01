@@ -1,13 +1,21 @@
-import React from 'react';
-import { ArrowLeft, Shield, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Shield, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import DriverBottomNav from '@/components/cabyDriver/DriverBottomNav';
 import DriverPhotoUpload from '@/components/cabyDriver/DriverPhotoUpload';
 import { useAuth } from '@/contexts/AuthContext';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
 
 const DriverProfilePage: React.FC = () => {
   const navigate = useNavigate();
-  const { profile } = useAuth();
+  const { profile, signOut } = useAuth();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/', { replace: true });
+  };
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -58,8 +66,20 @@ const DriverProfilePage: React.FC = () => {
         </div>
       </div>
 
+      {/* Logout */}
+      <div className="px-5 mt-10">
+        <Button
+          variant="ghost"
+          onClick={() => setShowLogoutDialog(true)}
+          className="w-full justify-center gap-2 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-2xl h-12"
+        >
+          <LogOut className="w-4 h-4" />
+          Se déconnecter
+        </Button>
+      </div>
+
       {/* Footer */}
-      <div className="px-5 mt-8 mb-4">
+      <div className="px-5 mt-6 mb-4">
         <div className="flex items-center justify-center gap-4 opacity-30">
           <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
             <Shield className="w-3 h-3" />
@@ -67,6 +87,24 @@ const DriverProfilePage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Logout confirmation dialog */}
+      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialogContent className="rounded-2xl max-w-[90vw]">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Se déconnecter ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir vous déconnecter de votre compte Caby ?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-xl">Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout} className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Confirmer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <DriverBottomNav />
     </div>
