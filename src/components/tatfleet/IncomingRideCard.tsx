@@ -217,38 +217,38 @@ const IncomingRideCard: React.FC<IncomingRideCardProps> = ({
         {/* Service accent bar */}
         <div className="h-1 w-full" style={{ background: service.color }} />
 
-        <div className="flex-1 p-5 flex flex-col">
+        <div className="flex-1 p-4 flex flex-col overflow-hidden">
           
           {/* Header: Avatar + Name + Countdown */}
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-3 mb-3">
             {/* Avatar */}
             <div className="relative flex-shrink-0">
               {course.clientAvatarUrl ? (
                 <img
                   src={course.clientAvatarUrl}
                   alt={course.clientDisplayName}
-                  className="w-14 h-14 rounded-full object-cover border-2 border-border"
+                  className="w-11 h-11 rounded-full object-cover border-2 border-border"
                 />
               ) : (
-                <div className="w-14 h-14 rounded-full bg-primary/20 border-2 border-primary/40 flex items-center justify-center">
-                  <span className="text-lg font-bold text-primary">{initials}</span>
+                <div className="w-11 h-11 rounded-full bg-primary/20 border-2 border-primary/40 flex items-center justify-center">
+                  <span className="text-sm font-bold text-primary">{initials}</span>
                 </div>
               )}
               {isPrivateClient && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[10px]">
+                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary flex items-center justify-center text-[8px]">
                   ⭐
                 </div>
               )}
             </div>
 
-            {/* Name + service + rating */}
+            {/* Name + service */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-bold text-foreground truncate">{course.clientDisplayName}</h3>
+              <h3 className="text-base font-bold text-foreground truncate">{course.clientDisplayName}</h3>
               <div className="flex items-center gap-2 mt-0.5">
                 <span style={{ color: service.color }}>{service.icon}</span>
-                <span className="text-xs font-semibold" style={{ color: service.color }}>{service.label}</span>
+                <span className="text-[10px] font-semibold" style={{ color: service.color }}>{service.label}</span>
                 {course.clientRating && (
-                  <span className="flex items-center gap-0.5 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
                     <Star className="w-3 h-3 fill-primary text-primary" />
                     {course.clientRating.toFixed(1)}
                   </span>
@@ -258,8 +258,8 @@ const IncomingRideCard: React.FC<IncomingRideCardProps> = ({
 
             {/* Countdown */}
             {isTop && (
-              <div className="relative w-14 h-14 flex-shrink-0">
-                <svg className="w-14 h-14 -rotate-90" viewBox="0 0 100 100">
+              <div className="relative w-11 h-11 flex-shrink-0">
+                <svg className="w-11 h-11 -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="46" stroke="hsl(var(--border))" strokeWidth="3" fill="none" />
                   <circle
                     cx="50" cy="50" r="46"
@@ -271,55 +271,44 @@ const IncomingRideCard: React.FC<IncomingRideCardProps> = ({
                     className="transition-all duration-1000 ease-linear"
                   />
                 </svg>
-                <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${secondsLeft <= 5 ? 'text-destructive' : 'text-foreground'}`}>
+                <span className={`absolute inset-0 flex items-center justify-center text-xs font-bold ${secondsLeft <= 5 ? 'text-destructive' : 'text-foreground'}`}>
                   {secondsLeft}s
                 </span>
               </div>
             )}
           </div>
 
-          {/* Route */}
-          <div className="space-y-2.5 mb-4">
-            {/* Pickup */}
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 w-8 h-8 rounded-full bg-[hsl(var(--caby-green))]/15 flex items-center justify-center flex-shrink-0">
-                <MapPin className="w-4 h-4 text-[hsl(var(--caby-green))]" />
+          {/* Route — compact */}
+          <div className="space-y-1.5 mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-[hsl(var(--caby-green))]/15 flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-3 h-3 text-[hsl(var(--caby-green))]" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Départ</p>
-                <p className="text-sm font-medium text-foreground truncate">{course.pickupAddress}</p>
-                <p className="text-xs text-[hsl(var(--caby-green))] font-semibold mt-0.5">
-                  À {(Math.random() * 3 + 0.5).toFixed(1)} km · {Math.floor(Math.random() * 5 + 2)} min
+                <p className="text-xs font-medium text-foreground truncate">{course.pickupAddress}</p>
+                <p className="text-[10px] text-[hsl(var(--caby-green))] font-semibold">
+                  À {(Math.random() * 3 + 0.5).toFixed(1)} km
                 </p>
               </div>
             </div>
-
-            <div className="ml-4 border-l-2 border-dashed border-border h-3" />
-
-            {/* Dropoff */}
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center flex-shrink-0">
-                <Navigation className="w-4 h-4 text-destructive" />
+            <div className="ml-3 border-l border-dashed border-border h-2" />
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-destructive/15 flex items-center justify-center flex-shrink-0">
+                <Navigation className="w-3 h-3 text-destructive" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Destination</p>
-                <p className="text-sm font-medium text-foreground truncate">{course.dropoffAddress}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <p className="text-xs font-medium text-foreground truncate">{course.dropoffAddress}</p>
+                <p className="text-[10px] text-muted-foreground">
                   {course.estimatedDistance.toFixed(1)} km · ~{course.estimatedDuration} min
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Price */}
-          <div className="bg-primary/10 border border-primary/20 rounded-2xl px-4 py-3 mb-4 text-center">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">Prix estimé</p>
-            <p className="text-3xl font-black text-primary tabular-nums">
-              {course.estimatedPrice.toFixed(0)} <span className="text-base font-medium">{APP_CONFIG.DEFAULT_CURRENCY}</span>
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              <Clock className="w-3 h-3 inline mr-1" />
-              ~{course.estimatedDuration} min · {course.estimatedDistance.toFixed(1)} km
+          {/* Price — compact */}
+          <div className="bg-primary/10 border border-primary/20 rounded-xl px-3 py-2 mb-3 text-center">
+            <p className="text-2xl font-black text-primary tabular-nums">
+              {course.estimatedPrice.toFixed(0)} <span className="text-xs font-medium">{APP_CONFIG.DEFAULT_CURRENCY}</span>
             </p>
           </div>
 
@@ -330,31 +319,31 @@ const IncomingRideCard: React.FC<IncomingRideCardProps> = ({
           <div className="flex items-center gap-3 justify-center">
             <button
               onClick={(e) => { e.stopPropagation(); setExitDir('left'); setTimeout(() => onRefuse(course.id), 300); }}
-              className="w-14 h-14 rounded-full bg-[hsl(var(--caby-red))] flex items-center justify-center active:scale-90 transition-transform shadow-lg shadow-[hsl(var(--caby-red))]/20"
+              className="w-12 h-12 rounded-full bg-[hsl(var(--caby-red))] flex items-center justify-center active:scale-90 transition-transform shadow-lg shadow-[hsl(var(--caby-red))]/20"
             >
-              <X className="w-6 h-6 text-white" strokeWidth={3} />
+              <X className="w-5 h-5 text-white" strokeWidth={3} />
             </button>
 
             {isPrivateClient && (
               <button
                 onClick={(e) => { e.stopPropagation(); setExitDir('up'); setTimeout(() => onShareToClub(course.id), 300); }}
-                className="flex items-center gap-2 px-5 py-3 rounded-full bg-gradient-to-r from-primary to-primary/80 text-black font-black text-xs uppercase tracking-wider active:scale-95 transition-transform shadow-lg shadow-primary/30"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary/80 text-black font-black text-[10px] uppercase tracking-wider active:scale-95 transition-transform shadow-lg shadow-primary/30"
               >
-                <Share2 className="w-4 h-4" />
+                <Share2 className="w-3.5 h-3.5" />
                 Club
               </button>
             )}
 
             <button
               onClick={(e) => { e.stopPropagation(); setExitDir('right'); setTimeout(() => onAccept(course.id), 300); }}
-              className="w-14 h-14 rounded-full bg-[hsl(var(--caby-green))] flex items-center justify-center active:scale-90 transition-transform shadow-lg shadow-[hsl(var(--caby-green))]/20"
+              className="w-12 h-12 rounded-full bg-[hsl(var(--caby-green))] flex items-center justify-center active:scale-90 transition-transform shadow-lg shadow-[hsl(var(--caby-green))]/20"
             >
-              <Check className="w-6 h-6 text-white" strokeWidth={3} />
+              <Check className="w-5 h-5 text-white" strokeWidth={3} />
             </button>
           </div>
 
           {/* Swipe hints */}
-          <div className="flex items-center justify-center gap-4 mt-3 text-[10px] text-muted-foreground">
+          <div className="flex items-center justify-center gap-3 mt-2 text-[9px] text-muted-foreground">
             <span>← Refuser</span>
             {isPrivateClient && <span>↑ Club</span>}
             <span>Accepter →</span>

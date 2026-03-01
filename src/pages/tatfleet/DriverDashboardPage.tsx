@@ -503,38 +503,36 @@ const DriverDashboardPage: React.FC = () => {
 
       <DriverBottomNav />
 
-      {/* ── Tinder-style incoming ride cards ── */}
+      {/* ── Tinder-style incoming ride cards — compact overlay above map ── */}
       <AnimatePresence>
         {incomingCourses.length > 0 && !acceptedCourse && (
-          <div className="fixed inset-0 z-50 flex flex-col">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-            <div className="relative flex-1 flex flex-col">
-              <div className="px-4 pt-12 pb-2">
-                <p className="text-xs text-white/70 font-semibold uppercase tracking-wider text-center">
-                  {incomingCourses.length} course{incomingCourses.length > 1 ? 's' : ''} disponible{incomingCourses.length > 1 ? 's' : ''}
-                </p>
-              </div>
-              <div className="flex-1 px-4 pb-4 relative" style={{ minHeight: '520px' }}>
-                {incomingCourses.slice(0, 3).map((course, index) => (
-                  <IncomingRideCard
-                    key={course.id}
-                    course={course}
-                    isPrivateClient={course.type === 'private_client'}
-                    isTop={index === 0}
-                    index={index}
-                    onAccept={handleCourseAccept}
-                    onRefuse={handleCourseRefuse}
-                    onShareToClub={handleCourseShareToClub}
-                    onExpire={handleCourseExpire}
-                  />
-                ))}
-              </div>
+          <div className="fixed bottom-16 left-0 right-0 z-40 px-4 pb-3" style={{ height: '420px' }}>
+            {/* Counter badge */}
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-50">
+              <span className="text-[10px] font-bold text-white bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full">
+                {incomingCourses.length} course{incomingCourses.length > 1 ? 's' : ''}
+              </span>
+            </div>
+            <div className="relative w-full h-full">
+              {incomingCourses.slice(0, 3).map((course, index) => (
+                <IncomingRideCard
+                  key={course.id}
+                  course={course}
+                  isPrivateClient={course.type === 'private_client'}
+                  isTop={index === 0}
+                  index={index}
+                  onAccept={handleCourseAccept}
+                  onRefuse={handleCourseRefuse}
+                  onShareToClub={handleCourseShareToClub}
+                  onExpire={handleCourseExpire}
+                />
+              ))}
             </div>
           </div>
         )}
       </AnimatePresence>
 
-      {/* ── Accepted ride simulation overlay ── */}
+      {/* ── Accepted ride — compact panel over the map ── */}
       <AnimatePresence>
         {acceptedCourse && (
           <AcceptedRideOverlay
