@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GoogleMap, Circle, Marker, InfoWindow } from '@react-google-maps/api';
-import { Wifi, WifiOff, Package, Locate } from 'lucide-react';
+import { Wifi, WifiOff, Package, Locate, Car } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { AnimatePresence } from 'framer-motion';
 import { APP_CONFIG } from '@/config/app.config';
 import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
+import { useDriverMode } from '@/hooks/useDriverMode';
 import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
 import DriverDashboardSheet from '@/components/tatfleet/DriverDashboardSheet';
 import IncomingRideOverlay, { type IncomingRide } from '@/components/tatfleet/IncomingRideOverlay';
 import ActiveRidePanel from '@/components/tatfleet/ActiveRidePanel';
+import ModeSwitchSuggestion from '@/components/tatfleet/ModeSwitchSuggestion';
+import QueueToleranceOverlay from '@/components/tatfleet/QueueToleranceOverlay';
 
 const RADAR_RADIUS_M = 5000;
 const containerStyle: React.CSSProperties = { width: '100%', height: '100%' };
@@ -67,7 +70,8 @@ const DriverDashboardPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [isOnline, setIsOnline] = useState(false);
-  const [isColisMode, setIsColisMode] = useState(false);
+  const driverMode = useDriverMode(isOnline);
+  const isColisMode = driverMode.mode === 'colis';
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
   const [hasMoved, setHasMoved] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<PartnerPoint | null>(null);
@@ -107,15 +111,15 @@ const DriverDashboardPage: React.FC = () => {
     return () => { clearInterval(id); watchIdRef.current = null; };
   }, [isOnline]);
 
-  // Simulate incoming ride 5s after going online (only if no active ride)
+  // Simulate incoming ride 5s after going online (only in ride mode, no active ride)
   useEffect(() => {
-    if (isOnline && !incomingRide && !activeRide) {
+    if (isOnline && !incomingRide && !activeRide && driverMode.mode === 'ride') {
       simTimerRef.current = setTimeout(() => {
         setIncomingRide(DEMO_RIDE);
       }, 5000);
     }
     return () => { if (simTimerRef.current) clearTimeout(simTimerRef.current); };
-  }, [isOnline, incomingRide, activeRide]);
+  }, [isOnline, incomingRide, activeRide, driverMode.mode]);
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
@@ -140,10 +144,8 @@ const DriverDashboardPage: React.FC = () => {
   };
 
   const toggleColisMode = () => {
-    const next = !isColisMode;
-    setIsColisMode(next);
-    if (!next) setSelectedPoint(null);
-    toast.info(next ? 'Mode Colis activé 📦' : 'Mode Passagers activé 🚗');
+    driverMode.toggleMode();
+    if (driverMode.mode === 'colis') setSelectedPoint(null); // will become ride after toggle
   };
 
   const handleAcceptRide = useCallback((id: string) => {
@@ -160,7 +162,9 @@ const DriverDashboardPage: React.FC = () => {
     setActiveRide(null);
     setTodayEarnings((prev) => prev + price);
     toast.success('Gains mis à jour !');
-  }, []);
+    // Check for mode switch suggestion after completing a ride
+    setTimeout(() => driverMode.checkModeSuggestion(), 3000);
+  }, [driverMode]);
 
   const triggerSimulation = useCallback(() => {
     if (!isOnline) {
@@ -318,11 +322,11 @@ const DriverDashboardPage: React.FC = () => {
             className={`flex items-center gap-1.5 px-3 py-2.5 rounded-full shadow-lg backdrop-blur-md border transition-all active:scale-95 ${
               isColisMode
                 ? 'bg-[hsl(var(--caby-gold))] border-[hsl(var(--caby-gold))]/50 text-black'
-                : 'bg-white/90 border-gray-200 text-gray-600'
+                : 'bg-card/90 border-border text-muted-foreground'
             }`}
           >
-            <Package className="w-4 h-4" />
-            <span className="text-xs font-bold hidden sm:inline">Colis</span>
+            {isColisMode ? <Package className="w-4 h-4" /> : <Car className="w-4 h-4" />}
+            <span className="text-xs font-bold">{isColisMode ? 'Colis' : 'Ride'}</span>
           </button>
         </div>
 
@@ -387,11 +391,41 @@ const DriverDashboardPage: React.FC = () => {
         <ActiveRidePanel
           ride={activeRide}
           driverPosition={position}
+          driverMode={driverMode.mode}
           onArrived={handleRideArrived}
           onComplete={handleRideComplete}
           onCancel={() => { setActiveRide(null); toast.info('Course annulée'); }}
+          onAcceptNextMission={(mission) => {
+            driverMode.acceptQueuedMission(mission);
+            toast.success('Mission suivante réservée !');
+          }}
         />
       )}
+
+      {/* ── Queue tolerance overlay ── */}
+      <AnimatePresence>
+        {driverMode.toleranceState && (
+          <QueueToleranceOverlay
+            state={driverMode.toleranceState}
+            mission={driverMode.queuedMission}
+            onConfirm={driverMode.confirmQueuedMission}
+            onDismiss={driverMode.clearQueuedMission}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Mode switch suggestion ── */}
+      <AnimatePresence>
+        {driverMode.modeSuggestion && !activeRide && !incomingRide && (
+          <ModeSwitchSuggestion
+            targetMode={driverMode.modeSuggestion.targetMode}
+            message={driverMode.modeSuggestion.message}
+            detail={driverMode.modeSuggestion.detail}
+            onAccept={driverMode.acceptSuggestion}
+            onDismiss={driverMode.dismissSuggestion}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

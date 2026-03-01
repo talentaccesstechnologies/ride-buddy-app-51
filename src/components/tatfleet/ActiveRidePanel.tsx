@@ -1,18 +1,21 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { GoogleMap, Marker, DirectionsRenderer } from '@react-google-maps/api';
-import { MapPin, CheckCircle, Flag, Star, ChevronRight, Navigation, CornerUpRight, CornerUpLeft, ArrowUp, RotateCw } from 'lucide-react';
+import { MapPin, CheckCircle, Flag, Star, ChevronRight, Navigation, CornerUpRight, CornerUpLeft, ArrowUp, RotateCw, Package, Car } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 import type { IncomingRide } from './IncomingRideOverlay';
+import type { DriverMode, QueuedMission } from '@/hooks/useDriverMode';
 
 export type RidePhase = 'pickup' | 'trip' | 'completed';
 
 interface Props {
   ride: IncomingRide;
   driverPosition: { lat: number; lng: number };
+  driverMode: DriverMode;
   onArrived: () => void;
   onComplete: (price: number) => void;
   onCancel: () => void;
+  onAcceptNextMission?: (mission: QueuedMission) => void;
 }
 
 const containerStyle: React.CSSProperties = { width: '100%', height: '100%' };
@@ -53,8 +56,9 @@ const getManeuverIcon = (maneuver?: string) => {
   return <ArrowUp className="w-6 h-6" />;
 };
 
-/* Fake next ride for the "prochaine course" teaser */
+/* Fake next suggestions by mode */
 const NEXT_RIDE_TEASER = { address: 'Rue de Lausanne 72', price: 28 };
+const NEXT_COLIS_TEASER = { address: 'Caby Express — Cornavin', price: 12, count: 4 };
 
 /* ── Haversine distance (m) ── */
 const haversineM = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) => {
@@ -65,7 +69,7 @@ const haversineM = (a: { lat: number; lng: number }, b: { lat: number; lng: numb
   return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
 };
 
-const ActiveRidePanel: React.FC<Props> = ({ ride, driverPosition, onArrived, onComplete, onCancel }) => {
+const ActiveRidePanel: React.FC<Props> = ({ ride, driverPosition, driverMode, onArrived, onComplete, onCancel, onAcceptNextMission }) => {
   const { isLoaded } = useGoogleMaps();
   const [phase, setPhase] = useState<RidePhase>('pickup');
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
@@ -374,14 +378,42 @@ const ActiveRidePanel: React.FC<Props> = ({ ride, driverPosition, onArrived, onC
               className="absolute bottom-[240px] left-4 right-4 z-10"
             >
               <div className="bg-card/95 backdrop-blur-xl border border-primary/30 rounded-2xl shadow-lg px-4 py-3 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center flex-shrink-0">
-                  <ChevronRight className="w-4 h-4 text-primary" />
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  driverMode === 'ride' ? 'bg-primary/15' : 'bg-[hsl(var(--caby-gold))]/20'
+                }`}>
+                  {driverMode === 'ride' ? (
+                    <Car className="w-4 h-4 text-primary" />
+                  ) : (
+                    <Package className="w-4 h-4 text-[hsl(var(--caby-gold))]" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Prochaine course</p>
-                  <p className="text-sm font-medium text-foreground truncate">{NEXT_RIDE_TEASER.address} · {NEXT_RIDE_TEASER.price} CHF</p>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    {driverMode === 'ride' ? 'Prochaine course' : 'Tournée colis'}
+                  </p>
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {driverMode === 'ride'
+                      ? `${NEXT_RIDE_TEASER.address} · ${NEXT_RIDE_TEASER.price} CHF`
+                      : `${NEXT_COLIS_TEASER.count} colis · ${NEXT_COLIS_TEASER.address}`}
+                  </p>
                 </div>
-                <button className="px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-bold active:scale-95 transition-transform">
+                <button
+                  onClick={() => {
+                    const teaser = driverMode === 'ride' ? NEXT_RIDE_TEASER : NEXT_COLIS_TEASER;
+                    onAcceptNextMission?.({
+                      id: `next-${Date.now()}`,
+                      type: driverMode,
+                      label: teaser.address,
+                      price: teaser.price,
+                      acceptedAt: Date.now(),
+                    });
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold active:scale-95 transition-transform ${
+                    driverMode === 'ride'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-[hsl(var(--caby-gold))] text-black'
+                  }`}
+                >
                   Accepter
                 </button>
               </div>
