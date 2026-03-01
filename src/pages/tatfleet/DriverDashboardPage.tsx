@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GoogleMap, Circle, Marker, InfoWindow } from '@react-google-maps/api';
-import { Wifi, WifiOff, Package, Locate, Users } from 'lucide-react';
+import { Wifi, WifiOff, Package, Locate } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { AnimatePresence } from 'framer-motion';
 import { APP_CONFIG } from '@/config/app.config';
 import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
 import DriverDashboardSheet from '@/components/tatfleet/DriverDashboardSheet';
+import IncomingRideOverlay, { type IncomingRide } from '@/components/tatfleet/IncomingRideOverlay';
 
 const RADAR_RADIUS_M = 5000;
 const containerStyle: React.CSSProperties = { width: '100%', height: '100%' };
@@ -40,6 +42,20 @@ const DRIVER_ICON_URL = (() => {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 })();
 
+/* ── Demo incoming ride ── */
+const DEMO_RIDE: IncomingRide = {
+  id: 'sim-1',
+  clientName: 'Sophie Müller',
+  clientPhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
+  pickupAddress: 'Rue du Rhône 48, Genève',
+  dropoffAddress: 'Aéroport de Genève (GVA)',
+  distanceFromDriver: 1.2,
+  estimatedPrice: 45,
+  serviceType: 'standard',
+  estimatedDuration: 18,
+  estimatedDistance: 12.4,
+};
+
 /* ── Page ── */
 const DriverDashboardPage: React.FC = () => {
   const { isLoaded, loadError } = useGoogleMaps();
@@ -53,9 +69,11 @@ const DriverDashboardPage: React.FC = () => {
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const [todayEarnings] = useState(145);
   const [missionsCount] = useState(3);
+  const [incomingRide, setIncomingRide] = useState<IncomingRide | null>(null);
 
   const mapRef = useRef<google.maps.Map | null>(null);
   const watchIdRef = useRef<number | null>(null);
+  const simTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Initial position
   useEffect(() => {
@@ -83,6 +101,16 @@ const DriverDashboardPage: React.FC = () => {
     return () => { clearInterval(id); watchIdRef.current = null; };
   }, [isOnline]);
 
+  // Simulate incoming ride 5s after going online
+  useEffect(() => {
+    if (isOnline && !incomingRide) {
+      simTimerRef.current = setTimeout(() => {
+        setIncomingRide(DEMO_RIDE);
+      }, 5000);
+    }
+    return () => { if (simTimerRef.current) clearTimeout(simTimerRef.current); };
+  }, [isOnline, incomingRide]);
+
   const onMapLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
     if (position) map.panTo(position);
@@ -99,6 +127,7 @@ const DriverDashboardPage: React.FC = () => {
   const toggleOnline = () => {
     const next = !isOnline;
     setIsOnline(next);
+    if (!next) setIncomingRide(null);
     toast[next ? 'success' : 'info'](next ? 'Radar activé' : 'Radar désactivé', {
       description: next ? 'Vous recevrez les courses à proximité' : undefined,
     });
@@ -107,8 +136,24 @@ const DriverDashboardPage: React.FC = () => {
   const toggleColisMode = () => {
     const next = !isColisMode;
     setIsColisMode(next);
+    if (!next) setSelectedPoint(null);
     toast.info(next ? 'Mode Colis activé 📦' : 'Mode Passagers activé 🚗');
   };
+
+  const handleAcceptRide = useCallback((id: string) => {
+    setIncomingRide(null);
+    toast.success('Course acceptée !', { description: 'Navigation vers le client…' });
+  }, []);
+
+  const handleRefuseRide = useCallback((id: string) => {
+    setIncomingRide(null);
+    toast.info('Course refusée');
+  }, []);
+
+  const handleExpireRide = useCallback((id: string) => {
+    setIncomingRide(null);
+    toast.info('Temps écoulé — course transmise au chauffeur suivant');
+  }, []);
 
   /* ── Error / Loading ── */
   if (loadError) {
@@ -139,7 +184,7 @@ const DriverDashboardPage: React.FC = () => {
   return (
     <div className="fixed inset-0 flex flex-col">
       <div className="flex-1 relative">
-        {/* Full-screen map */}
+        {/* Full-screen map — standard light style */}
         <GoogleMap
           mapContainerStyle={containerStyle}
           center={position}
@@ -151,14 +196,8 @@ const DriverDashboardPage: React.FC = () => {
             zoomControl: false,
             gestureHandling: 'greedy',
             styles: [
-              { elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
-              { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a2e' }] },
-              { elementType: 'labels.text.fill', stylers: [{ color: '#8a8a9a' }] },
-              { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#2a2a3e' }] },
-              { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#333348' }] },
-              { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0e0e1a' }] },
               { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
-              { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+              { featureType: 'transit', stylers: [{ visibility: 'simplified' }] },
             ],
           }}
         >
@@ -181,7 +220,7 @@ const DriverDashboardPage: React.FC = () => {
             />
           )}
 
-          {/* Partner markers (visible in colis mode) */}
+          {/* Partner markers — only in colis mode */}
           {isColisMode && PARTNER_POINTS.map((pt) => (
             <Marker
               key={pt.id}
@@ -220,7 +259,7 @@ const DriverDashboardPage: React.FC = () => {
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full shadow-lg backdrop-blur-md border transition-all active:scale-95 ${
               isOnline
                 ? 'bg-[hsl(var(--caby-green))]/90 border-[hsl(var(--caby-green))]/50 text-white'
-                : 'bg-card/90 border-border text-muted-foreground'
+                : 'bg-white/90 border-gray-200 text-gray-600'
             }`}
           >
             {isOnline ? (
@@ -241,7 +280,7 @@ const DriverDashboardPage: React.FC = () => {
         {/* Zone badge */}
         {isOnline && (
           <div className="absolute top-28 left-1/2 -translate-x-1/2 z-20">
-            <span className="text-[10px] font-semibold text-[hsl(var(--caby-green))] bg-card/80 backdrop-blur-sm px-3 py-1 rounded-full border border-[hsl(var(--caby-green))]/30 shadow-sm">
+            <span className="text-[10px] font-semibold text-green-700 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full border border-green-300 shadow-sm">
               🟢 Zone active · 5 km
             </span>
           </div>
@@ -253,8 +292,8 @@ const DriverDashboardPage: React.FC = () => {
             onClick={toggleColisMode}
             className={`flex items-center gap-1.5 px-3 py-2.5 rounded-full shadow-lg backdrop-blur-md border transition-all active:scale-95 ${
               isColisMode
-                ? 'bg-primary/90 border-primary/50 text-primary-foreground'
-                : 'bg-card/90 border-border text-muted-foreground'
+                ? 'bg-[hsl(var(--caby-gold))] border-[hsl(var(--caby-gold))]/50 text-black'
+                : 'bg-white/90 border-gray-200 text-gray-600'
             }`}
           >
             <Package className="w-4 h-4" />
@@ -262,12 +301,12 @@ const DriverDashboardPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Legend (colis mode) */}
+        {/* Legend — only in colis mode */}
         {isColisMode && (
-          <div className="absolute top-28 right-4 z-20 bg-card/90 backdrop-blur-md rounded-2xl shadow-lg p-3 space-y-1.5 border border-border">
-            <div className="flex items-center gap-2 text-[11px] font-medium text-foreground"><span className="w-3 h-3 rounded-full bg-orange-500" /> Express</div>
-            <div className="flex items-center gap-2 text-[11px] font-medium text-foreground"><span className="w-3 h-3 rounded-full bg-blue-500" /> Laundry</div>
-            <div className="flex items-center gap-2 text-[11px] font-medium text-foreground"><span className="w-3 h-3 rounded-full bg-red-500" /> Health</div>
+          <div className="absolute top-28 right-4 z-20 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg p-3 space-y-1.5 border border-gray-200">
+            <div className="flex items-center gap-2 text-[11px] font-medium text-gray-700"><span className="w-3 h-3 rounded-full bg-orange-500" /> Express</div>
+            <div className="flex items-center gap-2 text-[11px] font-medium text-gray-700"><span className="w-3 h-3 rounded-full bg-blue-500" /> Laundry</div>
+            <div className="flex items-center gap-2 text-[11px] font-medium text-gray-700"><span className="w-3 h-3 rounded-full bg-red-500" /> Health</div>
           </div>
         )}
 
@@ -275,9 +314,9 @@ const DriverDashboardPage: React.FC = () => {
         {hasMoved && (
           <button
             onClick={handleRecenter}
-            className="absolute bottom-[300px] right-4 z-20 w-12 h-12 rounded-full bg-card/90 backdrop-blur-md border border-border shadow-lg flex items-center justify-center active:scale-95 transition-transform"
+            className="absolute bottom-[300px] right-4 z-20 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md border border-gray-200 shadow-lg flex items-center justify-center active:scale-95 transition-transform"
           >
-            <Locate className="w-5 h-5 text-foreground" />
+            <Locate className="w-5 h-5 text-gray-700" />
           </button>
         )}
 
@@ -295,6 +334,18 @@ const DriverDashboardPage: React.FC = () => {
       </div>
 
       <DriverBottomNav />
+
+      {/* ── Incoming ride overlay ── */}
+      <AnimatePresence>
+        {incomingRide && (
+          <IncomingRideOverlay
+            ride={incomingRide}
+            onAccept={handleAcceptRide}
+            onRefuse={handleRefuseRide}
+            onExpire={handleExpireRide}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
