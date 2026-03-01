@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GoogleMap, useJsApiLoader, Circle, Marker, InfoWindow } from '@react-google-maps/api';
 import { Locate, Wifi, WifiOff } from 'lucide-react';
 import { APP_CONFIG } from '@/config/app.config';
+import { supabase } from '@/integrations/supabase/client';
 import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
 
 const LIBRARIES: ('places')[] = ['places'];
@@ -21,43 +22,35 @@ interface PartnerPoint {
 }
 
 const PARTNER_POINTS: PartnerPoint[] = [
-  // Caby Express 📦 (orange)
   { id: 'ex1', name: 'Caby Express — Cornavin', address: 'Pl. de Cornavin 7, Genève', lat: 46.2101, lng: 6.1427, type: 'express', emoji: '📦' },
   { id: 'ex2', name: 'Caby Express — Plainpalais', address: 'Bd Georges-Favon 24, Genève', lat: 46.2003, lng: 6.1420, type: 'express', emoji: '📦' },
   { id: 'ex3', name: 'Caby Express — Eaux-Vives', address: 'Rue de la Terrassière 12, Genève', lat: 46.2023, lng: 6.1610, type: 'express', emoji: '📦' },
-  // Caby Laundry 👕 (blue)
   { id: 'la1', name: 'Caby Laundry — Carouge', address: 'Rue St-Joseph 10, Carouge', lat: 46.1850, lng: 6.1396, type: 'laundry', emoji: '👕' },
   { id: 'la2', name: 'Caby Laundry — Servette', address: 'Rue de la Servette 45, Genève', lat: 46.2130, lng: 6.1310, type: 'laundry', emoji: '👕' },
-  // Caby Health Logistix 🏥 (red)
   { id: 'he1', name: 'Caby Health — HUG', address: 'Rue Gabrielle-Perret-Gentil 4, Genève', lat: 46.1935, lng: 6.1490, type: 'health', emoji: '🏥' },
   { id: 'he2', name: 'Caby Health — Champel', address: 'Av. de Champel 25, Genève', lat: 46.1920, lng: 6.1560, type: 'health', emoji: '🏥' },
 ];
 
 const MARKER_COLORS: Record<PartnerPoint['type'], string> = {
-  express: '#F97316',  // orange
-  laundry: '#3B82F6',  // blue
-  health: '#EF4444',   // red
+  express: '#F97316',
+  laundry: '#3B82F6',
+  health: '#EF4444',
 };
 
 const createPartnerIcon = (type: PartnerPoint['type'], emoji: string): string => {
   const color = MARKER_COLORS[type];
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="50" viewBox="0 0 40 50">
-      <path d="M20 48 C20 48 2 30 2 18 C2 8 10 0 20 0 S38 8 38 18 C38 30 20 48 20 48Z" fill="${color}" stroke="white" stroke-width="2"/>
-      <text x="20" y="22" text-anchor="middle" font-size="16">${emoji}</text>
-    </svg>
-  `;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="50" viewBox="0 0 40 50">
+    <path d="M20 48 C20 48 2 30 2 18 C2 8 10 0 20 0 S38 8 38 18 C38 30 20 48 20 48Z" fill="${color}" stroke="white" stroke-width="2"/>
+    <text x="20" y="22" text-anchor="middle" font-size="16">${emoji}</text>
+  </svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 };
 
-// Blue pulsing driver marker as SVG data URL
 const DRIVER_ICON_URL = (() => {
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
-      <circle cx="14" cy="14" r="13" fill="rgba(59,130,246,0.2)" stroke="rgba(59,130,246,0.4)" stroke-width="1"/>
-      <circle cx="14" cy="14" r="8" fill="#3B82F6" stroke="white" stroke-width="3"/>
-    </svg>
-  `;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+    <circle cx="14" cy="14" r="13" fill="rgba(59,130,246,0.2)" stroke="rgba(59,130,246,0.4)" stroke-width="1"/>
+    <circle cx="14" cy="14" r="8" fill="#3B82F6" stroke="white" stroke-width="3"/>
+  </svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 })();
 
@@ -66,13 +59,40 @@ const DriverMapPage: React.FC = () => {
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
   const [hasMoved, setHasMoved] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<PartnerPoint | null>(null);
+  const [mapsApiKey, setMapsApiKey] = useState<string | null>(null);
+  const [keyError, setKeyError] = useState<string | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const watchIdRef = useRef<number | null>(null);
 
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: APP_CONFIG.GOOGLE_MAPS_API_KEY,
-    libraries: LIBRARIES,
-  });
+  // Fetch Google Maps API key from edge function
+  useEffect(() => {
+    const fetchKey = async () => {
+      // First try env variable
+      const envKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+      if (envKey) {
+        console.log('[DriverMapPage] Using VITE_GOOGLE_MAPS_API_KEY from env');
+        setMapsApiKey(envKey);
+        return;
+      }
+
+      // Fallback: fetch from edge function
+      try {
+        console.log('[DriverMapPage] Fetching API key from edge function...');
+        const { data, error } = await supabase.functions.invoke('google-maps-key');
+        if (error) throw error;
+        if (data?.key) {
+          console.log('[DriverMapPage] ✅ API key fetched successfully, length:', data.key.length);
+          setMapsApiKey(data.key);
+        } else {
+          setKeyError('Clé API non trouvée côté serveur');
+        }
+      } catch (err: any) {
+        console.error('[DriverMapPage] ❌ Failed to fetch API key:', err);
+        setKeyError(err.message || 'Erreur lors du chargement de la clé');
+      }
+    };
+    fetchKey();
+  }, []);
 
   // Get initial position
   useEffect(() => {
@@ -125,10 +145,89 @@ const DriverMapPage: React.FC = () => {
 
   const toggleOnline = () => setIsOnline((v) => !v);
 
-  if (!isLoaded || !position) {
+  // Error: key not available
+  if (keyError) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center pb-20 px-6 text-center">
+        <div className="text-4xl mb-4">⚠️</div>
+        <h2 className="text-lg font-bold text-foreground mb-2">Impossible de charger la carte</h2>
+        <p className="text-sm text-muted-foreground mb-2">{keyError}</p>
+        <p className="text-xs text-muted-foreground">Vérifiez la configuration de la clé Google Maps.</p>
+        <DriverBottomNav />
+      </div>
+    );
+  }
+
+  // Loading: waiting for key or position
+  if (!mapsApiKey || !position) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center pb-20">
-        <div className="text-muted-foreground text-sm">Chargement de la carte…</div>
+        <div className="text-center">
+          <div className="text-2xl mb-3 animate-pulse">🗺️</div>
+          <div className="text-muted-foreground text-sm">
+            {!mapsApiKey ? 'Chargement de la clé API…' : 'Localisation en cours…'}
+          </div>
+        </div>
+        <DriverBottomNav />
+      </div>
+    );
+  }
+
+  return <DriverMapInner
+    apiKey={mapsApiKey}
+    position={position}
+    isOnline={isOnline}
+    hasMoved={hasMoved}
+    selectedPoint={selectedPoint}
+    onMapLoad={onMapLoad}
+    onDragEnd={() => setHasMoved(true)}
+    onRecenter={handleRecenter}
+    onToggleOnline={toggleOnline}
+    onSelectPoint={setSelectedPoint}
+  />;
+};
+
+// Inner component that uses useJsApiLoader (only rendered when key is available)
+interface DriverMapInnerProps {
+  apiKey: string;
+  position: { lat: number; lng: number };
+  isOnline: boolean;
+  hasMoved: boolean;
+  selectedPoint: PartnerPoint | null;
+  onMapLoad: (map: google.maps.Map) => void;
+  onDragEnd: () => void;
+  onRecenter: () => void;
+  onToggleOnline: () => void;
+  onSelectPoint: (p: PartnerPoint | null) => void;
+}
+
+const DriverMapInner: React.FC<DriverMapInnerProps> = ({
+  apiKey, position, isOnline, hasMoved, selectedPoint,
+  onMapLoad, onDragEnd, onRecenter, onToggleOnline, onSelectPoint,
+}) => {
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: apiKey,
+    libraries: LIBRARIES,
+  });
+
+  if (loadError) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center pb-20 px-6 text-center">
+        <div className="text-4xl mb-4">⚠️</div>
+        <h2 className="text-lg font-bold text-foreground mb-2">Erreur Google Maps</h2>
+        <p className="text-sm text-muted-foreground mb-2">{loadError.message}</p>
+        <DriverBottomNav />
+      </div>
+    );
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center pb-20">
+        <div className="text-center">
+          <div className="text-2xl mb-3 animate-pulse">🗺️</div>
+          <div className="text-muted-foreground text-sm">Chargement de Google Maps…</div>
+        </div>
         <DriverBottomNav />
       </div>
     );
@@ -142,16 +241,16 @@ const DriverMapPage: React.FC = () => {
           center={position}
           zoom={14}
           onLoad={onMapLoad}
-          onDragEnd={() => setHasMoved(true)}
+          onDragEnd={onDragEnd}
           options={{
             disableDefaultUI: true,
             zoomControl: true,
             zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_CENTER },
             gestureHandling: 'greedy',
-            styles: [], // Standard Google Maps style
+            styles: [],
           }}
         >
-          {/* Driver position marker */}
+          {/* Driver position */}
           <Marker
             position={position}
             icon={{
@@ -162,7 +261,7 @@ const DriverMapPage: React.FC = () => {
             zIndex={999}
           />
 
-          {/* Radar zone circle when online */}
+          {/* Radar zone */}
           {isOnline && (
             <Circle
               center={position}
@@ -177,7 +276,7 @@ const DriverMapPage: React.FC = () => {
             />
           )}
 
-          {/* Partner logistics markers */}
+          {/* Partner markers */}
           {PARTNER_POINTS.map((point) => (
             <Marker
               key={point.id}
@@ -187,16 +286,15 @@ const DriverMapPage: React.FC = () => {
                 scaledSize: new google.maps.Size(36, 45),
                 anchor: new google.maps.Point(18, 45),
               }}
-              onClick={() => setSelectedPoint(point)}
+              onClick={() => onSelectPoint(point)}
               zIndex={10}
             />
           ))}
 
-          {/* InfoWindow for selected partner */}
           {selectedPoint && (
             <InfoWindow
               position={{ lat: selectedPoint.lat, lng: selectedPoint.lng }}
-              onCloseClick={() => setSelectedPoint(null)}
+              onCloseClick={() => onSelectPoint(null)}
               options={{ pixelOffset: new google.maps.Size(0, -45) }}
             >
               <div style={{ padding: '4px 2px', minWidth: 180 }}>
@@ -205,11 +303,8 @@ const DriverMapPage: React.FC = () => {
                 </div>
                 <div style={{ fontSize: 11, color: '#666' }}>{selectedPoint.address}</div>
                 <div style={{
-                  marginTop: 6,
-                  fontSize: 10,
-                  fontWeight: 600,
-                  color: MARKER_COLORS[selectedPoint.type],
-                  textTransform: 'uppercase',
+                  marginTop: 6, fontSize: 10, fontWeight: 600,
+                  color: MARKER_COLORS[selectedPoint.type], textTransform: 'uppercase',
                 }}>
                   {selectedPoint.type === 'express' && 'Caby Express · Colis e-commerce'}
                   {selectedPoint.type === 'laundry' && 'Caby Laundry · Pressing'}
@@ -223,7 +318,7 @@ const DriverMapPage: React.FC = () => {
         {/* Status badge */}
         <div className="absolute top-14 left-1/2 -translate-x-1/2 z-10">
           <button
-            onClick={toggleOnline}
+            onClick={onToggleOnline}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full shadow-lg backdrop-blur-md border transition-all active:scale-95 ${
               isOnline
                 ? 'bg-[hsl(var(--caby-green))]/90 border-[hsl(var(--caby-green))]/50 text-white'
@@ -245,7 +340,7 @@ const DriverMapPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Radar zone label */}
+        {/* Radar label */}
         {isOnline && (
           <div className="absolute top-28 left-1/2 -translate-x-1/2 z-10">
             <span className="text-[10px] font-semibold text-green-700 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full border border-green-300 shadow-sm">
@@ -267,10 +362,10 @@ const DriverMapPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Recenter button */}
+        {/* Recenter */}
         {hasMoved && (
           <button
-            onClick={handleRecenter}
+            onClick={onRecenter}
             className="absolute bottom-24 right-4 z-10 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md border border-gray-200 shadow-lg flex items-center justify-center active:scale-95 transition-transform"
           >
             <Locate className="w-5 h-5 text-gray-700" />
