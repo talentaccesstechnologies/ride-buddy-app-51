@@ -184,40 +184,33 @@ const categories: ServiceCategory[] = [
   },
 ];
 
-const ServiceCard: React.FC<{ service: ServiceItem; index: number; onTap: () => void }> = ({ service, index, onTap }) => (
+const ServiceCard: React.FC<{ service: ServiceItem; index: number; fullWidth?: boolean; onTap: () => void }> = ({ service, index, fullWidth, onTap }) => (
   <motion.button
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.04, duration: 0.3 }}
-    whileTap={{ scale: 0.98 }}
+    whileTap={{ scale: 0.97 }}
     onClick={onTap}
-    className="relative w-full h-[140px] rounded-2xl overflow-hidden shadow-lg group text-left"
+    className={`relative aspect-square rounded-2xl overflow-hidden shadow-lg group text-left ${fullWidth ? 'col-span-2' : ''}`}
   >
-    {/* Background image */}
     <img
       src={service.image}
       alt={service.title}
       className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
       loading="lazy"
     />
+    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-    {/* Dark overlay with gold tint */}
-    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/50 to-black/20" />
-    <div className="absolute inset-0 bg-[hsl(43,75%,52%)]/5" />
-
-    {/* Badge */}
     {service.badge && (
-      <div className="absolute top-3 left-3">
-        <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${service.badgeColor || 'bg-primary text-primary-foreground'}`}>
+      <div className="absolute top-2.5 left-2.5">
+        <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${service.badgeColor || 'bg-primary text-primary-foreground'}`}>
           {service.badge}
         </span>
       </div>
     )}
 
-    {/* Content */}
-    <div className="absolute bottom-0 left-0 right-0 p-4">
-      <h3 className="text-base font-bold text-white">{service.title}</h3>
-      <p className="text-[11px] text-white/70 mt-0.5 line-clamp-1">{service.desc}</p>
+    <div className="absolute bottom-0 left-0 right-0 p-3">
+      <h3 className="text-sm font-bold text-white leading-tight">{service.title}</h3>
     </div>
   </motion.button>
 );
@@ -245,15 +238,20 @@ const ServicesPage: React.FC = () => {
           {categories.map((cat) => (
             <section key={cat.label}>
               <CategoryHeader emoji={cat.emoji} label={cat.label} />
-              <div className="space-y-3">
-                {cat.items.map((s, i) => (
-                  <ServiceCard
-                    key={s.id}
-                    service={s}
-                    index={i}
-                    onTap={() => navigate(s.route)}
-                  />
-                ))}
+              <div className="grid grid-cols-2 gap-3">
+                {cat.items.map((s, i) => {
+                  const isLast = i === cat.items.length - 1;
+                  const isOddTotal = cat.items.length % 2 !== 0;
+                  return (
+                    <ServiceCard
+                      key={s.id}
+                      service={s}
+                      index={i}
+                      fullWidth={isLast && isOddTotal}
+                      onTap={() => navigate(s.route)}
+                    />
+                  );
+                })}
               </div>
             </section>
           ))}
