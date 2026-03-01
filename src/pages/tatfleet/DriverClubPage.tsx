@@ -6,9 +6,10 @@ import SuperDriverBadgeCard from '@/components/tatfleet/SuperDriverBadgeCard';
 import ScoreBreakdown from '@/components/tatfleet/ScoreBreakdown';
 import LevelHistory from '@/components/tatfleet/LevelHistory';
 import MonthlyLeaderboard, { type LeaderboardEntry } from '@/components/tatfleet/MonthlyLeaderboard';
+import DriverPhotoUpload from '@/components/tatfleet/DriverPhotoUpload';
 import { type DriverLevel } from '@/lib/driverLevels';
 
-// ── Mock data (will be replaced by Supabase queries) ──
+// ── Mock data ──
 const MOCK_DRIVER = {
   level: 'super' as DriverLevel,
   rating: 4.87,
@@ -25,22 +26,26 @@ const MOCK_HISTORY = [
   { quarter: '2025-Q3', level: 'certified' as DriverLevel, rating: 4.52, acceptance: 82, cancellation: 1.8, rides: 74 },
 ];
 
+const AVATAR_COLORS = [
+  '#C9A84C', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6',
+  '#EF4444', '#06B6D4', '#EC4899', '#84CC16', '#F97316',
+];
+
 const MOCK_LEADERBOARD: LeaderboardEntry[] = [
-  { rank: 1, driverName: 'Moussa D.', score: 94, rating: 4.97, rides: 185, isWinner: true },
-  { rank: 2, driverName: 'Alexandre K.', score: 91, rating: 4.93, rides: 172 },
-  { rank: 3, driverName: 'Youssef B.', score: 88, rating: 4.90, rides: 158 },
-  { rank: 4, driverName: 'Jean-Paul M.', score: 85, rating: 4.87, rides: 127, isCurrentUser: true },
-  { rank: 5, driverName: 'Pierre L.', score: 82, rating: 4.85, rides: 145 },
-  { rank: 6, driverName: 'David R.', score: 80, rating: 4.82, rides: 130 },
-  { rank: 7, driverName: 'Samuel T.', score: 78, rating: 4.80, rides: 118 },
-  { rank: 8, driverName: 'Marc A.', score: 75, rating: 4.78, rides: 110 },
-  { rank: 9, driverName: 'Nicolas F.', score: 72, rating: 4.75, rides: 105 },
-  { rank: 10, driverName: 'Karim S.', score: 70, rating: 4.72, rides: 95 },
+  { rank: 1, driverName: 'Moussa Diallo', initials: 'MD', avatarColor: AVATAR_COLORS[0], driverCity: 'Genève', score: 94, rating: 4.97, rides: 185, isWinner: true },
+  { rank: 2, driverName: 'Alexandre Koné', initials: 'AK', avatarColor: AVATAR_COLORS[1], driverCity: 'Carouge', score: 91, rating: 4.93, rides: 172 },
+  { rank: 3, driverName: 'Youssef Benali', initials: 'YB', avatarColor: AVATAR_COLORS[2], driverCity: 'Vernier', score: 88, rating: 4.90, rides: 158 },
+  { rank: 4, driverName: 'Jean-Paul Müller', initials: 'JM', avatarColor: AVATAR_COLORS[3], driverCity: 'Lancy', score: 85, rating: 4.87, rides: 127, isCurrentUser: true },
+  { rank: 5, driverName: 'Pierre Lugrin', initials: 'PL', avatarColor: AVATAR_COLORS[4], driverCity: 'Meyrin', score: 82, rating: 4.85, rides: 145 },
+  { rank: 6, driverName: 'David Rouiller', initials: 'DR', avatarColor: AVATAR_COLORS[5], driverCity: 'Onex', score: 80, rating: 4.82, rides: 130 },
+  { rank: 7, driverName: 'Samuel Tettamanti', initials: 'ST', avatarColor: AVATAR_COLORS[6], driverCity: 'Thônex', score: 78, rating: 4.80, rides: 118 },
+  { rank: 8, driverName: 'Marc Auberson', initials: 'MA', avatarColor: AVATAR_COLORS[7], driverCity: 'Chêne-Bourg', score: 75, rating: 4.78, rides: 110 },
+  { rank: 9, driverName: 'Nicolas Favre', initials: 'NF', avatarColor: AVATAR_COLORS[8], driverCity: 'Plan-les-Ouates', score: 72, rating: 4.75, rides: 105 },
+  { rank: 10, driverName: 'Karim Sadki', initials: 'KS', avatarColor: AVATAR_COLORS[9], driverCity: 'Bernex', score: 70, rating: 4.72, rides: 95 },
 ];
 
 const currentMonthFr = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date());
 
-// ── Next evaluation ──
 const getNextEvaluation = () => {
   const now = new Date();
   const nextQuarter = new Date(now.getFullYear(), Math.ceil((now.getMonth() + 1) / 3) * 3, 1);
@@ -48,6 +53,8 @@ const getNextEvaluation = () => {
   const formatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
   return { date: formatter.format(nextQuarter), days: diffDays };
 };
+
+const PODIUM_BONUSES: Record<number, string> = { 1: "1'000", 2: '500', 3: '300' };
 
 type Tab = 'dashboard' | 'leaderboard' | 'clients';
 
@@ -61,11 +68,11 @@ const DriverClubPage: React.FC = () => {
     { key: 'clients', label: 'Clients' },
   ];
 
-  // Estimate Driver of Month bonus
   const currentRank = MOCK_LEADERBOARD.find(e => e.isCurrentUser)?.rank || 0;
   const pointsToFirst = currentRank > 1
     ? MOCK_LEADERBOARD[0].score - (MOCK_LEADERBOARD.find(e => e.isCurrentUser)?.score || 0)
     : 0;
+  const currentPrize = PODIUM_BONUSES[currentRank] || null;
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -161,7 +168,7 @@ const DriverClubPage: React.FC = () => {
           {/* Driver of Month estimation */}
           <div className="px-5">
             <div className="p-4 rounded-2xl bg-[hsl(var(--caby-gold))]/5 border border-[hsl(var(--caby-gold))]/15">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-xl bg-[hsl(var(--caby-gold))]/15 flex items-center justify-center">
                   <Trophy className="w-5 h-5 text-[hsl(var(--caby-gold))]" />
                 </div>
@@ -172,11 +179,38 @@ const DriverClubPage: React.FC = () => {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-black text-[hsl(var(--caby-gold))]">+500</p>
+                  <p className="text-sm font-black text-[hsl(var(--caby-gold))]">
+                    {currentPrize ? `+${currentPrize}` : '—'}
+                  </p>
                   <p className="text-[10px] text-muted-foreground">CHF bonus</p>
                 </div>
               </div>
+              {/* Podium prizes reminder */}
+              <div className="flex gap-2 pt-2 border-t border-[hsl(var(--caby-gold))]/10">
+                {[
+                  { emoji: '🥇', amount: "1'000 CHF" },
+                  { emoji: '🥈', amount: '500 CHF' },
+                  { emoji: '🥉', amount: '300 CHF' },
+                ].map((p) => (
+                  <div key={p.emoji} className="flex-1 text-center">
+                    <span className="text-sm">{p.emoji}</span>
+                    <p className="text-[10px] font-bold text-muted-foreground">{p.amount}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[9px] text-muted-foreground text-center mt-2">
+                Versé automatiquement sur votre prochain paiement
+              </p>
             </div>
+          </div>
+
+          {/* Photo upload */}
+          <div className="px-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-1 h-4 rounded-full bg-muted-foreground/30" />
+              <h3 className="text-sm font-display font-bold text-foreground">Mon Profil</h3>
+            </div>
+            <DriverPhotoUpload />
           </div>
 
           {/* Quarterly History */}
