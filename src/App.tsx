@@ -101,7 +101,7 @@ const App = () => (
 
               {/* TATFleet - Driver Interface */}
               <Route path="/tatfleet" element={<Navigate to="/tatfleet/dashboard" replace />} />
-              <Route path="/tatfleet/radar" element={<Navigate to="/tatfleet/dashboard" replace />} />
+              <Route path="/tatfleet/radar" element={<DriverRadarPage />} />
               <Route path="/tatfleet/map" element={<Navigate to="/tatfleet/dashboard" replace />} />
               <Route path="/tatfleet/dashboard" element={<DriverDashboardPage />} />
               <Route path="/tatfleet/help" element={<DriverHelpPage />} />
