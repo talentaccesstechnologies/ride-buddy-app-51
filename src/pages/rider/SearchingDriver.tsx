@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X } from 'lucide-react';
+import { X, Heart } from 'lucide-react';
 import { useRide } from '@/contexts/RideContext';
 import { generateSimulatedDriver } from '@/lib/simulatedDrivers';
 import { getVehicleOption } from '@/lib/vehicleOptions';
 import { Button } from '@/components/ui/button';
+import { useAffiliations } from '@/hooks/useAffiliations';
 
 const searchingMessages = [
   'Recherche en cours...',
@@ -18,6 +19,10 @@ const SearchingDriver: React.FC = () => {
   const { pickup, selectedVehicle, estimatedPrice, setCurrentDriver } = useRide();
   const [messageIndex, setMessageIndex] = useState(0);
   const [showCancel, setShowCancel] = useState(false);
+  const [searchPhase, setSearchPhase] = useState<'priority' | 'club' | 'general'>('priority');
+  const { clientAffiliations } = useAffiliations();
+  const hasFavorite = clientAffiliations.length > 0;
+  const favDriverName = clientAffiliations[0]?.driver_name;
 
   useEffect(() => {
     // Rotate messages
@@ -25,7 +30,30 @@ const SearchingDriver: React.FC = () => {
       setMessageIndex((prev) => (prev + 1) % searchingMessages.length);
     }, 3000);
 
-    // Simulate finding a driver after 5-8 seconds
+    // Priority dispatch cascade
+    if (hasFavorite) {
+      // Phase 1: Priority search (0-6s simulated as 30s)
+      const clubTimer = setTimeout(() => setSearchPhase('club'), 6000);
+      // Phase 2: Club dispatch (6-12s simulated as 60s)
+      const generalTimer = setTimeout(() => setSearchPhase('general'), 12000);
+      // Phase 3: General pool finds driver
+      const driverTimer = setTimeout(() => {
+        if (pickup) {
+          const driver = generateSimulatedDriver(pickup.lat, pickup.lng);
+          setCurrentDriver(driver);
+          navigate('/rider/trip');
+        }
+      }, 15000);
+
+      return () => {
+        clearInterval(messageTimer);
+        clearTimeout(clubTimer);
+        clearTimeout(generalTimer);
+        clearTimeout(driverTimer);
+      };
+    }
+
+    // No favorite: standard search
     const driverTimer = setTimeout(() => {
       if (pickup) {
         const driver = generateSimulatedDriver(pickup.lat, pickup.lng);
@@ -100,8 +128,22 @@ const SearchingDriver: React.FC = () => {
           </div>
 
           <h2 className="text-xl font-semibold mb-2">
-            {searchingMessages[messageIndex]}
+            {hasFavorite && searchPhase === 'priority'
+              ? `Votre chauffeur préféré ${favDriverName} est recherché en priorité...`
+              : hasFavorite && searchPhase === 'club'
+                ? `Recherche dans le club de ${favDriverName}...`
+                : searchingMessages[messageIndex]
+            }
           </h2>
+
+          {hasFavorite && searchPhase !== 'general' && (
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Heart className="w-4 h-4 text-[hsl(var(--caby-gold))] fill-[hsl(var(--caby-gold))]" />
+              <span className="text-xs text-muted-foreground">
+                {searchPhase === 'priority' ? 'Recherche prioritaire' : 'Club privé • Commission 10%'}
+              </span>
+            </div>
+          )}
 
           <div className="flex items-center justify-center gap-4 mt-4 text-muted-foreground">
             <div className="flex items-center gap-2">

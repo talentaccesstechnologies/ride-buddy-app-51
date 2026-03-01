@@ -46,6 +46,7 @@ import DriverLogisticsPage from "./pages/tatfleet/DriverLogisticsPage";
 import DriverClubPage from "./pages/tatfleet/DriverClubPage";
 import DriverMapPage from "./pages/tatfleet/DriverMapPage";
 import DriverDashboardPage from "./pages/tatfleet/DriverDashboardPage";
+import InvitePage from "./pages/InvitePage";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -105,6 +106,10 @@ const App = () => (
               <Route path="/tatfleet/help" element={<DriverHelpPage />} />
               <Route path="/tatfleet/logistics" element={<DriverLogisticsPage />} />
               <Route path="/tatfleet/club" element={<DriverClubPage />} />
+
+              {/* Invite */}
+              <Route path="/invite/:code" element={<InvitePage />} />
+
               {/* 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>

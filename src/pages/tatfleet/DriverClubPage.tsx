@@ -1,6 +1,7 @@
 import React from 'react';
 import { Shield, Star, Trophy, TrendingUp, XCircle, Clock, Eye, Zap, Crown, Car, Percent, ChevronRight, Award, Sparkles } from 'lucide-react';
 import DriverBottomNav from '@/components/tatfleet/DriverBottomNav';
+import DriverPrivateClients from '@/components/tatfleet/DriverPrivateClients';
 
 // ── Super Driver Criteria ──
 interface Criterion {
@@ -279,6 +280,15 @@ const DriverClubPage: React.FC = () => {
             );
           })}
         </div>
+      </div>
+
+      {/* Mes clients privés */}
+      <div className="px-5 mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-1 h-4 rounded-full bg-primary" />
+          <h3 className="text-sm font-display font-bold text-foreground">Mes Clients Privés</h3>
+        </div>
+        <DriverPrivateClients />
       </div>
 
       {/* Footer */}
