@@ -131,6 +131,9 @@ const App = () => (
               <Route path="/partner/dashboard" element={<PartnerDashboardPage />} />
               <Route path="/partner" element={<Navigate to="/partner/login" replace />} />
 
+              {/* Device Preview */}
+              <Route path="/preview" element={<DevicePreviewPage />} />
+
               {/* 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
