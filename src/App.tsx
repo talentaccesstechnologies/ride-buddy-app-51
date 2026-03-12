@@ -109,16 +109,18 @@ const App = () => (
               <Route path="/tatfleet/*" element={<Navigate to="/caby/driver/dashboard" replace />} />
 
               {/* Caby Driver Interface */}
-              <Route path="/caby/driver" element={<Navigate to="/caby/driver/dashboard" replace />} />
-              <Route path="/caby/driver/radar" element={<Navigate to="/caby/driver/dashboard" replace />} />
-              <Route path="/caby/driver/map" element={<Navigate to="/caby/driver/dashboard" replace />} />
-              <Route path="/caby/driver/dashboard" element={<DriverDashboardPage />} />
-              <Route path="/caby/driver/help" element={<DriverHelpPage />} />
-              <Route path="/caby/driver/logistics" element={<DriverLogisticsPage />} />
-              <Route path="/caby/driver/colis" element={<DriverColisFlowPage />} />
-              <Route path="/caby/driver/club" element={<DriverClubPage />} />
-              <Route path="/caby/driver/profile" element={<DriverProfilePage />} />
-              <Route path="/caby/driver/earnings" element={<DriverEarningsPage />} />
+              <Route path="/caby/driver" element={<DriverLayout />}>
+                <Route index element={<Navigate to="/caby/driver/dashboard" replace />} />
+                <Route path="radar" element={<Navigate to="/caby/driver/dashboard" replace />} />
+                <Route path="map" element={<Navigate to="/caby/driver/dashboard" replace />} />
+                <Route path="dashboard" element={<DriverDashboardPage />} />
+                <Route path="help" element={<DriverHelpPage />} />
+                <Route path="logistics" element={<DriverLogisticsPage />} />
+                <Route path="colis" element={<DriverColisFlowPage />} />
+                <Route path="club" element={<DriverClubPage />} />
+                <Route path="profile" element={<DriverProfilePage />} />
+                <Route path="earnings" element={<DriverEarningsPage />} />
+              </Route>
 
               {/* Invite */}
               <Route path="/invite/:code" element={<InvitePage />} />
