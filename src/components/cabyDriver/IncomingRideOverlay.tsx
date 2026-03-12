@@ -1,29 +1,31 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Navigation, X, Car, Bike, Truck } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { MapPin, Navigation, X, Car, Bike, Truck, Users } from 'lucide-react';
 
 export interface IncomingRide {
   id: string;
   clientName: string;
   clientPhoto?: string;
+  clientRating?: number;
   pickupAddress: string;
   pickupLat: number;
   pickupLng: number;
   dropoffAddress: string;
   dropoffLat: number;
   dropoffLng: number;
-  distanceFromDriver: number; // km
+  distanceFromDriver: number;
   estimatedPrice: number;
   serviceType: 'standard' | 'premium' | 'xl' | 'moto';
-  estimatedDuration: number; // minutes
-  estimatedDistance: number; // km
+  estimatedDuration: number;
+  estimatedDistance: number;
+  isPrivateClient?: boolean;
 }
 
 const SERVICE_LABELS: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  standard: { label: 'Caby Ride', icon: <Car className="w-4 h-4" />, color: 'hsl(var(--caby-gold))' },
-  premium: { label: 'Caby Premium', icon: <Car className="w-4 h-4" />, color: 'hsl(var(--caby-gold))' },
-  xl: { label: 'Caby Van', icon: <Truck className="w-4 h-4" />, color: 'hsl(var(--caby-blue))' },
-  moto: { label: 'Caby Moto', icon: <Bike className="w-4 h-4" />, color: 'hsl(var(--caby-green))' },
+  standard: { label: 'Ride', icon: <Car className="w-3 h-3" />, color: 'hsl(var(--caby-gold))' },
+  premium: { label: 'Premium', icon: <Car className="w-3 h-3" />, color: 'hsl(var(--caby-gold))' },
+  xl: { label: 'Van', icon: <Truck className="w-3 h-3" />, color: 'hsl(var(--caby-blue))' },
+  moto: { label: 'Moto', icon: <Bike className="w-3 h-3" />, color: 'hsl(var(--caby-green))' },
 };
 
 const COUNTDOWN_SECONDS = 20;
@@ -32,15 +34,15 @@ interface Props {
   ride: IncomingRide;
   onAccept: (id: string) => void;
   onRefuse: (id: string) => void;
+  onClub?: (id: string) => void;
   onExpire: (id: string) => void;
 }
 
-const IncomingRideOverlay: React.FC<Props> = ({ ride, onAccept, onRefuse, onExpire }) => {
+const IncomingRideOverlay: React.FC<Props> = ({ ride, onAccept, onRefuse, onClub, onExpire }) => {
   const [secondsLeft, setSecondsLeft] = useState(COUNTDOWN_SECONDS);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const service = SERVICE_LABELS[ride.serviceType] || SERVICE_LABELS.standard;
 
-  // Countdown
   useEffect(() => {
     timerRef.current = setInterval(() => {
       setSecondsLeft((prev) => {
@@ -56,7 +58,7 @@ const IncomingRideOverlay: React.FC<Props> = ({ ride, onAccept, onRefuse, onExpi
   }, [ride.id, onExpire]);
 
   const progress = secondsLeft / COUNTDOWN_SECONDS;
-  const circumference = 2 * Math.PI * 44;
+  const circumference = 2 * Math.PI * 18;
   const strokeDashoffset = circumference * (1 - progress);
 
   const initials = ride.clientName
@@ -68,127 +70,133 @@ const IncomingRideOverlay: React.FC<Props> = ({ ride, onAccept, onRefuse, onExpi
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 40 }}
-      transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-      className="fixed inset-0 z-50 flex items-end justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-end justify-center pointer-events-auto"
     >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
-      {/* Card */}
       <motion.div
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
-        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-        className="relative w-full max-w-md mx-4 mb-4 bg-card border border-border rounded-3xl shadow-2xl overflow-hidden"
+        transition={{ type: 'spring', damping: 25, stiffness: 400 }}
+        className={`relative w-full max-w-lg bg-black/95 rounded-t-3xl shadow-2xl overflow-hidden ${ride.isPrivateClient ? 'ring-2 ring-[hsl(var(--caby-gold))]' : ''}`}
+        style={{ maxHeight: '45vh' }}
       >
-        {/* Top accent bar */}
         <div className="h-1 w-full" style={{ background: service.color }} />
 
-        <div className="p-5">
-          {/* Header: client + countdown */}
-          <div className="flex items-center gap-4 mb-5">
-            {/* Avatar */}
+        <div className="p-4 flex flex-col h-full">
+          {/* Header: client + countdown - une ligne */}
+          <div className="flex items-center gap-3 mb-3">
             <div className="relative">
               {ride.clientPhoto ? (
                 <img
                   src={ride.clientPhoto}
                   alt={ride.clientName}
-                  className="w-14 h-14 rounded-full object-cover border-2 border-border"
+                  className="w-10 h-10 rounded-full object-cover border border-white/20"
                 />
               ) : (
-                <div className="w-14 h-14 rounded-full bg-primary/20 border-2 border-primary/40 flex items-center justify-center">
-                  <span className="text-lg font-bold text-primary">{initials}</span>
+                <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+                  <span className="text-sm font-bold text-white">{initials}</span>
+                </div>
+              )}
+              {ride.isPrivateClient && (
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[hsl(var(--caby-gold))] flex items-center justify-center">
+                  <span className="text-[8px] font-bold text-black">★</span>
                 </div>
               )}
             </div>
 
-            {/* Name + service */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-bold text-foreground truncate">{ride.clientName}</h3>
-              <div className="flex items-center gap-1.5 mt-0.5">
+              <h3 className="text-base font-bold text-white truncate">{ride.clientName}</h3>
+              <div className="flex items-center gap-1.5">
                 <span style={{ color: service.color }}>{service.icon}</span>
-                <span className="text-xs font-semibold" style={{ color: service.color }}>{service.label}</span>
+                <span className="text-xs font-medium text-white/70">{service.label}</span>
+                {ride.clientRating && (
+                  <span className="text-xs text-white/50">· {ride.clientRating.toFixed(1)}★</span>
+                )}
               </div>
             </div>
 
-            {/* Countdown circle */}
-            <div className="relative w-14 h-14 flex-shrink-0">
-              <svg className="w-14 h-14 -rotate-90" viewBox="0 0 96 96">
-                <circle cx="48" cy="48" r="44" stroke="hsl(var(--border))" strokeWidth="4" fill="none" />
+            <div className="relative w-10 h-10 flex-shrink-0">
+              <svg className="w-10 h-10 -rotate-90" viewBox="0 0 40 40">
+                <circle cx="20" cy="20" r="18" stroke="rgba(255,255,255,0.1)" strokeWidth="3" fill="none" />
                 <circle
-                  cx="48" cy="48" r="44"
+                  cx="20" cy="20" r="18"
                   stroke={secondsLeft <= 5 ? 'hsl(var(--caby-red))' : 'hsl(var(--caby-green))'}
-                  strokeWidth="4" fill="none"
+                  strokeWidth="3" fill="none"
                   strokeLinecap="round"
                   strokeDasharray={circumference}
                   strokeDashoffset={strokeDashoffset}
                   className="transition-all duration-1000 ease-linear"
                 />
               </svg>
-              <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${
-                secondsLeft <= 5 ? 'text-destructive' : 'text-foreground'
+              <span className={`absolute inset-0 flex items-center justify-center text-xs font-bold ${
+                secondsLeft <= 5 ? 'text-red-400' : 'text-white'
               }`}>
-                {secondsLeft}s
+                {secondsLeft}
               </span>
             </div>
           </div>
 
-          {/* Route info */}
-          <div className="space-y-3 mb-5">
-            {/* Pickup */}
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 w-8 h-8 rounded-full bg-[hsl(var(--caby-green))]/15 flex items-center justify-center flex-shrink-0">
-                <MapPin className="w-4 h-4 text-[hsl(var(--caby-green))]" />
+          {/* Route condensée */}
+          <div className="flex items-start gap-2 mb-3 text-sm">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1.5">
+                <div className="w-5 h-5 rounded-full bg-[hsl(var(--caby-green))]/20 flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-3 h-3 text-[hsl(var(--caby-green))]" />
+                </div>
+                <span className="text-white/90 truncate text-xs">{ride.pickupAddress}</span>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Départ</p>
-                <p className="text-sm font-medium text-foreground truncate">{ride.pickupAddress}</p>
-                <p className="text-xs text-primary font-semibold mt-0.5">À {ride.distanceFromDriver.toFixed(1)} km de vous</p>
+              <div className="flex items-center gap-1.5 ml-0.5">
+                <div className="w-1 h-4 border-l border-dashed border-white/30" />
+                <span className="text-[10px] text-white/50">{ride.distanceFromDriver.toFixed(1)} km</span>
               </div>
-            </div>
-
-            {/* Dotted line */}
-            <div className="ml-4 border-l-2 border-dashed border-border h-3" />
-
-            {/* Dropoff */}
-            <div className="flex items-start gap-3">
-              <div className="mt-0.5 w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center flex-shrink-0">
-                <Navigation className="w-4 h-4 text-destructive" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Destination</p>
-                <p className="text-sm font-medium text-foreground truncate">{ride.dropoffAddress}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {ride.estimatedDistance.toFixed(1)} km · ~{ride.estimatedDuration} min
-                </p>
+              <div className="flex items-center gap-1.5">
+                <div className="w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                  <Navigation className="w-3 h-3 text-red-400" />
+                </div>
+                <span className="text-white/90 truncate text-xs">{ride.dropoffAddress}</span>
               </div>
             </div>
           </div>
 
-          {/* Price */}
-          <div className="bg-primary/10 border border-primary/20 rounded-2xl px-4 py-3 mb-5 text-center">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">Prix estimé</p>
-            <p className="text-3xl font-bold text-primary tabular-nums">
-              {ride.estimatedPrice.toFixed(0)} <span className="text-base font-medium">CHF</span>
-            </p>
+          {/* Prix en grand - centre */}
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <p className="text-[10px] uppercase tracking-wider text-white/50 font-semibold mb-1">Prix estimé</p>
+              <p className="text-4xl font-bold text-[hsl(var(--caby-gold))] tabular-nums">
+                {ride.estimatedPrice.toFixed(0)} <span className="text-xl font-medium">CHF</span>
+              </p>
+              <p className="text-xs text-white/40 mt-1">{ride.estimatedDistance.toFixed(1)} km · {ride.estimatedDuration} min</p>
+            </div>
           </div>
 
-          {/* Buttons */}
-          <div className="flex gap-3">
+          {/* Boutons en bas - collés */}
+          <div className="flex gap-2 mt-3 pt-2 border-t border-white/10">
             <button
               onClick={() => onRefuse(ride.id)}
-              className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-secondary border border-border text-muted-foreground font-bold text-sm active:scale-[0.97] transition-transform"
+              className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white/80 font-semibold text-sm active:scale-[0.97] transition-transform"
             >
               <X className="w-4 h-4" />
               Refuser
             </button>
+            
+            {ride.isPrivateClient && onClub && (
+              <button
+                onClick={() => onClub(ride.id)}
+                className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl bg-[hsl(var(--caby-gold))]/20 hover:bg-[hsl(var(--caby-gold))]/30 border border-[hsl(var(--caby-gold))]/50 text-[hsl(var(--caby-gold))] font-semibold text-sm active:scale-[0.97] transition-transform"
+              >
+                <Users className="w-4 h-4" />
+                Club
+              </button>
+            )}
+            
             <button
               onClick={() => onAccept(ride.id)}
-              className="flex-[2] flex items-center justify-center gap-2 py-4 rounded-2xl bg-[hsl(var(--caby-green))] text-white font-bold text-sm active:scale-[0.97] transition-transform shadow-lg shadow-[hsl(var(--caby-green))]/30"
+              className="flex-[1.5] flex items-center justify-center gap-1.5 py-3 rounded-xl bg-[hsl(var(--caby-green))] text-black font-bold text-sm active:scale-[0.97] transition-transform shadow-lg shadow-[hsl(var(--caby-green))]/30"
             >
               Accepter
             </button>
