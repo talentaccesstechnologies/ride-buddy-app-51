@@ -5,6 +5,13 @@ interface Props {
 }
 
 const MobileDeviceWrapper: React.FC<Props> = ({ children }) => {
+  // Skip wrapper when rendered inside an iframe (e.g. /preview page)
+  const isInIframe = typeof window !== 'undefined' && window.self !== window.top;
+
+  if (isInIframe) {
+    return <div className="h-full w-full">{children}</div>;
+  }
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#111]">
       <div
