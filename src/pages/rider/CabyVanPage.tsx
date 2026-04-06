@@ -224,7 +224,10 @@ const CabyVanPage: React.FC = () => {
               </div>
 
               <Button onClick={() => setStep('search')} className="w-full mt-6 bg-[hsl(43,75%,52%)] hover:bg-[hsl(43,75%,45%)] text-black font-bold rounded-xl h-12">
-                Réserver un siège
+                Réserver un siège VAN
+              </Button>
+              <Button onClick={() => navigate('/caby/crossborder')} variant="outline" className="w-full mt-2 rounded-xl h-12 border-blue-500/30 text-blue-400 font-bold">
+                🌍 Caby Cross-Border — France ↔ Suisse
               </Button>
             </motion.div>
 
