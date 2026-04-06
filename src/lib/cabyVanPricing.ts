@@ -7,6 +7,7 @@ export interface VanRoute {
   segment: 'pendulaire' | 'business' | 'ski' | 'tourisme' | 'premium' | 'frontalier' | 'institutionnel';
   flag: string;
   seasonal?: boolean;
+  daily?: boolean; // frontalier commuter routes
 }
 
 export interface VanSlot {
@@ -20,7 +21,7 @@ export interface VanSlot {
   rushLevel: 'green' | 'yellow' | 'red';
 }
 
-const PRICE_FLOOR = 19;
+const PRICE_FLOOR = 12;
 const PRICE_CEILING = 130;
 
 export const cabyVanRoutes: VanRoute[] = [
@@ -63,11 +64,28 @@ export const cabyVanRoutes: VanRoute[] = [
   { id: 31, from: "Genève", to: "Courchevel", duration: 150, basePrice: 69, segment: "ski", flag: "🎿🇫🇷", seasonal: true },
   { id: 32, from: "Genève", to: "Val d'Isère", duration: 180, basePrice: 79, segment: "ski", flag: "🎿🇫🇷", seasonal: true },
   { id: 33, from: "Genève", to: "Les Arcs", duration: 165, basePrice: 72, segment: "ski", flag: "🎿🇫🇷", seasonal: true },
-  // TRANSFRONTALIER
-  { id: 34, from: "Genève", to: "Annecy", duration: 45, basePrice: 25, segment: "frontalier", flag: "🇫🇷" },
-  { id: 35, from: "Genève", to: "Lyon", duration: 105, basePrice: 49, segment: "premium", flag: "🇫🇷" },
-  { id: 36, from: "Bâle", to: "Strasbourg", duration: 45, basePrice: 25, segment: "frontalier", flag: "🇫🇷" },
-  { id: 37, from: "Zurich", to: "Munich", duration: 180, basePrice: 85, segment: "premium", flag: "🇩🇪" },
+  // TRANSFRONTALIER — Autres
+  { id: 34, from: "Genève", to: "Lyon", duration: 105, basePrice: 49, segment: "premium", flag: "🇫🇷" },
+  { id: 35, from: "Bâle", to: "Strasbourg", duration: 45, basePrice: 25, segment: "frontalier", flag: "🇫🇷" },
+  { id: 36, from: "Zurich", to: "Munich", duration: 180, basePrice: 85, segment: "premium", flag: "🇩🇪" },
+  // GRAND GENÈVE — HAUTE-SAVOIE (frontaliers quotidiens)
+  { id: 38, from: "Genève", to: "Annemasse", duration: 20, basePrice: 15, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 39, from: "Genève", to: "Saint-Julien-en-Genevois", duration: 20, basePrice: 15, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 40, from: "Genève", to: "Annecy", duration: 45, basePrice: 25, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 41, from: "Genève", to: "Thonon-les-Bains", duration: 40, basePrice: 22, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 42, from: "Genève", to: "Évian-les-Bains", duration: 50, basePrice: 25, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 43, from: "Genève", to: "Bonneville", duration: 45, basePrice: 25, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 44, from: "Genève", to: "Cluses", duration: 55, basePrice: 28, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 45, from: "Genève", to: "Sallanches", duration: 60, basePrice: 32, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 46, from: "Genève", to: "La Roche-sur-Foron", duration: 40, basePrice: 22, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 47, from: "Genève", to: "Rumilly", duration: 50, basePrice: 25, segment: "frontalier", flag: "🇫🇷", daily: true },
+  // GRAND GENÈVE — AIN (frontaliers)
+  { id: 48, from: "Genève", to: "Ferney-Voltaire", duration: 15, basePrice: 12, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 49, from: "Genève", to: "Gex", duration: 25, basePrice: 15, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 50, from: "Genève", to: "Divonne-les-Bains", duration: 25, basePrice: 15, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 51, from: "Genève", to: "Bellegarde", duration: 40, basePrice: 22, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 52, from: "Genève", to: "Oyonnax", duration: 75, basePrice: 38, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 53, from: "Genève", to: "Bourg-en-Bresse", duration: 90, basePrice: 45, segment: "frontalier", flag: "🇫🇷", daily: true },
 ];
 
 // All routes are bidirectional
@@ -78,7 +96,7 @@ export const ROUTES: VanRoute[] = [
 
 export const ALL_CITIES = [...new Set(ROUTES.flatMap(r => [r.from, r.to]))].sort();
 
-export type SegmentFilter = 'all' | 'pendulaire' | 'business' | 'ski' | 'tourisme' | 'premium' | 'frontalier' | 'institutionnel';
+export type SegmentFilter = 'all' | 'pendulaire' | 'business' | 'ski' | 'tourisme' | 'premium' | 'frontalier' | 'institutionnel' | 'grand_geneve';
 
 export const SEGMENT_META: Record<string, { label: string; icon: string; color: string }> = {
   pendulaire: { label: 'Pendulaire', icon: '🏙️', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
@@ -92,6 +110,7 @@ export const SEGMENT_META: Record<string, { label: string; icon: string; color: 
 
 export const getRoutesFrom = (city: string, segment?: SegmentFilter) => {
   const routes = ROUTES.filter(r => r.from === city);
+  if (segment === 'grand_geneve') return routes.filter(r => r.daily === true);
   if (segment && segment !== 'all') return routes.filter(r => r.segment === segment);
   return routes;
 };
@@ -148,6 +167,41 @@ export const generateSlotsForRoute = (route: VanRoute): VanSlot[] => {
     return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
   };
   const rid = String(route.id);
+
+  // Frontalier daily routes: fixed morning & evening commuter slots only
+  if (route.daily) {
+    const morningSlots = [
+      { h: 6, m: 0, label: 'Navette 6h00', taken: 5, level: 'red' as const },
+      { h: 6, m: 30, label: 'Navette 6h30', taken: 4, level: 'red' as const },
+      { h: 7, m: 0, label: 'Rush 7h00', taken: 6, level: 'red' as const },
+      { h: 7, m: 30, label: 'Rush 7h30', taken: 5, level: 'red' as const },
+      { h: 8, m: 0, label: 'Rush 8h00', taken: 3, level: 'yellow' as const },
+      { h: 8, m: 30, label: 'Standard 8h30', taken: 2, level: 'yellow' as const },
+    ];
+    const eveningSlots = [
+      { h: 17, m: 0, label: 'Retour 17h00', taken: 5, level: 'red' as const },
+      { h: 17, m: 30, label: 'Retour 17h30', taken: 6, level: 'red' as const },
+      { h: 18, m: 0, label: 'Rush 18h00', taken: 4, level: 'red' as const },
+      { h: 18, m: 30, label: 'Rush 18h30', taken: 3, level: 'yellow' as const },
+      { h: 19, m: 0, label: 'Soirée 19h00', taken: 2, level: 'yellow' as const },
+      { h: 19, m: 30, label: 'Soirée 19h30', taken: 1, level: 'green' as const },
+    ];
+    return [...morningSlots, ...eveningSlots].map(s => {
+      const dep = `${String(s.h).padStart(2, '0')}:${String(s.m).padStart(2, '0')}`;
+      return {
+        id: `${rid}-${dep.replace(':', '')}`,
+        departure: dep,
+        arrivalEstimate: addTime(s.h, s.m, route.duration),
+        label: s.label,
+        basePrice: calculateDynamicPrice(route.basePrice, 7 - s.taken, s.h, 3, 3),
+        seatsTotal: 7,
+        seatsTaken: s.taken,
+        rushLevel: s.level,
+      };
+    });
+  }
+
+  // Standard slots for other routes
   const slots: VanSlot[] = [
     { id: `${rid}-07`, departure: '07:00', arrivalEstimate: addTime(7, 0, route.duration), label: 'Rush matin', basePrice: calculateDynamicPrice(route.basePrice, 4, 7, 3, 3), seatsTotal: 7, seatsTaken: 3, rushLevel: 'red' },
     { id: `${rid}-09`, departure: '09:00', arrivalEstimate: addTime(9, 0, route.duration), label: 'Standard', basePrice: calculateDynamicPrice(route.basePrice, 6, 9, 3, 3), seatsTotal: 7, seatsTaken: 1, rushLevel: 'yellow' },
