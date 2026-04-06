@@ -87,6 +87,23 @@ export const ROUTES: VanRoute[] = [
 
 export const ALL_CITIES = [...new Set(ROUTES.flatMap(r => [r.from, r.to]))].sort();
 
+export const ROUTE_FILTER_META: { key: RouteFilter; label: string; icon: string }[] = [
+  { key: 'all', label: 'Tous', icon: '🗺️' },
+  { key: 'villes', label: 'Villes', icon: '🏙️' },
+  { key: 'ski_ch', label: 'Ski Suisse', icon: '🎿' },
+  { key: 'ski_fr', label: 'Ski France', icon: '🎿🇫🇷' },
+  { key: 'transfrontalier', label: 'Transfrontalier', icon: '🌍' },
+];
+
+const routeMatchesFilter = (r: VanRoute, f: RouteFilter): boolean => {
+  if (f === 'all') return true;
+  if (f === 'villes') return ['pendulaire', 'business', 'tourisme', 'institutionnel', 'premium'].includes(r.segment) && !r.seasonal && !r.flag.includes('🇫🇷') && !r.flag.includes('🇩🇪');
+  if (f === 'ski_ch') return r.segment === 'ski' && !r.flag.includes('🇫🇷');
+  if (f === 'ski_fr') return r.segment === 'ski' && r.flag.includes('🇫🇷');
+  if (f === 'transfrontalier') return r.segment === 'frontalier' || r.flag.includes('🇫🇷') || r.flag.includes('🇩🇪');
+  return true;
+};
+
 export type SegmentFilter = 'all' | 'pendulaire' | 'business' | 'ski' | 'tourisme' | 'premium' | 'frontalier' | 'institutionnel';
 
 export const SEGMENT_META: Record<string, { label: string; icon: string; color: string }> = {
@@ -103,6 +120,19 @@ export const getRoutesFrom = (city: string, segment?: SegmentFilter) => {
   const routes = ROUTES.filter(r => r.from === city);
   if (segment && segment !== 'all') return routes.filter(r => r.segment === segment);
   return routes;
+};
+
+export const getRoutesFromWithFilter = (city: string, filter: RouteFilter): VanRoute[] => {
+  return ROUTES.filter(r => r.from === city && routeMatchesFilter(r, filter));
+};
+
+export const getDestinationsFromWithFilter = (city: string, filter: RouteFilter): string[] => {
+  return getRoutesFromWithFilter(city, filter).map(r => r.to);
+};
+
+export const getCitiesForFilter = (filter: RouteFilter): string[] => {
+  const filtered = ROUTES.filter(r => routeMatchesFilter(r, filter));
+  return [...new Set(filtered.flatMap(r => [r.from, r.to]))].sort();
 };
 
 export const findRoute = (from: string, to: string): VanRoute | undefined =>
