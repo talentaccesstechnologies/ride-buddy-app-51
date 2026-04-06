@@ -4,20 +4,28 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Leaf, Users, Clock, MapPin, Luggage, Bike, QrCode, ArrowRight, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
-  cabyVanRoutes, ROUTES, ALL_CITIES, findRoute, getDestinationsFrom, generateSlotsForRoute,
-  formatDuration, SEGMENT_META,
-  type VanSlot, type VanRoute, type SegmentFilter,
+  cabyVanRoutes, ROUTES, ALL_CITIES, findRoute, getDestinationsFromWithFilter, generateSlotsForRoute,
+  formatDuration, SEGMENT_META, ROUTE_FILTER_META, getCitiesForFilter,
+  type VanSlot, type VanRoute, type RouteFilter,
 } from '@/lib/cabyVanPricing';
 import BottomNav from '@/components/rider/BottomNav';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'confirm';
 
-const rushIcon: Record<string, string> = { red: '🔴', yellow: '🟡', green: '🟢' };
-const rushColor: Record<string, string> = {
-  red: 'bg-red-500/20 text-red-400 border-red-500/30',
-  yellow: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+const badgeIcon: Record<string, string> = { green: '🟢', orange: '🟠', red: '🔴' };
+const badgeColor: Record<string, string> = {
   green: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+  orange: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+  red: 'bg-red-500/20 text-red-400 border-red-500/30',
 };
+
+const SeatBar: React.FC<{ total: number; taken: number }> = ({ total, taken }) => (
+  <div className="flex gap-0.5">
+    {Array.from({ length: total }, (_, i) => (
+      <div key={i} className={`h-3 flex-1 rounded-sm ${i < taken ? 'bg-muted/60' : 'bg-[hsl(43,75%,52%)]'}`} />
+    ))}
+  </div>
+);
 
 const SeatButton: React.FC<{ seat: number; taken: boolean; selected: boolean; onSelect: (s: number) => void }> = ({ seat, taken, selected, onSelect }) => (
   <button
@@ -33,30 +41,21 @@ const SeatButton: React.FC<{ seat: number; taken: boolean; selected: boolean; on
   </button>
 );
 
-// Group original (non-reversed) routes by category for hero
-const HERO_GROUPS: { title: string; icon: string; segments: string[]; routes: VanRoute[] }[] = [
-  { title: 'AXE ROMAND', icon: '🏙️', segments: ['pendulaire'], routes: cabyVanRoutes.filter(r => r.id <= 5) },
-  { title: 'AXE PLATEAU', icon: '💼', segments: ['business'], routes: cabyVanRoutes.filter(r => r.id >= 6 && r.id <= 12) },
-  { title: 'AXE ALÉMANIQUE', icon: '🇨🇭', segments: ['pendulaire', 'business', 'tourisme'], routes: cabyVanRoutes.filter(r => r.id >= 13 && r.id <= 18) },
-  { title: 'LONGUE DISTANCE', icon: '⭐', segments: ['premium', 'business'], routes: cabyVanRoutes.filter(r => r.id >= 19 && r.id <= 21) },
-  { title: 'SKI SUISSE', icon: '🎿', segments: ['ski'], routes: cabyVanRoutes.filter(r => r.id >= 22 && r.id <= 28) },
-  { title: 'SKI FRANCE', icon: '🎿🇫🇷', segments: ['ski'], routes: cabyVanRoutes.filter(r => r.id >= 29 && r.id <= 33) },
-  { title: 'TRANSFRONTALIER', icon: '🚗', segments: ['frontalier', 'premium'], routes: cabyVanRoutes.filter(r => r.id >= 34 && r.id <= 37) },
-];
-
-const FILTER_TABS: { key: SegmentFilter; label: string; icon: string }[] = [
-  { key: 'all', label: 'Tous', icon: '🗺️' },
-  { key: 'pendulaire', label: 'Pendulaire', icon: '🏙️' },
-  { key: 'business', label: 'Business', icon: '💼' },
-  { key: 'ski', label: 'Ski', icon: '🎿' },
-  { key: 'frontalier', label: 'Frontalier', icon: '🚗' },
-  { key: 'premium', label: 'Premium', icon: '⭐' },
+// Group routes for hero
+const HERO_GROUPS: { title: string; icon: string; routes: VanRoute[] }[] = [
+  { title: 'AXE ROMAND', icon: '🏙️', routes: cabyVanRoutes.filter(r => r.id <= 5) },
+  { title: 'AXE PLATEAU', icon: '💼', routes: cabyVanRoutes.filter(r => r.id >= 6 && r.id <= 12) },
+  { title: 'AXE ALÉMANIQUE', icon: '🇨🇭', routes: cabyVanRoutes.filter(r => r.id >= 13 && r.id <= 18) },
+  { title: 'LONGUE DISTANCE', icon: '⭐', routes: cabyVanRoutes.filter(r => r.id >= 19 && r.id <= 21) },
+  { title: 'SKI SUISSE', icon: '🎿', routes: cabyVanRoutes.filter(r => r.id >= 22 && r.id <= 28) },
+  { title: 'SKI FRANCE', icon: '🎿🇫🇷', routes: cabyVanRoutes.filter(r => r.id >= 29 && r.id <= 33) },
+  { title: 'TRANSFRONTALIER', icon: '🌍', routes: cabyVanRoutes.filter(r => r.id >= 34 && r.id <= 37) },
 ];
 
 const CabyVanPage: React.FC = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('hero');
-  const [filter, setFilter] = useState<SegmentFilter>('all');
+  const [filter, setFilter] = useState<RouteFilter>('all');
 
   const [from, setFrom] = useState('Genève');
   const [to, setTo] = useState('');
@@ -70,8 +69,11 @@ const CabyVanPage: React.FC = () => {
   const [baggage, setBaggage] = useState<'small' | 'large' | 'special'>('small');
 
   const selectedRoute = useMemo(() => (from && to ? findRoute(from, to) : undefined), [from, to]);
-  const destinations = useMemo(() => getDestinationsFrom(from, filter), [from, filter]);
-  const slots = useMemo(() => selectedRoute ? generateSlotsForRoute(selectedRoute) : [], [selectedRoute]);
+  const cities = useMemo(() => getCitiesForFilter(filter), [filter]);
+  const destinations = useMemo(() => getDestinationsFromWithFilter(from, filter), [from, filter]);
+
+  const depDate = useMemo(() => dateAller ? new Date(dateAller) : undefined, [dateAller]);
+  const slots = useMemo(() => selectedRoute ? generateSlotsForRoute(selectedRoute, depDate) : [], [selectedRoute, depDate]);
 
   const takenSeats = useMemo(() => {
     if (!selectedSlot) return [];
@@ -83,6 +85,8 @@ const CabyVanPage: React.FC = () => {
 
   const handleSearch = () => { if (from && to && from !== to && selectedRoute) setStep('results'); };
   const handleSelectSlot = (slot: VanSlot) => { setSelectedSlot(slot); setSelectedSeat(null); setStep('seat'); };
+
+  const isTransfrontalier = (r: VanRoute) => r.flag.includes('🇫🇷') || r.flag.includes('🇩🇪');
 
   // ── HERO ──
   if (step === 'hero') {
@@ -128,7 +132,6 @@ const CabyVanPage: React.FC = () => {
               <p className="text-xs text-emerald-300">La communauté Caby Van a économisé <span className="font-bold">12.4 tonnes de CO₂</span> ce mois</p>
             </div>
 
-            {/* All route groups */}
             {HERO_GROUPS.map(group => (
               <div key={group.title} className="mt-6">
                 <div className="flex items-center gap-2 mb-3">
@@ -159,8 +162,8 @@ const CabyVanPage: React.FC = () => {
             ))}
 
             <div className="mt-8 rounded-xl bg-muted/30 border border-border p-4 text-center text-xs text-muted-foreground">
-              <p className="font-bold text-sm text-foreground mb-1">37 destinations · 7 pays</p>
-              <p>Toutes les routes sont bidirectionnelles</p>
+              <p className="font-bold text-sm text-foreground mb-1">37 destinations · Bidirectionnelles</p>
+              <p>Suisse · France · Allemagne</p>
             </div>
           </div>
         </div>
@@ -181,7 +184,7 @@ const CabyVanPage: React.FC = () => {
 
           {/* Filter tabs */}
           <div className="flex gap-1.5 mb-5 flex-wrap">
-            {FILTER_TABS.map(f => (
+            {ROUTE_FILTER_META.map(f => (
               <button key={f.key} onClick={() => { setFilter(f.key); setTo(''); }}
                 className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-colors ${filter === f.key ? 'bg-[hsl(43,75%,52%)] text-black' : 'bg-muted/30 text-muted-foreground'}`}>
                 <span>{f.icon}</span>{f.label}
@@ -193,7 +196,7 @@ const CabyVanPage: React.FC = () => {
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Ville de départ</label>
               <select value={from} onChange={(e) => { setFrom(e.target.value); setTo(''); }} className="w-full h-12 rounded-xl bg-muted/30 border border-border px-4 text-sm">
-                {ALL_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                {cities.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
 
@@ -209,20 +212,27 @@ const CabyVanPage: React.FC = () => {
                 <option value="">Choisir une destination</option>
                 {destinations.map(c => {
                   const r = findRoute(from, c);
-                  return <option key={c} value={c}>{c}{r?.seasonal ? ' ❄️' : ''} — {r ? formatDuration(r.duration) : ''} · CHF {r?.basePrice}</option>;
+                  return (
+                    <option key={c} value={c}>
+                      {c}{r?.seasonal ? ' ❄️' : ''}{r && isTransfrontalier(r) ? ' 🌍' : ''} — {r ? formatDuration(r.duration) : ''} · CHF {r?.basePrice}
+                    </option>
+                  );
                 })}
               </select>
             </div>
 
             {selectedRoute && (
-              <div className="rounded-xl bg-[hsl(43,75%,52%)]/10 border border-[hsl(43,75%,52%)]/20 p-3 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[hsl(43,75%,52%)]" />
-                  <span className="text-sm">{formatDuration(selectedRoute.duration)}</span>
-                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${SEGMENT_META[selectedRoute.segment]?.color}`}>{SEGMENT_META[selectedRoute.segment]?.label}</span>
-                  {selectedRoute.seasonal && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400">❄️</span>}
+              <div className="rounded-xl bg-[hsl(43,75%,52%)]/10 border border-[hsl(43,75%,52%)]/20 p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Clock className="w-4 h-4 text-[hsl(43,75%,52%)]" />
+                    <span className="text-sm font-medium">{formatDuration(selectedRoute.duration)}</span>
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${SEGMENT_META[selectedRoute.segment]?.color}`}>{SEGMENT_META[selectedRoute.segment]?.label}</span>
+                    {selectedRoute.seasonal && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30">❄️ Saisonnier</span>}
+                    {isTransfrontalier(selectedRoute) && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">🌍 Transfrontalier</span>}
+                  </div>
+                  <span className="text-sm font-bold ml-2">dès CHF {selectedRoute.basePrice}</span>
                 </div>
-                <span className="text-sm font-bold">dès CHF {selectedRoute.basePrice}/siège</span>
               </div>
             )}
 
@@ -267,63 +277,73 @@ const CabyVanPage: React.FC = () => {
 
   // ── RESULTS ──
   if (step === 'results' && selectedRoute) {
+    const co2Saved = Math.round(selectedRoute.duration * 0.12 * 10) / 10;
     return (
       <div className="min-h-screen bg-background pb-24">
         <div className="px-5 pt-14">
           <button onClick={() => setStep('search')} className="flex items-center gap-1 text-muted-foreground mb-4">
             <ArrowLeft className="w-4 h-4" /> Modifier
           </button>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <MapPin className="w-4 h-4 text-[hsl(43,75%,52%)]" />
             <h2 className="text-lg font-bold">{from} → {to}</h2>
             <span className="text-sm">{selectedRoute.flag}</span>
-            {selectedRoute.seasonal && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400">❄️</span>}
+            {selectedRoute.seasonal && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30">❄️ Saisonnier</span>}
+            {isTransfrontalier(selectedRoute) && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">🌍</span>}
           </div>
           <p className="text-xs text-muted-foreground mb-6">{dateAller || "Aujourd'hui"} · {passengers} passager{passengers > 1 ? 's' : ''} · {formatDuration(selectedRoute.duration)}</p>
 
           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Créneaux disponibles</h3>
           <div className="space-y-3">
-            {slots.map((slot) => {
+            {slots.map((slot, idx) => {
               const seatsLeft = slot.seatsTotal - slot.seatsTaken;
-              const fillPct = (slot.seatsTaken / slot.seatsTotal) * 100;
               return (
-                <motion.button key={slot.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.98 }}
-                  onClick={() => handleSelectSlot(slot)} className="w-full text-left rounded-2xl bg-card border border-border p-4 space-y-3">
+                <motion.button key={slot.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleSelectSlot(slot)} className="w-full text-left rounded-2xl bg-card border border-border p-4 space-y-2.5">
+                  {/* Row 1: Time + label */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span>{rushIcon[slot.rushLevel]}</span>
+                      <span>{badgeIcon[slot.badge]}</span>
                       <span className="font-bold">{slot.departure}</span>
                       <span className="text-muted-foreground text-xs">→ {slot.arrivalEstimate}</span>
                     </div>
-                    <span className={`text-xs font-bold px-2 py-1 rounded-full border ${rushColor[slot.rushLevel]}`}>{slot.label}</span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor[slot.badge]}`}>{slot.label}</span>
                   </div>
+
+                  {/* Row 2: Price + reason */}
                   <div className="flex items-end justify-between">
                     <div>
                       <p className="text-2xl font-black">CHF {slot.basePrice}</p>
-                      <p className="text-[10px] text-muted-foreground">par siège</p>
+                      <p className="text-[10px] text-muted-foreground">{slot.reason}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-bold">{seatsLeft} siège{seatsLeft > 1 ? 's' : ''}</p>
-                      <div className="w-24 h-1.5 rounded-full bg-muted mt-1 overflow-hidden">
-                        <div className="h-full rounded-full bg-[hsl(43,75%,52%)]" style={{ width: `${fillPct}%` }} />
-                      </div>
                     </div>
                   </div>
+
+                  {/* Row 3: Seat bar */}
+                  <SeatBar total={slot.seatsTotal} taken={slot.seatsTaken} />
+
+                  {/* Row 4: CO2 */}
                   <div className="flex items-center gap-1.5 text-[10px] text-emerald-400">
                     <Leaf className="w-3 h-3" />
-                    <span>6× moins de CO₂ qu'en voiture solo</span>
+                    <span>{co2Saved} kg de CO₂ économisés vs voiture solo</span>
                   </div>
                 </motion.button>
               );
             })}
           </div>
 
-          <div className="mt-6 rounded-2xl border border-dashed border-[hsl(43,75%,52%)]/30 p-4 text-center">
-            <Clock className="w-5 h-5 text-[hsl(43,75%,52%)] mx-auto mb-2" />
-            <p className="text-sm font-bold">Choisissez votre heure exacte</p>
-            <p className="text-xs text-muted-foreground mt-1">Disponible entre 10h et 16h · prix dynamique</p>
-            <input type="time" min="10:00" max="16:00" className="mt-3 h-10 rounded-xl bg-muted/30 border border-border px-4 text-sm" />
-          </div>
+          {/* Custom time (business routes only) */}
+          {selectedRoute.duration > 60 && selectedRoute.duration <= 180 && (
+            <div className="mt-6 rounded-2xl border border-dashed border-[hsl(43,75%,52%)]/30 p-4 text-center">
+              <Clock className="w-5 h-5 text-[hsl(43,75%,52%)] mx-auto mb-2" />
+              <p className="text-sm font-bold">Choisissez votre heure exacte</p>
+              <p className="text-xs text-muted-foreground mt-1">Disponible entre 10h et 16h · prix dynamique</p>
+              <input type="time" min="10:00" max="16:00" className="mt-3 h-10 rounded-xl bg-muted/30 border border-border px-4 text-sm" />
+            </div>
+          )}
         </div>
         <BottomNav />
       </div>
@@ -344,7 +364,10 @@ const CabyVanPage: React.FC = () => {
                 <p className="font-bold">{from} → {to}</p>
                 <p className="text-xs text-muted-foreground">{selectedSlot.departure} → {selectedSlot.arrivalEstimate} · {dateAller || "Aujourd'hui"}</p>
               </div>
-              <p className="text-xl font-black">CHF {selectedSlot.basePrice}</p>
+              <div className="text-right">
+                <p className="text-xl font-black">CHF {selectedSlot.basePrice}</p>
+                <p className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border inline-block ${badgeColor[selectedSlot.badge]}`}>{selectedSlot.reason}</p>
+              </div>
             </div>
           </div>
 
@@ -371,8 +394,8 @@ const CabyVanPage: React.FC = () => {
           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Bagage</h3>
           <div className="flex gap-2 mb-6">
             {([
-              { key: 'small' as const, label: 'Petit', sub: 'Inclus', icon: <Luggage className="w-4 h-4" />, cost: 0 },
-              { key: 'large' as const, label: 'Grand', sub: '+CHF 5', icon: <Luggage className="w-5 h-5" />, cost: 5 },
+              { key: 'small' as const, label: 'Cabine', sub: 'Inclus', icon: <Luggage className="w-4 h-4" />, cost: 0 },
+              { key: 'large' as const, label: 'Grande valise', sub: '+CHF 5', icon: <Luggage className="w-5 h-5" />, cost: 5 },
               { key: 'special' as const, label: 'Skis/Vélo', sub: '+CHF 15', icon: <Bike className="w-4 h-4" />, cost: 15 },
             ]).map(b => (
               <button key={b.key} onClick={() => setBaggage(b.key)}
@@ -384,10 +407,25 @@ const CabyVanPage: React.FC = () => {
             ))}
           </div>
 
+          {/* Toggle aller-retour from seat view */}
+          {roundTrip && (
+            <div className="rounded-2xl bg-card border border-border p-4 mb-4">
+              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">Retour — {to} → {from}</p>
+              <p className="text-xs text-muted-foreground">{dateRetour || 'Date non sélectionnée'}</p>
+              <p className="text-xs text-[hsl(43,75%,52%)] mt-1">Prix retour calculé dynamiquement à la confirmation</p>
+            </div>
+          )}
+
           <div className="rounded-2xl bg-[hsl(43,75%,52%)]/10 border border-[hsl(43,75%,52%)]/30 p-4 mb-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm">Total</span>
-              <span className="text-2xl font-black">CHF {totalPrice}</span>
+            <div className="space-y-1.5 text-sm">
+              <div className="flex justify-between"><span className="text-muted-foreground">Trajet</span><span className="font-bold">{from} → {to}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Horaire</span><span className="font-bold">{selectedSlot.departure} → {selectedSlot.arrivalEstimate}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Siège</span><span className="font-bold">{selectedSeat ? `N°${selectedSeat}` : '—'}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Bagage</span><span className="font-bold">{baggage === 'small' ? 'Cabine' : baggage === 'large' ? 'Grande valise' : 'Skis/Vélo'}</span></div>
+              <div className="border-t border-[hsl(43,75%,52%)]/20 pt-2 flex justify-between">
+                <span className="font-medium">Total</span>
+                <span className="text-2xl font-black">CHF {totalPrice}</span>
+              </div>
             </div>
             {baggageCost > 0 && <p className="text-[10px] text-muted-foreground mt-1">Inclut supplément bagage +CHF {baggageCost}</p>}
           </div>
@@ -447,7 +485,7 @@ const CabyVanPage: React.FC = () => {
 
           <div className="mt-6 flex items-center gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3">
             <Leaf className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-            <p className="text-xs text-emerald-300 text-left">🌿 Trajet partagé — vous économisez <span className="font-bold">18.4 kg de CO₂</span> vs voiture solo</p>
+            <p className="text-xs text-emerald-300 text-left">🌿 Trajet partagé — vous économisez <span className="font-bold">{Math.round(selectedRoute.duration * 0.12 * 10) / 10} kg de CO₂</span> vs voiture solo</p>
           </div>
 
           <Button onClick={() => navigate('/caby/services')} variant="outline" className="w-full mt-4 rounded-xl h-12">
