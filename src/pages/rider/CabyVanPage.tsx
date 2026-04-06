@@ -304,10 +304,29 @@ const CabyVanPage: React.FC = () => {
 
   const ancillaryTotal = calculateAncillaryTotal(ancillaries);
   const slotPrice = selectedSlot ? (slotPricings.find(s => s.slot.id === selectedSlot.id)?.pricing.currentPrice || selectedSlot.basePrice) : 0;
+
+  // Vehicle pricing
+  const getVehiclePrice = (v: VehicleOption, routeBase: number) => {
+    if (v.type === 'shared') return Math.round(routeBase * 1.0);
+    const multiplier = v.id === 'berline' ? 3.2 : v.id === 'suv' ? 4.3 : v.id === 'van-private' ? 6.5 : 8;
+    return Math.round(routeBase * multiplier);
+  };
+
+  const activeVehicle = VEHICLES.find(v => v.id === selectedVehicle) || VEHICLES[0];
+  const activeVehicleReturn = VEHICLES.find(v => v.id === selectedVehicleReturn) || VEHICLES[0];
+  const routeBasePrice = selectedRoute?.basePrice || 65;
+
+  const outboundPrice = getVehiclePrice(activeVehicle, routeBasePrice);
+  const returnPrice = roundTrip ? getVehiclePrice(sameVehicleReturn ? activeVehicle : activeVehicleReturn, routeBasePrice) : 0;
+  const roundTripDiscount = roundTrip ? Math.round((outboundPrice + returnPrice) * 0.05) : 0;
+  const resultsInsuranceFee = roundTrip ? INSURANCE_FEE * 2 : INSURANCE_FEE;
+  const resultsTotalPrice = outboundPrice + returnPrice - roundTripDiscount + resultsInsuranceFee;
+
   const totalPrice = slotPrice + ancillaryTotal;
 
   const handleSearch = () => { if (from && to && from !== to && selectedRoute) setStep('results'); };
   const handleSelectSlot = (slot: VanSlot) => { setSelectedSlot(slot); setSelectedSeat(null); setAncillaries({}); setStep('seat'); };
+  const handleVehicleContinue = () => setStep('seat');
 
   // Last Minute deals
   const [now, setNow] = useState(() => new Date());
