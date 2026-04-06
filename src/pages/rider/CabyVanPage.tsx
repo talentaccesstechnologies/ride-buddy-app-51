@@ -13,6 +13,10 @@ import {
 } from '@/lib/cabyVanPricing';
 import BottomNav from '@/components/rider/BottomNav';
 import heroImg from '@/assets/van-hero-alps.jpg';
+import {
+  calculateLastMinuteDiscount, applyLastMinutePrice, formatCountdown,
+  generateSimulatedDeals, type LastMinuteDeal,
+} from '@/utils/lastMinutePricing';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'confirm' | 'abonnement';
 
