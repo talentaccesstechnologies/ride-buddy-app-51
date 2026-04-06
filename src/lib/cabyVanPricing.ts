@@ -20,8 +20,13 @@ export interface VanSlot {
   rushLevel: 'green' | 'yellow' | 'red';
 }
 
-const PRICE_FLOOR = 19;
-const PRICE_CEILING = 130;
+export type PriceBadge = 'green' | 'orange' | 'red';
+
+export interface DynamicPriceResult {
+  price: number;
+  badge: PriceBadge;
+  reason: string;
+}
 
 export const cabyVanRoutes: VanRoute[] = [
   // AXE ROMAND
