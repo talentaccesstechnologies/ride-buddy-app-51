@@ -1,13 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Leaf, Users, Clock, MapPin, Luggage, Bike, QrCode, ArrowRight, Check, X, Mountain, Building2 } from 'lucide-react';
+import { ArrowLeft, Leaf, Users, Clock, MapPin, Luggage, Bike, QrCode, ArrowRight, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ROUTES, ALL_CITIES, findRoute, getDestinationsFrom, generateSlotsForRoute, type VanSlot, type VanRoute } from '@/lib/cabyVanPricing';
+import {
+  cabyVanRoutes, ROUTES, ALL_CITIES, findRoute, getDestinationsFrom, generateSlotsForRoute,
+  formatDuration, SEGMENT_META,
+  type VanSlot, type VanRoute, type SegmentFilter,
+} from '@/lib/cabyVanPricing';
 import BottomNav from '@/components/rider/BottomNav';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'confirm';
-type Filter = 'all' | 'city' | 'ski';
 
 const rushIcon: Record<string, string> = { red: '🔴', yellow: '🟡', green: '🟢' };
 const rushColor: Record<string, string> = {
@@ -30,13 +33,33 @@ const SeatButton: React.FC<{ seat: number; taken: boolean; selected: boolean; on
   </button>
 );
 
+// Group original (non-reversed) routes by category for hero
+const HERO_GROUPS: { title: string; icon: string; segments: string[]; routes: VanRoute[] }[] = [
+  { title: 'AXE ROMAND', icon: '🏙️', segments: ['pendulaire'], routes: cabyVanRoutes.filter(r => r.id <= 5) },
+  { title: 'AXE PLATEAU', icon: '💼', segments: ['business'], routes: cabyVanRoutes.filter(r => r.id >= 6 && r.id <= 12) },
+  { title: 'AXE ALÉMANIQUE', icon: '🇨🇭', segments: ['pendulaire', 'business', 'tourisme'], routes: cabyVanRoutes.filter(r => r.id >= 13 && r.id <= 18) },
+  { title: 'LONGUE DISTANCE', icon: '⭐', segments: ['premium', 'business'], routes: cabyVanRoutes.filter(r => r.id >= 19 && r.id <= 21) },
+  { title: 'SKI SUISSE', icon: '🎿', segments: ['ski'], routes: cabyVanRoutes.filter(r => r.id >= 22 && r.id <= 28) },
+  { title: 'SKI FRANCE', icon: '🎿🇫🇷', segments: ['ski'], routes: cabyVanRoutes.filter(r => r.id >= 29 && r.id <= 33) },
+  { title: 'TRANSFRONTALIER', icon: '🚗', segments: ['frontalier', 'premium'], routes: cabyVanRoutes.filter(r => r.id >= 34 && r.id <= 37) },
+];
+
+const FILTER_TABS: { key: SegmentFilter; label: string; icon: string }[] = [
+  { key: 'all', label: 'Tous', icon: '🗺️' },
+  { key: 'pendulaire', label: 'Pendulaire', icon: '🏙️' },
+  { key: 'business', label: 'Business', icon: '💼' },
+  { key: 'ski', label: 'Ski', icon: '🎿' },
+  { key: 'frontalier', label: 'Frontalier', icon: '🚗' },
+  { key: 'premium', label: 'Premium', icon: '⭐' },
+];
+
 const CabyVanPage: React.FC = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('hero');
-  const [filter, setFilter] = useState<Filter>('all');
+  const [filter, setFilter] = useState<SegmentFilter>('all');
 
   const [from, setFrom] = useState('Genève');
-  const [to, setTo] = useState('Zurich');
+  const [to, setTo] = useState('');
   const [dateAller, setDateAller] = useState('');
   const [passengers, setPassengers] = useState(1);
   const [roundTrip, setRoundTrip] = useState(false);
@@ -46,8 +69,8 @@ const CabyVanPage: React.FC = () => {
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [baggage, setBaggage] = useState<'small' | 'large' | 'special'>('small');
 
-  const selectedRoute = useMemo(() => findRoute(from, to), [from, to]);
-  const destinations = useMemo(() => getDestinationsFrom(from, filter === 'all' ? undefined : filter), [from, filter]);
+  const selectedRoute = useMemo(() => (from && to ? findRoute(from, to) : undefined), [from, to]);
+  const destinations = useMemo(() => getDestinationsFrom(from, filter), [from, filter]);
   const slots = useMemo(() => selectedRoute ? generateSlotsForRoute(selectedRoute) : [], [selectedRoute]);
 
   const takenSeats = useMemo(() => {
@@ -60,10 +83,6 @@ const CabyVanPage: React.FC = () => {
 
   const handleSearch = () => { if (from && to && from !== to && selectedRoute) setStep('results'); };
   const handleSelectSlot = (slot: VanSlot) => { setSelectedSlot(slot); setSelectedSeat(null); setStep('seat'); };
-
-  // Grouped routes for hero display
-  const cityRoutes = ROUTES.filter(r => r.category === 'city');
-  const skiRoutes = ROUTES.filter(r => r.category === 'ski');
 
   // ── HERO ──
   if (step === 'hero') {
@@ -88,7 +107,7 @@ const CabyVanPage: React.FC = () => {
                 {[
                   { label: 'CFF 2ème classe', price: 78, strike: true },
                   { label: 'Uber', price: 220, strike: true },
-                  { label: 'Caby Van', price: 29, highlight: true },
+                  { label: 'Caby Van', price: 22, highlight: true },
                 ].map((c) => (
                   <div key={c.label} className={`flex items-center justify-between rounded-xl px-4 py-2.5 ${c.highlight ? 'bg-[hsl(43,75%,52%)]/15 border border-[hsl(43,75%,52%)]/30' : 'bg-muted/30'}`}>
                     <span className={`text-sm ${c.highlight ? 'font-bold' : 'text-muted-foreground'}`}>{c.label}</span>
@@ -109,48 +128,39 @@ const CabyVanPage: React.FC = () => {
               <p className="text-xs text-emerald-300">La communauté Caby Van a économisé <span className="font-bold">12.4 tonnes de CO₂</span> ce mois</p>
             </div>
 
-            {/* All destinations */}
-            <div className="mt-8">
-              <div className="flex items-center gap-2 mb-3">
-                <Building2 className="w-4 h-4 text-[hsl(43,75%,52%)]" />
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[hsl(43,75%,52%)]">🏙️ Villes suisses</h3>
-              </div>
-              <div className="space-y-2">
-                {cityRoutes.map(r => (
-                  <button key={r.id} onClick={() => { setFrom(r.from); setTo(r.to); setStep('search'); }}
-                    className="w-full flex items-center justify-between rounded-xl bg-card border border-border p-3 text-left">
-                    <div>
-                      <p className="text-sm font-bold">{r.from} ↔ {r.to}</p>
-                      <p className="text-[10px] text-muted-foreground">{r.duration}</p>
-                    </div>
-                    <span className="text-sm font-black text-[hsl(43,75%,52%)]">CHF {r.basePrice}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <div className="flex items-center gap-2 mb-3">
-                <Mountain className="w-4 h-4 text-[hsl(43,75%,52%)]" />
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[hsl(43,75%,52%)]">🎿 Stations de ski</h3>
-              </div>
-              <div className="space-y-2">
-                {skiRoutes.map(r => (
-                  <button key={r.id} onClick={() => { setFrom(r.from); setTo(r.to); setStep('search'); }}
-                    className="w-full flex items-center justify-between rounded-xl bg-card border border-border p-3 text-left">
-                    <div className="flex items-center gap-2">
-                      <div>
-                        <p className="text-sm font-bold">{r.from} ↔ {r.to}</p>
-                        <p className="text-[10px] text-muted-foreground">{r.duration}</p>
+            {/* All route groups */}
+            {HERO_GROUPS.map(group => (
+              <div key={group.title} className="mt-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <span>{group.icon}</span>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[hsl(43,75%,52%)]">{group.title}</h3>
+                  <div className="flex-1 h-px bg-[hsl(43,75%,52%)]/20" />
+                </div>
+                <div className="space-y-2">
+                  {group.routes.map(r => (
+                    <button key={r.id} onClick={() => { setFrom(r.from); setTo(r.to); setStep('search'); }}
+                      className="w-full flex items-center justify-between rounded-xl bg-card border border-border p-3 text-left">
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <span className="text-sm">{r.flag}</span>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold truncate">{r.from} ↔ {r.to}</p>
+                          <p className="text-[10px] text-muted-foreground">{formatDuration(r.duration)}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30">❄️ Saisonnier</span>
-                      <span className="text-sm font-black text-[hsl(43,75%,52%)]">CHF {r.basePrice}</span>
-                    </div>
-                  </button>
-                ))}
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {r.seasonal && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30">❄️</span>}
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${SEGMENT_META[r.segment]?.color}`}>{SEGMENT_META[r.segment]?.label}</span>
+                        <span className="text-sm font-black text-[hsl(43,75%,52%)]">CHF {r.basePrice}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
+            ))}
+
+            <div className="mt-8 rounded-xl bg-muted/30 border border-border p-4 text-center text-xs text-muted-foreground">
+              <p className="font-bold text-sm text-foreground mb-1">37 destinations · 7 pays</p>
+              <p>Toutes les routes sont bidirectionnelles</p>
             </div>
           </div>
         </div>
@@ -170,14 +180,10 @@ const CabyVanPage: React.FC = () => {
           <h2 className="text-xl font-bold mb-4">Rechercher un trajet</h2>
 
           {/* Filter tabs */}
-          <div className="flex gap-2 mb-5">
-            {([
-              { key: 'all' as Filter, label: 'Tous', icon: '🗺️' },
-              { key: 'city' as Filter, label: 'Villes', icon: '🏙️' },
-              { key: 'ski' as Filter, label: 'Stations de ski', icon: '🎿' },
-            ]).map(f => (
+          <div className="flex gap-1.5 mb-5 flex-wrap">
+            {FILTER_TABS.map(f => (
               <button key={f.key} onClick={() => { setFilter(f.key); setTo(''); }}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-colors ${filter === f.key ? 'bg-[hsl(43,75%,52%)] text-black' : 'bg-muted/30 text-muted-foreground'}`}>
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-colors ${filter === f.key ? 'bg-[hsl(43,75%,52%)] text-black' : 'bg-muted/30 text-muted-foreground'}`}>
                 <span>{f.icon}</span>{f.label}
               </button>
             ))}
@@ -203,18 +209,18 @@ const CabyVanPage: React.FC = () => {
                 <option value="">Choisir une destination</option>
                 {destinations.map(c => {
                   const r = findRoute(from, c);
-                  return <option key={c} value={c}>{c}{r?.seasonal ? ' ❄️' : ''} — {r?.duration} · CHF {r?.basePrice}</option>;
+                  return <option key={c} value={c}>{c}{r?.seasonal ? ' ❄️' : ''} — {r ? formatDuration(r.duration) : ''} · CHF {r?.basePrice}</option>;
                 })}
               </select>
             </div>
 
-            {/* Route info */}
             {selectedRoute && (
               <div className="rounded-xl bg-[hsl(43,75%,52%)]/10 border border-[hsl(43,75%,52%)]/20 p-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-[hsl(43,75%,52%)]" />
-                  <span className="text-sm">{selectedRoute.duration}</span>
-                  {selectedRoute.seasonal && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400">❄️ Saisonnier</span>}
+                  <span className="text-sm">{formatDuration(selectedRoute.duration)}</span>
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${SEGMENT_META[selectedRoute.segment]?.color}`}>{SEGMENT_META[selectedRoute.segment]?.label}</span>
+                  {selectedRoute.seasonal && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400">❄️</span>}
                 </div>
                 <span className="text-sm font-bold">dès CHF {selectedRoute.basePrice}/siège</span>
               </div>
@@ -270,9 +276,10 @@ const CabyVanPage: React.FC = () => {
           <div className="flex items-center gap-2 mb-1">
             <MapPin className="w-4 h-4 text-[hsl(43,75%,52%)]" />
             <h2 className="text-lg font-bold">{from} → {to}</h2>
+            <span className="text-sm">{selectedRoute.flag}</span>
             {selectedRoute.seasonal && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-400">❄️</span>}
           </div>
-          <p className="text-xs text-muted-foreground mb-6">{dateAller || "Aujourd'hui"} · {passengers} passager{passengers > 1 ? 's' : ''} · {selectedRoute.duration}</p>
+          <p className="text-xs text-muted-foreground mb-6">{dateAller || "Aujourd'hui"} · {passengers} passager{passengers > 1 ? 's' : ''} · {formatDuration(selectedRoute.duration)}</p>
 
           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Créneaux disponibles</h3>
           <div className="space-y-3">
@@ -415,7 +422,7 @@ const CabyVanPage: React.FC = () => {
                 ['Date', dateAller || "Aujourd'hui"],
                 ['Départ', selectedSlot.departure],
                 ['Arrivée estimée', selectedSlot.arrivalEstimate],
-                ['Durée', selectedRoute.duration],
+                ['Durée', formatDuration(selectedRoute.duration)],
                 ['Siège', `N°${selectedSeat}`],
                 ['Chauffeur', 'David M. · GE 482 317'],
                 ['Point RDV', from === 'Genève' ? 'Gare Cornavin, Sortie C' : `Gare de ${from}`],
