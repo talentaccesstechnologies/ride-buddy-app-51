@@ -26,6 +26,8 @@ const DriverCrossBorderPage: React.FC = () => {
   const [vtcUploaded, setVtcUploaded] = useState(false);
   const [licenseUploaded, setLicenseUploaded] = useState(false);
   const [insuranceUploaded, setInsuranceUploaded] = useState(false);
+  const [insuranceCoversCovoiturage, setInsuranceCoversCovoiturage] = useState(false);
+  const [insurerInformed, setInsurerInformed] = useState(false);
 
   // Step 3 — Route
   const [routeFrom, setRouteFrom] = useState('');
