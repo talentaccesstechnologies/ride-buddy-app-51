@@ -134,6 +134,24 @@ const CabyVanPage: React.FC = () => {
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [ancillaries, setAncillaries] = useState<Partial<AncillaryOptions>>({});
 
+  // Pickup / Dropoff
+  const [pickupLabel, setPickupLabel] = useState('');
+  const [pickupAddress, setPickupAddress] = useState('');
+  const [pickupCustom, setPickupCustom] = useState('');
+  const [dropoffLabel, setDropoffLabel] = useState('');
+  const [dropoffAddress, setDropoffAddress] = useState('');
+  const [dropoffCustom, setDropoffCustom] = useState('');
+  const [airportMode, setAirportMode] = useState<'arrival' | 'pickup'>('pickup');
+  const [flightArrivalTime, setFlightArrivalTime] = useState('');
+
+  const pickupPoints = useMemo(() => getPickupPoints(from), [from]);
+  const dropoffPoints = useMemo(() => getPickupPoints(to), [to]);
+  const isAirport = hasAirportSelected(pickupLabel, dropoffLabel);
+  const selectedPickupIsCustom = pickupPoints.find(p => p.label === pickupLabel)?.isCustom;
+  const selectedDropoffIsCustom = dropoffPoints.find(p => p.label === dropoffLabel)?.isCustom;
+  const effectivePickupAddress = selectedPickupIsCustom ? pickupCustom : pickupAddress;
+  const effectiveDropoffAddress = selectedDropoffIsCustom ? dropoffCustom : dropoffAddress;
+
   const selectedRoute = useMemo(() => (from && to ? findRoute(from, to) : undefined), [from, to]);
   const destinations = useMemo(() => getDestinationsFrom(from, filter), [from, filter]);
   const slots = useMemo(() => selectedRoute ? generateSlotsForRoute(selectedRoute) : [], [selectedRoute]);
