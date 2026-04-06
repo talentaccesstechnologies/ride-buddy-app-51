@@ -819,13 +819,14 @@ const CabyVanPage: React.FC = () => {
                   ))}
                 </select>
                 {selectedPickupIsCustom && (
-                  <input
-                    type="text"
-                    value={pickupCustom}
-                    onChange={(e) => setPickupCustom(e.target.value)}
-                    placeholder="Tapez votre adresse, hôtel, gare..."
-                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 mt-2"
-                  />
+                  <div className="mt-2">
+                    <PlacesAutocomplete
+                      value={pickupCustom}
+                      onChange={setPickupCustom}
+                      onPlaceSelect={(place) => setPickupCustom(place.address)}
+                      placeholder="Tapez votre adresse, hôtel, gare..."
+                    />
+                  </div>
                 )}
                 {pickupAddress && !selectedPickupIsCustom && (
                   <p className="text-[10px] text-gray-400 mt-1 px-1">{pickupAddress}</p>
