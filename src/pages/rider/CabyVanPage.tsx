@@ -24,6 +24,8 @@ import {
 import SeatPricingCard from '@/components/van/SeatPricingCard';
 import FlashDealBanner from '@/components/van/FlashDealBanner';
 import AncillarySelector from '@/components/van/AncillarySelector';
+import { getPickupPoints, hasAirportSelected, type PickupPoint } from '@/lib/pickupPoints';
+import { Plane } from 'lucide-react';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
