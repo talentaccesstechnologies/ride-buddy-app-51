@@ -115,37 +115,62 @@ export const formatDuration = (min: number): string => {
   return m > 0 ? `${h}h${String(m).padStart(2, '0')}` : `${h}h`;
 };
 
-export const calculateDynamicPrice = (
+export function calculateDynamicPrice(
   basePrice: number,
   seatsAvailable: number,
-  hour: number,
-  dayOfWeek: number,
-  daysUntilDeparture: number,
-  isSchoolHoliday: boolean = false
-): number => {
-  let price = basePrice;
-  if (seatsAvailable >= 7) price *= 0.85;
-  else if (seatsAvailable >= 5) price *= 1.0;
-  else if (seatsAvailable >= 3) price *= 1.1;
-  else price *= 1.15;
+  departureDate: Date,
+  departureHour: number,
+  bookingDate: Date = new Date()
+): DynamicPriceResult {
+  let multiplier = 1.0;
 
-  if (daysUntilDeparture >= 7) price *= 0.9;
-  else if (daysUntilDeparture >= 3) price *= 1.0;
-  else if (daysUntilDeparture >= 1) price *= 1.05;
-  else price *= 1.15;
+  // F1 — Remplissage (7 sièges total)
+  if (seatsAvailable === 7) multiplier *= 0.85;
+  else if (seatsAvailable >= 5) multiplier *= 1.00;
+  else if (seatsAvailable >= 3) multiplier *= 1.10;
+  else multiplier *= 1.15;
 
-  if ((hour >= 7 && hour <= 9) || (hour >= 16 && hour <= 19)) price *= 1.15;
-  else if (hour >= 9 && hour <= 16) price *= 0.95;
-  else price *= 1.05;
+  // F2 — Délai de réservation
+  const daysUntilDeparture = Math.floor((departureDate.getTime() - bookingDate.getTime()) / (1000 * 60 * 60 * 24));
+  if (daysUntilDeparture >= 7) multiplier *= 0.90;
+  else if (daysUntilDeparture >= 3) multiplier *= 1.00;
+  else if (daysUntilDeparture >= 1) multiplier *= 1.05;
+  else multiplier *= 1.15;
 
-  if ((dayOfWeek === 1 && hour < 12) || (dayOfWeek === 5 && hour >= 16)) price *= 1.2;
-  else if (dayOfWeek >= 2 && dayOfWeek <= 4) price *= 1.0;
-  else if (dayOfWeek === 0 || dayOfWeek === 6) price *= 1.1;
+  // F3 — Heure de départ
+  if ((departureHour >= 7 && departureHour <= 9) || (departureHour >= 16 && departureHour <= 19)) multiplier *= 1.15;
+  else if (departureHour >= 9 && departureHour < 16) multiplier *= 0.95;
+  else multiplier *= 1.05;
 
-  if (isSchoolHoliday) price *= 1.2;
+  // F4 — Jour de semaine
+  const dayOfWeek = departureDate.getDay();
+  if ((dayOfWeek === 1 && departureHour <= 10) || (dayOfWeek === 5 && departureHour >= 15)) multiplier *= 1.20;
+  else if (dayOfWeek === 0 || dayOfWeek === 6) multiplier *= 1.10;
+  else multiplier *= 1.00;
 
-  return Math.min(PRICE_CEILING, Math.max(PRICE_FLOOR, Math.round(price)));
-};
+  // F5 — Saisonnalité
+  const month = departureDate.getMonth() + 1;
+  if (month === 1) multiplier *= 1.30; // WEF Davos
+  else if ([12, 2, 3].includes(month)) multiplier *= 1.15; // Ski
+  else if ([7, 8].includes(month)) multiplier *= 0.90; // Basse saison
+
+  // Prix final avec garde-fous
+  const rawPrice = basePrice * multiplier;
+  const price = Math.max(basePrice * 0.77, Math.min(rawPrice, 110));
+  const finalPrice = Math.round(price);
+
+  // Badge couleur
+  const ratio = finalPrice / basePrice;
+  const badge: PriceBadge = ratio <= 0.90 ? 'green' : ratio <= 1.05 ? 'orange' : 'red';
+
+  // Raison affichée
+  const reason = seatsAvailable <= 2 ? 'Derniers sièges' :
+    daysUntilDeparture >= 7 ? 'Prix early bird' :
+    (departureHour >= 7 && departureHour <= 9) || (departureHour >= 16 && departureHour <= 19) ? 'Heure de pointe' :
+    'Prix standard';
+
+  return { price: finalPrice, badge, reason };
+}
 
 export const generateSlotsForRoute = (route: VanRoute): VanSlot[] => {
   const addTime = (hh: number, mm: number, addMin: number) => {
