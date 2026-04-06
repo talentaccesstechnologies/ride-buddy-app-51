@@ -136,6 +136,33 @@ const categories: ServiceCategory[] = [
     emoji: '⭐',
     items: [
       {
+        id: 'night',
+        title: 'Caby Night',
+        desc: 'Service nocturne premium · 22h–06h',
+        badge: '🌙 Nuit',
+        badgeColor: 'bg-indigo-600 text-white',
+        image: 'https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=800&q=80',
+        route: '/caby/night',
+      },
+      {
+        id: 'pass',
+        title: 'Caby Pass',
+        desc: '-10% sur toutes vos courses · CHF 29/mois',
+        badge: '⭐ Pass',
+        badgeColor: 'bg-[hsl(43,75%,52%)] text-black',
+        image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80',
+        route: '/caby/pass',
+      },
+      {
+        id: 'business-pro',
+        title: 'Caby Business Pro',
+        desc: 'Chauffeur dédié · Facturation mensuelle entreprise',
+        badge: '🏢 PRO',
+        badgeColor: 'bg-[hsl(43,75%,52%)] text-black',
+        image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
+        route: '/business',
+      },
+      {
         id: 'secure',
         title: 'Caby Secure',
         desc: 'Clés, passeports, contrats · Ultra-sécurisé',
