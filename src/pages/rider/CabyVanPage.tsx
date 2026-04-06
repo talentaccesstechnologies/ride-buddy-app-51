@@ -339,56 +339,62 @@ const CabyVanPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Last minute deals */}
+        {/* Last minute deals — dynamic */}
+        {activeDeals.length > 0 && (
         <section className="mt-8 px-5">
           <div className="flex items-center gap-2 mb-4">
             <Zap className="w-5 h-5 text-red-500" />
             <h2 className="text-xl font-bold text-gray-900">Offres Last Minute</h2>
+            <span className="text-[10px] text-gray-400 ml-auto">Mise à jour auto</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {LAST_MINUTE_DEALS.map((deal, i) => {
-              const discountedPrice = Math.round(deal.originalPrice * (1 - deal.discount / 100));
-              return (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                  className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
-                  {/* Discount badge */}
-                  <div className="absolute top-3 left-3">
-                    <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-emerald-500 text-white">−{deal.discount}%</span>
-                  </div>
-                  {/* Time badge */}
-                  <div className="absolute top-3 right-3">
-                    <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-red-500 text-white">{deal.departure}</span>
-                  </div>
+            {activeDeals.map((deal, i) => (
+              <motion.div key={deal.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+                className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                {/* Discount badge */}
+                <div className="absolute top-3 left-3">
+                  <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-emerald-500 text-white">−{deal.discount}%</span>
+                </div>
+                {/* Urgency label */}
+                <div className="absolute top-3 right-3">
+                  <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-gray-100 text-gray-700">{deal.urgencyLabel}</span>
+                </div>
 
-                  <div className="mt-8">
+                <div className="mt-8">
+                  <div className="flex items-center gap-1">
+                    <span>{deal.flag}</span>
                     <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Siège partagé</p>
-                    <p className="text-base font-bold text-gray-900 mt-0.5">{deal.from} → {deal.to}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-sm text-gray-400 line-through">CHF {deal.originalPrice}</span>
-                      <span className="text-lg font-black" style={{ color: GOLD }}>CHF {discountedPrice}</span>
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <p className="text-xs text-gray-500">{deal.date} · {deal.seats} sièges restants</p>
-                    </div>
                   </div>
+                  <p className="text-base font-bold text-gray-900 mt-0.5">{deal.from} → {deal.to}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-sm text-gray-400 line-through">CHF {deal.basePrice}</span>
+                    <span className="text-lg font-black" style={{ color: GOLD }}>CHF {deal.finalPrice}</span>
+                  </div>
+                  <div className="flex items-center justify-between mt-1.5">
+                    <p className="text-xs text-gray-500">{deal.seatsAvailable} sièges restants</p>
+                    {deal.countdown && (
+                      <p className="text-[10px] font-bold text-red-500 animate-pulse">{deal.countdown}</p>
+                    )}
+                  </div>
+                </div>
 
-                  <div className="flex items-center gap-2 mt-3">
-                    <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                      <button className="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-50 text-sm font-bold">−</button>
-                      <span className="w-6 text-center text-sm font-bold text-gray-900">1</span>
-                      <button className="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-50 text-sm font-bold">+</button>
-                    </div>
-                    <Button onClick={() => { setFrom(deal.from); setTo(deal.to); setStep('search'); }}
-                      className="flex-1 h-8 rounded-lg text-white text-xs font-bold" style={{ backgroundColor: GOLD }}>
-                      Réserver
-                    </Button>
+                <div className="flex items-center gap-2 mt-3">
+                  <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+                    <button className="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-50 text-sm font-bold">−</button>
+                    <span className="w-6 text-center text-sm font-bold text-gray-900">1</span>
+                    <button className="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-50 text-sm font-bold">+</button>
                   </div>
-                </motion.div>
-              );
-            })}
+                  <Button onClick={() => { setFrom(deal.from); setTo(deal.to); setStep('search'); }}
+                    className="flex-1 h-8 rounded-lg text-white text-xs font-bold" style={{ backgroundColor: GOLD }}>
+                    Réserver
+                  </Button>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </section>
+        )}
 
         {/* Trust stats */}
         <section className="mt-10 px-5 mb-8">
