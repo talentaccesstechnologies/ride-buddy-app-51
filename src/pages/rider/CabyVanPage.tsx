@@ -7,13 +7,13 @@ import {
   Info, ChevronDown, ChevronUp, Edit2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-// Unsplash vehicle images
+// Unsplash vehicle images — 3/4 view, neutral backgrounds
 const vehicleImages = {
-  van_shared: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&q=80',
-  berline_standard: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=400&q=80',
-  suv_premium: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=400&q=80',
-  van_private_standard: 'https://images.unsplash.com/photo-1609520505218-7421df82e44e?w=400&q=80',
-  van_private_premium: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&q=80',
+  van_shared: 'https://images.unsplash.com/photo-1612838320302-4b3b3b3b3b3b?w=600&q=80&fit=crop&crop=center',
+  berline_standard: 'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=600&q=80',
+  suv_premium: 'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?w=600&q=80',
+  van_private_standard: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+  van_private_premium: 'https://images.unsplash.com/photo-1609520505218-7421df82e44e?w=600&q=80',
 };
 import {
   cabyVanRoutes, ROUTES, ALL_CITIES, findRoute, getDestinationsFrom, generateSlotsForRoute,
