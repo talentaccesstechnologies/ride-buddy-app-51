@@ -26,6 +26,9 @@ import TripTracking from "./pages/rider/TripTracking";
 import ServicesPage from "./pages/rider/ServicesPage";
 import CabyExpressPage from "./pages/rider/CabyExpressPage";
 import CabyVanPage from "./pages/rider/CabyVanPage";
+import CabyNightPage from "./pages/rider/CabyNightPage";
+import CabyPassPage from "./pages/rider/CabyPassPage";
+import CabyBusinessPage from "./pages/rider/CabyBusinessPage";
 import ActivityPage from "./pages/rider/ActivityPage";
 import OffersPage from "./pages/rider/OffersPage";
 import PaymentPage from "./pages/rider/PaymentPage";
@@ -85,6 +88,8 @@ const App = () => (
               <Route path="/caby/services" element={<ServicesPage />} />
               <Route path="/caby/express" element={<CabyExpressPage />} />
               <Route path="/caby/van" element={<CabyVanPage />} />
+              <Route path="/caby/night" element={<CabyNightPage />} />
+              <Route path="/caby/pass" element={<CabyPassPage />} />
               <Route path="/caby/activity" element={<ActivityPage />} />
               <Route path="/caby/offers" element={<OffersPage />} />
               <Route path="/caby/account" element={<AccountPage />} />
@@ -132,6 +137,9 @@ const App = () => (
               <Route path="/partner/login" element={<PartnerLoginPage />} />
               <Route path="/partner/dashboard" element={<PartnerDashboardPage />} />
               <Route path="/partner" element={<Navigate to="/partner/login" replace />} />
+
+              {/* Business Pro */}
+              <Route path="/business" element={<CabyBusinessPage />} />
 
               {/* Device Preview */}
               <Route path="/preview" element={<DevicePreviewPage />} />

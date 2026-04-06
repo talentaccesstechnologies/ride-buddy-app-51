@@ -8,7 +8,7 @@ import BottomNav from '@/components/rider/BottomNav';
 import DriverOfMonthBanner from '@/components/shared/DriverOfMonthBanner';
 import {
   Search, Car, Zap, Ambulance, Package, Bike, Building2,
-  ChevronRight, MapPin, ShieldCheck, Truck, Heart
+  ChevronRight, MapPin, ShieldCheck, Truck, Heart, Moon, Star
 } from 'lucide-react';
 
 const modeFilters = [
@@ -31,6 +31,9 @@ const RiderHome: React.FC = () => {
   const { profile } = useAuth();
   const { latitude, longitude, loading } = useGeolocation();
   const { alerts } = useMapAlerts();
+  const now = new Date();
+  const hour = now.getHours();
+  const isNightTime = hour >= 21 && hour < 6 || hour >= 21; // 21:30-6:00 show banner
 
   const nearbyDrivers = useMemo(() => {
     if (latitude && longitude) return generateNearbyDrivers(latitude, longitude, 5);
@@ -145,6 +148,29 @@ const RiderHome: React.FC = () => {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Night mode banner */}
+      {isNightTime && (
+        <div className="px-5 mt-5">
+          <button onClick={() => navigate('/caby/night')} className="w-full flex items-center gap-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 p-4">
+            <Moon className="w-6 h-6 text-indigo-400 flex-shrink-0" />
+            <div className="flex-1 text-left">
+              <p className="font-bold text-sm">🌙 Mode Nuit activé</p>
+              <p className="text-[10px] text-muted-foreground">Tarif nuit en vigueur (+30%)</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-indigo-400" />
+          </button>
+        </div>
+      )}
+
+      {/* Caby Pass banner */}
+      <div className="px-5 mt-5">
+        <button onClick={() => navigate('/caby/pass')} className="w-full flex items-center gap-3 rounded-2xl bg-[hsl(43,75%,52%)]/8 border border-[hsl(43,75%,52%)]/15 p-3">
+          <Star className="w-5 h-5 text-[hsl(43,75%,52%)] flex-shrink-0" />
+          <p className="text-xs flex-1 text-left">Économisez avec <span className="font-bold">Caby Pass</span> — dès CHF 29/mois</p>
+          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+        </button>
       </div>
 
       {/* Driver of the Month */}
