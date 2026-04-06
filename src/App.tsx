@@ -102,7 +102,8 @@ const App = () => (
               <Route path="/caby/account" element={<AccountPage />} />
               <Route path="/caby/account/settings" element={<AccountSettingsPage />} />
               <Route path="/caby/account/help" element={<HelpPage />} />
-              <Route path="/caby/account/wallet" element={<PaymentPage />} />
+              <Route path="/caby/account/wallet" element={<WalletPage />} />
+              <Route path="/caby/account/reservations" element={<MyReservationsPage />} />
               <Route path="/caby/account/safety" element={<SafetyPage />} />
               <Route path="/caby/account/safety/preferences" element={<SafetyPreferencesPage />} />
               <Route path="/caby/account/safety/contacts" element={<TrustedContactsPage />} />
