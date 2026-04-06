@@ -660,7 +660,7 @@ const CabyVanPage: React.FC = () => {
               <label className="text-xs text-gray-500 mb-1 block font-medium">Ville de départ</label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                <select value={from} onChange={(e) => { setFrom(e.target.value); setTo(''); }}
+                <select value={from} onChange={(e) => { setFrom(e.target.value); setTo(''); setPickupLabel(''); setPickupAddress(''); setPickupCustom(''); }}
                   className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 pl-9 pr-4 text-sm text-gray-900 font-medium">
                   {ALL_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
