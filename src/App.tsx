@@ -25,6 +25,7 @@ import SearchingDriver from "./pages/rider/SearchingDriver";
 import TripTracking from "./pages/rider/TripTracking";
 import ServicesPage from "./pages/rider/ServicesPage";
 import CabyExpressPage from "./pages/rider/CabyExpressPage";
+import CabyVanPage from "./pages/rider/CabyVanPage";
 import ActivityPage from "./pages/rider/ActivityPage";
 import OffersPage from "./pages/rider/OffersPage";
 import PaymentPage from "./pages/rider/PaymentPage";
