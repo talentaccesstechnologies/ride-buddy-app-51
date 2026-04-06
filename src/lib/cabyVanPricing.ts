@@ -18,7 +18,11 @@ export interface VanSlot {
   seatsTotal: number;
   seatsTaken: number;
   rushLevel: 'green' | 'yellow' | 'red';
+  badge: PriceBadge;
+  reason: string;
 }
+
+export type RouteFilter = 'all' | 'villes' | 'ski_ch' | 'ski_fr' | 'transfrontalier';
 
 export type PriceBadge = 'green' | 'orange' | 'red';
 
