@@ -642,6 +642,9 @@ const DriverDashboardPage: React.FC = () => {
           />
         )}
       </AnimatePresence>
+
+      {/* ── SOS Button ── */}
+      {isOnline && <SOSButton />}
     </div>
   );
 };
