@@ -172,18 +172,33 @@ export function calculateDynamicPrice(
   return { price: finalPrice, badge, reason };
 }
 
-export const generateSlotsForRoute = (route: VanRoute): VanSlot[] => {
+export const generateSlotsForRoute = (route: VanRoute, departureDate?: Date): VanSlot[] => {
   const addTime = (hh: number, mm: number, addMin: number) => {
     const total = hh * 60 + mm + addMin;
     return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
   };
   const rid = String(route.id);
-  const slots: VanSlot[] = [
-    { id: `${rid}-07`, departure: '07:00', arrivalEstimate: addTime(7, 0, route.duration), label: 'Rush matin', basePrice: calculateDynamicPrice(route.basePrice, 4, 7, 3, 3), seatsTotal: 7, seatsTaken: 3, rushLevel: 'red' },
-    { id: `${rid}-09`, departure: '09:00', arrivalEstimate: addTime(9, 0, route.duration), label: 'Standard', basePrice: calculateDynamicPrice(route.basePrice, 6, 9, 3, 3), seatsTotal: 7, seatsTaken: 1, rushLevel: 'yellow' },
-    { id: `${rid}-12`, departure: '12:00', arrivalEstimate: addTime(12, 0, route.duration), label: 'Heures creuses', basePrice: calculateDynamicPrice(route.basePrice, 7, 12, 3, 3), seatsTotal: 7, seatsTaken: 0, rushLevel: 'green' },
-    { id: `${rid}-17`, departure: '17:00', arrivalEstimate: addTime(17, 0, route.duration), label: 'Rush soir', basePrice: calculateDynamicPrice(route.basePrice, 3, 17, 3, 3), seatsTotal: 7, seatsTaken: 4, rushLevel: 'red' },
-    { id: `${rid}-19`, departure: '19:00', arrivalEstimate: addTime(19, 0, route.duration), label: 'Soirée', basePrice: calculateDynamicPrice(route.basePrice, 5, 19, 3, 3), seatsTotal: 7, seatsTaken: 2, rushLevel: 'yellow' },
+  const depDate = departureDate || new Date(Date.now() + 3 * 86400000); // default 3 days out
+
+  const makeSlot = (hour: number, seats: number, seatsTaken: number, label: string): VanSlot => {
+    const result = calculateDynamicPrice(route.basePrice, seats - seatsTaken, depDate, hour);
+    return {
+      id: `${rid}-${String(hour).padStart(2, '0')}`,
+      departure: `${String(hour).padStart(2, '0')}:00`,
+      arrivalEstimate: addTime(hour, 0, route.duration),
+      label,
+      basePrice: result.price,
+      seatsTotal: seats,
+      seatsTaken,
+      rushLevel: result.badge === 'green' ? 'green' : result.badge === 'orange' ? 'yellow' : 'red',
+    };
+  };
+
+  return [
+    makeSlot(7, 7, 3, 'Rush matin'),
+    makeSlot(9, 7, 1, 'Standard'),
+    makeSlot(12, 7, 0, 'Heures creuses'),
+    makeSlot(17, 7, 4, 'Rush soir'),
+    makeSlot(19, 7, 2, 'Soirée'),
   ];
-  return slots;
 };
