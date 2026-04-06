@@ -348,6 +348,34 @@ const CabyVanPage: React.FC = () => {
                   <input type="date" value={dateAller} onChange={(e) => setDateAller(e.target.value)}
                     className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
                 </div>
+                <div className="flex-1">
+                  <select value={timeAller} onChange={(e) => setTimeAller(e.target.value)}
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
+                    <option value="">Heure ▼</option>
+                    {availableTimeSlotsAller.map(s => (
+                      <option key={s.time} value={s.time}>
+                        {s.time === 'custom' ? '🕐 Personnalisée' : `${s.time} ${s.rushLevel === 'rush' ? '🔴' : s.rushLevel === 'creux' ? '🟢' : '🟡'}`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              {timeAller === 'custom' && (
+                <div className="mb-3">
+                  <input type="time" value={customTimeAller} onChange={(e) => setCustomTimeAller(e.target.value)}
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
+                </div>
+              )}
+              {effectiveTimeAller && selectedRoute && (
+                <div className="mb-3 flex items-center gap-2 text-xs text-gray-500 px-1">
+                  <Timer className="w-3.5 h-3.5" />
+                  <span>Arrivée estimée : <span className="font-bold text-gray-900">{estimatedArrivalAller}</span> ({formatDuration(selectedRoute.duration)})</span>
+                  {selectedAllerRush && RUSH_BADGE[selectedAllerRush] && (
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${RUSH_BADGE[selectedAllerRush].color}`}>{RUSH_BADGE[selectedAllerRush].label}</span>
+                  )}
+                </div>
+              )}
+              <div className="flex gap-2 mb-3">
                 <div className="w-28 flex items-center gap-1 rounded-xl bg-gray-50 border border-gray-200 px-2">
                   <Users className="w-4 h-4 text-gray-400" />
                   <button onClick={() => setPassengers(Math.max(1, passengers - 1))} className="w-7 h-7 flex items-center justify-center text-gray-500 font-bold">−</button>
@@ -357,9 +385,34 @@ const CabyVanPage: React.FC = () => {
               </div>
 
               {roundTrip && (
+                <div className="flex gap-2 mb-3">
+                  <div className="flex-1">
+                    <input type="date" value={dateRetour} onChange={(e) => setDateRetour(e.target.value)}
+                      className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
+                  </div>
+                  <div className="flex-1">
+                    <select value={timeRetour} onChange={(e) => setTimeRetour(e.target.value)}
+                      className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
+                      <option value="">Heure ▼</option>
+                      {availableTimeSlotsRetour.map(s => (
+                        <option key={s.time} value={s.time}>
+                          {s.time === 'custom' ? '🕐 Personnalisée' : `${s.time} ${s.rushLevel === 'rush' ? '🔴' : s.rushLevel === 'creux' ? '🟢' : '🟡'}`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+              {roundTrip && timeRetour === 'custom' && (
                 <div className="mb-3">
-                  <input type="date" value={dateRetour} onChange={(e) => setDateRetour(e.target.value)}
+                  <input type="time" value={customTimeRetour} onChange={(e) => setCustomTimeRetour(e.target.value)}
                     className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
+                </div>
+              )}
+              {roundTrip && effectiveTimeRetour && selectedRoute && (
+                <div className="mb-3 flex items-center gap-2 text-xs text-gray-500 px-1">
+                  <Timer className="w-3.5 h-3.5" />
+                  <span>Retour arrivée : <span className="font-bold text-gray-900">{estimatedArrivalRetour}</span> · -5% aller-retour</span>
                 </div>
               )}
 
