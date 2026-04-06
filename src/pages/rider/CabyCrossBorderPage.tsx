@@ -368,8 +368,8 @@ const CabyCrossBorderPage: React.FC = () => {
             })}
           </div>
 
-          <div className="mt-4 text-[10px] text-muted-foreground text-center px-4">
-            Service de covoiturage avec chauffeur professionnel certifié. Trajet transfrontalier France-Suisse.
+          <div className="mt-4 text-[10px] text-muted-foreground text-center px-4 flex items-center justify-center gap-1">
+            🤝 Covoiturage — partage de frais entre particuliers · 🛡️ Couvert par assurance trajet Caby
           </div>
         </div>
         <BottomNav />
