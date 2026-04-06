@@ -114,6 +114,11 @@ const AccountPage: React.FC = () => {
           </button>
         </div>
 
+        {/* Traveler History */}
+        <div className="mt-5">
+          <TravelerHistory />
+        </div>
+
         {/* Favorite Drivers */}
         <div className="mt-5">
           <FavoriteDrivers />
