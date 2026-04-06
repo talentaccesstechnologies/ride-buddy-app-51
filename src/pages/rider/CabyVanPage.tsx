@@ -266,8 +266,8 @@ const CabyVanPage: React.FC = () => {
             ))}
 
             <div className="mt-8 rounded-xl bg-muted/30 border border-border p-4 text-center text-xs text-muted-foreground">
-              <p className="font-bold text-sm text-foreground mb-1">{cabyVanRoutes.length} destinations · Toutes bidirectionnelles</p>
-              <p>650'000 voitures/jour franchissent la frontière genevoise — partagez le trajet</p>
+              <p className="font-bold text-sm text-foreground mb-1">{cabyVanRoutes.length} destinations · {ROUTES.length} routes bidirectionnelles</p>
+              <p>Suisse romande complète · Grand Genève · Valais · Jura · Italie</p>
             </div>
           </div>
         </div>
