@@ -65,6 +65,8 @@ import EarlyAccessPage from "./pages/EarlyAccessPage";
 import PartnerLoginPage from "./pages/partner/PartnerLoginPage";
 import PartnerDashboardPage from "./pages/partner/PartnerDashboardPage";
 import { PartnerProvider } from "@/contexts/PartnerContext";
+import HowItWorksPage from "./pages/HowItWorksPage";
+import CGUModal from "@/components/shared/CGUModal";
 const queryClient = new QueryClient();
 
 const App = () => (
