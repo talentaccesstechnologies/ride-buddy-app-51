@@ -31,6 +31,7 @@ import FlashDealBanner from '@/components/van/FlashDealBanner';
 import AncillarySelector from '@/components/van/AncillarySelector';
 import { getPickupPoints, hasAirportSelected, type PickupPoint } from '@/lib/pickupPoints';
 import { Plane } from 'lucide-react';
+import PlacesAutocomplete from '@/components/shared/PlacesAutocomplete';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
@@ -818,13 +819,14 @@ const CabyVanPage: React.FC = () => {
                   ))}
                 </select>
                 {selectedPickupIsCustom && (
-                  <input
-                    type="text"
-                    value={pickupCustom}
-                    onChange={(e) => setPickupCustom(e.target.value)}
-                    placeholder="Tapez votre adresse, hôtel, gare..."
-                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 mt-2"
-                  />
+                  <div className="mt-2">
+                    <PlacesAutocomplete
+                      value={pickupCustom}
+                      onChange={setPickupCustom}
+                      onPlaceSelect={(place) => setPickupCustom(place.address)}
+                      placeholder="Tapez votre adresse, hôtel, gare..."
+                    />
+                  </div>
                 )}
                 {pickupAddress && !selectedPickupIsCustom && (
                   <p className="text-[10px] text-gray-400 mt-1 px-1">{pickupAddress}</p>
@@ -851,13 +853,14 @@ const CabyVanPage: React.FC = () => {
                   ))}
                 </select>
                 {selectedDropoffIsCustom && (
-                  <input
-                    type="text"
-                    value={dropoffCustom}
-                    onChange={(e) => setDropoffCustom(e.target.value)}
-                    placeholder="Tapez votre adresse, hôtel, bureau..."
-                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 mt-2"
-                  />
+                  <div className="mt-2">
+                    <PlacesAutocomplete
+                      value={dropoffCustom}
+                      onChange={setDropoffCustom}
+                      onPlaceSelect={(place) => setDropoffCustom(place.address)}
+                      placeholder="Tapez votre adresse, hôtel, bureau..."
+                    />
+                  </div>
                 )}
                 {dropoffAddress && !selectedDropoffIsCustom && (
                   <p className="text-[10px] text-gray-400 mt-1 px-1">{dropoffAddress}</p>
