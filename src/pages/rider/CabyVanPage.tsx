@@ -1066,6 +1066,32 @@ const CabyVanPage: React.FC = () => {
           <h2 className="text-xl font-bold text-gray-900 mb-1">Réservation confirmée !</h2>
           <p className="text-sm text-gray-500 mb-6">Votre e-ticket a été envoyé par email</p>
 
+          {/* Pickup/Dropoff detail cards */}
+          {(effectivePickupAddress || effectiveDropoffAddress) && (
+            <div className="rounded-2xl bg-white border border-gray-200 overflow-hidden text-left shadow-lg mb-4">
+              {effectivePickupAddress && (
+                <div className="p-4 border-b border-gray-100">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 mb-1">📍 Point de prise en charge</p>
+                  <p className="text-sm font-bold text-gray-900">{pickupLabel}</p>
+                  <p className="text-xs text-gray-500">{effectivePickupAddress}</p>
+                  {effectiveTimeAller && (
+                    <p className="text-xs text-gray-600 mt-1">🕐 {effectiveTimeAller} — Le chauffeur vous attend avec une pancarte à votre nom</p>
+                  )}
+                </div>
+              )}
+              {effectiveDropoffAddress && (
+                <div className="p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-red-500 mb-1">🏁 Point de dépose</p>
+                  <p className="text-sm font-bold text-gray-900">{dropoffLabel}</p>
+                  <p className="text-xs text-gray-500">{effectiveDropoffAddress}</p>
+                  {estimatedArrivalAller && (
+                    <p className="text-xs text-gray-600 mt-1">🕐 Arrivée estimée : {estimatedArrivalAller}</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="rounded-2xl bg-white border border-gray-200 overflow-hidden text-left shadow-lg">
             <div className="px-5 py-3 border-b border-gray-100" style={{ backgroundColor: `${GOLD}15` }}>
               <p className="text-xs font-bold uppercase tracking-wider" style={{ color: GOLD }}>E-Ticket Caby Van</p>
@@ -1079,11 +1105,12 @@ const CabyVanPage: React.FC = () => {
                 ['Durée', formatDuration(selectedRoute.duration)],
                 ['Siège', `N°${selectedSeat}`],
                 ['Chauffeur', 'David M. · GE 482 317'],
-                ['Point RDV', from === 'Genève' ? 'Gare Cornavin, Sortie C' : `Gare de ${from}`],
+                ['Pickup', effectivePickupAddress || (from === 'Genève' ? 'Gare Cornavin, Sortie C' : `Gare de ${from}`)],
+                ['Dépose', effectiveDropoffAddress || `Gare de ${to}`],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between text-sm">
                   <span className="text-gray-500">{label}</span>
-                  <span className="font-bold text-gray-900">{value}</span>
+                  <span className="font-bold text-gray-900 text-right max-w-[60%]">{value}</span>
                 </div>
               ))}
               {ancillaryTotal > 0 && (
