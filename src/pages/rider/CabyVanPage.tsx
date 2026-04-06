@@ -1137,9 +1137,9 @@ const CabyVanPage: React.FC = () => {
                         <Star className="w-3 h-3 fill-white" /> Recommandé
                       </div>
 
-                      {/* Vehicle image — larger for shared */}
-                      <div className="md:w-56 h-[200px] md:h-auto bg-gray-50 flex-shrink-0 overflow-hidden rounded-lg m-2">
-                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover rounded-lg" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} loading="lazy" />
+                      {/* Vehicle image — shared: larger with contain */}
+                      <div className="w-full md:w-[200px] md:min-w-[200px] h-[160px] md:h-[130px] flex-shrink-0 flex items-center justify-center overflow-hidden rounded-lg m-2 p-3" style={{ backgroundColor: '#F5F5F5' }}>
+                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-contain" loading="lazy" />
                       </div>
 
                       {/* Content */}
