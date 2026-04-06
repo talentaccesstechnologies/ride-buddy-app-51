@@ -39,13 +39,7 @@ const POPULAR_DESTINATIONS = [
   { city: 'Lausanne', emoji: '🏛️', price: 29, img: '🇨🇭' },
 ];
 
-// Last minute deals (simulated)
-const LAST_MINUTE_DEALS = [
-  { from: 'Annecy', to: 'Genève', departure: '17:30', date: "Aujourd'hui", discount: 25, originalPrice: 25, seats: 3 },
-  { from: 'Genève', to: 'Lausanne', departure: '18:00', date: "Aujourd'hui", discount: 15, originalPrice: 29, seats: 5 },
-  { from: 'Genève', to: 'Zurich', departure: '07:00', date: 'Demain', discount: 20, originalPrice: 77, seats: 2 },
-  { from: 'Chamonix', to: 'Genève', departure: '16:00', date: "Aujourd'hui", discount: 30, originalPrice: 35, seats: 4 },
-];
+// Last minute deals are now generated dynamically
 
 const FILTER_TABS: { key: SegmentFilter; label: string; icon: string; badge?: string }[] = [
   { key: 'all', label: 'Tous', icon: '🗺️' },
