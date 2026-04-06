@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, X, MapPin, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { INCIDENT_PROTOCOLS, BEHAVIOUR_CATEGORIES, type IncidentType } from '@/utils/incidentProtocol';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 interface SOSButtonProps {
@@ -19,26 +20,75 @@ const SOSButton: React.FC<SOSButtonProps> = ({ onIncidentCreated }) => {
   const handleSubmit = async () => {
     if (!selectedType) return;
     setIsSubmitting(true);
-    
-    // Simulate geolocation capture
-    const desc = selectedType === 'client_behaviour' && behaviourCategory
-      ? `${BEHAVIOUR_CATEGORIES.find(c => c.id === behaviourCategory)?.label}: ${description}`
-      : description;
 
-    // Simulate API call
-    await new Promise(r => setTimeout(r, 1000));
-    
-    const protocol = INCIDENT_PROTOCOLS[selectedType];
-    toast.success(`${protocol.emoji} Incident signalé`, {
-      description: `Type: ${protocol.label} — Caby Operations notifié`,
-    });
+    try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('Vous devez être connecté');
+        setIsSubmitting(false);
+        return;
+      }
 
-    onIncidentCreated?.(selectedType, desc);
-    setIsOpen(false);
-    setSelectedType(null);
-    setBehaviourCategory(null);
-    setDescription('');
-    setIsSubmitting(false);
+      // Capture geolocation
+      let lat: number | null = null;
+      let lng: number | null = null;
+      try {
+        const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
+        );
+        lat = pos.coords.latitude;
+        lng = pos.coords.longitude;
+      } catch {
+        // Geolocation unavailable — continue without
+      }
+
+      const descText = selectedType === 'client_behaviour' && behaviourCategory
+        ? `${BEHAVIOUR_CATEGORIES.find(c => c.id === behaviourCategory)?.label}: ${description}`
+        : description || INCIDENT_PROTOCOLS[selectedType].label;
+
+      // Insert into database
+      const { error } = await supabase.from('incidents').insert({
+        incident_type: selectedType,
+        reported_by: user.id,
+        driver_id: user.id,
+        description: descText,
+        lat,
+        lng,
+        status: 'open',
+      });
+
+      if (error) throw error;
+
+      const protocol = INCIDENT_PROTOCOLS[selectedType];
+
+      // Auto-compensation for applicable incident types
+      if (protocol.autoCompensation > 0 || protocol.voucherAmount > 0) {
+        const compAmount = protocol.voucherAmount || protocol.autoCompensation;
+        // Insert compensation for the reporting user (will be dispatched to affected passengers by backend)
+        await supabase.from('incident_compensations').insert({
+          user_id: user.id,
+          amount: compAmount,
+          compensation_type: protocol.voucherAmount > 0 ? 'voucher' : 'credit',
+          description: `Compensation ${protocol.label}`,
+        });
+      }
+
+      toast.success(`${protocol.emoji} Incident signalé`, {
+        description: `Type: ${protocol.label} — Caby Operations notifié`,
+      });
+
+      onIncidentCreated?.(selectedType, descText);
+      setIsOpen(false);
+      setSelectedType(null);
+      setBehaviourCategory(null);
+      setDescription('');
+    } catch (err: unknown) {
+      console.error('Error creating incident:', err);
+      toast.error('Erreur lors du signalement');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
