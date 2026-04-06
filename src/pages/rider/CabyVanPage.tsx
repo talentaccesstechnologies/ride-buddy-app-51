@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, ArrowRight, Leaf, Users, Clock, MapPin, Luggage, Bike, QrCode, Check, X,
-  CreditCard, Star, ChevronLeft, ChevronRight, Search, Percent, Zap, Shield, Car, SlidersHorizontal
+  CreditCard, Star, ChevronLeft, ChevronRight, Search, Percent, Zap, Shield, Car, SlidersHorizontal, Timer
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -29,6 +29,44 @@ type Step = 'hero' | 'search' | 'results' | 'seat' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
 
 const GOLD = '#C9A84C';
+
+const getTimeSlots = (routeSegment: string, isWeekend: boolean, duration: number): { time: string; label: string; rushLevel: 'rush' | 'creux' | 'soiree' | 'custom' }[] => {
+  const classify = (h: number): 'rush' | 'creux' | 'soiree' => {
+    if ((h >= 6 && h <= 9) || (h >= 16 && h <= 19)) return 'rush';
+    if (h >= 9 && h < 16) return 'creux';
+    return 'soiree';
+  };
+  const make = (t: string) => ({ time: t, label: t, rushLevel: classify(parseInt(t)) as 'rush' | 'creux' | 'soiree' });
+  let slots: { time: string; label: string; rushLevel: 'rush' | 'creux' | 'soiree' | 'custom' }[] = [];
+  if (routeSegment === 'frontalier' || (routeSegment === 'pendulaire' && duration <= 60)) {
+    slots = isWeekend
+      ? ['08:00','10:00','12:00','14:00','16:00','18:00'].map(make)
+      : ['06:00','06:30','07:00','07:30','08:00','08:30','12:00','13:00','17:00','17:30','18:00','18:30','19:00','19:30'].map(make);
+  } else if (routeSegment === 'ski') {
+    slots = isWeekend
+      ? ['05:30','06:00','06:30','07:00','07:30','08:00','16:00','17:00','18:00','19:00'].map(make)
+      : ['07:00','08:00','17:00','18:00'].map(make);
+  } else if (duration > 180) {
+    slots = ['06:00','07:00','08:00','14:00','15:00'].map(make);
+  } else {
+    slots = ['07:00','08:00','09:00','12:00','14:00','17:00','19:00'].map(make);
+  }
+  slots.push({ time: 'custom', label: '🕐 Heure personnalisée', rushLevel: 'custom' });
+  return slots;
+};
+
+const RUSH_BADGE: Record<string, { label: string; color: string; priceNote?: string }> = {
+  rush: { label: '🔴 Rush', color: 'bg-red-100 text-red-700 border-red-200' },
+  creux: { label: '🟢 Creux', color: 'bg-emerald-100 text-emerald-700 border-emerald-200', priceNote: 'Prix réduit −5%' },
+  soiree: { label: '🟡 Soirée', color: 'bg-amber-100 text-amber-700 border-amber-200' },
+  custom: { label: '🕐 Libre', color: 'bg-gray-100 text-gray-600 border-gray-200' },
+};
+
+const addMinutesToTime = (time: string, minutes: number): string => {
+  const [h, m] = time.split(':').map(Number);
+  const total = h * 60 + m + minutes;
+  return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+};
 
 const POPULAR_DESTINATIONS = [
   { city: 'Zurich', emoji: '🏙️', price: 77, img: '🇨🇭' },
@@ -81,9 +119,13 @@ const CabyVanPage: React.FC = () => {
   const [from, setFrom] = useState('Genève');
   const [to, setTo] = useState('');
   const [dateAller, setDateAller] = useState('');
+  const [timeAller, setTimeAller] = useState('');
   const [passengers, setPassengers] = useState(1);
   const [roundTrip, setRoundTrip] = useState(false);
   const [dateRetour, setDateRetour] = useState('');
+  const [timeRetour, setTimeRetour] = useState('');
+  const [customTimeAller, setCustomTimeAller] = useState('');
+  const [customTimeRetour, setCustomTimeRetour] = useState('');
   const [sortMode, setSortMode] = useState<SortMode>('price');
 
   const [selectedSlot, setSelectedSlot] = useState<VanSlot | null>(null);
@@ -93,6 +135,35 @@ const CabyVanPage: React.FC = () => {
   const selectedRoute = useMemo(() => (from && to ? findRoute(from, to) : undefined), [from, to]);
   const destinations = useMemo(() => getDestinationsFrom(from, filter), [from, filter]);
   const slots = useMemo(() => selectedRoute ? generateSlotsForRoute(selectedRoute) : [], [selectedRoute]);
+
+  const isWeekendAller = useMemo(() => {
+    if (!dateAller) return false;
+    const d = new Date(dateAller);
+    return d.getDay() === 0 || d.getDay() === 6;
+  }, [dateAller]);
+
+  const isWeekendRetour = useMemo(() => {
+    if (!dateRetour) return false;
+    const d = new Date(dateRetour);
+    return d.getDay() === 0 || d.getDay() === 6;
+  }, [dateRetour]);
+
+  const availableTimeSlotsAller = useMemo(() => {
+    if (!selectedRoute) return getTimeSlots('business', isWeekendAller, 90);
+    return getTimeSlots(selectedRoute.segment, isWeekendAller, selectedRoute.duration);
+  }, [selectedRoute, isWeekendAller]);
+
+  const availableTimeSlotsRetour = useMemo(() => {
+    if (!selectedRoute) return getTimeSlots('business', isWeekendRetour, 90);
+    return getTimeSlots(selectedRoute.segment, isWeekendRetour, selectedRoute.duration);
+  }, [selectedRoute, isWeekendRetour]);
+
+  const effectiveTimeAller = timeAller === 'custom' ? customTimeAller : timeAller;
+  const effectiveTimeRetour = timeRetour === 'custom' ? customTimeRetour : timeRetour;
+  const estimatedArrivalAller = effectiveTimeAller && selectedRoute ? addMinutesToTime(effectiveTimeAller, selectedRoute.duration) : '';
+  const estimatedArrivalRetour = effectiveTimeRetour && selectedRoute ? addMinutesToTime(effectiveTimeRetour, selectedRoute.duration) : '';
+  const selectedAllerRush = availableTimeSlotsAller.find(s => s.time === timeAller)?.rushLevel || '';
+  const selectedRetourRush = availableTimeSlotsRetour.find(s => s.time === timeRetour)?.rushLevel || '';
 
   const takenSeats = useMemo(() => {
     if (!selectedSlot) return [];
@@ -277,6 +348,34 @@ const CabyVanPage: React.FC = () => {
                   <input type="date" value={dateAller} onChange={(e) => setDateAller(e.target.value)}
                     className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
                 </div>
+                <div className="flex-1">
+                  <select value={timeAller} onChange={(e) => setTimeAller(e.target.value)}
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
+                    <option value="">Heure ▼</option>
+                    {availableTimeSlotsAller.map(s => (
+                      <option key={s.time} value={s.time}>
+                        {s.time === 'custom' ? '🕐 Personnalisée' : `${s.time} ${s.rushLevel === 'rush' ? '🔴' : s.rushLevel === 'creux' ? '🟢' : '🟡'}`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              {timeAller === 'custom' && (
+                <div className="mb-3">
+                  <input type="time" value={customTimeAller} onChange={(e) => setCustomTimeAller(e.target.value)}
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
+                </div>
+              )}
+              {effectiveTimeAller && selectedRoute && (
+                <div className="mb-3 flex items-center gap-2 text-xs text-gray-500 px-1">
+                  <Timer className="w-3.5 h-3.5" />
+                  <span>Arrivée estimée : <span className="font-bold text-gray-900">{estimatedArrivalAller}</span> ({formatDuration(selectedRoute.duration)})</span>
+                  {selectedAllerRush && RUSH_BADGE[selectedAllerRush] && (
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${RUSH_BADGE[selectedAllerRush].color}`}>{RUSH_BADGE[selectedAllerRush].label}</span>
+                  )}
+                </div>
+              )}
+              <div className="flex gap-2 mb-3">
                 <div className="w-28 flex items-center gap-1 rounded-xl bg-gray-50 border border-gray-200 px-2">
                   <Users className="w-4 h-4 text-gray-400" />
                   <button onClick={() => setPassengers(Math.max(1, passengers - 1))} className="w-7 h-7 flex items-center justify-center text-gray-500 font-bold">−</button>
@@ -286,9 +385,34 @@ const CabyVanPage: React.FC = () => {
               </div>
 
               {roundTrip && (
+                <div className="flex gap-2 mb-3">
+                  <div className="flex-1">
+                    <input type="date" value={dateRetour} onChange={(e) => setDateRetour(e.target.value)}
+                      className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
+                  </div>
+                  <div className="flex-1">
+                    <select value={timeRetour} onChange={(e) => setTimeRetour(e.target.value)}
+                      className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
+                      <option value="">Heure ▼</option>
+                      {availableTimeSlotsRetour.map(s => (
+                        <option key={s.time} value={s.time}>
+                          {s.time === 'custom' ? '🕐 Personnalisée' : `${s.time} ${s.rushLevel === 'rush' ? '🔴' : s.rushLevel === 'creux' ? '🟢' : '🟡'}`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
+              {roundTrip && timeRetour === 'custom' && (
                 <div className="mb-3">
-                  <input type="date" value={dateRetour} onChange={(e) => setDateRetour(e.target.value)}
+                  <input type="time" value={customTimeRetour} onChange={(e) => setCustomTimeRetour(e.target.value)}
                     className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
+                </div>
+              )}
+              {roundTrip && effectiveTimeRetour && selectedRoute && (
+                <div className="mb-3 flex items-center gap-2 text-xs text-gray-500 px-1">
+                  <Timer className="w-3.5 h-3.5" />
+                  <span>Retour arrivée : <span className="font-bold text-gray-900">{estimatedArrivalRetour}</span> · -5% aller-retour</span>
                 </div>
               )}
 
@@ -558,9 +682,51 @@ const CabyVanPage: React.FC = () => {
 
             <div>
               <label className="text-xs text-gray-500 mb-1 block font-medium">Date aller</label>
-              <input type="date" value={dateAller} onChange={(e) => setDateAller(e.target.value)}
-                className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" />
+              <div className="flex gap-2">
+                <input type="date" value={dateAller} onChange={(e) => setDateAller(e.target.value)}
+                  className="flex-1 h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" />
+                <select value={timeAller} onChange={(e) => setTimeAller(e.target.value)}
+                  className="flex-1 h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
+                  <option value="">Heure de départ</option>
+                  {availableTimeSlotsAller.map(s => (
+                    <option key={s.time} value={s.time}>
+                      {s.time === 'custom' ? '🕐 Heure personnalisée' : `${s.time} ${s.rushLevel === 'rush' ? '🔴 Rush' : s.rushLevel === 'creux' ? '🟢 Creux' : '🟡 Soirée'}`}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
+
+            {timeAller === 'custom' && (
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block font-medium">Heure personnalisée</label>
+                <input type="time" value={customTimeAller} onChange={(e) => setCustomTimeAller(e.target.value)}
+                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" />
+              </div>
+            )}
+
+            {effectiveTimeAller && selectedRoute && (
+              <div className="rounded-xl bg-blue-50 border border-blue-200 p-3 flex items-center gap-2">
+                <Timer className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm text-gray-900 font-medium">
+                    Arrivée estimée : <span className="font-bold">{estimatedArrivalAller}</span>
+                  </p>
+                  <p className="text-[10px] text-gray-500">{formatDuration(selectedRoute.duration)} de trajet</p>
+                </div>
+                {selectedAllerRush && RUSH_BADGE[selectedAllerRush] && (
+                  <span className={`text-[9px] font-bold px-2 py-1 rounded-full border ${RUSH_BADGE[selectedAllerRush].color}`}>
+                    {RUSH_BADGE[selectedAllerRush].label}
+                  </span>
+                )}
+              </div>
+            )}
+            {effectiveTimeAller && selectedAllerRush === 'creux' && (
+              <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-2.5 flex items-center gap-2">
+                <span className="text-sm">💰</span>
+                <p className="text-[11px] text-emerald-700 font-medium">Créneau creux — prix réduit −5%</p>
+              </div>
+            )}
 
             <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 border border-gray-200">
               <span className="text-sm text-gray-700 font-medium">Aller-retour</span>
@@ -576,8 +742,44 @@ const CabyVanPage: React.FC = () => {
             {roundTrip && (
               <div>
                 <label className="text-xs text-gray-500 mb-1 block font-medium">Date retour</label>
-                <input type="date" value={dateRetour} onChange={(e) => setDateRetour(e.target.value)}
+                <div className="flex gap-2">
+                  <input type="date" value={dateRetour} onChange={(e) => setDateRetour(e.target.value)}
+                    className="flex-1 h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" />
+                  <select value={timeRetour} onChange={(e) => setTimeRetour(e.target.value)}
+                    className="flex-1 h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
+                    <option value="">Heure retour</option>
+                    {availableTimeSlotsRetour.map(s => (
+                      <option key={s.time} value={s.time}>
+                        {s.time === 'custom' ? '🕐 Heure personnalisée' : `${s.time} ${s.rushLevel === 'rush' ? '🔴 Rush' : s.rushLevel === 'creux' ? '🟢 Creux' : '🟡 Soirée'}`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {roundTrip && timeRetour === 'custom' && (
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block font-medium">Heure personnalisée retour</label>
+                <input type="time" value={customTimeRetour} onChange={(e) => setCustomTimeRetour(e.target.value)}
                   className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" />
+              </div>
+            )}
+
+            {roundTrip && effectiveTimeRetour && selectedRoute && (
+              <div className="rounded-xl bg-blue-50 border border-blue-200 p-3 flex items-center gap-2">
+                <Timer className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm text-gray-900 font-medium">
+                    Retour arrivée : <span className="font-bold">{estimatedArrivalRetour}</span>
+                  </p>
+                  <p className="text-[10px] text-gray-500">Retour le même soir · -5% aller-retour</p>
+                </div>
+                {selectedRetourRush && RUSH_BADGE[selectedRetourRush] && (
+                  <span className={`text-[9px] font-bold px-2 py-1 rounded-full border ${RUSH_BADGE[selectedRetourRush].color}`}>
+                    {RUSH_BADGE[selectedRetourRush].label}
+                  </span>
+                )}
               </div>
             )}
 
@@ -624,7 +826,7 @@ const CabyVanPage: React.FC = () => {
             <h2 className="text-lg font-bold text-gray-900">{from} → {to}</h2>
             <span className="text-sm">{selectedRoute.flag}</span>
           </div>
-          <p className="text-xs text-gray-500">{dateAller || "Aujourd'hui"} · {passengers} passager{passengers > 1 ? 's' : ''} · {formatDuration(selectedRoute.duration)}</p>
+          <p className="text-xs text-gray-500">{dateAller || "Aujourd'hui"}{effectiveTimeAller ? ` · ${effectiveTimeAller}` : ''} · {passengers} passager{passengers > 1 ? 's' : ''} · {formatDuration(selectedRoute.duration)}</p>
         </div>
 
         {/* Sort buttons */}
