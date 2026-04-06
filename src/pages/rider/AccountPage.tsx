@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import BottomNav from '@/components/rider/BottomNav';
 import FavoriteDrivers from '@/components/rider/FavoriteDrivers';
+import TravelerHistory from '@/components/rider/TravelerHistory';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
