@@ -7,13 +7,13 @@ import {
   Info, ChevronDown, ChevronUp, Edit2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-// Unsplash vehicle images
+// Unsplash vehicle images — 3/4 view, neutral backgrounds
 const vehicleImages = {
-  van_shared: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&q=80',
-  berline_standard: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=400&q=80',
-  suv_premium: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=400&q=80',
-  van_private_standard: 'https://images.unsplash.com/photo-1609520505218-7421df82e44e?w=400&q=80',
-  van_private_premium: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&q=80',
+  van_shared: 'https://images.unsplash.com/photo-1612838320302-4b3b3b3b3b3b?w=600&q=80&fit=crop&crop=center',
+  berline_standard: 'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=600&q=80',
+  suv_premium: 'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?w=600&q=80',
+  van_private_standard: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+  van_private_premium: 'https://images.unsplash.com/photo-1609520505218-7421df82e44e?w=600&q=80',
 };
 import {
   cabyVanRoutes, ROUTES, ALL_CITIES, findRoute, getDestinationsFrom, generateSlotsForRoute,
@@ -1137,9 +1137,9 @@ const CabyVanPage: React.FC = () => {
                         <Star className="w-3 h-3 fill-white" /> Recommandé
                       </div>
 
-                      {/* Vehicle image — larger for shared */}
-                      <div className="md:w-56 h-[200px] md:h-auto bg-gray-50 flex-shrink-0 overflow-hidden rounded-lg m-2">
-                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover rounded-lg" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} loading="lazy" />
+                      {/* Vehicle image — shared: larger with contain */}
+                      <div className="w-full md:w-[200px] md:min-w-[200px] h-[160px] md:h-[130px] flex-shrink-0 flex items-center justify-center overflow-hidden rounded-lg m-2 p-3" style={{ backgroundColor: '#F5F5F5' }}>
+                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-contain" loading="lazy" />
                       </div>
 
                       {/* Content */}
@@ -1273,8 +1273,8 @@ const CabyVanPage: React.FC = () => {
                       isSelected ? 'border-amber-400 shadow-md' : 'border-gray-200'
                     }`}>
                     <div className="flex flex-col md:flex-row">
-                      <div className="md:w-44 h-[150px] md:h-auto bg-gray-50 flex-shrink-0 overflow-hidden rounded-lg m-2">
-                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover rounded-lg" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} loading="lazy" />
+                      <div className="w-full md:w-[200px] md:min-w-[200px] h-[160px] md:h-[130px] flex-shrink-0 flex items-center justify-center overflow-hidden rounded-lg m-2 p-3" style={{ backgroundColor: '#F5F5F5' }}>
+                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-contain" loading="lazy" />
                       </div>
                       <div className="flex-1 p-5">
                         <div className="flex items-start justify-between mb-3">
