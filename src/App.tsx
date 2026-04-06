@@ -76,6 +76,7 @@ const App = () => (
       <AuthProvider>
         <RideProvider>
           <PartnerProvider>
+          <CGUModal />
           <Toaster />
           <Sonner />
           <BrowserRouter>
