@@ -81,9 +81,13 @@ const CabyVanPage: React.FC = () => {
   const [from, setFrom] = useState('Genève');
   const [to, setTo] = useState('');
   const [dateAller, setDateAller] = useState('');
+  const [timeAller, setTimeAller] = useState('');
   const [passengers, setPassengers] = useState(1);
   const [roundTrip, setRoundTrip] = useState(false);
   const [dateRetour, setDateRetour] = useState('');
+  const [timeRetour, setTimeRetour] = useState('');
+  const [customTimeAller, setCustomTimeAller] = useState('');
+  const [customTimeRetour, setCustomTimeRetour] = useState('');
   const [sortMode, setSortMode] = useState<SortMode>('price');
 
   const [selectedSlot, setSelectedSlot] = useState<VanSlot | null>(null);
