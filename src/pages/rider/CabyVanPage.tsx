@@ -24,6 +24,8 @@ import {
 import SeatPricingCard from '@/components/van/SeatPricingCard';
 import FlashDealBanner from '@/components/van/FlashDealBanner';
 import AncillarySelector from '@/components/van/AncillarySelector';
+import { getPickupPoints, hasAirportSelected, type PickupPoint } from '@/lib/pickupPoints';
+import { Plane } from 'lucide-react';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
@@ -131,6 +133,24 @@ const CabyVanPage: React.FC = () => {
   const [selectedSlot, setSelectedSlot] = useState<VanSlot | null>(null);
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [ancillaries, setAncillaries] = useState<Partial<AncillaryOptions>>({});
+
+  // Pickup / Dropoff
+  const [pickupLabel, setPickupLabel] = useState('');
+  const [pickupAddress, setPickupAddress] = useState('');
+  const [pickupCustom, setPickupCustom] = useState('');
+  const [dropoffLabel, setDropoffLabel] = useState('');
+  const [dropoffAddress, setDropoffAddress] = useState('');
+  const [dropoffCustom, setDropoffCustom] = useState('');
+  const [airportMode, setAirportMode] = useState<'arrival' | 'pickup'>('pickup');
+  const [flightArrivalTime, setFlightArrivalTime] = useState('');
+
+  const pickupPoints = useMemo(() => getPickupPoints(from), [from]);
+  const dropoffPoints = useMemo(() => getPickupPoints(to), [to]);
+  const isAirport = hasAirportSelected(pickupLabel, dropoffLabel);
+  const selectedPickupIsCustom = pickupPoints.find(p => p.label === pickupLabel)?.isCustom;
+  const selectedDropoffIsCustom = dropoffPoints.find(p => p.label === dropoffLabel)?.isCustom;
+  const effectivePickupAddress = selectedPickupIsCustom ? pickupCustom : pickupAddress;
+  const effectiveDropoffAddress = selectedDropoffIsCustom ? dropoffCustom : dropoffAddress;
 
   const selectedRoute = useMemo(() => (from && to ? findRoute(from, to) : undefined), [from, to]);
   const destinations = useMemo(() => getDestinationsFrom(from, filter), [from, filter]);
@@ -640,7 +660,7 @@ const CabyVanPage: React.FC = () => {
               <label className="text-xs text-gray-500 mb-1 block font-medium">Ville de départ</label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                <select value={from} onChange={(e) => { setFrom(e.target.value); setTo(''); }}
+                <select value={from} onChange={(e) => { setFrom(e.target.value); setTo(''); setPickupLabel(''); setPickupAddress(''); setPickupCustom(''); }}
                   className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 pl-9 pr-4 text-sm text-gray-900 font-medium">
                   {ALL_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
@@ -658,7 +678,7 @@ const CabyVanPage: React.FC = () => {
               <label className="text-xs text-gray-500 mb-1 block font-medium">Ville d'arrivée</label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-red-500" />
-                <select value={to} onChange={(e) => setTo(e.target.value)}
+                <select value={to} onChange={(e) => { setTo(e.target.value); setDropoffLabel(''); setDropoffAddress(''); setDropoffCustom(''); }}
                   className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 pl-9 pr-4 text-sm text-gray-900 font-medium">
                   <option value="">Choisir une destination</option>
                   {destinations.map(c => {
@@ -668,6 +688,106 @@ const CabyVanPage: React.FC = () => {
                 </select>
               </div>
             </div>
+
+            {/* Pickup address */}
+            {from && (
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block font-medium">📍 Adresse de prise en charge</label>
+                <select
+                  value={pickupLabel}
+                  onChange={(e) => {
+                    const pt = pickupPoints.find(p => p.label === e.target.value);
+                    setPickupLabel(e.target.value);
+                    setPickupAddress(pt?.address || '');
+                    setPickupCustom('');
+                  }}
+                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
+                  <option value="">Choisir un point de pickup</option>
+                  {pickupPoints.map(p => (
+                    <option key={p.label} value={p.label}>{p.label}</option>
+                  ))}
+                </select>
+                {selectedPickupIsCustom && (
+                  <input
+                    type="text"
+                    value={pickupCustom}
+                    onChange={(e) => setPickupCustom(e.target.value)}
+                    placeholder="Tapez votre adresse, hôtel, gare..."
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 mt-2"
+                  />
+                )}
+                {pickupAddress && !selectedPickupIsCustom && (
+                  <p className="text-[10px] text-gray-400 mt-1 px-1">{pickupAddress}</p>
+                )}
+              </div>
+            )}
+
+            {/* Dropoff address */}
+            {to && (
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block font-medium">📍 Adresse de dépose</label>
+                <select
+                  value={dropoffLabel}
+                  onChange={(e) => {
+                    const pt = dropoffPoints.find(p => p.label === e.target.value);
+                    setDropoffLabel(e.target.value);
+                    setDropoffAddress(pt?.address || '');
+                    setDropoffCustom('');
+                  }}
+                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
+                  <option value="">Choisir un point de dépose</option>
+                  {dropoffPoints.map(p => (
+                    <option key={p.label} value={p.label}>{p.label}</option>
+                  ))}
+                </select>
+                {selectedDropoffIsCustom && (
+                  <input
+                    type="text"
+                    value={dropoffCustom}
+                    onChange={(e) => setDropoffCustom(e.target.value)}
+                    placeholder="Tapez votre adresse, hôtel, bureau..."
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 mt-2"
+                  />
+                )}
+                {dropoffAddress && !selectedDropoffIsCustom && (
+                  <p className="text-[10px] text-gray-400 mt-1 px-1">{dropoffAddress}</p>
+                )}
+              </div>
+            )}
+
+            {/* Airport toggle */}
+            {isAirport && (
+              <div className="rounded-xl bg-blue-50 border border-blue-200 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Plane className="w-4 h-4 text-blue-600" />
+                  <p className="text-xs font-bold text-blue-800">✈️ Vol détecté — Comment calculer l'heure ?</p>
+                </div>
+                <div className="flex gap-2 mb-3">
+                  <button
+                    onClick={() => setAirportMode('arrival')}
+                    className={`flex-1 py-2 rounded-lg text-xs font-bold transition-colors border ${airportMode === 'arrival' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200'}`}>
+                    Heure d'arrivée vol
+                  </button>
+                  <button
+                    onClick={() => setAirportMode('pickup')}
+                    className={`flex-1 py-2 rounded-lg text-xs font-bold transition-colors border ${airportMode === 'pickup' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200'}`}>
+                    Heure de pickup
+                  </button>
+                </div>
+                {airportMode === 'arrival' && (
+                  <div>
+                    <input
+                      type="time"
+                      value={flightArrivalTime}
+                      onChange={(e) => setFlightArrivalTime(e.target.value)}
+                      className="w-full h-10 rounded-lg bg-white border border-gray-200 px-3 text-sm text-gray-900"
+                      placeholder="Heure d'arrivée du vol"
+                    />
+                    <p className="text-[10px] text-blue-600 mt-1.5">🛬 Votre chauffeur vous attendra à votre arrivée avec une pancarte à votre nom</p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {selectedRoute && (
               <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 flex items-center justify-between">
@@ -946,6 +1066,32 @@ const CabyVanPage: React.FC = () => {
           <h2 className="text-xl font-bold text-gray-900 mb-1">Réservation confirmée !</h2>
           <p className="text-sm text-gray-500 mb-6">Votre e-ticket a été envoyé par email</p>
 
+          {/* Pickup/Dropoff detail cards */}
+          {(effectivePickupAddress || effectiveDropoffAddress) && (
+            <div className="rounded-2xl bg-white border border-gray-200 overflow-hidden text-left shadow-lg mb-4">
+              {effectivePickupAddress && (
+                <div className="p-4 border-b border-gray-100">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 mb-1">📍 Point de prise en charge</p>
+                  <p className="text-sm font-bold text-gray-900">{pickupLabel}</p>
+                  <p className="text-xs text-gray-500">{effectivePickupAddress}</p>
+                  {effectiveTimeAller && (
+                    <p className="text-xs text-gray-600 mt-1">🕐 {effectiveTimeAller} — Le chauffeur vous attend avec une pancarte à votre nom</p>
+                  )}
+                </div>
+              )}
+              {effectiveDropoffAddress && (
+                <div className="p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-red-500 mb-1">🏁 Point de dépose</p>
+                  <p className="text-sm font-bold text-gray-900">{dropoffLabel}</p>
+                  <p className="text-xs text-gray-500">{effectiveDropoffAddress}</p>
+                  {estimatedArrivalAller && (
+                    <p className="text-xs text-gray-600 mt-1">🕐 Arrivée estimée : {estimatedArrivalAller}</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="rounded-2xl bg-white border border-gray-200 overflow-hidden text-left shadow-lg">
             <div className="px-5 py-3 border-b border-gray-100" style={{ backgroundColor: `${GOLD}15` }}>
               <p className="text-xs font-bold uppercase tracking-wider" style={{ color: GOLD }}>E-Ticket Caby Van</p>
@@ -959,11 +1105,12 @@ const CabyVanPage: React.FC = () => {
                 ['Durée', formatDuration(selectedRoute.duration)],
                 ['Siège', `N°${selectedSeat}`],
                 ['Chauffeur', 'David M. · GE 482 317'],
-                ['Point RDV', from === 'Genève' ? 'Gare Cornavin, Sortie C' : `Gare de ${from}`],
+                ['Pickup', effectivePickupAddress || (from === 'Genève' ? 'Gare Cornavin, Sortie C' : `Gare de ${from}`)],
+                ['Dépose', effectiveDropoffAddress || `Gare de ${to}`],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between text-sm">
                   <span className="text-gray-500">{label}</span>
-                  <span className="font-bold text-gray-900">{value}</span>
+                  <span className="font-bold text-gray-900 text-right max-w-[60%]">{value}</span>
                 </div>
               ))}
               {ancillaryTotal > 0 && (
