@@ -1127,13 +1127,19 @@ const CabyVanPage: React.FC = () => {
                 const isExpanded = expandedDetails === vehicle.id;
                 return (
                   <motion.div key={vehicle.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                    className={`bg-white rounded-2xl border-2 overflow-hidden transition-all shadow-sm hover:shadow-md ${
-                      isSelected ? 'border-amber-400 shadow-md' : 'border-gray-200'
-                    }`}>
-                    <div className="flex flex-col md:flex-row">
-                      {/* Vehicle image */}
-                      <div className="md:w-48 h-36 md:h-auto bg-gray-50 flex-shrink-0 overflow-hidden">
-                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover" loading="lazy" width={800} height={512} />
+                    className={`rounded-2xl border-2 overflow-hidden transition-all hover:shadow-md ${
+                      isSelected ? 'border-amber-400 shadow-md' : 'border-amber-300'
+                    }`}
+                    style={{ backgroundColor: '#FDFAF4' }}>
+                    <div className="flex flex-col md:flex-row relative">
+                      {/* Recommended badge */}
+                      <div className="absolute top-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold text-white shadow-md" style={{ backgroundColor: GOLD }}>
+                        <Star className="w-3 h-3 fill-white" /> Recommandé
+                      </div>
+
+                      {/* Vehicle image — larger for shared */}
+                      <div className="md:w-56 h-[200px] md:h-auto bg-gray-50 flex-shrink-0 overflow-hidden rounded-lg m-2">
+                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover rounded-lg" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} loading="lazy" />
                       </div>
 
                       {/* Content */}
@@ -1147,9 +1153,13 @@ const CabyVanPage: React.FC = () => {
                               </span>
                             </div>
                             <p className="text-xs text-gray-500">Jusqu'à {vehicle.capacity} passagers</p>
-                            <div className="flex items-center gap-1 mt-1">
-                              <Users className="w-3.5 h-3.5 text-blue-500" />
-                              <span className="text-[11px] text-blue-600 font-medium">Siège partagé</span>
+                            <div className="flex items-center gap-2 mt-1.5">
+                              <span className="flex items-center gap-1 text-[11px] text-blue-600 font-medium">
+                                <Users className="w-3.5 h-3.5 text-blue-500" /> Siège partagé
+                              </span>
+                              <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded-full">
+                                <Leaf className="w-3 h-3" /> Écologique
+                              </span>
                             </div>
                           </div>
                         </div>
