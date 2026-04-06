@@ -8,7 +8,7 @@ import BottomNav from '@/components/rider/BottomNav';
 import DriverOfMonthBanner from '@/components/shared/DriverOfMonthBanner';
 import {
   Search, Car, Zap, Ambulance, Package, Bike, Building2,
-  ChevronRight, MapPin, ShieldCheck, Truck, Heart
+  ChevronRight, MapPin, ShieldCheck, Truck, Heart, Moon, Star
 } from 'lucide-react';
 
 const modeFilters = [
