@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import BottomNav from '@/components/rider/BottomNav';
 import FavoriteDrivers from '@/components/rider/FavoriteDrivers';
+import TravelerHistory from '@/components/rider/TravelerHistory';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -111,6 +112,11 @@ const AccountPage: React.FC = () => {
             </div>
             <Gift className="w-8 h-8 text-primary flex-shrink-0" />
           </button>
+        </div>
+
+        {/* Traveler History */}
+        <div className="mt-5">
+          <TravelerHistory />
         </div>
 
         {/* Favorite Drivers */}
