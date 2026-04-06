@@ -106,6 +106,30 @@ const CabyVanPage: React.FC = () => {
   const handleSearch = () => { if (from && to && from !== to && selectedRoute) setStep('results'); };
   const handleSelectSlot = (slot: VanSlot) => { setSelectedSlot(slot); setSelectedSeat(null); setStep('seat'); };
 
+  // Last Minute deals — dynamic
+  const [now, setNow] = useState(() => new Date());
+  const deals = useMemo(() => generateSimulatedDeals(now), []);
+  const activeDeals = useMemo(() => {
+    return deals
+      .map(deal => {
+        const lm = calculateLastMinuteDiscount(deal.departureTime, deal.seatsAvailable, deal.totalSeats, now);
+        if (!lm.isLastMinute) return null;
+        return { ...deal, ...lm, finalPrice: applyLastMinutePrice(deal.basePrice, lm.discount), countdown: formatCountdown(deal.departureTime, now) };
+      })
+      .filter(Boolean) as (LastMinuteDeal & { discount: number; urgencyLabel: string; finalPrice: number; countdown: string | null })[];
+  }, [deals, now]);
+
+  // Refresh every 5 minutes
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+  // Countdown refresh every 30s
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 30 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const scrollCarousel = (dir: 'left' | 'right') => {
     if (!carouselRef.current) return;
     carouselRef.current.scrollBy({ left: dir === 'left' ? -260 : 260, behavior: 'smooth' });
