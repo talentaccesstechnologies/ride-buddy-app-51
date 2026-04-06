@@ -115,7 +115,7 @@ const STEPPER_STEPS = [
 ];
 
 const INSURANCE_FEE = 2.50;
-type SortMode = 'price' | 'urgent' | 'earlybird';
+// SortMode declared above
 
 const GOLD = '#C9A84C';
 
