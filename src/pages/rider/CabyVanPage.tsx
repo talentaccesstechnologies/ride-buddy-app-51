@@ -136,6 +136,35 @@ const CabyVanPage: React.FC = () => {
   const destinations = useMemo(() => getDestinationsFrom(from, filter), [from, filter]);
   const slots = useMemo(() => selectedRoute ? generateSlotsForRoute(selectedRoute) : [], [selectedRoute]);
 
+  const isWeekendAller = useMemo(() => {
+    if (!dateAller) return false;
+    const d = new Date(dateAller);
+    return d.getDay() === 0 || d.getDay() === 6;
+  }, [dateAller]);
+
+  const isWeekendRetour = useMemo(() => {
+    if (!dateRetour) return false;
+    const d = new Date(dateRetour);
+    return d.getDay() === 0 || d.getDay() === 6;
+  }, [dateRetour]);
+
+  const availableTimeSlotsAller = useMemo(() => {
+    if (!selectedRoute) return getTimeSlots('business', isWeekendAller, 90);
+    return getTimeSlots(selectedRoute.segment, isWeekendAller, selectedRoute.duration);
+  }, [selectedRoute, isWeekendAller]);
+
+  const availableTimeSlotsRetour = useMemo(() => {
+    if (!selectedRoute) return getTimeSlots('business', isWeekendRetour, 90);
+    return getTimeSlots(selectedRoute.segment, isWeekendRetour, selectedRoute.duration);
+  }, [selectedRoute, isWeekendRetour]);
+
+  const effectiveTimeAller = timeAller === 'custom' ? customTimeAller : timeAller;
+  const effectiveTimeRetour = timeRetour === 'custom' ? customTimeRetour : timeRetour;
+  const estimatedArrivalAller = effectiveTimeAller && selectedRoute ? addMinutesToTime(effectiveTimeAller, selectedRoute.duration) : '';
+  const estimatedArrivalRetour = effectiveTimeRetour && selectedRoute ? addMinutesToTime(effectiveTimeRetour, selectedRoute.duration) : '';
+  const selectedAllerRush = availableTimeSlotsAller.find(s => s.time === timeAller)?.rushLevel || '';
+  const selectedRetourRush = availableTimeSlotsRetour.find(s => s.time === timeRetour)?.rushLevel || '';
+
   const takenSeats = useMemo(() => {
     if (!selectedSlot) return [];
     return Array.from({ length: selectedSlot.seatsTaken }, (_, i) => i + 1);
