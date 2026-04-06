@@ -328,6 +328,7 @@ const CabyCrossBorderPage: React.FC = () => {
                           <span className="text-[10px] font-bold">{slot.driverRating.toFixed(1)}</span>
                         </div>
                         <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">VTC Certifié 🇫🇷</span>
+                        <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🛡️ Assuré</span>
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-xs text-muted-foreground">{vt.icon} {vt.label}</span>
