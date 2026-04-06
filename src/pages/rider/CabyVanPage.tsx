@@ -417,6 +417,27 @@ const CabyVanPage: React.FC = () => {
             </div>
           )}
 
+          {selectedRoute.segment === 'horlogerie' && (
+            <div className="rounded-xl bg-yellow-600/10 border border-yellow-600/20 p-3 mb-4 text-xs">
+              <p className="font-bold text-yellow-500 mb-1">⌚ Route Horlogère</p>
+              <p className="text-muted-foreground">Service privilégié pour les professionnels de l'industrie horlogère — Rolex, Patek Philippe, Swatch Group</p>
+            </div>
+          )}
+
+          {selectedRoute.segment === 'international' && (
+            <div className="rounded-xl bg-indigo-500/10 border border-indigo-500/20 p-3 mb-4 text-xs">
+              <p className="font-bold text-indigo-400 mb-1">🇮🇹 Via Simplon — Route internationale</p>
+              <p className="text-muted-foreground">Passeport ou carte d'identité requis · Prix affiché en CHF (≈ €{Math.round(selectedRoute.basePrice * 0.93)} EUR)</p>
+            </div>
+          )}
+
+          {(to === 'Montreux' || to === 'Vevey' || to === 'Sion' || to === 'Martigny' || to === 'Sierre' || to === 'Brigue' || from === 'Montreux' || from === 'Vevey') && selectedRoute.segment !== 'horlogerie' && selectedRoute.segment !== 'international' && !selectedRoute.daily && (
+            <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-3 mb-4 text-xs">
+              <p className="font-bold text-purple-400 mb-1">🍷 Pays du Vin & des Alpes</p>
+              <p className="text-muted-foreground">Traversez les vignobles du Lavaux UNESCO — Riviera vaudoise & Vallée du Rhône</p>
+            </div>
+          )}
+
           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
             {selectedRoute.daily ? 'Navettes disponibles' : 'Créneaux disponibles'} ({slots.length})
           </h3>
