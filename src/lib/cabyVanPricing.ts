@@ -18,7 +18,11 @@ export interface VanSlot {
   seatsTotal: number;
   seatsTaken: number;
   rushLevel: 'green' | 'yellow' | 'red';
+  badge: PriceBadge;
+  reason: string;
 }
+
+export type RouteFilter = 'all' | 'villes' | 'ski_ch' | 'ski_fr' | 'transfrontalier';
 
 export type PriceBadge = 'green' | 'orange' | 'red';
 
@@ -83,6 +87,23 @@ export const ROUTES: VanRoute[] = [
 
 export const ALL_CITIES = [...new Set(ROUTES.flatMap(r => [r.from, r.to]))].sort();
 
+export const ROUTE_FILTER_META: { key: RouteFilter; label: string; icon: string }[] = [
+  { key: 'all', label: 'Tous', icon: '🗺️' },
+  { key: 'villes', label: 'Villes', icon: '🏙️' },
+  { key: 'ski_ch', label: 'Ski Suisse', icon: '🎿' },
+  { key: 'ski_fr', label: 'Ski France', icon: '🎿🇫🇷' },
+  { key: 'transfrontalier', label: 'Transfrontalier', icon: '🌍' },
+];
+
+const routeMatchesFilter = (r: VanRoute, f: RouteFilter): boolean => {
+  if (f === 'all') return true;
+  if (f === 'villes') return ['pendulaire', 'business', 'tourisme', 'institutionnel', 'premium'].includes(r.segment) && !r.seasonal && !r.flag.includes('🇫🇷') && !r.flag.includes('🇩🇪');
+  if (f === 'ski_ch') return r.segment === 'ski' && !r.flag.includes('🇫🇷');
+  if (f === 'ski_fr') return r.segment === 'ski' && r.flag.includes('🇫🇷');
+  if (f === 'transfrontalier') return r.segment === 'frontalier' || r.flag.includes('🇫🇷') || r.flag.includes('🇩🇪');
+  return true;
+};
+
 export type SegmentFilter = 'all' | 'pendulaire' | 'business' | 'ski' | 'tourisme' | 'premium' | 'frontalier' | 'institutionnel';
 
 export const SEGMENT_META: Record<string, { label: string; icon: string; color: string }> = {
@@ -99,6 +120,19 @@ export const getRoutesFrom = (city: string, segment?: SegmentFilter) => {
   const routes = ROUTES.filter(r => r.from === city);
   if (segment && segment !== 'all') return routes.filter(r => r.segment === segment);
   return routes;
+};
+
+export const getRoutesFromWithFilter = (city: string, filter: RouteFilter): VanRoute[] => {
+  return ROUTES.filter(r => r.from === city && routeMatchesFilter(r, filter));
+};
+
+export const getDestinationsFromWithFilter = (city: string, filter: RouteFilter): string[] => {
+  return getRoutesFromWithFilter(city, filter).map(r => r.to);
+};
+
+export const getCitiesForFilter = (filter: RouteFilter): string[] => {
+  const filtered = ROUTES.filter(r => routeMatchesFilter(r, filter));
+  return [...new Set(filtered.flatMap(r => [r.from, r.to]))].sort();
 };
 
 export const findRoute = (from: string, to: string): VanRoute | undefined =>
@@ -177,28 +211,69 @@ export const generateSlotsForRoute = (route: VanRoute, departureDate?: Date): Va
     const total = hh * 60 + mm + addMin;
     return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
   };
+  const addTimeHalf = (hh: number, mm: number, addMin: number) => addTime(hh, mm, addMin);
   const rid = String(route.id);
-  const depDate = departureDate || new Date(Date.now() + 3 * 86400000); // default 3 days out
+  const depDate = departureDate || new Date(Date.now() + 3 * 86400000);
 
-  const makeSlot = (hour: number, seats: number, seatsTaken: number, label: string): VanSlot => {
-    const result = calculateDynamicPrice(route.basePrice, seats - seatsTaken, depDate, hour);
+  const makeSlot = (hour: number, min: number, seatsTaken: number, label: string): VanSlot => {
+    const seatsAvailable = 7 - seatsTaken;
+    const result = calculateDynamicPrice(route.basePrice, seatsAvailable, depDate, hour);
     return {
-      id: `${rid}-${String(hour).padStart(2, '0')}`,
-      departure: `${String(hour).padStart(2, '0')}:00`,
-      arrivalEstimate: addTime(hour, 0, route.duration),
+      id: `${rid}-${String(hour).padStart(2, '0')}${min > 0 ? String(min).padStart(2, '0') : ''}`,
+      departure: `${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`,
+      arrivalEstimate: addTimeHalf(hour, min, route.duration),
       label,
       basePrice: result.price,
-      seatsTotal: seats,
+      seatsTotal: 7,
       seatsTaken,
       rushLevel: result.badge === 'green' ? 'green' : result.badge === 'orange' ? 'yellow' : 'red',
+      badge: result.badge,
+      reason: result.reason,
     };
   };
 
+  // Slots depend on route type
+  if (route.segment === 'ski') {
+    // Ski: vendredi soir + samedi matin + dimanche soir
+    return [
+      makeSlot(18, 0, 2, 'Vendredi soir'),
+      makeSlot(20, 0, 1, 'Vendredi soir tardif'),
+      makeSlot(6, 0, 4, 'Samedi tôt'),
+      makeSlot(7, 0, 5, 'Samedi matin'),
+      makeSlot(8, 0, 3, 'Samedi matin'),
+      makeSlot(17, 0, 4, 'Dimanche soir'),
+      makeSlot(19, 0, 2, 'Dimanche soir'),
+    ];
+  }
+
+  if (route.duration <= 60) {
+    // Pendulaire court (<= 1h): high frequency
+    return [
+      makeSlot(6, 30, 3, 'Très tôt'),
+      makeSlot(7, 30, 5, 'Rush matin'),
+      makeSlot(8, 30, 4, 'Rush matin'),
+      makeSlot(12, 0, 1, 'Heures creuses'),
+      makeSlot(17, 0, 5, 'Rush soir'),
+      makeSlot(18, 0, 4, 'Rush soir'),
+      makeSlot(19, 0, 2, 'Soirée'),
+    ];
+  }
+
+  if (route.duration > 180) {
+    // Longue distance (> 3h): few slots
+    return [
+      makeSlot(7, 0, 3, 'Matin'),
+      makeSlot(12, 0, 1, 'Midi'),
+      makeSlot(17, 0, 4, 'Soir'),
+    ];
+  }
+
+  // Business / standard (1h-3h): 5 slots + custom
   return [
-    makeSlot(7, 7, 3, 'Rush matin'),
-    makeSlot(9, 7, 1, 'Standard'),
-    makeSlot(12, 7, 0, 'Heures creuses'),
-    makeSlot(17, 7, 4, 'Rush soir'),
-    makeSlot(19, 7, 2, 'Soirée'),
+    makeSlot(7, 0, 3, 'Rush matin'),
+    makeSlot(9, 0, 1, 'Standard'),
+    makeSlot(12, 0, 0, 'Heures creuses'),
+    makeSlot(17, 0, 4, 'Rush soir'),
+    makeSlot(19, 0, 2, 'Soirée'),
   ];
 };
