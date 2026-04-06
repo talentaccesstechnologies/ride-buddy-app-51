@@ -520,11 +520,25 @@ const CabyCrossBorderPage: React.FC = () => {
                   <span className="font-bold">{value}</span>
                 </div>
               ))}
-              <div className="border-t border-dashed border-border pt-3">
+              <div className="border-t border-dashed border-border pt-3 space-y-1.5">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Total</span>
+                  <span className="text-muted-foreground">Siège</span>
+                  <span>CHF {selectedSlot.pricePerSeat}</span>
+                </div>
+                {baggageCost > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Bagage</span>
+                    <span>CHF {baggageCost}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">🛡️ Assurance trajet</span>
+                  <span>CHF {INSURANCE_FEE.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm border-t border-border/50 pt-1.5">
+                  <span className="font-bold">Total</span>
                   <div className="text-right">
-                    <span className="text-xl font-black">CHF {totalPrice}</span>
+                    <span className="text-xl font-black">CHF {totalPrice.toFixed(2)}</span>
                     <p className="text-[10px] text-muted-foreground">≈ €{totalEur}</p>
                   </div>
                 </div>
