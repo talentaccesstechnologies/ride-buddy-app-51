@@ -331,7 +331,27 @@ const CabyVanPage: React.FC = () => {
 
   const handleSearch = () => { if (from && to && from !== to && selectedRoute) setStep('results'); };
   const handleSelectSlot = (slot: VanSlot) => { setSelectedSlot(slot); setSelectedSeat(null); setAncillaries({}); setStep('seat'); };
-  const handleVehicleContinue = () => setStep('seat');
+  const handleVehicleContinue = () => {
+    // Create a synthetic slot if none selected (Alps2Alps flow skips slot selection)
+    if (!selectedSlot && selectedRoute) {
+      const effectiveTime = effectiveTimeAller || '08:00';
+      const syntheticSlot: VanSlot = {
+        departure: effectiveTime,
+        arrivalEstimate: addMinutesToTime(effectiveTime, selectedRoute.duration),
+        seatsTotal: 7,
+        seatsSold: 3,
+        pricing: calculateFullPrice({
+          basePrice: selectedRoute.basePrice,
+          fillRate: 3 / 7,
+          hoursUntilDeparture: 24,
+          isWeekend: false,
+          isFlash: false,
+        }),
+      };
+      setSelectedSlot(syntheticSlot);
+    }
+    setStep('seat');
+  };
 
   // Last Minute deals
   const [now, setNow] = useState(() => new Date());
