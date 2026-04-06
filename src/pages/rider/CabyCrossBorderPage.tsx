@@ -446,15 +446,36 @@ const CabyCrossBorderPage: React.FC = () => {
             ))}
           </div>
 
+          {/* Insurance badge */}
+          <div className="flex items-center gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3 mb-4">
+            <Shield className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+            <p className="text-xs text-emerald-300 text-left">🛡️ Assurance trajet activée — Vous êtes couvert pendant tout votre trajet</p>
+          </div>
+
           <div className="rounded-2xl bg-blue-500/10 border border-blue-500/30 p-4 mb-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm">Total</span>
-              <div className="text-right">
-                <span className="text-2xl font-black">CHF {totalPrice}</span>
-                <p className="text-[10px] text-muted-foreground">≈ €{totalEur}</p>
+            <div className="space-y-1.5 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Siège</span>
+                <span className="font-medium">CHF {selectedSlot.pricePerSeat}</span>
+              </div>
+              {baggageCost > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Supplément bagage</span>
+                  <span className="font-medium">CHF {baggageCost}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Assurance trajet Caby</span>
+                <span className="font-medium">CHF {INSURANCE_FEE.toFixed(2)}</span>
+              </div>
+              <div className="border-t border-border/50 pt-1.5 flex items-center justify-between">
+                <span className="font-bold">Total</span>
+                <div className="text-right">
+                  <span className="text-2xl font-black">CHF {totalPrice.toFixed(2)}</span>
+                  <p className="text-[10px] text-muted-foreground">≈ €{totalEur}</p>
+                </div>
               </div>
             </div>
-            {baggageCost > 0 && <p className="text-[10px] text-muted-foreground mt-1">Inclut supplément bagage +CHF {baggageCost}</p>}
           </div>
 
           <Button onClick={() => setStep('confirm')} disabled={!selectedSeat}
