@@ -56,8 +56,10 @@ import DriverDashboardPage from "./pages/cabyDriver/DriverDashboardPage";
 import DriverProfilePage from "./pages/cabyDriver/DriverProfilePage";
 import DriverEarningsPage from "./pages/cabyDriver/DriverEarningsPage";
 import DriverCrossBorderPage from "./pages/cabyDriver/DriverCrossBorderPage";
+import DriverFiscalPage from "./pages/cabyDriver/DriverFiscalPage";
 import CabyCrossBorderPage from "./pages/rider/CabyCrossBorderPage";
 import InvitePage from "./pages/InvitePage";
+import EarlyAccessPage from "./pages/EarlyAccessPage";
 import PartnerLoginPage from "./pages/partner/PartnerLoginPage";
 import PartnerDashboardPage from "./pages/partner/PartnerDashboardPage";
 import { PartnerProvider } from "@/contexts/PartnerContext";
@@ -132,6 +134,7 @@ const App = () => (
                 <Route path="profile" element={<DriverProfilePage />} />
                 <Route path="earnings" element={<DriverEarningsPage />} />
                 <Route path="crossborder" element={<DriverCrossBorderPage />} />
+                <Route path="fiscal" element={<DriverFiscalPage />} />
               </Route>
 
               {/* Invite */}
@@ -144,6 +147,10 @@ const App = () => (
 
               {/* Business Pro */}
               <Route path="/business" element={<CabyBusinessPage />} />
+
+              {/* Device Preview */}
+              {/* Early Access */}
+              <Route path="/early-access" element={<EarlyAccessPage />} />
 
               {/* Device Preview */}
               <Route path="/preview" element={<DevicePreviewPage />} />

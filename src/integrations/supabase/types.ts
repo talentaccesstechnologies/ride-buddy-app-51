@@ -674,6 +674,146 @@ export type Database = {
           },
         ]
       }
+      incident_compensations: {
+        Row: {
+          amount: number
+          compensation_type: string
+          created_at: string
+          description: string | null
+          expires_at: string | null
+          id: string
+          incident_id: string | null
+          is_used: boolean | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          compensation_type?: string
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          incident_id?: string | null
+          is_used?: boolean | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          compensation_type?: string
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          incident_id?: string | null
+          is_used?: boolean | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incident_compensations_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "incidents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "incident_compensations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      incidents: {
+        Row: {
+          client_id: string | null
+          compensation_amount: number | null
+          compensation_type: string | null
+          created_at: string
+          description: string | null
+          driver_id: string | null
+          id: string
+          incident_type: string
+          lat: number | null
+          lng: number | null
+          replacement_driver_id: string | null
+          reported_by: string
+          resolution: string | null
+          resolved_at: string | null
+          status: string
+          trip_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          client_id?: string | null
+          compensation_amount?: number | null
+          compensation_type?: string | null
+          created_at?: string
+          description?: string | null
+          driver_id?: string | null
+          id?: string
+          incident_type: string
+          lat?: number | null
+          lng?: number | null
+          replacement_driver_id?: string | null
+          reported_by: string
+          resolution?: string | null
+          resolved_at?: string | null
+          status?: string
+          trip_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string | null
+          compensation_amount?: number | null
+          compensation_type?: string | null
+          created_at?: string
+          description?: string | null
+          driver_id?: string | null
+          id?: string
+          incident_type?: string
+          lat?: number | null
+          lng?: number | null
+          replacement_driver_id?: string | null
+          reported_by?: string
+          resolution?: string | null
+          resolved_at?: string | null
+          status?: string
+          trip_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incidents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "incidents_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "incidents_replacement_driver_id_fkey"
+            columns: ["replacement_driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "incidents_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       map_alerts: {
         Row: {
           alert_type: string
@@ -1312,6 +1452,117 @@ export type Database = {
             columns: ["ride_id"]
             isOneToOne: false
             referencedRelation: "rides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trip_ratings: {
+        Row: {
+          badges: string[] | null
+          comment: string | null
+          created_at: string
+          criteria_scores: Json | null
+          id: string
+          is_revealed: boolean | null
+          overall_score: number
+          ratee_id: string
+          rater_id: string
+          rater_role: string
+          trip_id: string
+          trip_type: string
+          updated_at: string
+        }
+        Insert: {
+          badges?: string[] | null
+          comment?: string | null
+          created_at?: string
+          criteria_scores?: Json | null
+          id?: string
+          is_revealed?: boolean | null
+          overall_score: number
+          ratee_id: string
+          rater_id: string
+          rater_role: string
+          trip_id: string
+          trip_type?: string
+          updated_at?: string
+        }
+        Update: {
+          badges?: string[] | null
+          comment?: string | null
+          created_at?: string
+          criteria_scores?: Json | null
+          id?: string
+          is_revealed?: boolean | null
+          overall_score?: number
+          ratee_id?: string
+          rater_id?: string
+          rater_role?: string
+          trip_id?: string
+          trip_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_ratings_ratee_id_fkey"
+            columns: ["ratee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_ratings_rater_id_fkey"
+            columns: ["rater_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_warnings: {
+        Row: {
+          created_at: string
+          id: string
+          incident_id: string | null
+          is_active: boolean | null
+          reason: string | null
+          suspended_until: string | null
+          user_id: string
+          warning_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          incident_id?: string | null
+          is_active?: boolean | null
+          reason?: string | null
+          suspended_until?: string | null
+          user_id: string
+          warning_type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          incident_id?: string | null
+          is_active?: boolean | null
+          reason?: string | null
+          suspended_until?: string | null
+          user_id?: string
+          warning_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_warnings_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "incidents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_warnings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
