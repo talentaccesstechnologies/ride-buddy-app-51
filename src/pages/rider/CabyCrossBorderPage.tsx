@@ -56,8 +56,9 @@ const CabyCrossBorderPage: React.FC = () => {
     return null;
   }, [from, to, isValid]);
 
+  const INSURANCE_FEE = 2.50;
   const baggageCost = baggage === 'large' ? 5 : 0;
-  const totalPrice = selectedSlot ? selectedSlot.pricePerSeat + baggageCost : 0;
+  const totalPrice = selectedSlot ? selectedSlot.pricePerSeat + baggageCost + INSURANCE_FEE : 0;
   const totalEur = Math.round(totalPrice * EUR_RATE);
 
   const takenSeats = useMemo(() => {
