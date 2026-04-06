@@ -48,7 +48,7 @@ const categories: ServiceCategory[] = [
         title: 'Caby Van',
         desc: 'Groupes & sorties · Jusqu\'à 7 passagers',
         image: 'https://images.unsplash.com/photo-1559416523-140ddc3d238c?w=800&q=80',
-        route: '/caby/search',
+        route: '/caby/van',
       },
       {
         id: 'moto',
