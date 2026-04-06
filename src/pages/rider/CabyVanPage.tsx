@@ -35,6 +35,88 @@ import { Plane } from 'lucide-react';
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
 
+// ── VEHICLE DATA ──
+interface VehicleOption {
+  id: string;
+  type: 'shared' | 'private';
+  name: string;
+  capacity: number;
+  image: string;
+  pricePerSeat?: number;
+  priceTotal?: number;
+  features: string[];
+  details: { included: string[]; options: string[]; luggage: string; cancellation: string };
+}
+
+const VEHICLES: VehicleOption[] = [
+  {
+    id: 'van-shared', type: 'shared', name: 'VAN Standard', capacity: 7,
+    image: vehicleVanShared, pricePerSeat: 65,
+    features: ['🧳 1 bagage inclus', '🎿 Skis +CHF 15', '✓ Chauffeur certifié'],
+    details: {
+      included: ['1 bagage cabine', 'Wi-Fi à bord', 'Prise USB', 'Chauffeur professionnel certifié'],
+      options: ['Bagage supplémentaire +CHF 10', 'Équipement ski +CHF 15', 'Siège premium (avant) +CHF 8'],
+      luggage: '1 bagage standard (23kg max) inclus. Bagages volumineux sur demande.',
+      cancellation: 'Annulation gratuite jusqu\'à 24h avant le départ. 50% remboursé entre 24h et 6h. Non remboursable après.',
+    },
+  },
+  {
+    id: 'berline', type: 'private', name: 'Berline Standard', capacity: 3,
+    image: vehicleBerline, priceTotal: 210,
+    features: ['🧳 2 bagages inclus', '✓ Véhicule privatisé', '✓ Chauffeur certifié'],
+    details: {
+      included: ['2 bagages', 'Véhicule privatisé', 'Eau minérale', 'Chauffeur professionnel'],
+      options: ['Siège enfant +CHF 10', 'Arrêt intermédiaire +CHF 25'],
+      luggage: '2 bagages standards inclus (23kg max chacun).',
+      cancellation: 'Annulation gratuite jusqu\'à 48h avant. 50% entre 48h et 24h.',
+    },
+  },
+  {
+    id: 'suv', type: 'private', name: 'SUV Premium', capacity: 4,
+    image: vehicleSuv, priceTotal: 280,
+    features: ['🧳 3 bagages inclus', '✓ Véhicule privatisé', '⭐ Confort premium'],
+    details: {
+      included: ['3 bagages', 'Véhicule premium privatisé', 'Eau & snacks', 'Sièges cuir', 'Chauffeur premium'],
+      options: ['Siège enfant +CHF 10', 'Arrêt intermédiaire +CHF 25'],
+      luggage: '3 bagages standards inclus (23kg max chacun). Skis compatibles.',
+      cancellation: 'Annulation gratuite jusqu\'à 48h avant. 50% entre 48h et 24h.',
+    },
+  },
+  {
+    id: 'van-private', type: 'private', name: 'VAN Privé Standard', capacity: 7,
+    image: vehicleVanShared, priceTotal: 420,
+    features: ['🧳 7 bagages inclus', '🎿 Skis compatibles', '✓ Groupe privatisé'],
+    details: {
+      included: ['7 bagages', 'VAN privatisé pour votre groupe', 'Wi-Fi', 'Prises USB', 'Chauffeur professionnel'],
+      options: ['Équipement ski +CHF 0 (inclus)', 'Arrêt intermédiaire +CHF 30'],
+      luggage: '7 bagages standards inclus. Skis et snowboards acceptés.',
+      cancellation: 'Annulation gratuite jusqu\'à 48h avant. 50% entre 48h et 24h.',
+    },
+  },
+  {
+    id: 'van-premium', type: 'private', name: 'VAN Privé Premium', capacity: 7,
+    image: vehicleVanPremium, priceTotal: 520,
+    features: ['🧳 7 bagages inclus', '🎿 Skis compatibles', '⭐ Mercedes V-Class'],
+    details: {
+      included: ['7 bagages', 'Mercedes V-Class privatisé', 'Wi-Fi haut débit', 'Sièges cuir', 'Eau & snacks', 'Chauffeur premium'],
+      options: ['Équipement ski +CHF 0 (inclus)', 'Arrêt intermédiaire +CHF 30', 'Champagne +CHF 45'],
+      luggage: '7 bagages standards inclus. Tout équipement sport accepté.',
+      cancellation: 'Annulation gratuite jusqu\'à 72h avant. 50% entre 72h et 24h.',
+    },
+  },
+];
+
+const STEPPER_STEPS = [
+  { num: 1, label: 'Détails du trajet' },
+  { num: 2, label: 'Choisir le transfert' },
+  { num: 3, label: 'Vos informations' },
+  { num: 4, label: 'Paiement' },
+  { num: 5, label: 'Confirmation' },
+];
+
+const INSURANCE_FEE = 2.50;
+type SortMode = 'price' | 'urgent' | 'earlybird';
+
 const GOLD = '#C9A84C';
 
 const getTimeSlots = (routeSegment: string, isWeekend: boolean, duration: number): { time: string; label: string; rushLevel: 'rush' | 'creux' | 'soiree' | 'custom' }[] => {
