@@ -674,6 +674,50 @@ export type Database = {
           },
         ]
       }
+      early_access_signups: {
+        Row: {
+          city: string | null
+          created_at: string
+          email: string
+          id: string
+          is_founder: boolean
+          main_route: string | null
+          referral_code: string
+          referral_count: number
+          referred_by: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          is_founder?: boolean
+          main_route?: string | null
+          referral_code: string
+          referral_count?: number
+          referred_by?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          is_founder?: boolean
+          main_route?: string | null
+          referral_code?: string
+          referral_count?: number
+          referred_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "early_access_signups_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "early_access_signups"
+            referencedColumns: ["referral_code"]
+          },
+        ]
+      }
       incident_compensations: {
         Row: {
           amount: number
