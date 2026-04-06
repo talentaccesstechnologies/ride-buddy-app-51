@@ -7,10 +7,14 @@ import {
   Info, ChevronDown, ChevronUp, Edit2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import vehicleVanShared from '@/assets/vehicle-van-shared.jpg';
-import vehicleBerline from '@/assets/vehicle-berline.jpg';
-import vehicleSuv from '@/assets/vehicle-suv.jpg';
-import vehicleVanPremium from '@/assets/vehicle-van-premium.jpg';
+// Unsplash vehicle images
+const vehicleImages = {
+  van_shared: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&q=80',
+  berline_standard: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=400&q=80',
+  suv_premium: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=400&q=80',
+  van_private_standard: 'https://images.unsplash.com/photo-1609520505218-7421df82e44e?w=400&q=80',
+  van_private_premium: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&q=80',
+};
 import {
   cabyVanRoutes, ROUTES, ALL_CITIES, findRoute, getDestinationsFrom, generateSlotsForRoute,
   formatDuration, SEGMENT_META,
