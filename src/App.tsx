@@ -55,6 +55,8 @@ import DriverMapPage from "./pages/cabyDriver/DriverMapPage";
 import DriverDashboardPage from "./pages/cabyDriver/DriverDashboardPage";
 import DriverProfilePage from "./pages/cabyDriver/DriverProfilePage";
 import DriverEarningsPage from "./pages/cabyDriver/DriverEarningsPage";
+import DriverCrossBorderPage from "./pages/cabyDriver/DriverCrossBorderPage";
+import CabyCrossBorderPage from "./pages/rider/CabyCrossBorderPage";
 import InvitePage from "./pages/InvitePage";
 import PartnerLoginPage from "./pages/partner/PartnerLoginPage";
 import PartnerDashboardPage from "./pages/partner/PartnerDashboardPage";
@@ -88,6 +90,7 @@ const App = () => (
               <Route path="/caby/services" element={<ServicesPage />} />
               <Route path="/caby/express" element={<CabyExpressPage />} />
               <Route path="/caby/van" element={<CabyVanPage />} />
+              <Route path="/caby/crossborder" element={<CabyCrossBorderPage />} />
               <Route path="/caby/night" element={<CabyNightPage />} />
               <Route path="/caby/pass" element={<CabyPassPage />} />
               <Route path="/caby/activity" element={<ActivityPage />} />
@@ -128,6 +131,7 @@ const App = () => (
                 <Route path="club" element={<DriverClubPage />} />
                 <Route path="profile" element={<DriverProfilePage />} />
                 <Route path="earnings" element={<DriverEarningsPage />} />
+                <Route path="crossborder" element={<DriverCrossBorderPage />} />
               </Route>
 
               {/* Invite */}
