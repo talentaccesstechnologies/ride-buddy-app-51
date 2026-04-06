@@ -211,28 +211,69 @@ export const generateSlotsForRoute = (route: VanRoute, departureDate?: Date): Va
     const total = hh * 60 + mm + addMin;
     return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
   };
+  const addTimeHalf = (hh: number, mm: number, addMin: number) => addTime(hh, mm, addMin);
   const rid = String(route.id);
-  const depDate = departureDate || new Date(Date.now() + 3 * 86400000); // default 3 days out
+  const depDate = departureDate || new Date(Date.now() + 3 * 86400000);
 
-  const makeSlot = (hour: number, seats: number, seatsTaken: number, label: string): VanSlot => {
-    const result = calculateDynamicPrice(route.basePrice, seats - seatsTaken, depDate, hour);
+  const makeSlot = (hour: number, min: number, seatsTaken: number, label: string): VanSlot => {
+    const seatsAvailable = 7 - seatsTaken;
+    const result = calculateDynamicPrice(route.basePrice, seatsAvailable, depDate, hour);
     return {
-      id: `${rid}-${String(hour).padStart(2, '0')}`,
-      departure: `${String(hour).padStart(2, '0')}:00`,
-      arrivalEstimate: addTime(hour, 0, route.duration),
+      id: `${rid}-${String(hour).padStart(2, '0')}${min > 0 ? String(min).padStart(2, '0') : ''}`,
+      departure: `${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`,
+      arrivalEstimate: addTimeHalf(hour, min, route.duration),
       label,
       basePrice: result.price,
-      seatsTotal: seats,
+      seatsTotal: 7,
       seatsTaken,
       rushLevel: result.badge === 'green' ? 'green' : result.badge === 'orange' ? 'yellow' : 'red',
+      badge: result.badge,
+      reason: result.reason,
     };
   };
 
+  // Slots depend on route type
+  if (route.segment === 'ski') {
+    // Ski: vendredi soir + samedi matin + dimanche soir
+    return [
+      makeSlot(18, 0, 2, 'Vendredi soir'),
+      makeSlot(20, 0, 1, 'Vendredi soir tardif'),
+      makeSlot(6, 0, 4, 'Samedi tôt'),
+      makeSlot(7, 0, 5, 'Samedi matin'),
+      makeSlot(8, 0, 3, 'Samedi matin'),
+      makeSlot(17, 0, 4, 'Dimanche soir'),
+      makeSlot(19, 0, 2, 'Dimanche soir'),
+    ];
+  }
+
+  if (route.duration <= 60) {
+    // Pendulaire court (<= 1h): high frequency
+    return [
+      makeSlot(6, 30, 3, 'Très tôt'),
+      makeSlot(7, 30, 5, 'Rush matin'),
+      makeSlot(8, 30, 4, 'Rush matin'),
+      makeSlot(12, 0, 1, 'Heures creuses'),
+      makeSlot(17, 0, 5, 'Rush soir'),
+      makeSlot(18, 0, 4, 'Rush soir'),
+      makeSlot(19, 0, 2, 'Soirée'),
+    ];
+  }
+
+  if (route.duration > 180) {
+    // Longue distance (> 3h): few slots
+    return [
+      makeSlot(7, 0, 3, 'Matin'),
+      makeSlot(12, 0, 1, 'Midi'),
+      makeSlot(17, 0, 4, 'Soir'),
+    ];
+  }
+
+  // Business / standard (1h-3h): 5 slots + custom
   return [
-    makeSlot(7, 7, 3, 'Rush matin'),
-    makeSlot(9, 7, 1, 'Standard'),
-    makeSlot(12, 7, 0, 'Heures creuses'),
-    makeSlot(17, 7, 4, 'Rush soir'),
-    makeSlot(19, 7, 2, 'Soirée'),
+    makeSlot(7, 0, 3, 'Rush matin'),
+    makeSlot(9, 0, 1, 'Standard'),
+    makeSlot(12, 0, 0, 'Heures creuses'),
+    makeSlot(17, 0, 4, 'Rush soir'),
+    makeSlot(19, 0, 2, 'Soirée'),
   ];
 };
