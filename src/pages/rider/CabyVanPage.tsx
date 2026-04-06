@@ -297,13 +297,40 @@ const CabyVanPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Marketing message for Grand Genève */}
+          {/* Contextual marketing messages */}
           {filter === 'grand_geneve' && (
             <div className="rounded-xl bg-orange-500/10 border border-orange-500/20 p-3 mb-4 flex items-start gap-2">
               <span className="text-sm mt-0.5">🚗</span>
               <div>
                 <p className="text-xs font-bold">Navettes frontalières quotidiennes</p>
                 <p className="text-[10px] text-muted-foreground">Créneaux fixes matin (6h-8h30) et soir (17h-19h30) · Uniquement heures de pointe</p>
+              </div>
+            </div>
+          )}
+          {filter === 'valais' && (
+            <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-3 mb-4 flex items-start gap-2">
+              <span className="text-sm mt-0.5">🍷</span>
+              <div>
+                <p className="text-xs font-bold">Valais & Riviera — Pays du Vin & des Alpes</p>
+                <p className="text-[10px] text-muted-foreground">Vignobles du Lavaux UNESCO · Montreux Jazz · Vallée du Rhône jusqu'à Brigue</p>
+              </div>
+            </div>
+          )}
+          {filter === 'horlogerie' && (
+            <div className="rounded-xl bg-yellow-600/10 border border-yellow-600/20 p-3 mb-4 flex items-start gap-2">
+              <span className="text-sm mt-0.5">⌚</span>
+              <div>
+                <p className="text-xs font-bold">Jura & Route Horlogère</p>
+                <p className="text-[10px] text-muted-foreground">Service premium pour l'industrie horlogère — Rolex, Patek Philippe, Swatch Group</p>
+              </div>
+            </div>
+          )}
+          {filter === 'international' && (
+            <div className="rounded-xl bg-indigo-500/10 border border-indigo-500/20 p-3 mb-4 flex items-start gap-2">
+              <span className="text-sm mt-0.5">🌍</span>
+              <div>
+                <p className="text-xs font-bold">Routes internationales — Via Simplon</p>
+                <p className="text-[10px] text-muted-foreground">Passeport ou carte d'identité requis · Prix en CHF et EUR</p>
               </div>
             </div>
           )}
