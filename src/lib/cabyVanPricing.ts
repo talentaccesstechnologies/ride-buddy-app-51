@@ -4,7 +4,7 @@ export interface VanRoute {
   to: string;
   duration: number; // minutes
   basePrice: number;
-  segment: 'pendulaire' | 'business' | 'ski' | 'tourisme' | 'premium' | 'frontalier' | 'institutionnel';
+  segment: 'pendulaire' | 'business' | 'ski' | 'tourisme' | 'premium' | 'frontalier' | 'institutionnel' | 'horlogerie' | 'international';
   flag: string;
   seasonal?: boolean;
   daily?: boolean; // frontalier commuter routes
@@ -86,6 +86,37 @@ export const cabyVanRoutes: VanRoute[] = [
   { id: 51, from: "Genève", to: "Bellegarde", duration: 40, basePrice: 22, segment: "frontalier", flag: "🇫🇷", daily: true },
   { id: 52, from: "Genève", to: "Oyonnax", duration: 75, basePrice: 38, segment: "frontalier", flag: "🇫🇷", daily: true },
   { id: 53, from: "Genève", to: "Bourg-en-Bresse", duration: 90, basePrice: 45, segment: "frontalier", flag: "🇫🇷", daily: true },
+  // AXE VALAIS — Arc lémanique → Vallée du Rhône
+  { id: 54, from: "Genève", to: "Nyon", duration: 25, basePrice: 18, segment: "pendulaire", flag: "🇨🇭", daily: true },
+  { id: 55, from: "Genève", to: "Rolle", duration: 35, basePrice: 22, segment: "pendulaire", flag: "🇨🇭", daily: true },
+  { id: 56, from: "Genève", to: "Morges", duration: 40, basePrice: 25, segment: "pendulaire", flag: "🇨🇭", daily: true },
+  { id: 57, from: "Genève", to: "Vevey", duration: 60, basePrice: 35, segment: "business", flag: "🇨🇭" },
+  { id: 58, from: "Genève", to: "Montreux", duration: 75, basePrice: 38, segment: "tourisme", flag: "🇨🇭" },
+  { id: 59, from: "Genève", to: "Aigle", duration: 90, basePrice: 42, segment: "pendulaire", flag: "🇨🇭" },
+  { id: 60, from: "Genève", to: "Martigny", duration: 105, basePrice: 49, segment: "business", flag: "🇨🇭" },
+  { id: 61, from: "Genève", to: "Sion", duration: 135, basePrice: 59, segment: "business", flag: "🇨🇭" },
+  { id: 62, from: "Genève", to: "Sierre", duration: 150, basePrice: 65, segment: "business", flag: "🇨🇭" },
+  { id: 63, from: "Genève", to: "Brigue", duration: 180, basePrice: 75, segment: "tourisme", flag: "🇨🇭" },
+  { id: 64, from: "Lausanne", to: "Montreux", duration: 30, basePrice: 22, segment: "tourisme", flag: "🇨🇭" },
+  { id: 65, from: "Lausanne", to: "Martigny", duration: 60, basePrice: 35, segment: "pendulaire", flag: "🇨🇭" },
+  { id: 66, from: "Lausanne", to: "Sion", duration: 75, basePrice: 39, segment: "business", flag: "🇨🇭" },
+  // AXE JURA — Pied du Jura + Canton du Jura
+  { id: 67, from: "Genève", to: "Yverdon-les-Bains", duration: 60, basePrice: 35, segment: "business", flag: "🇨🇭" },
+  { id: 68, from: "Genève", to: "La Chaux-de-Fonds", duration: 120, basePrice: 55, segment: "horlogerie", flag: "⌚" },
+  { id: 69, from: "Genève", to: "Delémont", duration: 150, basePrice: 65, segment: "business", flag: "🇨🇭" },
+  { id: 70, from: "Genève", to: "Porrentruy", duration: 165, basePrice: 70, segment: "business", flag: "🇨🇭" },
+  { id: 71, from: "Lausanne", to: "Yverdon-les-Bains", duration: 30, basePrice: 22, segment: "pendulaire", flag: "🇨🇭", daily: true },
+  { id: 72, from: "Lausanne", to: "La Chaux-de-Fonds", duration: 75, basePrice: 39, segment: "horlogerie", flag: "⌚" },
+  { id: 73, from: "Neuchâtel", to: "La Chaux-de-Fonds", duration: 40, basePrice: 25, segment: "pendulaire", flag: "🇨🇭", daily: true },
+  // DESTINATIONS PREMIUM
+  { id: 74, from: "Genève", to: "Gstaad", duration: 150, basePrice: 75, segment: "premium", flag: "⭐" },
+  { id: 75, from: "Genève", to: "Château-d'Oex", duration: 120, basePrice: 59, segment: "tourisme", flag: "🇨🇭" },
+  { id: 76, from: "Lausanne", to: "Gstaad", duration: 120, basePrice: 65, segment: "premium", flag: "⭐" },
+  { id: 77, from: "Lausanne", to: "Les Diablerets", duration: 90, basePrice: 45, segment: "ski", flag: "🎿", seasonal: true },
+  // AXE ITALIE VIA SIMPLON
+  { id: 78, from: "Genève", to: "Milan", duration: 240, basePrice: 95, segment: "international", flag: "🇮🇹" },
+  { id: 79, from: "Lausanne", to: "Milan", duration: 210, basePrice: 85, segment: "international", flag: "🇮🇹" },
+  { id: 80, from: "Brigue", to: "Domodossola", duration: 30, basePrice: 22, segment: "frontalier", flag: "🇮🇹", daily: true },
 ];
 
 // All routes are bidirectional
@@ -96,7 +127,7 @@ export const ROUTES: VanRoute[] = [
 
 export const ALL_CITIES = [...new Set(ROUTES.flatMap(r => [r.from, r.to]))].sort();
 
-export type SegmentFilter = 'all' | 'pendulaire' | 'business' | 'ski' | 'tourisme' | 'premium' | 'frontalier' | 'institutionnel' | 'grand_geneve';
+export type SegmentFilter = 'all' | 'pendulaire' | 'business' | 'ski' | 'tourisme' | 'premium' | 'frontalier' | 'institutionnel' | 'grand_geneve' | 'valais' | 'horlogerie' | 'international';
 
 export const SEGMENT_META: Record<string, { label: string; icon: string; color: string }> = {
   pendulaire: { label: 'Pendulaire', icon: '🏙️', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
@@ -106,11 +137,21 @@ export const SEGMENT_META: Record<string, { label: string; icon: string; color: 
   premium: { label: 'Premium', icon: '⭐', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
   frontalier: { label: 'Frontalier', icon: '🚗', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30' },
   institutionnel: { label: 'Institutionnel', icon: '🏛️', color: 'bg-slate-500/20 text-slate-400 border-slate-500/30' },
+  horlogerie: { label: 'Route Horlogère', icon: '⌚', color: 'bg-yellow-600/20 text-yellow-500 border-yellow-600/30' },
+  international: { label: 'International', icon: '🌍', color: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' },
 };
+
+// IDs for custom filter groups
+const VALAIS_IDS = [54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66];
+const JURA_IDS = [67, 68, 69, 70, 71, 72, 73];
+const INTL_IDS = [78, 79, 80];
 
 export const getRoutesFrom = (city: string, segment?: SegmentFilter) => {
   const routes = ROUTES.filter(r => r.from === city);
-  if (segment === 'grand_geneve') return routes.filter(r => r.daily === true);
+  if (segment === 'grand_geneve') return routes.filter(r => r.daily === true && r.segment === 'frontalier');
+  if (segment === 'valais') return routes.filter(r => VALAIS_IDS.includes(r.id) || VALAIS_IDS.includes(r.id - 100));
+  if (segment === 'horlogerie') return routes.filter(r => r.segment === 'horlogerie' || JURA_IDS.includes(r.id) || JURA_IDS.includes(r.id - 100));
+  if (segment === 'international') return routes.filter(r => r.segment === 'international' || INTL_IDS.includes(r.id) || INTL_IDS.includes(r.id - 100));
   if (segment && segment !== 'all') return routes.filter(r => r.segment === segment);
   return routes;
 };
