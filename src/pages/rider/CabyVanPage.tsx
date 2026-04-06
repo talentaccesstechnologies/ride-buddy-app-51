@@ -7,10 +7,14 @@ import {
   Info, ChevronDown, ChevronUp, Edit2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import vehicleVanShared from '@/assets/vehicle-van-shared.jpg';
-import vehicleBerline from '@/assets/vehicle-berline.jpg';
-import vehicleSuv from '@/assets/vehicle-suv.jpg';
-import vehicleVanPremium from '@/assets/vehicle-van-premium.jpg';
+// Unsplash vehicle images
+const vehicleImages = {
+  van_shared: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&q=80',
+  berline_standard: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=400&q=80',
+  suv_premium: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=400&q=80',
+  van_private_standard: 'https://images.unsplash.com/photo-1609520505218-7421df82e44e?w=400&q=80',
+  van_private_premium: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&q=80',
+};
 import {
   cabyVanRoutes, ROUTES, ALL_CITIES, findRoute, getDestinationsFrom, generateSlotsForRoute,
   formatDuration, SEGMENT_META,
@@ -52,7 +56,7 @@ interface VehicleOption {
 const VEHICLES: VehicleOption[] = [
   {
     id: 'van-shared', type: 'shared', name: 'VAN Standard', capacity: 7,
-    image: vehicleVanShared, pricePerSeat: 65,
+    image: vehicleImages.van_shared, pricePerSeat: 65,
     features: ['🧳 1 bagage inclus', '🎿 Skis +CHF 15', '✓ Chauffeur certifié'],
     details: {
       included: ['1 bagage cabine', 'Wi-Fi à bord', 'Prise USB', 'Chauffeur professionnel certifié'],
@@ -63,7 +67,7 @@ const VEHICLES: VehicleOption[] = [
   },
   {
     id: 'berline', type: 'private', name: 'Berline Standard', capacity: 3,
-    image: vehicleBerline, priceTotal: 210,
+    image: vehicleImages.berline_standard, priceTotal: 210,
     features: ['🧳 2 bagages inclus', '✓ Véhicule privatisé', '✓ Chauffeur certifié'],
     details: {
       included: ['2 bagages', 'Véhicule privatisé', 'Eau minérale', 'Chauffeur professionnel'],
@@ -74,7 +78,7 @@ const VEHICLES: VehicleOption[] = [
   },
   {
     id: 'suv', type: 'private', name: 'SUV Premium', capacity: 4,
-    image: vehicleSuv, priceTotal: 280,
+    image: vehicleImages.suv_premium, priceTotal: 280,
     features: ['🧳 3 bagages inclus', '✓ Véhicule privatisé', '⭐ Confort premium'],
     details: {
       included: ['3 bagages', 'Véhicule premium privatisé', 'Eau & snacks', 'Sièges cuir', 'Chauffeur premium'],
@@ -85,7 +89,7 @@ const VEHICLES: VehicleOption[] = [
   },
   {
     id: 'van-private', type: 'private', name: 'VAN Privé Standard', capacity: 7,
-    image: vehicleVanShared, priceTotal: 420,
+    image: vehicleImages.van_private_standard, priceTotal: 420,
     features: ['🧳 7 bagages inclus', '🎿 Skis compatibles', '✓ Groupe privatisé'],
     details: {
       included: ['7 bagages', 'VAN privatisé pour votre groupe', 'Wi-Fi', 'Prises USB', 'Chauffeur professionnel'],
@@ -96,7 +100,7 @@ const VEHICLES: VehicleOption[] = [
   },
   {
     id: 'van-premium', type: 'private', name: 'VAN Privé Premium', capacity: 7,
-    image: vehicleVanPremium, priceTotal: 520,
+    image: vehicleImages.van_private_premium, priceTotal: 520,
     features: ['🧳 7 bagages inclus', '🎿 Skis compatibles', '⭐ Mercedes V-Class'],
     details: {
       included: ['7 bagages', 'Mercedes V-Class privatisé', 'Wi-Fi haut débit', 'Sièges cuir', 'Eau & snacks', 'Chauffeur premium'],
@@ -1123,13 +1127,19 @@ const CabyVanPage: React.FC = () => {
                 const isExpanded = expandedDetails === vehicle.id;
                 return (
                   <motion.div key={vehicle.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                    className={`bg-white rounded-2xl border-2 overflow-hidden transition-all shadow-sm hover:shadow-md ${
-                      isSelected ? 'border-amber-400 shadow-md' : 'border-gray-200'
-                    }`}>
-                    <div className="flex flex-col md:flex-row">
-                      {/* Vehicle image */}
-                      <div className="md:w-48 h-36 md:h-auto bg-gray-50 flex-shrink-0 overflow-hidden">
-                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover" loading="lazy" width={800} height={512} />
+                    className={`rounded-2xl border-2 overflow-hidden transition-all hover:shadow-md ${
+                      isSelected ? 'border-amber-400 shadow-md' : 'border-amber-300'
+                    }`}
+                    style={{ backgroundColor: '#FDFAF4' }}>
+                    <div className="flex flex-col md:flex-row relative">
+                      {/* Recommended badge */}
+                      <div className="absolute top-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold text-white shadow-md" style={{ backgroundColor: GOLD }}>
+                        <Star className="w-3 h-3 fill-white" /> Recommandé
+                      </div>
+
+                      {/* Vehicle image — larger for shared */}
+                      <div className="md:w-56 h-[200px] md:h-auto bg-gray-50 flex-shrink-0 overflow-hidden rounded-lg m-2">
+                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover rounded-lg" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} loading="lazy" />
                       </div>
 
                       {/* Content */}
@@ -1143,9 +1153,13 @@ const CabyVanPage: React.FC = () => {
                               </span>
                             </div>
                             <p className="text-xs text-gray-500">Jusqu'à {vehicle.capacity} passagers</p>
-                            <div className="flex items-center gap-1 mt-1">
-                              <Users className="w-3.5 h-3.5 text-blue-500" />
-                              <span className="text-[11px] text-blue-600 font-medium">Siège partagé</span>
+                            <div className="flex items-center gap-2 mt-1.5">
+                              <span className="flex items-center gap-1 text-[11px] text-blue-600 font-medium">
+                                <Users className="w-3.5 h-3.5 text-blue-500" /> Siège partagé
+                              </span>
+                              <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded-full">
+                                <Leaf className="w-3 h-3" /> Écologique
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -1259,8 +1273,8 @@ const CabyVanPage: React.FC = () => {
                       isSelected ? 'border-amber-400 shadow-md' : 'border-gray-200'
                     }`}>
                     <div className="flex flex-col md:flex-row">
-                      <div className="md:w-48 h-36 md:h-auto bg-gray-50 flex-shrink-0 overflow-hidden">
-                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover" loading="lazy" width={800} height={512} />
+                      <div className="md:w-44 h-[150px] md:h-auto bg-gray-50 flex-shrink-0 overflow-hidden rounded-lg m-2">
+                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover rounded-lg" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} loading="lazy" />
                       </div>
                       <div className="flex-1 p-5">
                         <div className="flex items-start justify-between mb-3">
