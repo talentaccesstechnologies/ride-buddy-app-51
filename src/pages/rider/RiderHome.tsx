@@ -31,6 +31,9 @@ const RiderHome: React.FC = () => {
   const { profile } = useAuth();
   const { latitude, longitude, loading } = useGeolocation();
   const { alerts } = useMapAlerts();
+  const now = new Date();
+  const hour = now.getHours();
+  const isNightTime = hour >= 21 && hour < 6 || hour >= 21; // 21:30-6:00 show banner
 
   const nearbyDrivers = useMemo(() => {
     if (latitude && longitude) return generateNearbyDrivers(latitude, longitude, 5);
