@@ -56,7 +56,7 @@ interface VehicleOption {
 const VEHICLES: VehicleOption[] = [
   {
     id: 'van-shared', type: 'shared', name: 'VAN Standard', capacity: 7,
-    image: vehicleVanShared, pricePerSeat: 65,
+    image: vehicleImages.van_shared, pricePerSeat: 65,
     features: ['🧳 1 bagage inclus', '🎿 Skis +CHF 15', '✓ Chauffeur certifié'],
     details: {
       included: ['1 bagage cabine', 'Wi-Fi à bord', 'Prise USB', 'Chauffeur professionnel certifié'],
@@ -67,7 +67,7 @@ const VEHICLES: VehicleOption[] = [
   },
   {
     id: 'berline', type: 'private', name: 'Berline Standard', capacity: 3,
-    image: vehicleBerline, priceTotal: 210,
+    image: vehicleImages.berline_standard, priceTotal: 210,
     features: ['🧳 2 bagages inclus', '✓ Véhicule privatisé', '✓ Chauffeur certifié'],
     details: {
       included: ['2 bagages', 'Véhicule privatisé', 'Eau minérale', 'Chauffeur professionnel'],
@@ -78,7 +78,7 @@ const VEHICLES: VehicleOption[] = [
   },
   {
     id: 'suv', type: 'private', name: 'SUV Premium', capacity: 4,
-    image: vehicleSuv, priceTotal: 280,
+    image: vehicleImages.suv_premium, priceTotal: 280,
     features: ['🧳 3 bagages inclus', '✓ Véhicule privatisé', '⭐ Confort premium'],
     details: {
       included: ['3 bagages', 'Véhicule premium privatisé', 'Eau & snacks', 'Sièges cuir', 'Chauffeur premium'],
@@ -89,7 +89,7 @@ const VEHICLES: VehicleOption[] = [
   },
   {
     id: 'van-private', type: 'private', name: 'VAN Privé Standard', capacity: 7,
-    image: vehicleVanShared, priceTotal: 420,
+    image: vehicleImages.van_private_standard, priceTotal: 420,
     features: ['🧳 7 bagages inclus', '🎿 Skis compatibles', '✓ Groupe privatisé'],
     details: {
       included: ['7 bagages', 'VAN privatisé pour votre groupe', 'Wi-Fi', 'Prises USB', 'Chauffeur professionnel'],
@@ -100,7 +100,7 @@ const VEHICLES: VehicleOption[] = [
   },
   {
     id: 'van-premium', type: 'private', name: 'VAN Privé Premium', capacity: 7,
-    image: vehicleVanPremium, priceTotal: 520,
+    image: vehicleImages.van_private_premium, priceTotal: 520,
     features: ['🧳 7 bagages inclus', '🎿 Skis compatibles', '⭐ Mercedes V-Class'],
     details: {
       included: ['7 bagages', 'Mercedes V-Class privatisé', 'Wi-Fi haut débit', 'Sièges cuir', 'Eau & snacks', 'Chauffeur premium'],
