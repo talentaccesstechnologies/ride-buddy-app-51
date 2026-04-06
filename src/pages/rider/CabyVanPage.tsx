@@ -37,22 +37,26 @@ const SeatButton: React.FC<{ seat: number; taken: boolean; selected: boolean; on
 const HERO_GROUPS: { title: string; icon: string; routes: VanRoute[]; subtitle?: string }[] = [
   { title: 'GRAND GENÈVE — HAUTE-SAVOIE', icon: '🇫🇷', subtitle: '74% des frontaliers · Trajets quotidiens', routes: cabyVanRoutes.filter(r => r.id >= 38 && r.id <= 47) },
   { title: 'GRAND GENÈVE — AIN', icon: '🇫🇷', subtitle: '19% des frontaliers · Pays de Gex', routes: cabyVanRoutes.filter(r => r.id >= 48 && r.id <= 53) },
+  { title: 'AXE VALAIS — Riviera & Vallée du Rhône', icon: '🏔️', subtitle: '🍷 Traversez les vignobles du Lavaux UNESCO', routes: cabyVanRoutes.filter(r => r.id >= 54 && r.id <= 66) },
+  { title: 'AXE JURA — Route Horlogère', icon: '⌚', subtitle: 'Service privilégié pour l\'industrie horlogère', routes: cabyVanRoutes.filter(r => r.id >= 67 && r.id <= 73) },
   { title: 'AXE ROMAND', icon: '🏙️', routes: cabyVanRoutes.filter(r => r.id <= 5) },
   { title: 'AXE PLATEAU', icon: '💼', routes: cabyVanRoutes.filter(r => r.id >= 6 && r.id <= 12) },
   { title: 'AXE ALÉMANIQUE', icon: '🇨🇭', routes: cabyVanRoutes.filter(r => r.id >= 13 && r.id <= 18) },
   { title: 'LONGUE DISTANCE', icon: '⭐', routes: cabyVanRoutes.filter(r => r.id >= 19 && r.id <= 21) },
   { title: 'SKI SUISSE', icon: '🎿', routes: cabyVanRoutes.filter(r => r.id >= 22 && r.id <= 28) },
   { title: 'SKI FRANCE', icon: '🎿🇫🇷', routes: cabyVanRoutes.filter(r => r.id >= 29 && r.id <= 33) },
-  { title: 'TRANSFRONTALIER', icon: '🚗', routes: cabyVanRoutes.filter(r => r.id >= 34 && r.id <= 36) },
+  { title: 'DESTINATIONS PREMIUM', icon: '⭐', routes: cabyVanRoutes.filter(r => [74, 75, 76, 77].includes(r.id)) },
+  { title: 'INTERNATIONAL — Via Simplon', icon: '🇮🇹', subtitle: '🇮🇹 Passeport/carte d\'identité requis', routes: cabyVanRoutes.filter(r => [34, 35, 36, 78, 79, 80].includes(r.id)) },
 ];
 
 const FILTER_TABS: { key: SegmentFilter; label: string; icon: string; badge?: string }[] = [
   { key: 'all', label: 'Tous', icon: '🗺️' },
   { key: 'grand_geneve', label: 'Grand Genève', icon: '🚗', badge: '112\'000 frontaliers' },
-  { key: 'pendulaire', label: 'Pendulaire', icon: '🏙️' },
-  { key: 'business', label: 'Business', icon: '💼' },
+  { key: 'valais', label: 'Valais & Riviera', icon: '🏔️' },
+  { key: 'horlogerie', label: 'Jura & Horlogerie', icon: '⌚' },
+  { key: 'pendulaire', label: 'Villes Suisses', icon: '🏙️' },
   { key: 'ski', label: 'Ski', icon: '🎿' },
-  { key: 'frontalier', label: 'Frontalier', icon: '🌍' },
+  { key: 'international', label: 'International', icon: '🌍' },
   { key: 'premium', label: 'Premium', icon: '⭐' },
 ];
 
