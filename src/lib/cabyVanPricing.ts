@@ -20,8 +20,13 @@ export interface VanSlot {
   rushLevel: 'green' | 'yellow' | 'red';
 }
 
-const PRICE_FLOOR = 19;
-const PRICE_CEILING = 130;
+export type PriceBadge = 'green' | 'orange' | 'red';
+
+export interface DynamicPriceResult {
+  price: number;
+  badge: PriceBadge;
+  reason: string;
+}
 
 export const cabyVanRoutes: VanRoute[] = [
   // AXE ROMAND
@@ -110,50 +115,90 @@ export const formatDuration = (min: number): string => {
   return m > 0 ? `${h}h${String(m).padStart(2, '0')}` : `${h}h`;
 };
 
-export const calculateDynamicPrice = (
+export function calculateDynamicPrice(
   basePrice: number,
   seatsAvailable: number,
-  hour: number,
-  dayOfWeek: number,
-  daysUntilDeparture: number,
-  isSchoolHoliday: boolean = false
-): number => {
-  let price = basePrice;
-  if (seatsAvailable >= 7) price *= 0.85;
-  else if (seatsAvailable >= 5) price *= 1.0;
-  else if (seatsAvailable >= 3) price *= 1.1;
-  else price *= 1.15;
+  departureDate: Date,
+  departureHour: number,
+  bookingDate: Date = new Date()
+): DynamicPriceResult {
+  let multiplier = 1.0;
 
-  if (daysUntilDeparture >= 7) price *= 0.9;
-  else if (daysUntilDeparture >= 3) price *= 1.0;
-  else if (daysUntilDeparture >= 1) price *= 1.05;
-  else price *= 1.15;
+  // F1 — Remplissage (7 sièges total)
+  if (seatsAvailable === 7) multiplier *= 0.85;
+  else if (seatsAvailable >= 5) multiplier *= 1.00;
+  else if (seatsAvailable >= 3) multiplier *= 1.10;
+  else multiplier *= 1.15;
 
-  if ((hour >= 7 && hour <= 9) || (hour >= 16 && hour <= 19)) price *= 1.15;
-  else if (hour >= 9 && hour <= 16) price *= 0.95;
-  else price *= 1.05;
+  // F2 — Délai de réservation
+  const daysUntilDeparture = Math.floor((departureDate.getTime() - bookingDate.getTime()) / (1000 * 60 * 60 * 24));
+  if (daysUntilDeparture >= 7) multiplier *= 0.90;
+  else if (daysUntilDeparture >= 3) multiplier *= 1.00;
+  else if (daysUntilDeparture >= 1) multiplier *= 1.05;
+  else multiplier *= 1.15;
 
-  if ((dayOfWeek === 1 && hour < 12) || (dayOfWeek === 5 && hour >= 16)) price *= 1.2;
-  else if (dayOfWeek >= 2 && dayOfWeek <= 4) price *= 1.0;
-  else if (dayOfWeek === 0 || dayOfWeek === 6) price *= 1.1;
+  // F3 — Heure de départ
+  if ((departureHour >= 7 && departureHour <= 9) || (departureHour >= 16 && departureHour <= 19)) multiplier *= 1.15;
+  else if (departureHour >= 9 && departureHour < 16) multiplier *= 0.95;
+  else multiplier *= 1.05;
 
-  if (isSchoolHoliday) price *= 1.2;
+  // F4 — Jour de semaine
+  const dayOfWeek = departureDate.getDay();
+  if ((dayOfWeek === 1 && departureHour <= 10) || (dayOfWeek === 5 && departureHour >= 15)) multiplier *= 1.20;
+  else if (dayOfWeek === 0 || dayOfWeek === 6) multiplier *= 1.10;
+  else multiplier *= 1.00;
 
-  return Math.min(PRICE_CEILING, Math.max(PRICE_FLOOR, Math.round(price)));
-};
+  // F5 — Saisonnalité
+  const month = departureDate.getMonth() + 1;
+  if (month === 1) multiplier *= 1.30; // WEF Davos
+  else if ([12, 2, 3].includes(month)) multiplier *= 1.15; // Ski
+  else if ([7, 8].includes(month)) multiplier *= 0.90; // Basse saison
 
-export const generateSlotsForRoute = (route: VanRoute): VanSlot[] => {
+  // Prix final avec garde-fous
+  const rawPrice = basePrice * multiplier;
+  const price = Math.max(basePrice * 0.77, Math.min(rawPrice, 110));
+  const finalPrice = Math.round(price);
+
+  // Badge couleur
+  const ratio = finalPrice / basePrice;
+  const badge: PriceBadge = ratio <= 0.90 ? 'green' : ratio <= 1.05 ? 'orange' : 'red';
+
+  // Raison affichée
+  const reason = seatsAvailable <= 2 ? 'Derniers sièges' :
+    daysUntilDeparture >= 7 ? 'Prix early bird' :
+    (departureHour >= 7 && departureHour <= 9) || (departureHour >= 16 && departureHour <= 19) ? 'Heure de pointe' :
+    'Prix standard';
+
+  return { price: finalPrice, badge, reason };
+}
+
+export const generateSlotsForRoute = (route: VanRoute, departureDate?: Date): VanSlot[] => {
   const addTime = (hh: number, mm: number, addMin: number) => {
     const total = hh * 60 + mm + addMin;
     return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
   };
   const rid = String(route.id);
-  const slots: VanSlot[] = [
-    { id: `${rid}-07`, departure: '07:00', arrivalEstimate: addTime(7, 0, route.duration), label: 'Rush matin', basePrice: calculateDynamicPrice(route.basePrice, 4, 7, 3, 3), seatsTotal: 7, seatsTaken: 3, rushLevel: 'red' },
-    { id: `${rid}-09`, departure: '09:00', arrivalEstimate: addTime(9, 0, route.duration), label: 'Standard', basePrice: calculateDynamicPrice(route.basePrice, 6, 9, 3, 3), seatsTotal: 7, seatsTaken: 1, rushLevel: 'yellow' },
-    { id: `${rid}-12`, departure: '12:00', arrivalEstimate: addTime(12, 0, route.duration), label: 'Heures creuses', basePrice: calculateDynamicPrice(route.basePrice, 7, 12, 3, 3), seatsTotal: 7, seatsTaken: 0, rushLevel: 'green' },
-    { id: `${rid}-17`, departure: '17:00', arrivalEstimate: addTime(17, 0, route.duration), label: 'Rush soir', basePrice: calculateDynamicPrice(route.basePrice, 3, 17, 3, 3), seatsTotal: 7, seatsTaken: 4, rushLevel: 'red' },
-    { id: `${rid}-19`, departure: '19:00', arrivalEstimate: addTime(19, 0, route.duration), label: 'Soirée', basePrice: calculateDynamicPrice(route.basePrice, 5, 19, 3, 3), seatsTotal: 7, seatsTaken: 2, rushLevel: 'yellow' },
+  const depDate = departureDate || new Date(Date.now() + 3 * 86400000); // default 3 days out
+
+  const makeSlot = (hour: number, seats: number, seatsTaken: number, label: string): VanSlot => {
+    const result = calculateDynamicPrice(route.basePrice, seats - seatsTaken, depDate, hour);
+    return {
+      id: `${rid}-${String(hour).padStart(2, '0')}`,
+      departure: `${String(hour).padStart(2, '0')}:00`,
+      arrivalEstimate: addTime(hour, 0, route.duration),
+      label,
+      basePrice: result.price,
+      seatsTotal: seats,
+      seatsTaken,
+      rushLevel: result.badge === 'green' ? 'green' : result.badge === 'orange' ? 'yellow' : 'red',
+    };
+  };
+
+  return [
+    makeSlot(7, 7, 3, 'Rush matin'),
+    makeSlot(9, 7, 1, 'Standard'),
+    makeSlot(12, 7, 0, 'Heures creuses'),
+    makeSlot(17, 7, 4, 'Rush soir'),
+    makeSlot(19, 7, 2, 'Soirée'),
   ];
-  return slots;
 };
