@@ -689,6 +689,106 @@ const CabyVanPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Pickup address */}
+            {from && (
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block font-medium">📍 Adresse de prise en charge</label>
+                <select
+                  value={pickupLabel}
+                  onChange={(e) => {
+                    const pt = pickupPoints.find(p => p.label === e.target.value);
+                    setPickupLabel(e.target.value);
+                    setPickupAddress(pt?.address || '');
+                    setPickupCustom('');
+                  }}
+                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
+                  <option value="">Choisir un point de pickup</option>
+                  {pickupPoints.map(p => (
+                    <option key={p.label} value={p.label}>{p.label}</option>
+                  ))}
+                </select>
+                {selectedPickupIsCustom && (
+                  <input
+                    type="text"
+                    value={pickupCustom}
+                    onChange={(e) => setPickupCustom(e.target.value)}
+                    placeholder="Tapez votre adresse, hôtel, gare..."
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 mt-2"
+                  />
+                )}
+                {pickupAddress && !selectedPickupIsCustom && (
+                  <p className="text-[10px] text-gray-400 mt-1 px-1">{pickupAddress}</p>
+                )}
+              </div>
+            )}
+
+            {/* Dropoff address */}
+            {to && (
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block font-medium">📍 Adresse de dépose</label>
+                <select
+                  value={dropoffLabel}
+                  onChange={(e) => {
+                    const pt = dropoffPoints.find(p => p.label === e.target.value);
+                    setDropoffLabel(e.target.value);
+                    setDropoffAddress(pt?.address || '');
+                    setDropoffCustom('');
+                  }}
+                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
+                  <option value="">Choisir un point de dépose</option>
+                  {dropoffPoints.map(p => (
+                    <option key={p.label} value={p.label}>{p.label}</option>
+                  ))}
+                </select>
+                {selectedDropoffIsCustom && (
+                  <input
+                    type="text"
+                    value={dropoffCustom}
+                    onChange={(e) => setDropoffCustom(e.target.value)}
+                    placeholder="Tapez votre adresse, hôtel, bureau..."
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 mt-2"
+                  />
+                )}
+                {dropoffAddress && !selectedDropoffIsCustom && (
+                  <p className="text-[10px] text-gray-400 mt-1 px-1">{dropoffAddress}</p>
+                )}
+              </div>
+            )}
+
+            {/* Airport toggle */}
+            {isAirport && (
+              <div className="rounded-xl bg-blue-50 border border-blue-200 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Plane className="w-4 h-4 text-blue-600" />
+                  <p className="text-xs font-bold text-blue-800">✈️ Vol détecté — Comment calculer l'heure ?</p>
+                </div>
+                <div className="flex gap-2 mb-3">
+                  <button
+                    onClick={() => setAirportMode('arrival')}
+                    className={`flex-1 py-2 rounded-lg text-xs font-bold transition-colors border ${airportMode === 'arrival' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200'}`}>
+                    Heure d'arrivée vol
+                  </button>
+                  <button
+                    onClick={() => setAirportMode('pickup')}
+                    className={`flex-1 py-2 rounded-lg text-xs font-bold transition-colors border ${airportMode === 'pickup' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200'}`}>
+                    Heure de pickup
+                  </button>
+                </div>
+                {airportMode === 'arrival' && (
+                  <div>
+                    <input
+                      type="time"
+                      value={flightArrivalTime}
+                      onChange={(e) => setFlightArrivalTime(e.target.value)}
+                      className="w-full h-10 rounded-lg bg-white border border-gray-200 px-3 text-sm text-gray-900"
+                      placeholder="Heure d'arrivée du vol"
+                    />
+                    <p className="text-[10px] text-blue-600 mt-1.5">🛬 Votre chauffeur vous attendra à votre arrivée avec une pancarte à votre nom</p>
+                  </div>
+                )}
+              </div>
+            )}
+
             {selectedRoute && (
               <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
