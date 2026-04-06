@@ -55,6 +55,8 @@ import DriverMapPage from "./pages/cabyDriver/DriverMapPage";
 import DriverDashboardPage from "./pages/cabyDriver/DriverDashboardPage";
 import DriverProfilePage from "./pages/cabyDriver/DriverProfilePage";
 import DriverEarningsPage from "./pages/cabyDriver/DriverEarningsPage";
+import DriverCrossBorderPage from "./pages/cabyDriver/DriverCrossBorderPage";
+import CabyCrossBorderPage from "./pages/rider/CabyCrossBorderPage";
 import InvitePage from "./pages/InvitePage";
 import PartnerLoginPage from "./pages/partner/PartnerLoginPage";
 import PartnerDashboardPage from "./pages/partner/PartnerDashboardPage";
