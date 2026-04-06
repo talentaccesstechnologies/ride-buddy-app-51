@@ -30,6 +30,44 @@ type SortMode = 'price' | 'urgent' | 'earlybird';
 
 const GOLD = '#C9A84C';
 
+const getTimeSlots = (routeSegment: string, isWeekend: boolean, duration: number): { time: string; label: string; rushLevel: 'rush' | 'creux' | 'soiree' | 'custom' }[] => {
+  const classify = (h: number): 'rush' | 'creux' | 'soiree' => {
+    if ((h >= 6 && h <= 9) || (h >= 16 && h <= 19)) return 'rush';
+    if (h >= 9 && h < 16) return 'creux';
+    return 'soiree';
+  };
+  const make = (t: string) => ({ time: t, label: t, rushLevel: classify(parseInt(t)) as 'rush' | 'creux' | 'soiree' });
+  let slots: { time: string; label: string; rushLevel: 'rush' | 'creux' | 'soiree' | 'custom' }[] = [];
+  if (routeSegment === 'frontalier' || (routeSegment === 'pendulaire' && duration <= 60)) {
+    slots = isWeekend
+      ? ['08:00','10:00','12:00','14:00','16:00','18:00'].map(make)
+      : ['06:00','06:30','07:00','07:30','08:00','08:30','12:00','13:00','17:00','17:30','18:00','18:30','19:00','19:30'].map(make);
+  } else if (routeSegment === 'ski') {
+    slots = isWeekend
+      ? ['05:30','06:00','06:30','07:00','07:30','08:00','16:00','17:00','18:00','19:00'].map(make)
+      : ['07:00','08:00','17:00','18:00'].map(make);
+  } else if (duration > 180) {
+    slots = ['06:00','07:00','08:00','14:00','15:00'].map(make);
+  } else {
+    slots = ['07:00','08:00','09:00','12:00','14:00','17:00','19:00'].map(make);
+  }
+  slots.push({ time: 'custom', label: '🕐 Heure personnalisée', rushLevel: 'custom' });
+  return slots;
+};
+
+const RUSH_BADGE: Record<string, { label: string; color: string; priceNote?: string }> = {
+  rush: { label: '🔴 Rush', color: 'bg-red-100 text-red-700 border-red-200' },
+  creux: { label: '🟢 Creux', color: 'bg-emerald-100 text-emerald-700 border-emerald-200', priceNote: 'Prix réduit −5%' },
+  soiree: { label: '🟡 Soirée', color: 'bg-amber-100 text-amber-700 border-amber-200' },
+  custom: { label: '🕐 Libre', color: 'bg-gray-100 text-gray-600 border-gray-200' },
+};
+
+const addMinutesToTime = (time: string, minutes: number): string => {
+  const [h, m] = time.split(':').map(Number);
+  const total = h * 60 + m + minutes;
+  return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+};
+
 const POPULAR_DESTINATIONS = [
   { city: 'Zurich', emoji: '🏙️', price: 77, img: '🇨🇭' },
   { city: 'Verbier', emoji: '🎿', price: 59, img: '⛷️' },
