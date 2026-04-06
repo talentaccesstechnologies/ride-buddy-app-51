@@ -64,7 +64,28 @@ const DriverProfilePage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+
+        {/* Fiscal & Documents */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-1 h-4 rounded-full bg-primary/60" />
+            <h3 className="text-sm font-display font-bold text-foreground">Fiscalité & Documents</h3>
+          </div>
+          <button
+            onClick={() => navigate('/caby/driver/fiscal')}
+            className="w-full p-4 rounded-2xl bg-card border border-border flex items-center justify-between active:bg-muted transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-lg">📑</span>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-foreground">Fiscalité & Documents</p>
+                <p className="text-xs text-muted-foreground">Récapitulatifs, attestations, factures</p>
+              </div>
+            </div>
+            <FileText className="w-4 h-4 text-muted-foreground" />
+          </button>
+        </div>
 
       {/* Logout */}
       <div className="px-5 mt-10">
