@@ -1,11 +1,16 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, ArrowRight, Leaf, Users, Clock, MapPin, Luggage, Bike, QrCode, Check, X,
-  CreditCard, Star, ChevronLeft, ChevronRight, Search, Percent, Zap, Shield, Car, SlidersHorizontal, Timer
+  CreditCard, Star, ChevronLeft, ChevronRight, Search, Percent, Zap, Shield, Car, SlidersHorizontal, Timer,
+  Info, ChevronDown, ChevronUp, Edit2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import vehicleVanShared from '@/assets/vehicle-van-shared.jpg';
+import vehicleBerline from '@/assets/vehicle-berline.jpg';
+import vehicleSuv from '@/assets/vehicle-suv.jpg';
+import vehicleVanPremium from '@/assets/vehicle-van-premium.jpg';
 import {
   cabyVanRoutes, ROUTES, ALL_CITIES, findRoute, getDestinationsFrom, generateSlotsForRoute,
   formatDuration, SEGMENT_META,
