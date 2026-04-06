@@ -1273,8 +1273,8 @@ const CabyVanPage: React.FC = () => {
                       isSelected ? 'border-amber-400 shadow-md' : 'border-gray-200'
                     }`}>
                     <div className="flex flex-col md:flex-row">
-                      <div className="md:w-44 h-[150px] md:h-auto bg-gray-50 flex-shrink-0 overflow-hidden rounded-lg m-2">
-                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover rounded-lg" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} loading="lazy" />
+                      <div className="w-full md:w-[200px] md:min-w-[200px] h-[160px] md:h-[130px] flex-shrink-0 flex items-center justify-center overflow-hidden rounded-lg m-2 p-3" style={{ backgroundColor: '#F5F5F5' }}>
+                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-contain" loading="lazy" />
                       </div>
                       <div className="flex-1 p-5">
                         <div className="flex items-start justify-between mb-3">
