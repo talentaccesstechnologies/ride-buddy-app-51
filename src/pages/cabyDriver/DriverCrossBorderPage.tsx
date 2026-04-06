@@ -26,6 +26,8 @@ const DriverCrossBorderPage: React.FC = () => {
   const [vtcUploaded, setVtcUploaded] = useState(false);
   const [licenseUploaded, setLicenseUploaded] = useState(false);
   const [insuranceUploaded, setInsuranceUploaded] = useState(false);
+  const [insuranceCoversCovoiturage, setInsuranceCoversCovoiturage] = useState(false);
+  const [insurerInformed, setInsurerInformed] = useState(false);
 
   // Step 3 — Route
   const [routeFrom, setRouteFrom] = useState('');
@@ -193,11 +195,33 @@ const DriverCrossBorderPage: React.FC = () => {
               </button>
             ))}
 
+            {/* Insurance checkboxes */}
+            <div className="space-y-3 rounded-xl border border-border bg-card p-4">
+              <p className="text-xs font-bold flex items-center gap-1.5">🛡️ Vérification assurance</p>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" checked={insuranceCoversCovoiturage} onChange={e => setInsuranceCoversCovoiturage(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-border accent-blue-500" />
+                <span className="text-xs leading-relaxed">Mon assurance couvre le covoiturage et le transport de passagers</span>
+              </label>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" checked={insurerInformed} onChange={e => setInsurerInformed(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-border accent-blue-500" />
+                <span className="text-xs leading-relaxed">J'ai informé mon assureur de ma pratique du covoiturage régulier</span>
+              </label>
+              {(!insuranceCoversCovoiturage || !insurerInformed) && (
+                <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-2.5 text-[11px] text-amber-400">
+                  💡 Contactez votre assureur pour ajouter une clause covoiturage — c'est gratuit ou très peu coûteux chez la plupart des assureurs.
+                </div>
+              )}
+            </div>
+
             <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 text-xs text-amber-400">
               Validation Caby sous 24h après soumission de tous les documents.
             </div>
 
-            <Button onClick={() => setStep('route')} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl h-12">
+            <Button onClick={() => setStep('route')}
+              disabled={!vtcUploaded || !licenseUploaded || !insuranceUploaded || !insuranceCoversCovoiturage || !insurerInformed}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl h-12 disabled:opacity-40">
               Suivant → Mon trajet
             </Button>
           </div>
