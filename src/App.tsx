@@ -58,6 +58,8 @@ import DriverEarningsPage from "./pages/cabyDriver/DriverEarningsPage";
 import DriverCrossBorderPage from "./pages/cabyDriver/DriverCrossBorderPage";
 import DriverFiscalPage from "./pages/cabyDriver/DriverFiscalPage";
 import CabyCrossBorderPage from "./pages/rider/CabyCrossBorderPage";
+import WalletPage from "./pages/rider/WalletPage";
+import MyReservationsPage from "./pages/rider/MyReservationsPage";
 import InvitePage from "./pages/InvitePage";
 import EarlyAccessPage from "./pages/EarlyAccessPage";
 import PartnerLoginPage from "./pages/partner/PartnerLoginPage";
@@ -100,7 +102,8 @@ const App = () => (
               <Route path="/caby/account" element={<AccountPage />} />
               <Route path="/caby/account/settings" element={<AccountSettingsPage />} />
               <Route path="/caby/account/help" element={<HelpPage />} />
-              <Route path="/caby/account/wallet" element={<PaymentPage />} />
+              <Route path="/caby/account/wallet" element={<WalletPage />} />
+              <Route path="/caby/account/reservations" element={<MyReservationsPage />} />
               <Route path="/caby/account/safety" element={<SafetyPage />} />
               <Route path="/caby/account/safety/preferences" element={<SafetyPreferencesPage />} />
               <Route path="/caby/account/safety/contacts" element={<TrustedContactsPage />} />
