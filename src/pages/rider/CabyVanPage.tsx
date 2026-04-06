@@ -853,13 +853,14 @@ const CabyVanPage: React.FC = () => {
                   ))}
                 </select>
                 {selectedDropoffIsCustom && (
-                  <input
-                    type="text"
-                    value={dropoffCustom}
-                    onChange={(e) => setDropoffCustom(e.target.value)}
-                    placeholder="Tapez votre adresse, hôtel, bureau..."
-                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 mt-2"
-                  />
+                  <div className="mt-2">
+                    <PlacesAutocomplete
+                      value={dropoffCustom}
+                      onChange={setDropoffCustom}
+                      onPlaceSelect={(place) => setDropoffCustom(place.address)}
+                      placeholder="Tapez votre adresse, hôtel, bureau..."
+                    />
+                  </div>
                 )}
                 {dropoffAddress && !selectedDropoffIsCustom && (
                   <p className="text-[10px] text-gray-400 mt-1 px-1">{dropoffAddress}</p>
