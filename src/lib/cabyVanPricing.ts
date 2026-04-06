@@ -7,6 +7,7 @@ export interface VanRoute {
   segment: 'pendulaire' | 'business' | 'ski' | 'tourisme' | 'premium' | 'frontalier' | 'institutionnel';
   flag: string;
   seasonal?: boolean;
+  daily?: boolean; // frontalier commuter routes
 }
 
 export interface VanSlot {
@@ -18,19 +19,10 @@ export interface VanSlot {
   seatsTotal: number;
   seatsTaken: number;
   rushLevel: 'green' | 'yellow' | 'red';
-  badge: PriceBadge;
-  reason: string;
 }
 
-export type RouteFilter = 'all' | 'villes' | 'ski_ch' | 'ski_fr' | 'transfrontalier';
-
-export type PriceBadge = 'green' | 'orange' | 'red';
-
-export interface DynamicPriceResult {
-  price: number;
-  badge: PriceBadge;
-  reason: string;
-}
+const PRICE_FLOOR = 12;
+const PRICE_CEILING = 130;
 
 export const cabyVanRoutes: VanRoute[] = [
   // AXE ROMAND
@@ -72,11 +64,28 @@ export const cabyVanRoutes: VanRoute[] = [
   { id: 31, from: "Genève", to: "Courchevel", duration: 150, basePrice: 69, segment: "ski", flag: "🎿🇫🇷", seasonal: true },
   { id: 32, from: "Genève", to: "Val d'Isère", duration: 180, basePrice: 79, segment: "ski", flag: "🎿🇫🇷", seasonal: true },
   { id: 33, from: "Genève", to: "Les Arcs", duration: 165, basePrice: 72, segment: "ski", flag: "🎿🇫🇷", seasonal: true },
-  // TRANSFRONTALIER
-  { id: 34, from: "Genève", to: "Annecy", duration: 45, basePrice: 25, segment: "frontalier", flag: "🇫🇷" },
-  { id: 35, from: "Genève", to: "Lyon", duration: 105, basePrice: 49, segment: "premium", flag: "🇫🇷" },
-  { id: 36, from: "Bâle", to: "Strasbourg", duration: 45, basePrice: 25, segment: "frontalier", flag: "🇫🇷" },
-  { id: 37, from: "Zurich", to: "Munich", duration: 180, basePrice: 85, segment: "premium", flag: "🇩🇪" },
+  // TRANSFRONTALIER — Autres
+  { id: 34, from: "Genève", to: "Lyon", duration: 105, basePrice: 49, segment: "premium", flag: "🇫🇷" },
+  { id: 35, from: "Bâle", to: "Strasbourg", duration: 45, basePrice: 25, segment: "frontalier", flag: "🇫🇷" },
+  { id: 36, from: "Zurich", to: "Munich", duration: 180, basePrice: 85, segment: "premium", flag: "🇩🇪" },
+  // GRAND GENÈVE — HAUTE-SAVOIE (frontaliers quotidiens)
+  { id: 38, from: "Genève", to: "Annemasse", duration: 20, basePrice: 15, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 39, from: "Genève", to: "Saint-Julien-en-Genevois", duration: 20, basePrice: 15, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 40, from: "Genève", to: "Annecy", duration: 45, basePrice: 25, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 41, from: "Genève", to: "Thonon-les-Bains", duration: 40, basePrice: 22, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 42, from: "Genève", to: "Évian-les-Bains", duration: 50, basePrice: 25, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 43, from: "Genève", to: "Bonneville", duration: 45, basePrice: 25, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 44, from: "Genève", to: "Cluses", duration: 55, basePrice: 28, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 45, from: "Genève", to: "Sallanches", duration: 60, basePrice: 32, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 46, from: "Genève", to: "La Roche-sur-Foron", duration: 40, basePrice: 22, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 47, from: "Genève", to: "Rumilly", duration: 50, basePrice: 25, segment: "frontalier", flag: "🇫🇷", daily: true },
+  // GRAND GENÈVE — AIN (frontaliers)
+  { id: 48, from: "Genève", to: "Ferney-Voltaire", duration: 15, basePrice: 12, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 49, from: "Genève", to: "Gex", duration: 25, basePrice: 15, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 50, from: "Genève", to: "Divonne-les-Bains", duration: 25, basePrice: 15, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 51, from: "Genève", to: "Bellegarde", duration: 40, basePrice: 22, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 52, from: "Genève", to: "Oyonnax", duration: 75, basePrice: 38, segment: "frontalier", flag: "🇫🇷", daily: true },
+  { id: 53, from: "Genève", to: "Bourg-en-Bresse", duration: 90, basePrice: 45, segment: "frontalier", flag: "🇫🇷", daily: true },
 ];
 
 // All routes are bidirectional
@@ -87,24 +96,7 @@ export const ROUTES: VanRoute[] = [
 
 export const ALL_CITIES = [...new Set(ROUTES.flatMap(r => [r.from, r.to]))].sort();
 
-export const ROUTE_FILTER_META: { key: RouteFilter; label: string; icon: string }[] = [
-  { key: 'all', label: 'Tous', icon: '🗺️' },
-  { key: 'villes', label: 'Villes', icon: '🏙️' },
-  { key: 'ski_ch', label: 'Ski Suisse', icon: '🎿' },
-  { key: 'ski_fr', label: 'Ski France', icon: '🎿🇫🇷' },
-  { key: 'transfrontalier', label: 'Transfrontalier', icon: '🌍' },
-];
-
-const routeMatchesFilter = (r: VanRoute, f: RouteFilter): boolean => {
-  if (f === 'all') return true;
-  if (f === 'villes') return ['pendulaire', 'business', 'tourisme', 'institutionnel', 'premium'].includes(r.segment) && !r.seasonal && !r.flag.includes('🇫🇷') && !r.flag.includes('🇩🇪');
-  if (f === 'ski_ch') return r.segment === 'ski' && !r.flag.includes('🇫🇷');
-  if (f === 'ski_fr') return r.segment === 'ski' && r.flag.includes('🇫🇷');
-  if (f === 'transfrontalier') return r.segment === 'frontalier' || r.flag.includes('🇫🇷') || r.flag.includes('🇩🇪');
-  return true;
-};
-
-export type SegmentFilter = 'all' | 'pendulaire' | 'business' | 'ski' | 'tourisme' | 'premium' | 'frontalier' | 'institutionnel';
+export type SegmentFilter = 'all' | 'pendulaire' | 'business' | 'ski' | 'tourisme' | 'premium' | 'frontalier' | 'institutionnel' | 'grand_geneve';
 
 export const SEGMENT_META: Record<string, { label: string; icon: string; color: string }> = {
   pendulaire: { label: 'Pendulaire', icon: '🏙️', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
@@ -118,21 +110,9 @@ export const SEGMENT_META: Record<string, { label: string; icon: string; color: 
 
 export const getRoutesFrom = (city: string, segment?: SegmentFilter) => {
   const routes = ROUTES.filter(r => r.from === city);
+  if (segment === 'grand_geneve') return routes.filter(r => r.daily === true);
   if (segment && segment !== 'all') return routes.filter(r => r.segment === segment);
   return routes;
-};
-
-export const getRoutesFromWithFilter = (city: string, filter: RouteFilter): VanRoute[] => {
-  return ROUTES.filter(r => r.from === city && routeMatchesFilter(r, filter));
-};
-
-export const getDestinationsFromWithFilter = (city: string, filter: RouteFilter): string[] => {
-  return getRoutesFromWithFilter(city, filter).map(r => r.to);
-};
-
-export const getCitiesForFilter = (filter: RouteFilter): string[] => {
-  const filtered = ROUTES.filter(r => routeMatchesFilter(r, filter));
-  return [...new Set(filtered.flatMap(r => [r.from, r.to]))].sort();
 };
 
 export const findRoute = (from: string, to: string): VanRoute | undefined =>
@@ -149,131 +129,85 @@ export const formatDuration = (min: number): string => {
   return m > 0 ? `${h}h${String(m).padStart(2, '0')}` : `${h}h`;
 };
 
-export function calculateDynamicPrice(
+export const calculateDynamicPrice = (
   basePrice: number,
   seatsAvailable: number,
-  departureDate: Date,
-  departureHour: number,
-  bookingDate: Date = new Date()
-): DynamicPriceResult {
-  let multiplier = 1.0;
+  hour: number,
+  dayOfWeek: number,
+  daysUntilDeparture: number,
+  isSchoolHoliday: boolean = false
+): number => {
+  let price = basePrice;
+  if (seatsAvailable >= 7) price *= 0.85;
+  else if (seatsAvailable >= 5) price *= 1.0;
+  else if (seatsAvailable >= 3) price *= 1.1;
+  else price *= 1.15;
 
-  // F1 — Remplissage (7 sièges total)
-  if (seatsAvailable === 7) multiplier *= 0.85;
-  else if (seatsAvailable >= 5) multiplier *= 1.00;
-  else if (seatsAvailable >= 3) multiplier *= 1.10;
-  else multiplier *= 1.15;
+  if (daysUntilDeparture >= 7) price *= 0.9;
+  else if (daysUntilDeparture >= 3) price *= 1.0;
+  else if (daysUntilDeparture >= 1) price *= 1.05;
+  else price *= 1.15;
 
-  // F2 — Délai de réservation
-  const daysUntilDeparture = Math.floor((departureDate.getTime() - bookingDate.getTime()) / (1000 * 60 * 60 * 24));
-  if (daysUntilDeparture >= 7) multiplier *= 0.90;
-  else if (daysUntilDeparture >= 3) multiplier *= 1.00;
-  else if (daysUntilDeparture >= 1) multiplier *= 1.05;
-  else multiplier *= 1.15;
+  if ((hour >= 7 && hour <= 9) || (hour >= 16 && hour <= 19)) price *= 1.15;
+  else if (hour >= 9 && hour <= 16) price *= 0.95;
+  else price *= 1.05;
 
-  // F3 — Heure de départ
-  if ((departureHour >= 7 && departureHour <= 9) || (departureHour >= 16 && departureHour <= 19)) multiplier *= 1.15;
-  else if (departureHour >= 9 && departureHour < 16) multiplier *= 0.95;
-  else multiplier *= 1.05;
+  if ((dayOfWeek === 1 && hour < 12) || (dayOfWeek === 5 && hour >= 16)) price *= 1.2;
+  else if (dayOfWeek >= 2 && dayOfWeek <= 4) price *= 1.0;
+  else if (dayOfWeek === 0 || dayOfWeek === 6) price *= 1.1;
 
-  // F4 — Jour de semaine
-  const dayOfWeek = departureDate.getDay();
-  if ((dayOfWeek === 1 && departureHour <= 10) || (dayOfWeek === 5 && departureHour >= 15)) multiplier *= 1.20;
-  else if (dayOfWeek === 0 || dayOfWeek === 6) multiplier *= 1.10;
-  else multiplier *= 1.00;
+  if (isSchoolHoliday) price *= 1.2;
 
-  // F5 — Saisonnalité
-  const month = departureDate.getMonth() + 1;
-  if (month === 1) multiplier *= 1.30; // WEF Davos
-  else if ([12, 2, 3].includes(month)) multiplier *= 1.15; // Ski
-  else if ([7, 8].includes(month)) multiplier *= 0.90; // Basse saison
+  return Math.min(PRICE_CEILING, Math.max(PRICE_FLOOR, Math.round(price)));
+};
 
-  // Prix final avec garde-fous
-  const rawPrice = basePrice * multiplier;
-  const price = Math.max(basePrice * 0.77, Math.min(rawPrice, 110));
-  const finalPrice = Math.round(price);
-
-  // Badge couleur
-  const ratio = finalPrice / basePrice;
-  const badge: PriceBadge = ratio <= 0.90 ? 'green' : ratio <= 1.05 ? 'orange' : 'red';
-
-  // Raison affichée
-  const reason = seatsAvailable <= 2 ? 'Derniers sièges' :
-    daysUntilDeparture >= 7 ? 'Prix early bird' :
-    (departureHour >= 7 && departureHour <= 9) || (departureHour >= 16 && departureHour <= 19) ? 'Heure de pointe' :
-    'Prix standard';
-
-  return { price: finalPrice, badge, reason };
-}
-
-export const generateSlotsForRoute = (route: VanRoute, departureDate?: Date): VanSlot[] => {
+export const generateSlotsForRoute = (route: VanRoute): VanSlot[] => {
   const addTime = (hh: number, mm: number, addMin: number) => {
     const total = hh * 60 + mm + addMin;
     return `${String(Math.floor(total / 60) % 24).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
   };
-  const addTimeHalf = (hh: number, mm: number, addMin: number) => addTime(hh, mm, addMin);
   const rid = String(route.id);
-  const depDate = departureDate || new Date(Date.now() + 3 * 86400000);
 
-  const makeSlot = (hour: number, min: number, seatsTaken: number, label: string): VanSlot => {
-    const seatsAvailable = 7 - seatsTaken;
-    const result = calculateDynamicPrice(route.basePrice, seatsAvailable, depDate, hour);
-    return {
-      id: `${rid}-${String(hour).padStart(2, '0')}${min > 0 ? String(min).padStart(2, '0') : ''}`,
-      departure: `${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`,
-      arrivalEstimate: addTimeHalf(hour, min, route.duration),
-      label,
-      basePrice: result.price,
-      seatsTotal: 7,
-      seatsTaken,
-      rushLevel: result.badge === 'green' ? 'green' : result.badge === 'orange' ? 'yellow' : 'red',
-      badge: result.badge,
-      reason: result.reason,
-    };
-  };
-
-  // Slots depend on route type
-  if (route.segment === 'ski') {
-    // Ski: vendredi soir + samedi matin + dimanche soir
-    return [
-      makeSlot(18, 0, 2, 'Vendredi soir'),
-      makeSlot(20, 0, 1, 'Vendredi soir tardif'),
-      makeSlot(6, 0, 4, 'Samedi tôt'),
-      makeSlot(7, 0, 5, 'Samedi matin'),
-      makeSlot(8, 0, 3, 'Samedi matin'),
-      makeSlot(17, 0, 4, 'Dimanche soir'),
-      makeSlot(19, 0, 2, 'Dimanche soir'),
+  // Frontalier daily routes: fixed morning & evening commuter slots only
+  if (route.daily) {
+    const morningSlots = [
+      { h: 6, m: 0, label: 'Navette 6h00', taken: 5, level: 'red' as const },
+      { h: 6, m: 30, label: 'Navette 6h30', taken: 4, level: 'red' as const },
+      { h: 7, m: 0, label: 'Rush 7h00', taken: 6, level: 'red' as const },
+      { h: 7, m: 30, label: 'Rush 7h30', taken: 5, level: 'red' as const },
+      { h: 8, m: 0, label: 'Rush 8h00', taken: 3, level: 'yellow' as const },
+      { h: 8, m: 30, label: 'Standard 8h30', taken: 2, level: 'yellow' as const },
     ];
+    const eveningSlots = [
+      { h: 17, m: 0, label: 'Retour 17h00', taken: 5, level: 'red' as const },
+      { h: 17, m: 30, label: 'Retour 17h30', taken: 6, level: 'red' as const },
+      { h: 18, m: 0, label: 'Rush 18h00', taken: 4, level: 'red' as const },
+      { h: 18, m: 30, label: 'Rush 18h30', taken: 3, level: 'yellow' as const },
+      { h: 19, m: 0, label: 'Soirée 19h00', taken: 2, level: 'yellow' as const },
+      { h: 19, m: 30, label: 'Soirée 19h30', taken: 1, level: 'green' as const },
+    ];
+    return [...morningSlots, ...eveningSlots].map(s => {
+      const dep = `${String(s.h).padStart(2, '0')}:${String(s.m).padStart(2, '0')}`;
+      return {
+        id: `${rid}-${dep.replace(':', '')}`,
+        departure: dep,
+        arrivalEstimate: addTime(s.h, s.m, route.duration),
+        label: s.label,
+        basePrice: calculateDynamicPrice(route.basePrice, 7 - s.taken, s.h, 3, 3),
+        seatsTotal: 7,
+        seatsTaken: s.taken,
+        rushLevel: s.level,
+      };
+    });
   }
 
-  if (route.duration <= 60) {
-    // Pendulaire court (<= 1h): high frequency
-    return [
-      makeSlot(6, 30, 3, 'Très tôt'),
-      makeSlot(7, 30, 5, 'Rush matin'),
-      makeSlot(8, 30, 4, 'Rush matin'),
-      makeSlot(12, 0, 1, 'Heures creuses'),
-      makeSlot(17, 0, 5, 'Rush soir'),
-      makeSlot(18, 0, 4, 'Rush soir'),
-      makeSlot(19, 0, 2, 'Soirée'),
-    ];
-  }
-
-  if (route.duration > 180) {
-    // Longue distance (> 3h): few slots
-    return [
-      makeSlot(7, 0, 3, 'Matin'),
-      makeSlot(12, 0, 1, 'Midi'),
-      makeSlot(17, 0, 4, 'Soir'),
-    ];
-  }
-
-  // Business / standard (1h-3h): 5 slots + custom
-  return [
-    makeSlot(7, 0, 3, 'Rush matin'),
-    makeSlot(9, 0, 1, 'Standard'),
-    makeSlot(12, 0, 0, 'Heures creuses'),
-    makeSlot(17, 0, 4, 'Rush soir'),
-    makeSlot(19, 0, 2, 'Soirée'),
+  // Standard slots for other routes
+  const slots: VanSlot[] = [
+    { id: `${rid}-07`, departure: '07:00', arrivalEstimate: addTime(7, 0, route.duration), label: 'Rush matin', basePrice: calculateDynamicPrice(route.basePrice, 4, 7, 3, 3), seatsTotal: 7, seatsTaken: 3, rushLevel: 'red' },
+    { id: `${rid}-09`, departure: '09:00', arrivalEstimate: addTime(9, 0, route.duration), label: 'Standard', basePrice: calculateDynamicPrice(route.basePrice, 6, 9, 3, 3), seatsTotal: 7, seatsTaken: 1, rushLevel: 'yellow' },
+    { id: `${rid}-12`, departure: '12:00', arrivalEstimate: addTime(12, 0, route.duration), label: 'Heures creuses', basePrice: calculateDynamicPrice(route.basePrice, 7, 12, 3, 3), seatsTotal: 7, seatsTaken: 0, rushLevel: 'green' },
+    { id: `${rid}-17`, departure: '17:00', arrivalEstimate: addTime(17, 0, route.duration), label: 'Rush soir', basePrice: calculateDynamicPrice(route.basePrice, 3, 17, 3, 3), seatsTotal: 7, seatsTaken: 4, rushLevel: 'red' },
+    { id: `${rid}-19`, departure: '19:00', arrivalEstimate: addTime(19, 0, route.duration), label: 'Soirée', basePrice: calculateDynamicPrice(route.basePrice, 5, 19, 3, 3), seatsTotal: 7, seatsTaken: 2, rushLevel: 'yellow' },
   ];
+  return slots;
 };
