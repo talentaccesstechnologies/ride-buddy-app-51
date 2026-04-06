@@ -1043,62 +1043,380 @@ const CabyVanPage: React.FC = () => {
     );
   }
 
-  // ── RESULTS with Ryanair pricing ──
+  // ── RESULTS — Alps2Alps Style ──
   if (step === 'results' && selectedRoute) {
+    const sharedVehicles = VEHICLES.filter(v => v.type === 'shared');
+    const privateVehicles = VEHICLES.filter(v => v.type === 'private');
+    const currentStep = 2;
+
     return (
-      <div className="min-h-screen bg-gray-50 pb-24">
-        <div className="bg-white px-5 pt-14 pb-4 border-b border-gray-100">
-          <button onClick={() => setStep('search')} className="flex items-center gap-1 text-gray-500 mb-4">
-            <ArrowLeft className="w-4 h-4" /> Modifier
-          </button>
-          <div className="flex items-center gap-2 mb-1">
-            <MapPin className="w-4 h-4" style={{ color: GOLD }} />
-            <h2 className="text-lg font-bold text-gray-900">{from} → {to}</h2>
-            <span className="text-sm">{selectedRoute.flag}</span>
+      <div className="min-h-screen bg-gray-50">
+        {/* STEPPER */}
+        <div className="bg-white border-b border-gray-200 px-4 py-3">
+          <div className="max-w-6xl mx-auto flex items-center justify-between">
+            {STEPPER_STEPS.map((s, i) => (
+              <React.Fragment key={s.num}>
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                    s.num < currentStep ? 'bg-emerald-500 text-white' :
+                    s.num === currentStep ? 'text-white' :
+                    'bg-gray-200 text-gray-500'
+                  }`} style={s.num === currentStep ? { backgroundColor: GOLD } : {}}>
+                    {s.num < currentStep ? <Check className="w-3.5 h-3.5" /> : s.num}
+                  </div>
+                  <span className={`text-xs font-medium hidden md:inline ${s.num === currentStep ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</span>
+                </div>
+                {i < STEPPER_STEPS.length - 1 && <div className={`flex-1 h-0.5 mx-2 ${s.num < currentStep ? 'bg-emerald-500' : 'bg-gray-200'}`} />}
+              </React.Fragment>
+            ))}
           </div>
-          <p className="text-xs text-gray-500">{dateAller || "Aujourd'hui"}{effectiveTimeAller ? ` · ${effectiveTimeAller}` : ''} · {passengers} passager{passengers > 1 ? 's' : ''} · {formatDuration(selectedRoute.duration)}</p>
         </div>
 
-        {/* Sort buttons */}
-        <div className="px-5 pt-4 flex gap-2">
-          {([
-            { key: 'price' as SortMode, label: '💰 Prix croissant' },
-            { key: 'urgent' as SortMode, label: '⚡ Départ imminent' },
-            { key: 'earlybird' as SortMode, label: '🟢 Early Bird' },
-          ]).map(s => (
-            <button key={s.key} onClick={() => setSortMode(s.key)}
-              className={`px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors border ${sortMode === s.key ? 'text-white border-transparent' : 'bg-white text-gray-600 border-gray-200'}`}
-              style={sortMode === s.key ? { backgroundColor: GOLD } : {}}>
-              {s.label}
+        {/* TRIP RECAP — sticky */}
+        <div className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+          <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-6 flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                <div>
+                  <p className="text-sm font-bold text-gray-900">{from} → {to}</p>
+                  <p className="text-[11px] text-gray-500">{dateAller || "Aujourd'hui"} {effectiveTimeAller ? `· ${effectiveTimeAller}` : ''} · {passengers} adulte{passengers > 1 ? 's' : ''}</p>
+                </div>
+              </div>
+              {roundTrip && (
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                  <div>
+                    <p className="text-sm font-bold text-gray-900">{to} → {from}</p>
+                    <p className="text-[11px] text-gray-500">{dateRetour || "Retour"} {effectiveTimeRetour ? `· ${effectiveTimeRetour}` : ''} · {passengers} adulte{passengers > 1 ? 's' : ''}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            <button onClick={() => setStep('search')} className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50">
+              <Edit2 className="w-3 h-3" /> Modifier le trajet
             </button>
-          ))}
-        </div>
-
-        {/* Info banner */}
-        <div className="px-5 mt-3">
-          <div className="rounded-xl bg-amber-50 border border-amber-200 p-2.5 flex items-center gap-2">
-            <span className="text-sm">💡</span>
-            <p className="text-[10px] text-amber-800">Les prix augmentent à chaque réservation. Les early birds économisent jusqu'à <span className="font-bold">30%</span>.</p>
           </div>
         </div>
 
-        <div className="px-5 pt-4 space-y-3">
-          {sortedSlots.map(({ slot, pricing, depDate }) => (
-            <SeatPricingCard
-              key={slot.id}
-              from={from}
-              to={to}
-              departure={slot.departure}
-              arrivalEstimate={slot.arrivalEstimate}
-              pricing={pricing}
-              seatsTotal={slot.seatsTotal}
-              seatsSold={slot.seatsTaken}
-              departureTime={depDate}
-              onBook={() => handleSelectSlot(slot)}
-            />
-          ))}
+        {/* MAIN CONTENT — Two columns */}
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* LEFT — Vehicle cards (70%) */}
+            <div className="flex-1 lg:max-w-[70%] space-y-4">
+              {/* Shared vehicles section */}
+              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <Users className="w-5 h-5 text-gray-500" />
+                Sièges partagés
+                <span className="text-xs font-normal text-gray-400 ml-1">— Voyagez à petit prix</span>
+              </h3>
+
+              {sharedVehicles.map(vehicle => {
+                const price = getVehiclePrice(vehicle, routeBasePrice);
+                const isSelected = selectedVehicle === vehicle.id;
+                const isExpanded = expandedDetails === vehicle.id;
+                return (
+                  <motion.div key={vehicle.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                    className={`bg-white rounded-2xl border-2 overflow-hidden transition-all shadow-sm hover:shadow-md ${
+                      isSelected ? 'border-amber-400 shadow-md' : 'border-gray-200'
+                    }`}>
+                    <div className="flex flex-col md:flex-row">
+                      {/* Vehicle image */}
+                      <div className="md:w-48 h-36 md:h-auto bg-gray-50 flex-shrink-0 overflow-hidden">
+                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover" loading="lazy" width={800} height={512} />
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 p-5">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="text-base font-bold text-gray-900">{vehicle.name}</h4>
+                              <span className="flex items-center gap-0.5 text-[10px] font-medium text-gray-400 cursor-help" title="Siège partagé dans un VAN avec d'autres passagers">
+                                Siège Partagé <Info className="w-3 h-3" />
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-500">Jusqu'à {vehicle.capacity} passagers</p>
+                            <div className="flex items-center gap-1 mt-1">
+                              <Users className="w-3.5 h-3.5 text-blue-500" />
+                              <span className="text-[11px] text-blue-600 font-medium">Siège partagé</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Features */}
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {vehicle.features.map(f => (
+                            <span key={f} className="text-[11px] text-gray-600 bg-gray-50 px-2 py-1 rounded-lg">{f}</span>
+                          ))}
+                        </div>
+
+                        {/* Price selection */}
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                          <label className="flex items-center gap-3 flex-1 p-3 rounded-xl border border-gray-200 hover:border-amber-300 cursor-pointer transition-colors"
+                            onClick={() => setSelectedVehicle(vehicle.id)}>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-amber-500' : 'border-gray-300'}`}>
+                              {isSelected && <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: GOLD }} />}
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-xs text-gray-500">Trajet aller</p>
+                              <p className="text-sm text-gray-400">Prix demandé</p>
+                              <p className="text-lg font-black text-gray-900">CHF {price}.00</p>
+                            </div>
+                          </label>
+                          {roundTrip && (
+                            <label className="flex items-center gap-3 flex-1 p-3 rounded-xl border border-gray-200 hover:border-amber-300 cursor-pointer transition-colors"
+                              onClick={() => { setSelectedVehicle(vehicle.id); setSameVehicleReturn(true); setSelectedVehicleReturn(vehicle.id); }}>
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected && sameVehicleReturn ? 'border-amber-500' : 'border-gray-300'}`}>
+                                {isSelected && sameVehicleReturn && <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: GOLD }} />}
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-xs text-gray-500">Trajet retour</p>
+                                <p className="text-sm text-gray-400">Prix demandé</p>
+                                <p className="text-lg font-black text-gray-900">CHF {price}.00</p>
+                              </div>
+                            </label>
+                          )}
+                        </div>
+
+                        {roundTrip && isSelected && (
+                          <button onClick={() => { setSameVehicleReturn(true); setSelectedVehicleReturn(vehicle.id); }}
+                            className="text-[11px] font-medium mt-2 px-3 py-1 rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50">
+                            Choisir même véhicule aller-retour
+                          </button>
+                        )}
+
+                        {/* Expand details */}
+                        <button onClick={() => setExpandedDetails(isExpanded ? null : vehicle.id)}
+                          className="flex items-center gap-1 mt-3 text-xs font-medium text-blue-600 hover:text-blue-700">
+                          {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                          {isExpanded ? 'Masquer les détails' : '+ Détails'}
+                        </button>
+
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                              className="overflow-hidden">
+                              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-gray-100">
+                                <div>
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 mb-1.5">✓ Inclus dans le prix</p>
+                                  {vehicle.details.included.map(i => (
+                                    <p key={i} className="text-[11px] text-gray-600 flex items-center gap-1.5 mb-1">
+                                      <Check className="w-3 h-3 text-emerald-500 flex-shrink-0" />{i}
+                                    </p>
+                                  ))}
+                                </div>
+                                <div>
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-amber-600 mb-1.5">Options payantes</p>
+                                  {vehicle.details.options.map(o => (
+                                    <p key={o} className="text-[11px] text-gray-600 mb-1">+ {o}</p>
+                                  ))}
+                                </div>
+                                <div>
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">🧳 Bagages</p>
+                                  <p className="text-[11px] text-gray-600">{vehicle.details.luggage}</p>
+                                </div>
+                                <div>
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Annulation</p>
+                                  <p className="text-[11px] text-gray-600">{vehicle.details.cancellation}</p>
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+
+              {/* Separator banner */}
+              <div className="rounded-2xl bg-gradient-to-r from-slate-800 to-slate-700 p-4 text-center my-6">
+                <p className="text-white text-sm font-bold">Découvrez aussi nos transferts privés</p>
+                <p className="text-white/60 text-xs mt-0.5">Véhicule privatisé pour votre groupe</p>
+              </div>
+
+              {/* Private vehicles */}
+              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <Car className="w-5 h-5 text-gray-500" />
+                Transferts Privés
+                <span className="text-xs font-normal text-gray-400 ml-1">— Véhicule dédié</span>
+              </h3>
+
+              {privateVehicles.map(vehicle => {
+                const price = getVehiclePrice(vehicle, routeBasePrice);
+                const isSelected = selectedVehicle === vehicle.id;
+                const isExpanded = expandedDetails === vehicle.id;
+                return (
+                  <motion.div key={vehicle.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                    className={`bg-white rounded-2xl border-2 overflow-hidden transition-all shadow-sm hover:shadow-md ${
+                      isSelected ? 'border-amber-400 shadow-md' : 'border-gray-200'
+                    }`}>
+                    <div className="flex flex-col md:flex-row">
+                      <div className="md:w-48 h-36 md:h-auto bg-gray-50 flex-shrink-0 overflow-hidden">
+                        <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover" loading="lazy" width={800} height={512} />
+                      </div>
+                      <div className="flex-1 p-5">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="text-base font-bold text-gray-900">{vehicle.name}</h4>
+                              <span className="flex items-center gap-0.5 text-[10px] font-medium text-gray-400 cursor-help">
+                                Transfert Privé <Info className="w-3 h-3" />
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-500">Jusqu'à {vehicle.capacity} passagers</p>
+                            <div className="flex items-center gap-1 mt-1">
+                              <Car className="w-3.5 h-3.5 text-amber-600" />
+                              <span className="text-[11px] font-medium" style={{ color: GOLD }}>Transfert privé</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {vehicle.features.map(f => (
+                            <span key={f} className="text-[11px] text-gray-600 bg-gray-50 px-2 py-1 rounded-lg">{f}</span>
+                          ))}
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                          <label className="flex items-center gap-3 flex-1 p-3 rounded-xl border border-gray-200 hover:border-amber-300 cursor-pointer transition-colors"
+                            onClick={() => setSelectedVehicle(vehicle.id)}>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-amber-500' : 'border-gray-300'}`}>
+                              {isSelected && <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: GOLD }} />}
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-xs text-gray-500">{roundTrip ? 'Aller-retour' : 'Trajet aller'}</p>
+                              <p className="text-lg font-black text-gray-900">CHF {roundTrip ? price * 2 - Math.round(price * 2 * 0.05) : price}.00</p>
+                            </div>
+                          </label>
+                        </div>
+
+                        {roundTrip && isSelected && (
+                          <button onClick={() => { setSameVehicleReturn(false); }}
+                            className="text-[11px] font-medium mt-2 px-3 py-1 rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50">
+                            Choisir autre véhicule retour
+                          </button>
+                        )}
+
+                        <button onClick={() => setExpandedDetails(isExpanded ? null : vehicle.id)}
+                          className="flex items-center gap-1 mt-3 text-xs font-medium text-blue-600 hover:text-blue-700">
+                          {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                          {isExpanded ? 'Masquer les détails' : '+ Détails'}
+                        </button>
+
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                              className="overflow-hidden">
+                              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-gray-100">
+                                <div>
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 mb-1.5">✓ Inclus</p>
+                                  {vehicle.details.included.map(i => (
+                                    <p key={i} className="text-[11px] text-gray-600 flex items-center gap-1.5 mb-1"><Check className="w-3 h-3 text-emerald-500 flex-shrink-0" />{i}</p>
+                                  ))}
+                                </div>
+                                <div>
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-amber-600 mb-1.5">Options</p>
+                                  {vehicle.details.options.map(o => <p key={o} className="text-[11px] text-gray-600 mb-1">+ {o}</p>)}
+                                </div>
+                                <div>
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">🧳 Bagages</p>
+                                  <p className="text-[11px] text-gray-600">{vehicle.details.luggage}</p>
+                                </div>
+                                <div>
+                                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Annulation</p>
+                                  <p className="text-[11px] text-gray-600">{vehicle.details.cancellation}</p>
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* RIGHT — Sidebar price recap (30%) — desktop sticky */}
+            <div className="hidden lg:block lg:w-[30%]">
+              <div className="sticky top-[76px] space-y-4">
+                <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+                  <h4 className="text-sm font-bold text-gray-900 mb-4">Récapitulatif</h4>
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Trajet aller ({activeVehicle.type === 'shared' ? 'Partagé' : 'Privé'})</span>
+                      <span className="font-bold text-gray-900">CHF {outboundPrice}</span>
+                    </div>
+                    {roundTrip && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600">Trajet retour ({(sameVehicleReturn ? activeVehicle : activeVehicleReturn).type === 'shared' ? 'Partagé' : 'Privé'})</span>
+                        <span className="font-bold text-gray-900">CHF {returnPrice}</span>
+                      </div>
+                    )}
+                    {roundTrip && roundTripDiscount > 0 && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-emerald-600">Remise aller-retour -5%</span>
+                        <span className="font-bold text-emerald-600">-CHF {roundTripDiscount.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Assurance trajet</span>
+                      <span className="font-bold text-gray-900">CHF {resultsInsuranceFee.toFixed(2)}</span>
+                    </div>
+                    <div className="border-t border-gray-200 pt-3 mt-3 flex items-center justify-between">
+                      <span className="text-sm font-bold text-gray-900">Total à payer</span>
+                      <span className="text-xl font-black text-gray-900">CHF {resultsTotalPrice.toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  <Button onClick={handleVehicleContinue}
+                    className="w-full mt-4 h-12 rounded-xl text-white font-bold text-sm shadow-lg"
+                    style={{ backgroundColor: GOLD }}>
+                    Continuer
+                  </Button>
+
+                  <div className="mt-4 space-y-2">
+                    {[
+                      '✓ Annulation gratuite jusqu\'à 24h avant',
+                      '✓ Chauffeur certifié Caby',
+                      '✓ Assurance trajet incluse',
+                    ].map(t => (
+                      <p key={t} className="text-[11px] text-gray-500 flex items-center gap-1.5">
+                        <Shield className="w-3 h-3 text-emerald-500 flex-shrink-0" />{t}
+                      </p>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-gray-100 flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center">
+                      <QrCode className="w-14 h-14 text-gray-400" />
+                    </div>
+                    <p className="text-[10px] text-gray-400 mt-1.5">📱 QR Code app Caby</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <BottomNav />
+
+        {/* MOBILE — Sticky bottom bar */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-lg font-black text-gray-900">CHF {resultsTotalPrice.toFixed(2)}</p>
+              <p className="text-[10px] text-gray-500">{activeVehicle.name}{roundTrip ? ' · Aller-retour' : ''}</p>
+            </div>
+            <Button onClick={handleVehicleContinue}
+              className="h-11 px-8 rounded-xl text-white font-bold text-sm"
+              style={{ backgroundColor: GOLD }}>
+              Continuer
+            </Button>
+          </div>
+        </div>
+
+        <div className="h-20 lg:h-0" /> {/* Mobile spacer */}
       </div>
     );
   }
