@@ -418,24 +418,28 @@ const CabyVanPage: React.FC = () => {
           </div>
         )}
 
-        <div className={`relative ${flashDeals.length > 0 ? 'h-[360px]' : 'h-[420px]'} overflow-hidden ${flashDeals.length > 0 ? 'mt-3' : ''}`}>
-          <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover" width={1920} height={1080} />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
+        <div className={`relative ${flashDeals.length > 0 ? 'mt-3' : ''}`}>
+          {/* Hero background */}
+          <div className="relative h-[280px] overflow-hidden">
+            <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover" width={1920} height={1080} />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
 
-          {!flashDeals.length && (
-            <div className="absolute top-12 left-5 z-10">
-              <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-white/90 text-sm font-medium bg-black/20 backdrop-blur-sm rounded-full px-3 py-1.5">
-                <ArrowLeft className="w-4 h-4" /> Services
-              </button>
+            {!flashDeals.length && (
+              <div className="absolute top-12 left-5 z-10">
+                <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-white/90 text-sm font-medium bg-black/20 backdrop-blur-sm rounded-full px-3 py-1.5">
+                  <ArrowLeft className="w-4 h-4" /> Services
+                </button>
+              </div>
+            )}
+
+            <div className="absolute bottom-8 left-0 right-0 px-6 z-10">
+              <h1 className="text-3xl font-extrabold text-white leading-tight">Voyagez malin.<br />Écolo. Confortable.</h1>
+              <p className="text-white/80 text-sm mt-2">Réservez un siège, pas un taxi. Moins cher que le train.</p>
             </div>
-          )}
-
-          <div className="absolute bottom-32 left-0 right-0 px-6 z-10">
-            <h1 className="text-3xl font-extrabold text-white leading-tight">Voyagez malin.<br />Écolo. Confortable.</h1>
-            <p className="text-white/80 text-sm mt-2">Réservez un siège, pas un taxi. Moins cher que le train.</p>
           </div>
 
-          <div className="absolute -bottom-40 left-4 right-4 z-20">
+          {/* Search card — flows naturally, no absolute positioning */}
+          <div className="px-4 -mt-10 relative z-20">
             <div className="bg-white rounded-2xl shadow-2xl p-5 border border-gray-100">
               <div className="flex items-center gap-2 mb-4">
                 <button onClick={() => setRoundTrip(false)} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${!roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600'}`}
@@ -557,7 +561,6 @@ const CabyVanPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="h-44" />
 
         {/* Info banner */}
         <div className="px-5 mt-6">
