@@ -138,6 +138,9 @@ const App = () => (
               <Route path="/partner/dashboard" element={<PartnerDashboardPage />} />
               <Route path="/partner" element={<Navigate to="/partner/login" replace />} />
 
+              {/* Business Pro */}
+              <Route path="/business" element={<CabyBusinessPage />} />
+
               {/* Device Preview */}
               <Route path="/preview" element={<DevicePreviewPage />} />
 
