@@ -826,7 +826,7 @@ const CabyVanPage: React.FC = () => {
             <h2 className="text-lg font-bold text-gray-900">{from} → {to}</h2>
             <span className="text-sm">{selectedRoute.flag}</span>
           </div>
-          <p className="text-xs text-gray-500">{dateAller || "Aujourd'hui"} · {passengers} passager{passengers > 1 ? 's' : ''} · {formatDuration(selectedRoute.duration)}</p>
+          <p className="text-xs text-gray-500">{dateAller || "Aujourd'hui"}{effectiveTimeAller ? ` · ${effectiveTimeAller}` : ''} · {passengers} passager{passengers > 1 ? 's' : ''} · {formatDuration(selectedRoute.duration)}</p>
         </div>
 
         {/* Sort buttons */}
