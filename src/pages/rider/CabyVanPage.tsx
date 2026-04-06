@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -13,6 +13,10 @@ import {
 } from '@/lib/cabyVanPricing';
 import BottomNav from '@/components/rider/BottomNav';
 import heroImg from '@/assets/van-hero-alps.jpg';
+import {
+  calculateLastMinuteDiscount, applyLastMinutePrice, formatCountdown,
+  generateSimulatedDeals, type LastMinuteDeal,
+} from '@/utils/lastMinutePricing';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'confirm' | 'abonnement';
 
@@ -35,13 +39,7 @@ const POPULAR_DESTINATIONS = [
   { city: 'Lausanne', emoji: '🏛️', price: 29, img: '🇨🇭' },
 ];
 
-// Last minute deals (simulated)
-const LAST_MINUTE_DEALS = [
-  { from: 'Annecy', to: 'Genève', departure: '17:30', date: "Aujourd'hui", discount: 25, originalPrice: 25, seats: 3 },
-  { from: 'Genève', to: 'Lausanne', departure: '18:00', date: "Aujourd'hui", discount: 15, originalPrice: 29, seats: 5 },
-  { from: 'Genève', to: 'Zurich', departure: '07:00', date: 'Demain', discount: 20, originalPrice: 77, seats: 2 },
-  { from: 'Chamonix', to: 'Genève', departure: '16:00', date: "Aujourd'hui", discount: 30, originalPrice: 35, seats: 4 },
-];
+// Last minute deals are now generated dynamically
 
 const FILTER_TABS: { key: SegmentFilter; label: string; icon: string; badge?: string }[] = [
   { key: 'all', label: 'Tous', icon: '🗺️' },
@@ -107,6 +105,30 @@ const CabyVanPage: React.FC = () => {
 
   const handleSearch = () => { if (from && to && from !== to && selectedRoute) setStep('results'); };
   const handleSelectSlot = (slot: VanSlot) => { setSelectedSlot(slot); setSelectedSeat(null); setStep('seat'); };
+
+  // Last Minute deals — dynamic
+  const [now, setNow] = useState(() => new Date());
+  const deals = useMemo(() => generateSimulatedDeals(now), []);
+  const activeDeals = useMemo(() => {
+    return deals
+      .map(deal => {
+        const lm = calculateLastMinuteDiscount(deal.departureTime, deal.seatsAvailable, deal.totalSeats, now);
+        if (!lm.isLastMinute) return null;
+        return { ...deal, ...lm, finalPrice: applyLastMinutePrice(deal.basePrice, lm.discount), countdown: formatCountdown(deal.departureTime, now) };
+      })
+      .filter(Boolean) as (LastMinuteDeal & { discount: number; urgencyLabel: string; finalPrice: number; countdown: string | null })[];
+  }, [deals, now]);
+
+  // Refresh every 5 minutes
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+  // Countdown refresh every 30s
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 30 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const scrollCarousel = (dir: 'left' | 'right') => {
     if (!carouselRef.current) return;
@@ -317,56 +339,62 @@ const CabyVanPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Last minute deals */}
+        {/* Last minute deals — dynamic */}
+        {activeDeals.length > 0 && (
         <section className="mt-8 px-5">
           <div className="flex items-center gap-2 mb-4">
             <Zap className="w-5 h-5 text-red-500" />
             <h2 className="text-xl font-bold text-gray-900">Offres Last Minute</h2>
+            <span className="text-[10px] text-gray-400 ml-auto">Mise à jour auto</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {LAST_MINUTE_DEALS.map((deal, i) => {
-              const discountedPrice = Math.round(deal.originalPrice * (1 - deal.discount / 100));
-              return (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                  className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
-                  {/* Discount badge */}
-                  <div className="absolute top-3 left-3">
-                    <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-emerald-500 text-white">−{deal.discount}%</span>
-                  </div>
-                  {/* Time badge */}
-                  <div className="absolute top-3 right-3">
-                    <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-red-500 text-white">{deal.departure}</span>
-                  </div>
+            {activeDeals.map((deal, i) => (
+              <motion.div key={deal.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+                className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                {/* Discount badge */}
+                <div className="absolute top-3 left-3">
+                  <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-emerald-500 text-white">−{deal.discount}%</span>
+                </div>
+                {/* Urgency label */}
+                <div className="absolute top-3 right-3">
+                  <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-gray-100 text-gray-700">{deal.urgencyLabel}</span>
+                </div>
 
-                  <div className="mt-8">
+                <div className="mt-8">
+                  <div className="flex items-center gap-1">
+                    <span>{deal.flag}</span>
                     <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Siège partagé</p>
-                    <p className="text-base font-bold text-gray-900 mt-0.5">{deal.from} → {deal.to}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-sm text-gray-400 line-through">CHF {deal.originalPrice}</span>
-                      <span className="text-lg font-black" style={{ color: GOLD }}>CHF {discountedPrice}</span>
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <p className="text-xs text-gray-500">{deal.date} · {deal.seats} sièges restants</p>
-                    </div>
                   </div>
+                  <p className="text-base font-bold text-gray-900 mt-0.5">{deal.from} → {deal.to}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-sm text-gray-400 line-through">CHF {deal.basePrice}</span>
+                    <span className="text-lg font-black" style={{ color: GOLD }}>CHF {deal.finalPrice}</span>
+                  </div>
+                  <div className="flex items-center justify-between mt-1.5">
+                    <p className="text-xs text-gray-500">{deal.seatsAvailable} sièges restants</p>
+                    {deal.countdown && (
+                      <p className="text-[10px] font-bold text-red-500 animate-pulse">{deal.countdown}</p>
+                    )}
+                  </div>
+                </div>
 
-                  <div className="flex items-center gap-2 mt-3">
-                    <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                      <button className="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-50 text-sm font-bold">−</button>
-                      <span className="w-6 text-center text-sm font-bold text-gray-900">1</span>
-                      <button className="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-50 text-sm font-bold">+</button>
-                    </div>
-                    <Button onClick={() => { setFrom(deal.from); setTo(deal.to); setStep('search'); }}
-                      className="flex-1 h-8 rounded-lg text-white text-xs font-bold" style={{ backgroundColor: GOLD }}>
-                      Réserver
-                    </Button>
+                <div className="flex items-center gap-2 mt-3">
+                  <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+                    <button className="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-50 text-sm font-bold">−</button>
+                    <span className="w-6 text-center text-sm font-bold text-gray-900">1</span>
+                    <button className="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-50 text-sm font-bold">+</button>
                   </div>
-                </motion.div>
-              );
-            })}
+                  <Button onClick={() => { setFrom(deal.from); setTo(deal.to); setStep('search'); }}
+                    className="flex-1 h-8 rounded-lg text-white text-xs font-bold" style={{ backgroundColor: GOLD }}>
+                    Réserver
+                  </Button>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </section>
+        )}
 
         {/* Trust stats */}
         <section className="mt-10 px-5 mb-8">
