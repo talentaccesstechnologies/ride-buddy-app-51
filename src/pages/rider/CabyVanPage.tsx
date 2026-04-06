@@ -37,22 +37,26 @@ const SeatButton: React.FC<{ seat: number; taken: boolean; selected: boolean; on
 const HERO_GROUPS: { title: string; icon: string; routes: VanRoute[]; subtitle?: string }[] = [
   { title: 'GRAND GENÈVE — HAUTE-SAVOIE', icon: '🇫🇷', subtitle: '74% des frontaliers · Trajets quotidiens', routes: cabyVanRoutes.filter(r => r.id >= 38 && r.id <= 47) },
   { title: 'GRAND GENÈVE — AIN', icon: '🇫🇷', subtitle: '19% des frontaliers · Pays de Gex', routes: cabyVanRoutes.filter(r => r.id >= 48 && r.id <= 53) },
+  { title: 'AXE VALAIS — Riviera & Vallée du Rhône', icon: '🏔️', subtitle: '🍷 Traversez les vignobles du Lavaux UNESCO', routes: cabyVanRoutes.filter(r => r.id >= 54 && r.id <= 66) },
+  { title: 'AXE JURA — Route Horlogère', icon: '⌚', subtitle: 'Service privilégié pour l\'industrie horlogère', routes: cabyVanRoutes.filter(r => r.id >= 67 && r.id <= 73) },
   { title: 'AXE ROMAND', icon: '🏙️', routes: cabyVanRoutes.filter(r => r.id <= 5) },
   { title: 'AXE PLATEAU', icon: '💼', routes: cabyVanRoutes.filter(r => r.id >= 6 && r.id <= 12) },
   { title: 'AXE ALÉMANIQUE', icon: '🇨🇭', routes: cabyVanRoutes.filter(r => r.id >= 13 && r.id <= 18) },
   { title: 'LONGUE DISTANCE', icon: '⭐', routes: cabyVanRoutes.filter(r => r.id >= 19 && r.id <= 21) },
   { title: 'SKI SUISSE', icon: '🎿', routes: cabyVanRoutes.filter(r => r.id >= 22 && r.id <= 28) },
   { title: 'SKI FRANCE', icon: '🎿🇫🇷', routes: cabyVanRoutes.filter(r => r.id >= 29 && r.id <= 33) },
-  { title: 'TRANSFRONTALIER', icon: '🚗', routes: cabyVanRoutes.filter(r => r.id >= 34 && r.id <= 36) },
+  { title: 'DESTINATIONS PREMIUM', icon: '⭐', routes: cabyVanRoutes.filter(r => [74, 75, 76, 77].includes(r.id)) },
+  { title: 'INTERNATIONAL — Via Simplon', icon: '🇮🇹', subtitle: '🇮🇹 Passeport/carte d\'identité requis', routes: cabyVanRoutes.filter(r => [34, 35, 36, 78, 79, 80].includes(r.id)) },
 ];
 
 const FILTER_TABS: { key: SegmentFilter; label: string; icon: string; badge?: string }[] = [
   { key: 'all', label: 'Tous', icon: '🗺️' },
   { key: 'grand_geneve', label: 'Grand Genève', icon: '🚗', badge: '112\'000 frontaliers' },
-  { key: 'pendulaire', label: 'Pendulaire', icon: '🏙️' },
-  { key: 'business', label: 'Business', icon: '💼' },
+  { key: 'valais', label: 'Valais & Riviera', icon: '🏔️' },
+  { key: 'horlogerie', label: 'Jura & Horlogerie', icon: '⌚' },
+  { key: 'pendulaire', label: 'Villes Suisses', icon: '🏙️' },
   { key: 'ski', label: 'Ski', icon: '🎿' },
-  { key: 'frontalier', label: 'Frontalier', icon: '🌍' },
+  { key: 'international', label: 'International', icon: '🌍' },
   { key: 'premium', label: 'Premium', icon: '⭐' },
 ];
 
@@ -262,8 +266,8 @@ const CabyVanPage: React.FC = () => {
             ))}
 
             <div className="mt-8 rounded-xl bg-muted/30 border border-border p-4 text-center text-xs text-muted-foreground">
-              <p className="font-bold text-sm text-foreground mb-1">{cabyVanRoutes.length} destinations · Toutes bidirectionnelles</p>
-              <p>650'000 voitures/jour franchissent la frontière genevoise — partagez le trajet</p>
+              <p className="font-bold text-sm text-foreground mb-1">{cabyVanRoutes.length} destinations · {ROUTES.length} routes bidirectionnelles</p>
+              <p>Suisse romande complète · Grand Genève · Valais · Jura · Italie</p>
             </div>
           </div>
         </div>
@@ -293,13 +297,40 @@ const CabyVanPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Marketing message for Grand Genève */}
+          {/* Contextual marketing messages */}
           {filter === 'grand_geneve' && (
             <div className="rounded-xl bg-orange-500/10 border border-orange-500/20 p-3 mb-4 flex items-start gap-2">
               <span className="text-sm mt-0.5">🚗</span>
               <div>
                 <p className="text-xs font-bold">Navettes frontalières quotidiennes</p>
                 <p className="text-[10px] text-muted-foreground">Créneaux fixes matin (6h-8h30) et soir (17h-19h30) · Uniquement heures de pointe</p>
+              </div>
+            </div>
+          )}
+          {filter === 'valais' && (
+            <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-3 mb-4 flex items-start gap-2">
+              <span className="text-sm mt-0.5">🍷</span>
+              <div>
+                <p className="text-xs font-bold">Valais & Riviera — Pays du Vin & des Alpes</p>
+                <p className="text-[10px] text-muted-foreground">Vignobles du Lavaux UNESCO · Montreux Jazz · Vallée du Rhône jusqu'à Brigue</p>
+              </div>
+            </div>
+          )}
+          {filter === 'horlogerie' && (
+            <div className="rounded-xl bg-yellow-600/10 border border-yellow-600/20 p-3 mb-4 flex items-start gap-2">
+              <span className="text-sm mt-0.5">⌚</span>
+              <div>
+                <p className="text-xs font-bold">Jura & Route Horlogère</p>
+                <p className="text-[10px] text-muted-foreground">Service premium pour l'industrie horlogère — Rolex, Patek Philippe, Swatch Group</p>
+              </div>
+            </div>
+          )}
+          {filter === 'international' && (
+            <div className="rounded-xl bg-indigo-500/10 border border-indigo-500/20 p-3 mb-4 flex items-start gap-2">
+              <span className="text-sm mt-0.5">🌍</span>
+              <div>
+                <p className="text-xs font-bold">Routes internationales — Via Simplon</p>
+                <p className="text-[10px] text-muted-foreground">Passeport ou carte d'identité requis · Prix en CHF et EUR</p>
               </div>
             </div>
           )}
@@ -410,6 +441,27 @@ const CabyVanPage: React.FC = () => {
             <div className="rounded-xl bg-orange-500/10 border border-orange-500/20 p-3 mb-4 text-xs">
               <p className="font-bold text-orange-400 mb-1">🚗 Navette frontalière — Horaires fixes</p>
               <p className="text-muted-foreground">Matin 6h-8h30 · Soir 17h-19h30 · Pas de créneau à la demande</p>
+            </div>
+          )}
+
+          {selectedRoute.segment === 'horlogerie' && (
+            <div className="rounded-xl bg-yellow-600/10 border border-yellow-600/20 p-3 mb-4 text-xs">
+              <p className="font-bold text-yellow-500 mb-1">⌚ Route Horlogère</p>
+              <p className="text-muted-foreground">Service privilégié pour les professionnels de l'industrie horlogère — Rolex, Patek Philippe, Swatch Group</p>
+            </div>
+          )}
+
+          {selectedRoute.segment === 'international' && (
+            <div className="rounded-xl bg-indigo-500/10 border border-indigo-500/20 p-3 mb-4 text-xs">
+              <p className="font-bold text-indigo-400 mb-1">🇮🇹 Via Simplon — Route internationale</p>
+              <p className="text-muted-foreground">Passeport ou carte d'identité requis · Prix affiché en CHF (≈ €{Math.round(selectedRoute.basePrice * 0.93)} EUR)</p>
+            </div>
+          )}
+
+          {(to === 'Montreux' || to === 'Vevey' || to === 'Sion' || to === 'Martigny' || to === 'Sierre' || to === 'Brigue' || from === 'Montreux' || from === 'Vevey') && selectedRoute.segment !== 'horlogerie' && selectedRoute.segment !== 'international' && !selectedRoute.daily && (
+            <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-3 mb-4 text-xs">
+              <p className="font-bold text-purple-400 mb-1">🍷 Pays du Vin & des Alpes</p>
+              <p className="text-muted-foreground">Traversez les vignobles du Lavaux UNESCO — Riviera vaudoise & Vallée du Rhône</p>
             </div>
           )}
 
