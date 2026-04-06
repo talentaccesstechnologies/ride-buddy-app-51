@@ -15,6 +15,7 @@ import AcceptedRideOverlay from '@/components/cabyDriver/AcceptedRideOverlay';
 import ActiveRidePanel from '@/components/cabyDriver/ActiveRidePanel';
 import ModeSwitchSuggestion from '@/components/cabyDriver/ModeSwitchSuggestion';
 import QueueToleranceOverlay from '@/components/cabyDriver/QueueToleranceOverlay';
+import SOSButton from '@/components/cabyDriver/SOSButton';
 import { type IncomingRide } from '@/components/cabyDriver/IncomingRideOverlay';
 
 const RADAR_RADIUS_M = 5000;
