@@ -58,6 +58,8 @@ import DriverEarningsPage from "./pages/cabyDriver/DriverEarningsPage";
 import DriverCrossBorderPage from "./pages/cabyDriver/DriverCrossBorderPage";
 import DriverFiscalPage from "./pages/cabyDriver/DriverFiscalPage";
 import CabyCrossBorderPage from "./pages/rider/CabyCrossBorderPage";
+import WalletPage from "./pages/rider/WalletPage";
+import MyReservationsPage from "./pages/rider/MyReservationsPage";
 import InvitePage from "./pages/InvitePage";
 import EarlyAccessPage from "./pages/EarlyAccessPage";
 import PartnerLoginPage from "./pages/partner/PartnerLoginPage";
