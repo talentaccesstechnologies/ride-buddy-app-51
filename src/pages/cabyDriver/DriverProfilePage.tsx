@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Shield, LogOut } from 'lucide-react';
+import { ArrowLeft, Shield, LogOut, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import DriverBottomNav from '@/components/cabyDriver/DriverBottomNav';
 import DriverPhotoUpload from '@/components/cabyDriver/DriverPhotoUpload';
