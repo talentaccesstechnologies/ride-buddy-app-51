@@ -331,7 +331,26 @@ const CabyVanPage: React.FC = () => {
 
   const handleSearch = () => { if (from && to && from !== to && selectedRoute) setStep('results'); };
   const handleSelectSlot = (slot: VanSlot) => { setSelectedSlot(slot); setSelectedSeat(null); setAncillaries({}); setStep('seat'); };
-  const handleVehicleContinue = () => setStep('seat');
+  const handleVehicleContinue = () => {
+    if (!selectedSlot && selectedRoute) {
+      const effectiveTime = effectiveTimeAller || '08:00';
+      const depDate = new Date();
+      depDate.setHours(parseInt(effectiveTime.split(':')[0]), parseInt(effectiveTime.split(':')[1]), 0);
+      if (depDate.getTime() < Date.now()) depDate.setDate(depDate.getDate() + 1);
+      const syntheticSlot: VanSlot = {
+        id: `syn-${Date.now()}`,
+        departure: effectiveTime,
+        arrivalEstimate: addMinutesToTime(effectiveTime, selectedRoute.duration),
+        label: effectiveTime,
+        basePrice: selectedRoute.basePrice,
+        seatsTotal: 7,
+        seatsTaken: 3,
+        rushLevel: 'green',
+      };
+      setSelectedSlot(syntheticSlot);
+    }
+    setStep('seat');
+  };
 
   // Last Minute deals
   const [now, setNow] = useState(() => new Date());
@@ -1594,7 +1613,7 @@ const CabyVanPage: React.FC = () => {
     );
   }
 
-  return null;
+  return <div className="min-h-screen bg-white" />;
 };
 
 export default CabyVanPage;
