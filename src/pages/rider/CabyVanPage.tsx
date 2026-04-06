@@ -220,6 +220,10 @@ const CabyVanPage: React.FC = () => {
   const [selectedSlot, setSelectedSlot] = useState<VanSlot | null>(null);
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [ancillaries, setAncillaries] = useState<Partial<AncillaryOptions>>({});
+  const [selectedVehicle, setSelectedVehicle] = useState<string>('van-shared');
+  const [selectedVehicleReturn, setSelectedVehicleReturn] = useState<string>('van-shared');
+  const [expandedDetails, setExpandedDetails] = useState<string | null>(null);
+  const [sameVehicleReturn, setSameVehicleReturn] = useState(true);
 
   // Pickup / Dropoff
   const [pickupLabel, setPickupLabel] = useState('');
