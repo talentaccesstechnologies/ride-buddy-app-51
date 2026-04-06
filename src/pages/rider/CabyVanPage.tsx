@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, ArrowRight, Leaf, Users, Clock, MapPin, Luggage, Bike, QrCode, Check, X,
-  CreditCard, Star, ChevronLeft, ChevronRight, Search, Percent, Zap, Shield, Car
+  CreditCard, Star, ChevronLeft, ChevronRight, Search, Percent, Zap, Shield, Car, SlidersHorizontal
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,13 +17,19 @@ import {
   calculateLastMinuteDiscount, applyLastMinutePrice, formatCountdown,
   generateSimulatedDeals, type LastMinuteDeal,
 } from '@/utils/lastMinutePricing';
+import {
+  calculateFullPrice, generateFlashDeals, calculateAncillaryTotal,
+  type PricingResult, type AncillaryOptions,
+} from '@/utils/cabyVanPricing';
+import SeatPricingCard from '@/components/van/SeatPricingCard';
+import FlashDealBanner from '@/components/van/FlashDealBanner';
+import AncillarySelector from '@/components/van/AncillarySelector';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'confirm' | 'abonnement';
+type SortMode = 'price' | 'urgent' | 'earlybird';
 
 const GOLD = '#C9A84C';
-const GOLD_DARK = '#B8963F';
 
-// Destination cards for the carousel
 const POPULAR_DESTINATIONS = [
   { city: 'Zurich', emoji: '🏙️', price: 77, img: '🇨🇭' },
   { city: 'Verbier', emoji: '🎿', price: 59, img: '⛷️' },
@@ -39,11 +45,9 @@ const POPULAR_DESTINATIONS = [
   { city: 'Lausanne', emoji: '🏛️', price: 29, img: '🇨🇭' },
 ];
 
-// Last minute deals are now generated dynamically
-
 const FILTER_TABS: { key: SegmentFilter; label: string; icon: string; badge?: string }[] = [
   { key: 'all', label: 'Tous', icon: '🗺️' },
-  { key: 'grand_geneve', label: 'Grand Genève', icon: '🚗', badge: '112\'000 frontaliers' },
+  { key: 'grand_geneve', label: 'Grand Genève', icon: '🚗', badge: "112'000 frontaliers" },
   { key: 'valais', label: 'Valais & Riviera', icon: '🏔️' },
   { key: 'horlogerie', label: 'Jura & Horlogerie', icon: '⌚' },
   { key: 'pendulaire', label: 'Villes', icon: '🏙️' },
@@ -58,18 +62,12 @@ const ABONNEMENT_PLANS = [
   { name: 'Premium', price: 599, trips: 'Illimité toutes routes', features: ['Tout Flex', 'Siège premium (avant)', 'Bagages illimités', 'Accès ski & longue distance'] },
 ];
 
-const rushIcon: Record<string, string> = { red: '🔴', yellow: '🟡', green: '🟢' };
-
 const SeatButton: React.FC<{ seat: number; taken: boolean; selected: boolean; onSelect: (s: number) => void }> = ({ seat, taken, selected, onSelect }) => (
-  <button
-    disabled={taken}
-    onClick={() => onSelect(seat)}
+  <button disabled={taken} onClick={() => onSelect(seat)}
     className={`w-12 h-12 rounded-xl flex items-center justify-center text-xs font-bold transition-all border
       ${taken ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : ''}
       ${!taken && !selected ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' : ''}
-      ${selected ? 'bg-emerald-500 text-white border-emerald-400 scale-110 shadow-lg' : ''}
-    `}
-  >
+      ${selected ? 'bg-emerald-500 text-white border-emerald-400 scale-110 shadow-lg' : ''}`}>
     {taken ? <X className="w-3 h-3" /> : seat}
   </button>
 );
@@ -86,10 +84,11 @@ const CabyVanPage: React.FC = () => {
   const [passengers, setPassengers] = useState(1);
   const [roundTrip, setRoundTrip] = useState(false);
   const [dateRetour, setDateRetour] = useState('');
+  const [sortMode, setSortMode] = useState<SortMode>('price');
 
   const [selectedSlot, setSelectedSlot] = useState<VanSlot | null>(null);
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
-  const [baggage, setBaggage] = useState<'small' | 'large' | 'special'>('small');
+  const [ancillaries, setAncillaries] = useState<Partial<AncillaryOptions>>({});
 
   const selectedRoute = useMemo(() => (from && to ? findRoute(from, to) : undefined), [from, to]);
   const destinations = useMemo(() => getDestinationsFrom(from, filter), [from, filter]);
@@ -100,13 +99,35 @@ const CabyVanPage: React.FC = () => {
     return Array.from({ length: selectedSlot.seatsTaken }, (_, i) => i + 1);
   }, [selectedSlot]);
 
-  const baggageCost = baggage === 'large' ? 5 : baggage === 'special' ? 15 : 0;
-  const totalPrice = selectedSlot ? selectedSlot.basePrice + baggageCost : 0;
+  // Build pricing for each slot
+  const slotPricings = useMemo(() => {
+    return slots.map(slot => {
+      const depDate = new Date();
+      const [h, m] = slot.departure.split(':').map(Number);
+      depDate.setHours(h, m, 0, 0);
+      if (depDate.getTime() < Date.now()) depDate.setDate(depDate.getDate() + 1);
+      const pricing = calculateFullPrice(slot.basePrice, slot.seatsTaken, slot.seatsTotal, depDate);
+      return { slot, pricing, depDate };
+    });
+  }, [slots]);
+
+  // Sort
+  const sortedSlots = useMemo(() => {
+    const copy = [...slotPricings];
+    if (sortMode === 'price') copy.sort((a, b) => a.pricing.currentPrice - b.pricing.currentPrice);
+    else if (sortMode === 'urgent') copy.sort((a, b) => a.pricing.hoursUntilDeparture - b.pricing.hoursUntilDeparture);
+    else copy.sort((a, b) => (a.pricing.isEarlyBird ? 0 : 1) - (b.pricing.isEarlyBird ? 0 : 1) || a.pricing.currentPrice - b.pricing.currentPrice);
+    return copy;
+  }, [slotPricings, sortMode]);
+
+  const ancillaryTotal = calculateAncillaryTotal(ancillaries);
+  const slotPrice = selectedSlot ? (slotPricings.find(s => s.slot.id === selectedSlot.id)?.pricing.currentPrice || selectedSlot.basePrice) : 0;
+  const totalPrice = slotPrice + ancillaryTotal;
 
   const handleSearch = () => { if (from && to && from !== to && selectedRoute) setStep('results'); };
-  const handleSelectSlot = (slot: VanSlot) => { setSelectedSlot(slot); setSelectedSeat(null); setStep('seat'); };
+  const handleSelectSlot = (slot: VanSlot) => { setSelectedSlot(slot); setSelectedSeat(null); setAncillaries({}); setStep('seat'); };
 
-  // Last Minute deals — dynamic
+  // Last Minute deals
   const [now, setNow] = useState(() => new Date());
   const deals = useMemo(() => generateSimulatedDeals(now), []);
   const activeDeals = useMemo(() => {
@@ -119,12 +140,10 @@ const CabyVanPage: React.FC = () => {
       .filter(Boolean) as (LastMinuteDeal & { discount: number; urgencyLabel: string; finalPrice: number; countdown: string | null })[];
   }, [deals, now]);
 
-  // Refresh every 5 minutes
-  useEffect(() => {
-    const interval = setInterval(() => setNow(new Date()), 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, []);
-  // Countdown refresh every 30s
+  // Flash deals
+  const flashDeals = useMemo(() => generateFlashDeals(), []);
+
+  // Refresh timers
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 30 * 1000);
     return () => clearInterval(interval);
@@ -148,7 +167,6 @@ const CabyVanPage: React.FC = () => {
             <h2 className="text-xl font-bold text-gray-900">Abonnement Frontalier</h2>
           </div>
           <p className="text-sm text-gray-500 mb-6">Trajets illimités · Réservation prioritaire · Sans engagement</p>
-
           <div className="space-y-4">
             {ABONNEMENT_PLANS.map((plan) => (
               <motion.div key={plan.name} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
@@ -187,37 +205,39 @@ const CabyVanPage: React.FC = () => {
     );
   }
 
-  // ── HERO (Alps2Alps inspired) ──
+  // ── HERO ──
   if (step === 'hero') {
     return (
       <div className="min-h-screen bg-white pb-24">
-        {/* Hero with background image */}
-        <div className="relative h-[420px] overflow-hidden">
+        {/* Flash Deal Banner */}
+        {flashDeals.length > 0 && (
+          <div className="px-4 pt-12 pb-0">
+            <FlashDealBanner deal={flashDeals[0]} onBook={() => setStep('search')} />
+          </div>
+        )}
+
+        <div className={`relative ${flashDeals.length > 0 ? 'h-[360px]' : 'h-[420px]'} overflow-hidden ${flashDeals.length > 0 ? 'mt-3' : ''}`}>
           <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover" width={1920} height={1080} />
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
-          
-          {/* Back button */}
-          <div className="absolute top-12 left-5 z-10">
-            <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-white/90 text-sm font-medium bg-black/20 backdrop-blur-sm rounded-full px-3 py-1.5">
-              <ArrowLeft className="w-4 h-4" /> Services
-            </button>
-          </div>
 
-          {/* Hero text */}
+          {!flashDeals.length && (
+            <div className="absolute top-12 left-5 z-10">
+              <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-white/90 text-sm font-medium bg-black/20 backdrop-blur-sm rounded-full px-3 py-1.5">
+                <ArrowLeft className="w-4 h-4" /> Services
+              </button>
+            </div>
+          )}
+
           <div className="absolute bottom-32 left-0 right-0 px-6 z-10">
             <h1 className="text-3xl font-extrabold text-white leading-tight">Voyagez malin.<br />Écolo. Confortable.</h1>
             <p className="text-white/80 text-sm mt-2">Réservez un siège, pas un taxi. Moins cher que le train.</p>
           </div>
 
-          {/* Floating search card */}
           <div className="absolute -bottom-40 left-4 right-4 z-20">
             <div className="bg-white rounded-2xl shadow-2xl p-5 border border-gray-100">
-              {/* Round trip toggle */}
               <div className="flex items-center gap-2 mb-4">
                 <button onClick={() => setRoundTrip(false)} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${!roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600'}`}
-                  style={!roundTrip ? { backgroundColor: GOLD } : {}}>
-                  Aller simple
-                </button>
+                  style={!roundTrip ? { backgroundColor: GOLD } : {}}>Aller simple</button>
                 <button onClick={() => setRoundTrip(true)} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-1.5 ${roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600'}`}
                   style={roundTrip ? { backgroundColor: GOLD } : {}}>
                   Aller-retour
@@ -225,7 +245,6 @@ const CabyVanPage: React.FC = () => {
                 </button>
               </div>
 
-              {/* From */}
               <div className="relative mb-3">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-emerald-500" />
                 <select value={from} onChange={(e) => { setFrom(e.target.value); setTo(''); }}
@@ -234,7 +253,6 @@ const CabyVanPage: React.FC = () => {
                 </select>
               </div>
 
-              {/* Swap */}
               <div className="flex justify-center -my-1.5 relative z-10">
                 <button onClick={() => { const t = from; setFrom(to || from); setTo(t); }}
                   className="w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center shadow-sm hover:border-amber-400 transition-colors">
@@ -242,7 +260,6 @@ const CabyVanPage: React.FC = () => {
                 </button>
               </div>
 
-              {/* To */}
               <div className="relative mb-3">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-red-500" />
                 <select value={to} onChange={(e) => setTo(e.target.value)}
@@ -255,7 +272,6 @@ const CabyVanPage: React.FC = () => {
                 </select>
               </div>
 
-              {/* Date + Passengers */}
               <div className="flex gap-2 mb-3">
                 <div className="flex-1">
                   <input type="date" value={dateAller} onChange={(e) => setDateAller(e.target.value)}
@@ -272,11 +288,10 @@ const CabyVanPage: React.FC = () => {
               {roundTrip && (
                 <div className="mb-3">
                   <input type="date" value={dateRetour} onChange={(e) => setDateRetour(e.target.value)}
-                    placeholder="Date retour" className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
                 </div>
               )}
 
-              {/* Search button */}
               <Button onClick={() => { if (from && to) handleSearch(); else setStep('search'); }}
                 className="w-full h-12 rounded-xl text-white font-bold text-base shadow-lg hover:shadow-xl transition-shadow"
                 style={{ backgroundColor: GOLD }}>
@@ -287,11 +302,18 @@ const CabyVanPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Spacer for floating card */}
         <div className="h-44" />
 
+        {/* Info banner */}
+        <div className="px-5 mt-6">
+          <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 flex items-start gap-2">
+            <span className="text-sm mt-0.5">💡</span>
+            <p className="text-xs text-amber-800">Les prix augmentent à chaque réservation. Les early birds économisent jusqu'à <span className="font-bold">30%</span>.</p>
+          </div>
+        </div>
+
         {/* Destinations carousel */}
-        <section className="mt-8 px-5">
+        <section className="mt-6 px-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">Destinations populaires</h2>
             <div className="flex gap-1">
@@ -303,16 +325,13 @@ const CabyVanPage: React.FC = () => {
               </button>
             </div>
           </div>
-
           <div ref={carouselRef} className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1">
             {POPULAR_DESTINATIONS.map((dest) => (
               <button key={dest.city} onClick={() => { setTo(dest.city); setStep('search'); }}
                 className="flex-shrink-0 w-[160px] rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow group bg-white border border-gray-100">
                 <div className="h-24 bg-gradient-to-br from-gray-800 to-gray-600 flex items-center justify-center text-4xl relative">
                   <span>{dest.emoji}</span>
-                  <div className="absolute top-2 right-2">
-                    <span className="text-lg">{dest.img}</span>
-                  </div>
+                  <div className="absolute top-2 right-2"><span className="text-lg">{dest.img}</span></div>
                 </div>
                 <div className="p-3">
                   <p className="text-sm font-bold text-gray-900 truncate">{dest.city}</p>
@@ -326,7 +345,7 @@ const CabyVanPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Filter chips for browsing */}
+        {/* Filter chips */}
         <section className="mt-8 px-5">
           <h2 className="text-xl font-bold text-gray-900 mb-3">Explorer par catégorie</h2>
           <div className="flex gap-2 flex-wrap">
@@ -339,61 +358,49 @@ const CabyVanPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Last minute deals — dynamic */}
+        {/* Last minute deals */}
         {activeDeals.length > 0 && (
-        <section className="mt-8 px-5">
-          <div className="flex items-center gap-2 mb-4">
-            <Zap className="w-5 h-5 text-red-500" />
-            <h2 className="text-xl font-bold text-gray-900">Offres Last Minute</h2>
-            <span className="text-[10px] text-gray-400 ml-auto">Mise à jour auto</span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {activeDeals.map((deal, i) => (
-              <motion.div key={deal.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
-                {/* Discount badge */}
-                <div className="absolute top-3 left-3">
-                  <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-emerald-500 text-white">−{deal.discount}%</span>
-                </div>
-                {/* Urgency label */}
-                <div className="absolute top-3 right-3">
-                  <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-gray-100 text-gray-700">{deal.urgencyLabel}</span>
-                </div>
-
-                <div className="mt-8">
-                  <div className="flex items-center gap-1">
-                    <span>{deal.flag}</span>
-                    <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Siège partagé</p>
+          <section className="mt-8 px-5">
+            <div className="flex items-center gap-2 mb-4">
+              <Zap className="w-5 h-5 text-red-500" />
+              <h2 className="text-xl font-bold text-gray-900">Offres Last Minute</h2>
+              <span className="text-[10px] text-gray-400 ml-auto">Mise à jour auto</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {activeDeals.map((deal, i) => (
+                <motion.div key={deal.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+                  className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                  <div className="absolute top-3 left-3">
+                    <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-emerald-500 text-white">−{deal.discount}%</span>
                   </div>
-                  <p className="text-base font-bold text-gray-900 mt-0.5">{deal.from} → {deal.to}</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-sm text-gray-400 line-through">CHF {deal.basePrice}</span>
-                    <span className="text-lg font-black" style={{ color: GOLD }}>CHF {deal.finalPrice}</span>
+                  <div className="absolute top-3 right-3">
+                    <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-gray-100 text-gray-700">{deal.urgencyLabel}</span>
                   </div>
-                  <div className="flex items-center justify-between mt-1.5">
-                    <p className="text-xs text-gray-500">{deal.seatsAvailable} sièges restants</p>
-                    {deal.countdown && (
-                      <p className="text-[10px] font-bold text-red-500 animate-pulse">{deal.countdown}</p>
-                    )}
+                  <div className="mt-8">
+                    <div className="flex items-center gap-1">
+                      <span>{deal.flag}</span>
+                      <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Siège partagé</p>
+                    </div>
+                    <p className="text-base font-bold text-gray-900 mt-0.5">{deal.from} → {deal.to}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-sm text-gray-400 line-through">CHF {deal.basePrice}</span>
+                      <span className="text-lg font-black" style={{ color: GOLD }}>CHF {deal.finalPrice}</span>
+                    </div>
+                    <div className="flex items-center justify-between mt-1.5">
+                      <p className="text-xs text-gray-500">{deal.seatsAvailable} sièges restants</p>
+                      {deal.countdown && <p className="text-[10px] font-bold text-red-500 animate-pulse">{deal.countdown}</p>}
+                    </div>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-2 mt-3">
-                  <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                    <button className="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-50 text-sm font-bold">−</button>
-                    <span className="w-6 text-center text-sm font-bold text-gray-900">1</span>
-                    <button className="w-7 h-7 flex items-center justify-center text-gray-500 hover:bg-gray-50 text-sm font-bold">+</button>
+                  <div className="flex items-center gap-2 mt-3">
+                    <Button onClick={() => { setFrom(deal.from); setTo(deal.to); setStep('search'); }}
+                      className="flex-1 h-8 rounded-lg text-white text-xs font-bold" style={{ backgroundColor: GOLD }}>
+                      Réserver
+                    </Button>
                   </div>
-                  <Button onClick={() => { setFrom(deal.from); setTo(deal.to); setStep('search'); }}
-                    className="flex-1 h-8 rounded-lg text-white text-xs font-bold" style={{ backgroundColor: GOLD }}>
-                    Réserver
-                  </Button>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+                </motion.div>
+              ))}
+            </div>
+          </section>
         )}
 
         {/* Trust stats */}
@@ -424,8 +431,7 @@ const CabyVanPage: React.FC = () => {
             </div>
             <p className="text-sm text-white/80">Covoiturage premium France ↔ Suisse avec chauffeur certifié</p>
             <div className="flex items-center gap-1 mt-2 text-white/60 text-xs">
-              <span>Découvrir</span>
-              <ArrowRight className="w-3 h-3" />
+              <span>Découvrir</span><ArrowRight className="w-3 h-3" />
             </div>
           </button>
         </section>
@@ -457,7 +463,6 @@ const CabyVanPage: React.FC = () => {
           </button>
           <h2 className="text-xl font-bold text-gray-900 mb-4">Rechercher un trajet</h2>
 
-          {/* Filter tabs */}
           <div className="flex gap-1.5 mb-5 flex-wrap">
             {FILTER_TABS.map(f => (
               <button key={f.key} onClick={() => { setFilter(f.key); setTo(''); }}
@@ -469,7 +474,6 @@ const CabyVanPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Contextual messages */}
           {filter === 'grand_geneve' && (
             <div className="rounded-xl bg-orange-50 border border-orange-200 p-3 mb-4 flex items-start gap-2">
               <span className="text-sm mt-0.5">🚗</span>
@@ -508,7 +512,6 @@ const CabyVanPage: React.FC = () => {
           )}
 
           <div className="space-y-4">
-            {/* From */}
             <div>
               <label className="text-xs text-gray-500 mb-1 block font-medium">Ville de départ</label>
               <div className="relative">
@@ -527,7 +530,6 @@ const CabyVanPage: React.FC = () => {
               </button>
             </div>
 
-            {/* To */}
             <div>
               <label className="text-xs text-gray-500 mb-1 block font-medium">Ville d'arrivée</label>
               <div className="relative">
@@ -609,7 +611,7 @@ const CabyVanPage: React.FC = () => {
     );
   }
 
-  // ── RESULTS ──
+  // ── RESULTS with Ryanair pricing ──
   if (step === 'results' && selectedRoute) {
     return (
       <div className="min-h-screen bg-gray-50 pb-24">
@@ -625,87 +627,51 @@ const CabyVanPage: React.FC = () => {
           <p className="text-xs text-gray-500">{dateAller || "Aujourd'hui"} · {passengers} passager{passengers > 1 ? 's' : ''} · {formatDuration(selectedRoute.duration)}</p>
         </div>
 
-        <div className="px-5 pt-4">
-          {/* Contextual badges */}
-          {selectedRoute.daily && (
-            <div className="rounded-xl bg-orange-50 border border-orange-200 p-3 mb-4 text-xs">
-              <p className="font-bold text-orange-800 mb-1">🚗 Navette frontalière — Horaires fixes</p>
-              <p className="text-orange-600">Matin 6h-8h30 · Soir 17h-19h30</p>
-            </div>
-          )}
-          {selectedRoute.segment === 'horlogerie' && (
-            <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 mb-4 text-xs">
-              <p className="font-bold text-amber-800 mb-1">⌚ Route Horlogère</p>
-              <p className="text-amber-600">Service privilégié pour l'industrie horlogère</p>
-            </div>
-          )}
-          {selectedRoute.segment === 'international' && (
-            <div className="rounded-xl bg-indigo-50 border border-indigo-200 p-3 mb-4 text-xs">
-              <p className="font-bold text-indigo-800 mb-1">🇮🇹 Via Simplon</p>
-              <p className="text-indigo-600">Passeport requis · ≈ €{Math.round(selectedRoute.basePrice * 0.93)} EUR</p>
-            </div>
-          )}
+        {/* Sort buttons */}
+        <div className="px-5 pt-4 flex gap-2">
+          {([
+            { key: 'price' as SortMode, label: '💰 Prix croissant' },
+            { key: 'urgent' as SortMode, label: '⚡ Départ imminent' },
+            { key: 'earlybird' as SortMode, label: '🟢 Early Bird' },
+          ]).map(s => (
+            <button key={s.key} onClick={() => setSortMode(s.key)}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors border ${sortMode === s.key ? 'text-white border-transparent' : 'bg-white text-gray-600 border-gray-200'}`}
+              style={sortMode === s.key ? { backgroundColor: GOLD } : {}}>
+              {s.label}
+            </button>
+          ))}
+        </div>
 
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
-            {selectedRoute.daily ? 'Navettes disponibles' : 'Créneaux disponibles'} ({slots.length})
-          </h3>
-
-          <div className="space-y-3">
-            {slots.map((slot) => {
-              const seatsLeft = slot.seatsTotal - slot.seatsTaken;
-              const fillPct = (slot.seatsTaken / slot.seatsTotal) * 100;
-              return (
-                <motion.button key={slot.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.98 }}
-                  onClick={() => handleSelectSlot(slot)}
-                  className="w-full text-left rounded-2xl bg-white border border-gray-200 p-4 space-y-3 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span>{rushIcon[slot.rushLevel]}</span>
-                      <span className="font-bold text-gray-900">{slot.departure}</span>
-                      <span className="text-gray-400 text-xs">→ {slot.arrivalEstimate}</span>
-                    </div>
-                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                      slot.rushLevel === 'green' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-                      slot.rushLevel === 'yellow' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
-                      'bg-red-50 text-red-700 border border-red-200'
-                    }`}>{slot.label}</span>
-                  </div>
-                  <div className="flex items-end justify-between">
-                    <div>
-                      <p className="text-2xl font-black text-gray-900">CHF {slot.basePrice}</p>
-                      <p className="text-[10px] text-gray-400">par siège</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-gray-700">{seatsLeft} siège{seatsLeft > 1 ? 's' : ''}</p>
-                      <div className="w-24 h-1.5 rounded-full bg-gray-100 mt-1 overflow-hidden">
-                        <div className="h-full rounded-full" style={{ width: `${fillPct}%`, backgroundColor: GOLD }} />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-[10px] text-emerald-600">
-                    <Leaf className="w-3 h-3" />
-                    <span>6× moins de CO₂ qu'en voiture solo</span>
-                  </div>
-                </motion.button>
-              );
-            })}
+        {/* Info banner */}
+        <div className="px-5 mt-3">
+          <div className="rounded-xl bg-amber-50 border border-amber-200 p-2.5 flex items-center gap-2">
+            <span className="text-sm">💡</span>
+            <p className="text-[10px] text-amber-800">Les prix augmentent à chaque réservation. Les early birds économisent jusqu'à <span className="font-bold">30%</span>.</p>
           </div>
+        </div>
 
-          {!selectedRoute.daily && (
-            <div className="mt-6 rounded-2xl border-2 border-dashed border-gray-200 p-4 text-center bg-white">
-              <Clock className="w-5 h-5 mx-auto mb-2" style={{ color: GOLD }} />
-              <p className="text-sm font-bold text-gray-900">Choisissez votre heure exacte</p>
-              <p className="text-xs text-gray-500 mt-1">Disponible entre 10h et 16h · prix dynamique</p>
-              <input type="time" min="10:00" max="16:00" className="mt-3 h-10 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" />
-            </div>
-          )}
+        <div className="px-5 pt-4 space-y-3">
+          {sortedSlots.map(({ slot, pricing, depDate }) => (
+            <SeatPricingCard
+              key={slot.id}
+              from={from}
+              to={to}
+              departure={slot.departure}
+              arrivalEstimate={slot.arrivalEstimate}
+              pricing={pricing}
+              seatsTotal={slot.seatsTotal}
+              seatsSold={slot.seatsTaken}
+              departureTime={depDate}
+              onBook={() => handleSelectSlot(slot)}
+            />
+          ))}
         </div>
         <BottomNav />
       </div>
     );
   }
 
-  // ── SEAT SELECTION ──
+  // ── SEAT SELECTION + ANCILLARIES ──
   if (step === 'seat' && selectedSlot && selectedRoute) {
     return (
       <div className="min-h-screen bg-white pb-24">
@@ -719,7 +685,7 @@ const CabyVanPage: React.FC = () => {
                 <p className="font-bold text-gray-900">{from} → {to}</p>
                 <p className="text-xs text-gray-500">{selectedSlot.departure} → {selectedSlot.arrivalEstimate} · {dateAller || "Aujourd'hui"}</p>
               </div>
-              <p className="text-xl font-black text-gray-900">CHF {selectedSlot.basePrice}</p>
+              <p className="text-xl font-black" style={{ color: GOLD }}>CHF {slotPrice}</p>
             </div>
           </div>
 
@@ -743,20 +709,9 @@ const CabyVanPage: React.FC = () => {
             </div>
           </div>
 
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Bagage</h3>
-          <div className="flex gap-2 mb-6">
-            {([
-              { key: 'small' as const, label: 'Petit', sub: 'Inclus', icon: <Luggage className="w-4 h-4" />, cost: 0 },
-              { key: 'large' as const, label: 'Grand', sub: '+CHF 5', icon: <Luggage className="w-5 h-5" />, cost: 5 },
-              { key: 'special' as const, label: 'Skis/Vélo', sub: '+CHF 15', icon: <Bike className="w-4 h-4" />, cost: 15 },
-            ]).map(b => (
-              <button key={b.key} onClick={() => setBaggage(b.key)}
-                className={`flex-1 rounded-xl p-3 text-center border transition-colors ${baggage === b.key ? 'border-amber-400 bg-amber-50' : 'border-gray-200 bg-white'}`}>
-                <div className="flex justify-center mb-1 text-gray-600">{b.icon}</div>
-                <p className="text-xs font-bold text-gray-900">{b.label}</p>
-                <p className="text-[10px] text-gray-500">{b.sub}</p>
-              </button>
-            ))}
+          {/* Ancillary options */}
+          <div className="mb-6">
+            <AncillarySelector selected={ancillaries} onChange={setAncillaries} basePrice={slotPrice} />
           </div>
 
           <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 mb-4">
@@ -764,7 +719,7 @@ const CabyVanPage: React.FC = () => {
               <span className="text-sm text-gray-700">Total</span>
               <span className="text-2xl font-black text-gray-900">CHF {totalPrice}</span>
             </div>
-            {baggageCost > 0 && <p className="text-[10px] text-gray-500 mt-1">Inclut supplément bagage +CHF {baggageCost}</p>}
+            {ancillaryTotal > 0 && <p className="text-[10px] text-gray-500 mt-1">Siège CHF {slotPrice} + options CHF {ancillaryTotal}</p>}
           </div>
 
           <Button onClick={() => setStep('confirm')} disabled={!selectedSeat}
@@ -809,6 +764,12 @@ const CabyVanPage: React.FC = () => {
                   <span className="font-bold text-gray-900">{value}</span>
                 </div>
               ))}
+              {ancillaryTotal > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Options</span>
+                  <span className="font-bold text-gray-900">+CHF {ancillaryTotal}</span>
+                </div>
+              )}
               <div className="border-t border-dashed border-gray-200 pt-3 flex justify-between text-sm">
                 <span className="text-gray-500">Total payé</span>
                 <span className="text-xl font-black text-gray-900">CHF {totalPrice}</span>
