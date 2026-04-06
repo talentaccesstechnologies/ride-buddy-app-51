@@ -13,6 +13,8 @@ interface IncidentRow {
   compensation_type: string | null;
   created_at: string;
   resolved_at: string | null;
+  client_id: string | null;
+  reported_by: string;
 }
 
 interface Incident {
