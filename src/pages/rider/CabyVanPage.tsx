@@ -561,7 +561,6 @@ const CabyVanPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="h-44" />
 
         {/* Info banner */}
         <div className="px-5 mt-6">
