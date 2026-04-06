@@ -368,8 +368,8 @@ const CabyCrossBorderPage: React.FC = () => {
             })}
           </div>
 
-          <div className="mt-4 text-[10px] text-muted-foreground text-center px-4">
-            Service de covoiturage avec chauffeur professionnel certifié. Trajet transfrontalier France-Suisse.
+          <div className="mt-4 text-[10px] text-muted-foreground text-center px-4 flex items-center justify-center gap-1">
+            🤝 Covoiturage — partage de frais entre particuliers · 🛡️ Couvert par assurance trajet Caby
           </div>
         </div>
         <BottomNav />
@@ -528,8 +528,8 @@ const CabyCrossBorderPage: React.FC = () => {
             <p className="text-xs text-emerald-300 text-left">🌿 Trajet partagé — vous économisez <span className="font-bold">{Math.round(selectedRoute.duration * 0.12)} kg de CO₂</span> vs voiture solo</p>
           </div>
 
-          <div className="mt-4 text-[10px] text-muted-foreground px-4">
-            Service de covoiturage avec chauffeur professionnel certifié. Trajet transfrontalier France-Suisse.
+          <div className="mt-4 text-[10px] text-muted-foreground text-center px-4">
+            🤝 Covoiturage — partage de frais entre particuliers · 🛡️ Couvert par assurance trajet Caby
           </div>
 
           <Button onClick={() => navigate('/caby/services')} variant="outline" className="w-full mt-4 rounded-xl h-12">

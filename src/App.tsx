@@ -65,6 +65,8 @@ import EarlyAccessPage from "./pages/EarlyAccessPage";
 import PartnerLoginPage from "./pages/partner/PartnerLoginPage";
 import PartnerDashboardPage from "./pages/partner/PartnerDashboardPage";
 import { PartnerProvider } from "@/contexts/PartnerContext";
+import HowItWorksPage from "./pages/HowItWorksPage";
+import CGUModal from "@/components/shared/CGUModal";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -74,6 +76,7 @@ const App = () => (
       <AuthProvider>
         <RideProvider>
           <PartnerProvider>
+          <CGUModal />
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -152,6 +155,9 @@ const App = () => (
               <Route path="/business" element={<CabyBusinessPage />} />
 
               {/* Device Preview */}
+              {/* How It Works */}
+              <Route path="/how-it-works" element={<HowItWorksPage />} />
+
               {/* Early Access */}
               <Route path="/early-access" element={<EarlyAccessPage />} />
 
