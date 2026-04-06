@@ -155,6 +155,9 @@ const App = () => (
               <Route path="/business" element={<CabyBusinessPage />} />
 
               {/* Device Preview */}
+              {/* How It Works */}
+              <Route path="/how-it-works" element={<HowItWorksPage />} />
+
               {/* Early Access */}
               <Route path="/early-access" element={<EarlyAccessPage />} />
 
