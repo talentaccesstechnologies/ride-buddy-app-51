@@ -131,6 +131,7 @@ const App = () => (
                 <Route path="club" element={<DriverClubPage />} />
                 <Route path="profile" element={<DriverProfilePage />} />
                 <Route path="earnings" element={<DriverEarningsPage />} />
+                <Route path="crossborder" element={<DriverCrossBorderPage />} />
               </Route>
 
               {/* Invite */}
