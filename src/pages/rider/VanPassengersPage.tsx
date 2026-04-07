@@ -110,9 +110,9 @@ export default function VanPassengersPage() {
 
             {/* Additional passengers */}
             {passengerNames.length > 0 && (
-              <div className="bg-white rounded-xl border p-5">
+              <div className="bg-white rounded-xl border p-5 text-gray-900">
                 <div className="flex justify-between items-center mb-3">
-                  <h2 className="font-semibold">Passagers supplémentaires</h2>
+                  <h2 className="font-semibold text-gray-900">Passagers supplémentaires</h2>
                   <button
                     className="text-xs hover:underline" style={{ color: GOLD }}
                     onClick={() => setPassengerNames(ps => ps.map(() => ({ first: form.firstName, last: form.lastName })))}
