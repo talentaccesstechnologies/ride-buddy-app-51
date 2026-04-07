@@ -36,6 +36,7 @@ import AncillarySelector from '@/components/van/AncillarySelector';
 import { getPickupPoints, hasAirportSelected, type PickupPoint } from '@/lib/pickupPoints';
 import { Plane } from 'lucide-react';
 import PlacesAutocomplete from '@/components/shared/PlacesAutocomplete';
+import PriceCalendar from '@/components/van/PriceCalendar';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'extras' | 'passenger' | 'payment' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
