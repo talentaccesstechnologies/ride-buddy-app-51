@@ -35,6 +35,7 @@ const IMAGE_MAP: Record<string, string> = {
   Berne: berneImg,
   'Chambéry': chamberyImg,
   Chamonix: chamonixImg,
+  Sion: sionImg,
 };
 
 const ALL_DESTINATIONS: DestinationItem[] = [
