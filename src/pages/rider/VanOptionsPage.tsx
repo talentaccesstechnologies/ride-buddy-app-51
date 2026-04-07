@@ -66,19 +66,19 @@ export default function VanOptionsPage() {
 
               <div className="grid grid-cols-3 gap-4 mb-5">
                 <div className="text-center">
-                  <Clock className="w-6 h-6 mx-auto mb-1 text-gray-500" />
-                  <p className="text-xs font-medium">Dernière minute</p>
-                  <p className="text-[10px] text-gray-400">Modifiez jusqu'à 2h avant</p>
+                  <Clock className="w-6 h-6 mx-auto mb-1 text-gray-600" />
+                  <p className="text-xs font-medium text-gray-900">Dernière minute</p>
+                  <p className="text-[10px] text-gray-500">Modifiez jusqu'à 2h avant</p>
                 </div>
                 <div className="text-center">
-                  <CalendarCheck className="w-6 h-6 mx-auto mb-1 text-gray-500" />
-                  <p className="text-xs font-medium">Flexibilité</p>
-                  <p className="text-[10px] text-gray-400">Changez heure ou créneau</p>
+                  <CalendarCheck className="w-6 h-6 mx-auto mb-1 text-gray-600" />
+                  <p className="text-xs font-medium text-gray-900">Flexibilité</p>
+                  <p className="text-[10px] text-gray-500">Changez heure ou créneau</p>
                 </div>
                 <div className="text-center">
-                  <Coins className="w-6 h-6 mx-auto mb-1 text-gray-500" />
-                  <p className="text-xs font-medium">Économies</p>
-                  <p className="text-[10px] text-gray-400">Pas de frais de modification</p>
+                  <Coins className="w-6 h-6 mx-auto mb-1 text-gray-600" />
+                  <p className="text-xs font-medium text-gray-900">Économies</p>
+                  <p className="text-[10px] text-gray-500">Pas de frais de modification</p>
                 </div>
               </div>
 
