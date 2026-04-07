@@ -114,9 +114,11 @@ const VEHICLES: VehicleOption[] = [
 const STEPPER_STEPS = [
   { num: 1, label: 'Détails du trajet' },
   { num: 2, label: 'Choisir le transfert' },
-  { num: 3, label: 'Vos informations' },
-  { num: 4, label: 'Paiement' },
-  { num: 5, label: 'Confirmation' },
+  { num: 3, label: 'Choix du siège' },
+  { num: 4, label: 'Extras & options' },
+  { num: 5, label: 'Vos informations' },
+  { num: 6, label: 'Paiement' },
+  { num: 7, label: 'Confirmation' },
 ];
 
 const INSURANCE_FEE = 2.50;
