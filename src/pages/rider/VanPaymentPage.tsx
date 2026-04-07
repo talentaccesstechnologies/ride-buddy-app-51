@@ -45,7 +45,7 @@ export default function VanPaymentPage() {
   const walletApplied = useWallet ? Math.min(walletBalance, total) : 0;
   const finalTotal = total - walletApplied;
 
-  const canPay = cgu1 && cgu2 && (paymentMethod !== 'card' || (cardNumber && expiry && cvv));
+  const canPay = paymentMethod !== 'card' || (cardNumber && expiry && cvv);
 
   const handlePay = () => {
     setProcessing(true);
