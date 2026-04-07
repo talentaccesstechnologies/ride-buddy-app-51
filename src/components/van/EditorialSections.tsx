@@ -22,7 +22,7 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
           {/* Card 1 — Traversez les Alpes */}
           <button
             onClick={() => onSelectDestination('Verbier')}
-            className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left"
+            className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left flex flex-col"
           >
             <div className="h-[200px] overflow-hidden">
               <img
@@ -32,11 +32,11 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
                 loading="lazy"
               />
             </div>
-            <div className="p-5">
-              <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight">
+            <div className="p-5 flex flex-col flex-1">
+              <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight min-h-[56px]">
                 Traversez les Alpes en Van
               </h3>
-              <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+              <p className="text-sm text-gray-500 mt-2 leading-relaxed flex-1">
                 Verbier, Zermatt, Davos... Les plus belles stations accessibles en un trajet.
               </p>
               <div className="flex items-center gap-1.5 mt-4 font-bold text-sm" style={{ color: GOLD }}>
@@ -48,7 +48,7 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
           {/* Card 2 — Genève ↔ Lyon */}
           <button
             onClick={() => onSelectDestination('Lyon')}
-            className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left"
+            className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left flex flex-col"
           >
             <div className="h-[200px] overflow-hidden">
               <img
@@ -58,11 +58,11 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
                 loading="lazy"
               />
             </div>
-            <div className="p-5">
-              <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight">
+            <div className="p-5 flex flex-col flex-1">
+              <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight min-h-[56px]">
                 Genève ↔ Lyon en 1h45
               </h3>
-              <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+              <p className="text-sm text-gray-500 mt-2 leading-relaxed flex-1">
                 Business, loisirs, week-end. Dès CHF 42.
               </p>
               <div className="flex items-center gap-1.5 mt-4 font-bold text-sm" style={{ color: GOLD }}>
@@ -74,7 +74,7 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
           {/* Card 3 — Stations de Ski */}
           <button
             onClick={() => onSelectDestination('Chamonix')}
-            className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left"
+            className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left flex flex-col"
           >
             <div className="h-[200px] overflow-hidden">
               <img
@@ -84,11 +84,11 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
                 loading="lazy"
               />
             </div>
-            <div className="p-5">
-              <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight">
+            <div className="p-5 flex flex-col flex-1">
+              <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight min-h-[56px]">
                 Stations de Ski — Réservez tôt
               </h3>
-              <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+              <p className="text-sm text-gray-500 mt-2 leading-relaxed flex-1">
                 Verbier, Chamonix, Zermatt, Davos. Dès CHF 28.
               </p>
               <div className="flex items-center gap-1.5 mt-4 font-bold text-sm" style={{ color: GOLD }}>
