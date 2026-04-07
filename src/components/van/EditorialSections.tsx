@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import annecyImg from '@/assets/annecy.jpg';
 import zermattImg from '@/assets/zermatt.jpg';
