@@ -176,11 +176,9 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
     }
   };
 
-  const nightsCount = selectedDeparture && selectedReturn
-    ? Math.round((selectedReturn.getTime() - selectedDeparture.getTime()) / (1000 * 60 * 60 * 24))
-    : 0;
-
-  const formatShort = (d: Date) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+  const MONTHS_SHORT = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+  const formatDateLabel = (d: Date) => `${String(d.getDate()).padStart(2, '0')} ${MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}`;
+  const formatShort = (d: Date) => `${String(d.getDate()).padStart(2, '0')} ${MONTHS_SHORT[d.getMonth()]}`;
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-xl p-4 md:p-6 w-full max-w-2xl">
