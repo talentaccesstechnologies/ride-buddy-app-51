@@ -7,6 +7,7 @@ import {
   Info, ChevronDown, ChevronUp, Edit2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import zermattImg from '@/assets/zermatt.jpg';
 // Unsplash vehicle images — 3/4 view, neutral backgrounds
 const vehicleImages = {
   van_shared: 'https://images.unsplash.com/photo-1612838320302-4b3b3b3b3b3b?w=600&q=80&fit=crop&crop=center',
