@@ -198,7 +198,7 @@ const DEST_CARDS = [
 
 const EDITORIAL_CARDS = [
   { title: 'TRAVERSEZ LES ALPES EN VAN', desc: 'De Genève au Cervin en toute sérénité. Sièges confortables, Wi-Fi, vue panoramique.', image: zermattImg, cta: 'Explorer', dest: 'Zermatt' },
-  { title: 'GENÈVE ↔ LYON EN 1H45', desc: 'La ligne la plus demandée. Départs quotidiens, prix imbattable vs le train.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Lyon_Fourviere.jpg/640px-Lyon_Fourviere.jpg', cta: 'Réserver', dest: 'Lyon' },
+  { title: 'GENÈVE ↔ LYON EN 1H45', desc: 'La ligne la plus demandée. Départs quotidiens, prix imbattable vs le train.', image: lyonImg, cta: 'Réserver', dest: 'Lyon' },
   { title: 'STATIONS DE SKI — RÉSERVEZ TÔT', desc: 'Verbier, Chamonix, Zermatt. Early Bird -30%. Skis transportés gratuitement.', image: verbierImg, cta: 'Voir les offres', dest: 'Verbier' },
 ];
 
