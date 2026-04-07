@@ -17,15 +17,6 @@ const GOLD = '#C9A84C';
 const DAYS_FR_SHORT = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 const MONTHS_FR = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
 
-const STEPPER = [
-  { icon: '🚐', label: 'Choisir le trajet' },
-  { icon: '👤', label: 'Infos passager' },
-  { icon: '💺', label: 'Siège' },
-  { icon: '🧳', label: 'Bagages & extras' },
-  { icon: '➕', label: 'Options' },
-  { icon: '💳', label: 'Paiement' },
-];
-
 interface TimeSlotData {
   id: string;
   departure: string;
