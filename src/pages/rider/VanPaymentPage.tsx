@@ -131,7 +131,7 @@ export default function VanPaymentPage() {
                   placeholder="Code promo"
                   className="flex-1"
                 />
-                <button className="px-4 py-2 rounded-lg text-sm font-semibold bg-gray-100 hover:bg-gray-200">
+                <button className="px-4 py-2 rounded-lg text-sm font-semibold bg-gray-100 hover:bg-gray-200 text-gray-900">
                   Appliquer
                 </button>
               </div>
