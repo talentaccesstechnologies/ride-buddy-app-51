@@ -43,6 +43,7 @@ const IMAGE_MAP: Record<string, string> = {
   'Neuchâtel': neuchatelImg,
   Montreux: montreuxImg,
   Davos: davosImg,
+  Gstaad: gstaadImg,
 };
 
 const ALL_DESTINATIONS: DestinationItem[] = [
