@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import zermattImg from '@/assets/zermatt.jpg';
 import zurichImg from '@/assets/zurich.jpg';
+import verbierImg from '@/assets/verbier.jpg';
 // Unsplash vehicle images — 3/4 view, neutral backgrounds
 const vehicleImages = {
   van_shared: 'https://images.unsplash.com/photo-1612838320302-4b3b3b3b3b3b?w=600&q=80&fit=crop&crop=center',
@@ -189,7 +190,7 @@ const DEST_CARDS = [
   { from: 'Genève', to: 'Zurich', image: zurichImg, fromPrice: 54, month: 'avr. 2026' },
   { from: 'Genève', to: 'Annecy', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Annecy_-_vieille_ville_%28Palais_de_l%27Isle%29.jpg/640px-Annecy_-_vieille_ville_%28Palais_de_l%27Isle%29.jpg', fromPrice: 15, month: 'avr. 2026' },
   { from: 'Genève', to: 'Lausanne', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Lausanne_and_Lake_Geneva_from_Signal_2010.jpg/640px-Lausanne_and_Lake_Geneva_from_Signal_2010.jpg', fromPrice: 18, month: 'avr. 2026' },
-  { from: 'Genève', to: 'Verbier', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Verbier_-_2012.jpg/640px-Verbier_-_2012.jpg', fromPrice: 35, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Verbier', image: verbierImg, fromPrice: 35, month: 'avr. 2026' },
   { from: 'Genève', to: 'Lyon', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Lyon_Fourviere.jpg/640px-Lyon_Fourviere.jpg', fromPrice: 42, month: 'avr. 2026' },
   { from: 'Genève', to: 'Zermatt', image: zermattImg, fromPrice: 55, month: 'mai 2026' },
 ];
@@ -197,7 +198,7 @@ const DEST_CARDS = [
 const EDITORIAL_CARDS = [
   { title: 'TRAVERSEZ LES ALPES EN VAN', desc: 'De Genève au Cervin en toute sérénité. Sièges confortables, Wi-Fi, vue panoramique.', image: zermattImg, cta: 'Explorer', dest: 'Zermatt' },
   { title: 'GENÈVE ↔ LYON EN 1H45', desc: 'La ligne la plus demandée. Départs quotidiens, prix imbattable vs le train.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Lyon_Fourviere.jpg/640px-Lyon_Fourviere.jpg', cta: 'Réserver', dest: 'Lyon' },
-  { title: 'STATIONS DE SKI — RÉSERVEZ TÔT', desc: 'Verbier, Chamonix, Zermatt. Early Bird -30%. Skis transportés gratuitement.', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Verbier_-_2012.jpg/640px-Verbier_-_2012.jpg', cta: 'Voir les offres', dest: 'Verbier' },
+  { title: 'STATIONS DE SKI — RÉSERVEZ TÔT', desc: 'Verbier, Chamonix, Zermatt. Early Bird -30%. Skis transportés gratuitement.', image: verbierImg, cta: 'Voir les offres', dest: 'Verbier' },
 ];
 
 const FILTER_TABS: { key: SegmentFilter; label: string; icon: string; badge?: string }[] = [
