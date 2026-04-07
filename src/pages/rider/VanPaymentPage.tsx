@@ -238,7 +238,7 @@ export default function VanPaymentPage() {
 
             {/* Pay button */}
             <div className="text-center">
-              <p className="text-lg font-bold mb-2">Montant total : CHF {finalTotal.toFixed(2)}</p>
+              <p className="text-lg font-bold mb-2 text-gray-900">Montant total : CHF {finalTotal.toFixed(2)}</p>
               <button
                 onClick={handlePay}
                 disabled={!canPay || processing}
