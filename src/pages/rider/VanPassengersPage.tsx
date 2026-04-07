@@ -150,9 +150,9 @@ export default function VanPassengersPage() {
             )}
 
             {/* Flight number */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-2">Numéro de vol (optionnel)</h2>
-              <p className="text-xs text-gray-500 mb-3">Votre chauffeur suivra votre vol en temps réel</p>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-2 text-gray-900">Numéro de vol (optionnel)</h2>
+              <p className="text-xs text-gray-600 mb-3">Votre chauffeur suivra votre vol en temps réel</p>
               <Input
                 value={form.flightNumber}
                 onChange={e => update('flightNumber', e.target.value)}
