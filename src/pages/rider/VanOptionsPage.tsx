@@ -109,10 +109,10 @@ export default function VanOptionsPage() {
                 style={{ borderColor: insurance ? GOLD : '#e5e7eb' }}
               >
                 <div className="flex justify-between items-start mb-3">
-                  <h3 className="font-semibold text-sm">Annulation & Bagages</h3>
+                  <h3 className="font-semibold text-sm text-gray-900">Annulation & Bagages</h3>
                   <span className="font-bold" style={{ color: GOLD }}>CHF 4.90</span>
                 </div>
-                <ul className="space-y-1.5 text-sm text-gray-600">
+                <ul className="space-y-1.5 text-sm text-gray-700">
                   <li className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Annulation : jusqu'à CHF 500</li>
                   <li className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Bagages perdus : jusqu'à CHF 300</li>
                   <li className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Assistance retard : jusqu'à CHF 100</li>
