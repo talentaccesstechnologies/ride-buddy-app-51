@@ -221,8 +221,8 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: '#ef4444' }} /> Très élevé</span>
       </div>
 
-      {/* Footer — sticky */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-100 px-5 py-3 rounded-b-xl">
+      {/* Footer */}
+      <div className="bg-white border-t border-gray-100 px-5 py-3 rounded-b-xl mt-2">
         {roundTrip && selectedDeparture && selectedReturn && (
           <div className="mb-2 text-xs text-gray-500 flex items-center gap-2 flex-wrap">
             <span>Aller : <strong className="text-gray-900">{formatDateLabel(selectedDeparture)}</strong></span>
