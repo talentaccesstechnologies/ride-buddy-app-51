@@ -182,18 +182,18 @@ const POPULAR_DESTINATIONS = [
 ];
 
 const DEST_CARDS = [
-  { from: 'Genève', to: 'Zurich', image: 'https://images.unsplash.com/photo-1620735692151-26a7e0748429?w=600&q=80&fit=crop', fromPrice: 54, month: 'avr. 2026' },
-  { from: 'Genève', to: 'Annecy', image: 'https://images.unsplash.com/photo-1533395427226-788cee25cc7b?w=600&q=80&fit=crop', fromPrice: 15, month: 'avr. 2026' },
-  { from: 'Genève', to: 'Lausanne', image: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=600&q=80&fit=crop', fromPrice: 18, month: 'avr. 2026' },
-  { from: 'Genève', to: 'Verbier', image: 'https://images.unsplash.com/photo-1548777123-e216912df7d8?w=600&q=80&fit=crop', fromPrice: 35, month: 'avr. 2026' },
-  { from: 'Genève', to: 'Lyon', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80&fit=crop', fromPrice: 42, month: 'avr. 2026' },
-  { from: 'Genève', to: 'Zermatt', image: 'https://images.unsplash.com/photo-1531168556467-80aace0d0144?w=600&q=80&fit=crop', fromPrice: 55, month: 'mai 2026' },
+  { from: 'Genève', to: 'Zurich', image: 'https://source.unsplash.com/600x400/?zurich,switzerland,lake,city&sig=1', fromPrice: 54, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Annecy', image: 'https://source.unsplash.com/600x400/?annecy,france,canal,lake&sig=2', fromPrice: 15, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Lausanne', image: 'https://source.unsplash.com/600x400/?lausanne,lake-leman,switzerland&sig=3', fromPrice: 18, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Verbier', image: 'https://source.unsplash.com/600x400/?verbier,ski,alps,switzerland&sig=4', fromPrice: 35, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Lyon', image: 'https://source.unsplash.com/600x400/?lyon,france,fourviere,basilica&sig=5', fromPrice: 42, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Zermatt', image: 'https://source.unsplash.com/600x400/?zermatt,matterhorn,switzerland&sig=6', fromPrice: 55, month: 'mai 2026' },
 ];
 
 const EDITORIAL_CARDS = [
-  { title: 'TRAVERSEZ LES ALPES EN VAN', desc: 'De Genève au Cervin en toute sérénité. Sièges confortables, Wi-Fi, vue panoramique.', image: 'https://images.unsplash.com/photo-1531168556467-80aace0d0144?w=800&q=80&fit=crop', cta: 'Explorer', dest: 'Zermatt' },
-  { title: 'GENÈVE ↔ LYON EN 1H45', desc: 'La ligne la plus demandée. Départs quotidiens, prix imbattable vs le train.', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&fit=crop', cta: 'Réserver', dest: 'Lyon' },
-  { title: 'STATIONS DE SKI — RÉSERVEZ TÔT', desc: 'Verbier, Chamonix, Zermatt. Early Bird -30%. Skis transportés gratuitement.', image: 'https://images.unsplash.com/photo-1548777123-e216912df7d8?w=800&q=80&fit=crop', cta: 'Voir les offres', dest: 'Verbier' },
+  { title: 'TRAVERSEZ LES ALPES EN VAN', desc: 'De Genève au Cervin en toute sérénité. Sièges confortables, Wi-Fi, vue panoramique.', image: 'https://source.unsplash.com/800x500/?zermatt,matterhorn,switzerland&sig=10', cta: 'Explorer', dest: 'Zermatt' },
+  { title: 'GENÈVE ↔ LYON EN 1H45', desc: 'La ligne la plus demandée. Départs quotidiens, prix imbattable vs le train.', image: 'https://source.unsplash.com/800x500/?lyon,france,fourviere,basilica&sig=11', cta: 'Réserver', dest: 'Lyon' },
+  { title: 'STATIONS DE SKI — RÉSERVEZ TÔT', desc: 'Verbier, Chamonix, Zermatt. Early Bird -30%. Skis transportés gratuitement.', image: 'https://source.unsplash.com/800x500/?verbier,ski,alps,switzerland&sig=12', cta: 'Voir les offres', dest: 'Verbier' },
 ];
 
 const FILTER_TABS: { key: SegmentFilter; label: string; icon: string; badge?: string }[] = [
