@@ -1018,7 +1018,35 @@ const CabyVanPage: React.FC = () => {
               </div>
             )}
 
-            {roundTrip && timeRetour === 'custom' && (
+            {timeAller === 'custom' && (
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block font-medium">Heure personnalisée aller</label>
+                <input type="time" value={customTimeAller} onChange={(e) => setCustomTimeAller(e.target.value)}
+                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" />
+              </div>
+            )}
+
+            {effectiveTimeAller && selectedRoute && (
+              <div className="rounded-xl bg-blue-50 border border-blue-200 p-3 flex items-center gap-2">
+                <Timer className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm text-gray-900 font-medium">
+                    Arrivée estimée : <span className="font-bold">{estimatedArrivalAller}</span>
+                  </p>
+                  <p className="text-[10px] text-gray-500">{formatDuration(selectedRoute.duration)} de trajet</p>
+                </div>
+                {selectedAllerRush && RUSH_BADGE[selectedAllerRush] && (
+                  <span className={`text-[9px] font-bold px-2 py-1 rounded-full border ${RUSH_BADGE[selectedAllerRush].color}`}>
+                    {RUSH_BADGE[selectedAllerRush].label}
+                  </span>
+                )}
+              </div>
+            )}
+            {effectiveTimeAller && selectedAllerRush === 'creux' && (
+              <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-2.5 flex items-center gap-2">
+                <span className="text-sm">💰</span>
+                <p className="text-[11px] text-emerald-700 font-medium">Créneau creux — prix réduit −5%</p>
+              </div>
               <div>
                 <label className="text-xs text-gray-500 mb-1 block font-medium">Heure personnalisée retour</label>
                 <input type="time" value={customTimeRetour} onChange={(e) => setCustomTimeRetour(e.target.value)}
