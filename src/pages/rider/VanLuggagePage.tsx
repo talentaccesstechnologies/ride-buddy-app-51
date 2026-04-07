@@ -75,12 +75,12 @@ export default function VanLuggagePage() {
             </div>
 
             {/* Per passenger */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-4">Par passager</h2>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-4 text-gray-900">Par passager</h2>
 
               {Array.from({ length: passengers }).map((_, i) => (
                 <div key={i} className="mb-4 last:mb-0">
-                  <p className="font-medium text-sm mb-2">👤 Passager {i + 1}</p>
+                  <p className="font-medium text-sm mb-2 text-gray-900">👤 Passager {i + 1}</p>
                   <div className="space-y-2 ml-4">
                     <div className="flex items-center gap-2 text-sm">
                       <span>🎒</span>
