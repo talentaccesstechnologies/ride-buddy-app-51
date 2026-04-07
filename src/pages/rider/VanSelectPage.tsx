@@ -402,26 +402,7 @@ const VanSelectPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* STEPPER */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          {STEPPER.map((s, i) => (
-            <React.Fragment key={s.label}>
-              <div className="flex flex-col items-center gap-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
-                  i === 0 ? 'text-white' : 'bg-gray-200 text-gray-500'
-                }`} style={i === 0 ? { backgroundColor: GOLD } : {}}>
-                  {s.icon}
-                </div>
-                <span className={`text-[10px] font-medium hidden md:block ${i === 0 ? 'text-gray-900' : 'text-gray-400'}`}>
-                  {s.label}
-                </span>
-              </div>
-              {i < STEPPER.length - 1 && <div className={`flex-1 h-0.5 mx-1 ${i < 0 ? 'bg-emerald-500' : 'bg-gray-200'}`} />}
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
+      <BookingStepper currentStep={0} />
 
       {/* MODIFY LINK */}
       <div className="max-w-6xl mx-auto px-4 pt-4 flex justify-end">
