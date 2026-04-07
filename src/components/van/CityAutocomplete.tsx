@@ -167,7 +167,7 @@ const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
       </div>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl overflow-hidden max-h-[320px] overflow-y-auto" ref={listRef}>
+        <div className="absolute z-[999] w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl overflow-hidden max-h-[320px] overflow-y-auto" ref={listRef}>
           {filtered ? (
             filtered.length > 0 ? (
               filtered.map((c, i) => renderRow(c, i))

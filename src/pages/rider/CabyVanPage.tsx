@@ -623,7 +623,7 @@ const CabyVanPage: React.FC = () => {
 
           {/* Tagline — hidden when calendar is open */}
           {!calendarOpen && (
-            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-center w-full z-10 px-6" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-center w-full z-[1] px-6" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
               <h1 className="text-[42px] md:text-5xl font-black text-white leading-tight" style={{ letterSpacing: '-0.5px' }}>
                 VOYAGEZ MALIN.
               </h1>
