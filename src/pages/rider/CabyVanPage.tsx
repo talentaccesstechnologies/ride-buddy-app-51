@@ -233,6 +233,16 @@ const CabyVanPage: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement>(null);
   const calendarSearchRef = useRef<HTMLDivElement>(null);
 
+  const [from, setFrom] = useState('Genève');
+  const [to, setTo] = useState('');
+  const [dateAller, setDateAller] = useState('');
+  const [timeAller, setTimeAller] = useState('');
+  const [passengers, setPassengers] = useState(1);
+  const [roundTrip, setRoundTrip] = useState(false);
+  const [dateRetour, setDateRetour] = useState('');
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [calendarOpenSearch, setCalendarOpenSearch] = useState(false);
+
   // Close calendars on click outside
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -258,16 +268,6 @@ const CabyVanPage: React.FC = () => {
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, []);
-
-  const [from, setFrom] = useState('Genève');
-  const [to, setTo] = useState('');
-  const [dateAller, setDateAller] = useState('');
-  const [timeAller, setTimeAller] = useState('');
-  const [passengers, setPassengers] = useState(1);
-  const [roundTrip, setRoundTrip] = useState(false);
-  const [dateRetour, setDateRetour] = useState('');
-  const [calendarOpen, setCalendarOpen] = useState(false);
-  const [calendarOpenSearch, setCalendarOpenSearch] = useState(false);
   const [departureDateObj, setDepartureDateObj] = useState<Date | null>(null);
   const [returnDateObj, setReturnDateObj] = useState<Date | null>(null);
   const [timeRetour, setTimeRetour] = useState('');
