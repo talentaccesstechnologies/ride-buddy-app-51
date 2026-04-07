@@ -548,7 +548,7 @@ const CabyVanPage: React.FC = () => {
           <div className="absolute inset-0 bg-black/25" />
 
           {/* Search engine card — absolutely positioned at top */}
-          <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[90%] max-w-[880px] z-10">
+          <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[90%] max-w-[880px] z-[100]">
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] p-5 md:p-6">
               {/* Round trip toggle */}
               <div className="flex items-center gap-1.5 mb-4">
