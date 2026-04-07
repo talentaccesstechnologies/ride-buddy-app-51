@@ -31,6 +31,7 @@ import VanDestinationPage from "./pages/rider/VanDestinationPage";
 import VanSelectPage from "./pages/rider/VanSelectPage";
 import VanPackPage from "./pages/rider/VanPackPage";
 import VanPassengersPage from "./pages/rider/VanPassengersPage";
+import VanTermsPage from "./pages/rider/VanTermsPage";
 import VanSeatPage from "./pages/rider/VanSeatPage";
 import VanLuggagePage from "./pages/rider/VanLuggagePage";
 import VanOptionsPage from "./pages/rider/VanOptionsPage";
