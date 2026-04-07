@@ -550,35 +550,24 @@ const CabyVanPage: React.FC = () => {
           {/* Search engine card — absolutely positioned at top */}
           <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[90%] max-w-[880px] z-10">
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] p-5 md:p-6">
-              {/* Line 1: Service tabs */}
-              <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-3">
-                {([['trajets', '🚐 Trajets'], ['ski', '🎿 Ski'], ['crossborder', '🌍 Cross-Border']] as const).map(([key, label]) => (
-                  <button key={key} onClick={() => handleServiceChange(key)}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${activeService === key ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                    style={activeService === key ? { backgroundColor: GOLD } : {}}>
-                    {label}
-                  </button>
-                ))}
-                <div className="flex-1" />
-                <div className="flex items-center gap-1.5">
-                  <button onClick={() => setRoundTrip(false)} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${!roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                    style={!roundTrip ? { backgroundColor: GOLD } : {}}>Aller simple</button>
-                  <button onClick={() => setRoundTrip(true)} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1 ${roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                    style={roundTrip ? { backgroundColor: GOLD } : {}}>
-                    Aller-retour
-                    <span className="text-[9px] font-bold px-1 py-0.5 rounded-full bg-white/20">-5%</span>
-                  </button>
-                </div>
+              {/* Round trip toggle */}
+              <div className="flex items-center gap-1.5 mb-4">
+                <button onClick={() => setRoundTrip(false)} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${!roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                  style={!roundTrip ? { backgroundColor: GOLD } : {}}>Aller simple</button>
+                <button onClick={() => setRoundTrip(true)} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1 ${roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                  style={roundTrip ? { backgroundColor: GOLD } : {}}>
+                  Aller-retour
+                  <span className="text-[9px] font-bold px-1 py-0.5 rounded-full bg-white/20">-5%</span>
+                </button>
               </div>
 
-              {/* Line 2: Fields */}
+              {/* Fields */}
               <div className="flex flex-col md:flex-row gap-3 md:items-center">
                 <CityAutocomplete
                   value={from}
                   onChange={(c) => { setFrom(c); setTo(''); }}
                   placeholder="Ville, gare, aéroport..."
                   iconColor="#10b981"
-                  filterCities={currentFilterCities}
                 />
                 <div className="hidden md:flex items-center shrink-0">
                   <button onClick={() => { const t = from; setFrom(to || from); setTo(t); }}
@@ -589,9 +578,8 @@ const CabyVanPage: React.FC = () => {
                 <CityAutocomplete
                   value={to}
                   onChange={setTo}
-                  placeholder={destPlaceholder}
+                  placeholder="Destination"
                   iconColor="#ef4444"
-                  filterCities={currentFilterCities}
                 />
                 <div className="flex-1 min-w-0">
                   <button onClick={() => setCalendarOpen(!calendarOpen)}
@@ -610,8 +598,7 @@ const CabyVanPage: React.FC = () => {
                 <Button onClick={() => { if (from && to) handleSearch(); else setStep('search'); }}
                   className="h-11 px-6 rounded-xl text-white font-bold text-sm shadow-lg hover:shadow-xl transition-shadow shrink-0"
                   style={{ backgroundColor: GOLD }}>
-                  <Search className="w-4 h-4 mr-1.5" />
-                  Rechercher
+                  🚐 Afficher les trajets
                 </Button>
               </div>
             </div>
