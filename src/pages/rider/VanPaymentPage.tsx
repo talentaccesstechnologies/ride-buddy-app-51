@@ -154,8 +154,8 @@ export default function VanPaymentPage() {
               <h2 className="font-semibold mb-3 text-gray-900">Récapitulatif</h2>
               {items.map((item, i) => (
                 <div key={i} className="flex justify-between text-sm py-1">
-                  <span className="text-gray-600">{item.label}</span>
-                  <span>CHF {item.amount.toFixed(2)}</span>
+                  <span className="text-gray-700">{item.label}</span>
+                  <span className="font-medium text-gray-900">CHF {item.amount.toFixed(2)}</span>
                 </div>
               ))}
               {walletApplied > 0 && (
