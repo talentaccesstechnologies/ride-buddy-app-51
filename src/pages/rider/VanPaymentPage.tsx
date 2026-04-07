@@ -172,8 +172,8 @@ export default function VanPaymentPage() {
             </div>
 
             {/* Payment method */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-4">Comment souhaitez-vous payer ?</h2>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-4 text-gray-900">Comment souhaitez-vous payer ?</h2>
               <div className="space-y-3">
                 {[
                   { id: 'card', label: 'Carte bancaire', icon: <CreditCard className="w-4 h-4" /> },
