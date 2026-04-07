@@ -186,7 +186,7 @@ const POPULAR_DESTINATIONS = [
 const FALLBACK_IMAGE = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Montreux_and_Lake_Geneva.jpg/640px-Montreux_and_Lake_Geneva.jpg';
 
 const DEST_CARDS = [
-  { from: 'Genève', to: 'Zurich', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Zurich_-_Grossm%C3%BCnster_-_Limmat_-_2011.jpg/640px-Zurich_-_Grossm%C3%BCnster_-_Limmat_-_2011.jpg', fromPrice: 54, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Zurich', image: zurichImg, fromPrice: 54, month: 'avr. 2026' },
   { from: 'Genève', to: 'Annecy', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Annecy_-_vieille_ville_%28Palais_de_l%27Isle%29.jpg/640px-Annecy_-_vieille_ville_%28Palais_de_l%27Isle%29.jpg', fromPrice: 15, month: 'avr. 2026' },
   { from: 'Genève', to: 'Lausanne', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Lausanne_and_Lake_Geneva_from_Signal_2010.jpg/640px-Lausanne_and_Lake_Geneva_from_Signal_2010.jpg', fromPrice: 18, month: 'avr. 2026' },
   { from: 'Genève', to: 'Verbier', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Verbier_-_2012.jpg/640px-Verbier_-_2012.jpg', fromPrice: 35, month: 'avr. 2026' },
