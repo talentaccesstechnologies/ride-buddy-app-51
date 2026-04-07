@@ -599,7 +599,6 @@ const CabyVanPage: React.FC = () => {
                   className="h-11 px-6 rounded-xl text-white font-bold text-sm shadow-lg hover:shadow-xl transition-shadow shrink-0"
                   style={{ backgroundColor: GOLD }}>
                   🚐 Afficher les trajets
-                  Rechercher
                 </Button>
               </div>
             </div>
