@@ -578,6 +578,7 @@ const CabyVanPage: React.FC = () => {
                   onChange={(c) => { setFrom(c); setTo(''); }}
                   placeholder="Ville, gare, aéroport..."
                   iconColor="#10b981"
+                  filterCities={currentFilterCities}
                 />
                 <div className="hidden md:flex items-center shrink-0">
                   <button onClick={() => { const t = from; setFrom(to || from); setTo(t); }}
@@ -588,8 +589,9 @@ const CabyVanPage: React.FC = () => {
                 <CityAutocomplete
                   value={to}
                   onChange={setTo}
-                  placeholder="Destination"
+                  placeholder={destPlaceholder}
                   iconColor="#ef4444"
+                  filterCities={currentFilterCities}
                 />
                 <div className="flex-1 min-w-0">
                   <button onClick={() => setCalendarOpen(!calendarOpen)}
