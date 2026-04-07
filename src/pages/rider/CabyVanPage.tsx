@@ -967,81 +967,54 @@ const CabyVanPage: React.FC = () => {
               </div>
             )}
 
+            {/* Date + Time Selection with Price Calendar */}
             <div>
-              <label className="text-xs text-gray-500 mb-1 block font-medium">Date aller</label>
-              <div className="flex gap-2">
-                <input type="date" value={dateAller} onChange={(e) => setDateAller(e.target.value)}
-                  className="flex-1 h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" />
-                <select value={timeAller} onChange={(e) => setTimeAller(e.target.value)}
-                  className="flex-1 h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
-                  <option value="">Heure de départ</option>
-                  {availableTimeSlotsAller.map(s => (
+              <label className="text-xs text-gray-500 mb-1 block font-medium">📅 Date du trajet</label>
+              <button onClick={() => setCalendarOpenSearch(!calendarOpenSearch)}
+                className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-left font-medium text-gray-900 hover:bg-gray-100 transition-colors">
+                {calendarDateLabel || 'Choisir une date — voir les prix'}
+              </button>
+            </div>
+
+            {calendarOpenSearch && (
+              <PriceCalendar
+                basePrice={calendarBasePrice}
+                roundTrip={roundTrip}
+                onToggleRoundTrip={setRoundTrip}
+                selectedDeparture={departureDateObj}
+                selectedReturn={returnDateObj}
+                onSelectDeparture={setDepartureDateObj}
+                onSelectReturn={setReturnDateObj}
+                onApply={() => handleCalendarApply(setCalendarOpenSearch)}
+                onClear={handleCalendarClear}
+              />
+            )}
+
+            <div>
+              <label className="text-xs text-gray-500 mb-1 block font-medium">🕐 Heure de départ</label>
+              <select value={timeAller} onChange={(e) => setTimeAller(e.target.value)}
+                className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
+                <option value="">Heure de départ</option>
+                {availableTimeSlotsAller.map(s => (
+                  <option key={s.time} value={s.time}>
+                    {s.time === 'custom' ? '🕐 Heure personnalisée' : `${s.time} ${s.rushLevel === 'rush' ? '🔴 Rush' : s.rushLevel === 'creux' ? '🟢 Creux' : '🟡 Soirée'}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {roundTrip && (
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block font-medium">🕐 Heure de retour</label>
+                <select value={timeRetour} onChange={(e) => setTimeRetour(e.target.value)}
+                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
+                  <option value="">Heure retour</option>
+                  {availableTimeSlotsRetour.map(s => (
                     <option key={s.time} value={s.time}>
                       {s.time === 'custom' ? '🕐 Heure personnalisée' : `${s.time} ${s.rushLevel === 'rush' ? '🔴 Rush' : s.rushLevel === 'creux' ? '🟢 Creux' : '🟡 Soirée'}`}
                     </option>
                   ))}
                 </select>
-              </div>
-            </div>
-
-            {timeAller === 'custom' && (
-              <div>
-                <label className="text-xs text-gray-500 mb-1 block font-medium">Heure personnalisée</label>
-                <input type="time" value={customTimeAller} onChange={(e) => setCustomTimeAller(e.target.value)}
-                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" />
-              </div>
-            )}
-
-            {effectiveTimeAller && selectedRoute && (
-              <div className="rounded-xl bg-blue-50 border border-blue-200 p-3 flex items-center gap-2">
-                <Timer className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm text-gray-900 font-medium">
-                    Arrivée estimée : <span className="font-bold">{estimatedArrivalAller}</span>
-                  </p>
-                  <p className="text-[10px] text-gray-500">{formatDuration(selectedRoute.duration)} de trajet</p>
-                </div>
-                {selectedAllerRush && RUSH_BADGE[selectedAllerRush] && (
-                  <span className={`text-[9px] font-bold px-2 py-1 rounded-full border ${RUSH_BADGE[selectedAllerRush].color}`}>
-                    {RUSH_BADGE[selectedAllerRush].label}
-                  </span>
-                )}
-              </div>
-            )}
-            {effectiveTimeAller && selectedAllerRush === 'creux' && (
-              <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-2.5 flex items-center gap-2">
-                <span className="text-sm">💰</span>
-                <p className="text-[11px] text-emerald-700 font-medium">Créneau creux — prix réduit −5%</p>
-              </div>
-            )}
-
-            <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 border border-gray-200">
-              <span className="text-sm text-gray-700 font-medium">Aller-retour</span>
-              <div className="flex items-center gap-2">
-                {roundTrip && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white" style={{ backgroundColor: GOLD }}>-5%</span>}
-                <button onClick={() => setRoundTrip(!roundTrip)} className={`w-11 h-6 rounded-full transition-colors ${roundTrip ? '' : 'bg-gray-300'}`}
-                  style={roundTrip ? { backgroundColor: GOLD } : {}}>
-                  <div className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${roundTrip ? 'translate-x-5' : 'translate-x-0.5'}`} />
-                </button>
-              </div>
-            </div>
-
-            {roundTrip && (
-              <div>
-                <label className="text-xs text-gray-500 mb-1 block font-medium">Date retour</label>
-                <div className="flex gap-2">
-                  <input type="date" value={dateRetour} onChange={(e) => setDateRetour(e.target.value)}
-                    className="flex-1 h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" />
-                  <select value={timeRetour} onChange={(e) => setTimeRetour(e.target.value)}
-                    className="flex-1 h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
-                    <option value="">Heure retour</option>
-                    {availableTimeSlotsRetour.map(s => (
-                      <option key={s.time} value={s.time}>
-                        {s.time === 'custom' ? '🕐 Heure personnalisée' : `${s.time} ${s.rushLevel === 'rush' ? '🔴 Rush' : s.rushLevel === 'creux' ? '🟢 Creux' : '🟡 Soirée'}`}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
             )}
 
