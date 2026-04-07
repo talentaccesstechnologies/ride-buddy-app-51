@@ -596,26 +596,11 @@ const CabyVanPage: React.FC = () => {
                   iconColor="#ef4444"
                 />
 
-                <div className="flex-1 relative min-w-0">
+                <div className="flex-1 min-w-0">
                   <button onClick={() => setCalendarOpen(!calendarOpen)}
                     className="w-full h-11 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-left font-medium text-gray-900 hover:bg-gray-100 transition-colors truncate">
                     {calendarDateLabel || '📅 Dates de voyage'}
                   </button>
-                  {calendarOpen && (
-                    <div ref={calendarRef} className="absolute top-full left-0 mt-2 z-[1000]">
-                      <PriceCalendar
-                        basePrice={calendarBasePrice}
-                        roundTrip={roundTrip}
-                        onToggleRoundTrip={setRoundTrip}
-                        selectedDeparture={departureDateObj}
-                        selectedReturn={returnDateObj}
-                        onSelectDeparture={setDepartureDateObj}
-                        onSelectReturn={setReturnDateObj}
-                        onApply={() => handleCalendarApply(setCalendarOpen)}
-                        onClear={handleCalendarClear}
-                      />
-                    </div>
-                  )}
                 </div>
 
                 <div className="w-full md:w-28 shrink-0">
@@ -635,6 +620,23 @@ const CabyVanPage: React.FC = () => {
                 </Button>
               </div>
             </div>
+
+              {/* Calendar dropdown — full width under the card */}
+              {calendarOpen && (
+                <div ref={calendarRef} className="mt-1 z-[200]">
+                  <PriceCalendar
+                    basePrice={calendarBasePrice}
+                    roundTrip={roundTrip}
+                    onToggleRoundTrip={setRoundTrip}
+                    selectedDeparture={departureDateObj}
+                    selectedReturn={returnDateObj}
+                    onSelectDeparture={setDepartureDateObj}
+                    onSelectReturn={setReturnDateObj}
+                    onApply={() => handleCalendarApply(setCalendarOpen)}
+                    onClear={handleCalendarClear}
+                  />
+                </div>
+              )}
           </div>
         </div>
 
