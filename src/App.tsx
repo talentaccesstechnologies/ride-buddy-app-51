@@ -27,6 +27,12 @@ import ServicesPage from "./pages/rider/ServicesPage";
 import CabyExpressPage from "./pages/rider/CabyExpressPage";
 import CabyVanPage from "./pages/rider/CabyVanPage";
 import VanSelectPage from "./pages/rider/VanSelectPage";
+import VanPackPage from "./pages/rider/VanPackPage";
+import VanPassengersPage from "./pages/rider/VanPassengersPage";
+import VanSeatPage from "./pages/rider/VanSeatPage";
+import VanLuggagePage from "./pages/rider/VanLuggagePage";
+import VanOptionsPage from "./pages/rider/VanOptionsPage";
+import VanPaymentPage from "./pages/rider/VanPaymentPage";
 import CabyNightPage from "./pages/rider/CabyNightPage";
 import CabyPassPage from "./pages/rider/CabyPassPage";
 import CabyBusinessPage from "./pages/rider/CabyBusinessPage";
@@ -99,6 +105,12 @@ const App = () => (
               <Route path="/caby/express" element={<CabyExpressPage />} />
               <Route path="/caby/van" element={<CabyVanPage />} />
               <Route path="/caby/van/select" element={<VanSelectPage />} />
+              <Route path="/caby/van/pack" element={<VanPackPage />} />
+              <Route path="/caby/van/passengers" element={<VanPassengersPage />} />
+              <Route path="/caby/van/seat" element={<VanSeatPage />} />
+              <Route path="/caby/van/luggage" element={<VanLuggagePage />} />
+              <Route path="/caby/van/options" element={<VanOptionsPage />} />
+              <Route path="/caby/van/payment" element={<VanPaymentPage />} />
               <Route path="/caby/crossborder" element={<CabyCrossBorderPage />} />
               <Route path="/caby/night" element={<CabyNightPage />} />
               <Route path="/caby/pass" element={<CabyPassPage />} />

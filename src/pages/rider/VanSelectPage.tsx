@@ -10,20 +10,12 @@ import {
   findRoute, formatDuration, generateSlotsForRoute,
   type VanRoute, type VanSlot,
 } from '@/lib/cabyVanPricing';
+import BookingStepper from '@/components/van/BookingStepper';
 import BottomNav from '@/components/rider/BottomNav';
 
 const GOLD = '#C9A84C';
 const DAYS_FR_SHORT = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 const MONTHS_FR = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
-
-const STEPPER = [
-  { icon: '🚐', label: 'Choisir le trajet' },
-  { icon: '👤', label: 'Infos passager' },
-  { icon: '💺', label: 'Siège' },
-  { icon: '🧳', label: 'Bagages & extras' },
-  { icon: '➕', label: 'Options' },
-  { icon: '💳', label: 'Paiement' },
-];
 
 interface TimeSlotData {
   id: string;
@@ -354,7 +346,19 @@ const VanSelectPage: React.FC = () => {
 
         <Button
           disabled={!canContinue}
-          onClick={() => navigate('/caby/van')}
+          onClick={() => {
+            const p = new URLSearchParams(searchParams);
+            if (selectedOutbound) {
+              p.set('price', String(selectedOutbound.price));
+              p.set('time', selectedOutbound.departure);
+              p.set('arrivalTime', selectedOutbound.arrival);
+            }
+            if (selectedReturn) {
+              p.set('returnTime', selectedReturn.departure);
+              p.set('returnArrivalTime', selectedReturn.arrival);
+            }
+            navigate(`/caby/van/pack?${p}`);
+          }}
           className="w-full h-11 rounded-xl text-white font-bold text-sm disabled:opacity-40 shadow-lg"
           style={{ backgroundColor: canContinue ? GOLD : undefined }}>
           Continuer →
@@ -398,26 +402,7 @@ const VanSelectPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* STEPPER */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          {STEPPER.map((s, i) => (
-            <React.Fragment key={s.label}>
-              <div className="flex flex-col items-center gap-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
-                  i === 0 ? 'text-white' : 'bg-gray-200 text-gray-500'
-                }`} style={i === 0 ? { backgroundColor: GOLD } : {}}>
-                  {s.icon}
-                </div>
-                <span className={`text-[10px] font-medium hidden md:block ${i === 0 ? 'text-gray-900' : 'text-gray-400'}`}>
-                  {s.label}
-                </span>
-              </div>
-              {i < STEPPER.length - 1 && <div className={`flex-1 h-0.5 mx-1 ${i < 0 ? 'bg-emerald-500' : 'bg-gray-200'}`} />}
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
+      <BookingStepper currentStep={0} />
 
       {/* MODIFY LINK */}
       <div className="max-w-6xl mx-auto px-4 pt-4 flex justify-end">
@@ -487,7 +472,19 @@ const VanSelectPage: React.FC = () => {
             {roundTripDiscount > 0 && <p className="text-[10px] text-emerald-600 font-medium">-5% aller-retour</p>}
           </div>
           <Button disabled={!canContinue}
-            onClick={() => navigate('/caby/van')}
+            onClick={() => {
+              const p = new URLSearchParams(searchParams);
+              if (selectedOutbound) {
+                p.set('price', String(selectedOutbound.price));
+                p.set('time', selectedOutbound.departure);
+                p.set('arrivalTime', selectedOutbound.arrival);
+              }
+              if (selectedReturn) {
+                p.set('returnTime', selectedReturn.departure);
+                p.set('returnArrivalTime', selectedReturn.arrival);
+              }
+              navigate(`/caby/van/pack?${p}`);
+            }}
             className="h-10 px-6 rounded-xl text-white font-bold text-sm disabled:opacity-40"
             style={{ backgroundColor: canContinue ? GOLD : undefined }}>
             Continuer →
