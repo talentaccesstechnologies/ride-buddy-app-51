@@ -38,8 +38,6 @@ export default function VanPaymentPage() {
   const [promoCode, setPromoCode] = useState('');
   const [useWallet, setUseWallet] = useState(false);
   const [saveCard, setSaveCard] = useState(false);
-  const [cgu1, setCgu1] = useState(false);
-  const [cgu2, setCgu2] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
 
