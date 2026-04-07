@@ -8,7 +8,7 @@ const GOLD = '#C9A84C';
 
 interface Seat {
   id: number;
-  category: 'avant' | 'capitaine' | 'banquette';
+  category: 'avant' | 'milieu' | 'arriere';
   price: number;
   taken: boolean;
 }
