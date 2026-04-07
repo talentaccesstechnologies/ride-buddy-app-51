@@ -530,16 +530,15 @@ const CabyVanPage: React.FC = () => {
           <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover object-center" />
           <div className="absolute inset-0 bg-black/25" />
 
-          {/* Back button */}
-          <div className="absolute top-4 left-4 z-10">
-            <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-white/90 text-sm font-medium bg-white/15 backdrop-blur-md rounded-full px-4 py-2 hover:bg-white/25 transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Services
-            </button>
-          </div>
-
           {/* Search engine card — absolutely positioned at top */}
           <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[90%] max-w-[880px] z-10">
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] p-5 md:p-6">
+              {/* Back button inside card */}
+              <div className="flex items-center gap-2 mb-3">
+                <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-gray-500 text-xs font-medium hover:text-gray-800 transition-colors">
+                  <ArrowLeft className="w-3.5 h-3.5" /> Services
+                </button>
+              </div>
               {/* Line 1: Service tabs */}
               <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-3">
                 <button className="px-4 py-2 rounded-lg text-xs font-bold text-white" style={{ backgroundColor: GOLD }}>
