@@ -58,8 +58,8 @@ export default function VanOptionsPage() {
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h2 className="font-bold text-lg">CABY FLEX</h2>
-                  <p className="text-sm text-gray-500">Flexibilité maximale sur votre trajet</p>
+                  <h2 className="font-bold text-lg text-gray-900">CABY FLEX</h2>
+                  <p className="text-sm text-gray-600">Flexibilité maximale sur votre trajet</p>
                 </div>
                 <span className="font-bold" style={{ color: GOLD }}>CHF 9.00 <span className="text-xs font-normal text-gray-400">/pers.</span></span>
               </div>
