@@ -10,6 +10,7 @@ import {
   findRoute, formatDuration, generateSlotsForRoute,
   type VanRoute, type VanSlot,
 } from '@/lib/cabyVanPricing';
+import BookingStepper from '@/components/van/BookingStepper';
 import BottomNav from '@/components/rider/BottomNav';
 
 const GOLD = '#C9A84C';
