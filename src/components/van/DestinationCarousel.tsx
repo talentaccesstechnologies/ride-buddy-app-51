@@ -6,6 +6,7 @@ import verbierImg from '@/assets/verbier.jpg';
 import lausanneImg from '@/assets/lausanne.jpg';
 import annecyImg from '@/assets/annecy.jpg';
 import lyonImg from '@/assets/lyon.jpg';
+import baleImg from '@/assets/bale.jpg';
 
 const GOLD = '#C9A84C';
 const FALLBACK_IMAGE = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Montreux_and_Lake_Geneva.jpg/640px-Montreux_and_Lake_Geneva.jpg';
@@ -26,6 +27,7 @@ const IMAGE_MAP: Record<string, string> = {
   Zermatt: zermattImg,
   Annecy: annecyImg,
   Lyon: lyonImg,
+  'Bâle': baleImg,
 };
 
 const ALL_DESTINATIONS: DestinationItem[] = [
