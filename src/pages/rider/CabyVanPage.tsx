@@ -537,17 +537,8 @@ const CabyVanPage: React.FC = () => {
             </button>
           </div>
 
-          {/* Hero text */}
-          <div className="relative z-10 text-center pt-16 md:pt-20 px-6">
-            <h1 className="text-4xl md:text-5xl font-black text-white leading-tight tracking-tight">
-              VOYAGEZ MALIN.
-            </h1>
-            <p className="text-xl md:text-2xl font-bold text-white/90 mt-2">GENÈVE ↔ TOUTE LA SUISSE.</p>
-            <p className="text-white/70 text-sm md:text-base mt-3">Siège partagé · Chauffeur certifié · Dès CHF 9</p>
-          </div>
-
           {/* Search engine card — centered, not sticky */}
-          <div className="relative z-10 max-w-[900px] mx-auto mt-8 md:mt-10 px-4 md:px-6">
+          <div className="relative z-10 max-w-[900px] mx-auto mt-12 md:mt-16 px-4 md:px-6">
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] p-5 md:p-6">
               {/* Line 1: Service tabs */}
               <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-3">
@@ -621,22 +612,31 @@ const CabyVanPage: React.FC = () => {
               </div>
             </div>
 
-              {/* Calendar dropdown — full width under the card */}
-              {calendarOpen && (
-                <div ref={calendarRef} className="mt-1 z-[200]">
-                  <PriceCalendar
-                    basePrice={calendarBasePrice}
-                    roundTrip={roundTrip}
-                    onToggleRoundTrip={setRoundTrip}
-                    selectedDeparture={departureDateObj}
-                    selectedReturn={returnDateObj}
-                    onSelectDeparture={setDepartureDateObj}
-                    onSelectReturn={setReturnDateObj}
-                    onApply={() => handleCalendarApply(setCalendarOpen)}
-                    onClear={handleCalendarClear}
-                  />
-                </div>
-              )}
+            {/* Calendar dropdown — full width under the card */}
+            {calendarOpen && (
+              <div ref={calendarRef} className="mt-1 z-[200]">
+                <PriceCalendar
+                  basePrice={calendarBasePrice}
+                  roundTrip={roundTrip}
+                  onToggleRoundTrip={setRoundTrip}
+                  selectedDeparture={departureDateObj}
+                  selectedReturn={returnDateObj}
+                  onSelectDeparture={setDepartureDateObj}
+                  onSelectReturn={setReturnDateObj}
+                  onApply={() => handleCalendarApply(setCalendarOpen)}
+                  onClear={handleCalendarClear}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Hero text — BELOW the search card */}
+          <div className="relative z-10 text-center mt-6 pb-12 px-6" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
+            <h1 className="text-[42px] md:text-5xl font-black text-white leading-tight tracking-tight">
+              VOYAGEZ MALIN.
+            </h1>
+            <p className="text-lg md:text-2xl font-bold text-white/90 mt-2">GENÈVE ↔ TOUTE LA SUISSE.</p>
+            <p className="text-white/70 text-[15px] md:text-base mt-3">Siège partagé · Chauffeur certifié · Dès CHF 9</p>
           </div>
         </div>
 
