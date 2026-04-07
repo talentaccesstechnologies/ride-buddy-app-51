@@ -719,7 +719,7 @@ const CabyVanPage: React.FC = () => {
             {EDITORIAL_CARDS.map(card => (
               <button key={card.title} onClick={() => { setTo(card.dest); setStep('search'); }}
                 className="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all group text-left relative h-[280px]">
-                <img src={card.image} alt={card.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
+                <img src={card.image ?? FALLBACK_IMAGE} alt={card.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = FALLBACK_IMAGE; }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
                   <h3 className="text-base font-black text-white uppercase tracking-wide leading-tight">{card.title}</h3>
