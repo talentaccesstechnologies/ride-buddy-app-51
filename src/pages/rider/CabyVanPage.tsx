@@ -558,6 +558,21 @@ const CabyVanPage: React.FC = () => {
                     className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-left font-medium text-gray-900 hover:bg-gray-100 transition-colors">
                     {calendarDateLabel || '📅 Date'}
                   </button>
+                  {calendarOpen && (
+                    <div className="absolute top-full left-0 mt-2 z-[1000]">
+                      <PriceCalendar
+                        basePrice={calendarBasePrice}
+                        roundTrip={roundTrip}
+                        onToggleRoundTrip={setRoundTrip}
+                        selectedDeparture={departureDateObj}
+                        selectedReturn={returnDateObj}
+                        onSelectDeparture={setDepartureDateObj}
+                        onSelectReturn={setReturnDateObj}
+                        onApply={() => handleCalendarApply(setCalendarOpen)}
+                        onClear={handleCalendarClear}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="w-full md:w-32">
@@ -576,23 +591,6 @@ const CabyVanPage: React.FC = () => {
                   Rechercher
                 </Button>
               </div>
-
-              {/* Price Calendar Dropdown — Hero */}
-              {calendarOpen && (
-                <div className="mt-3">
-                  <PriceCalendar
-                    basePrice={calendarBasePrice}
-                    roundTrip={roundTrip}
-                    onToggleRoundTrip={setRoundTrip}
-                    selectedDeparture={departureDateObj}
-                    selectedReturn={returnDateObj}
-                    onSelectDeparture={setDepartureDateObj}
-                    onSelectReturn={setReturnDateObj}
-                    onApply={() => handleCalendarApply(setCalendarOpen)}
-                    onClear={handleCalendarClear}
-                  />
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -973,27 +971,28 @@ const CabyVanPage: React.FC = () => {
             )}
 
             {/* Date + Time Selection with Price Calendar */}
-            <div>
+            <div className="relative">
               <label className="text-xs text-gray-500 mb-1 block font-medium">📅 Date du trajet</label>
               <button onClick={() => setCalendarOpenSearch(!calendarOpenSearch)}
                 className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-left font-medium text-gray-900 hover:bg-gray-100 transition-colors">
                 {calendarDateLabel || 'Choisir une date — voir les prix'}
               </button>
+              {calendarOpenSearch && (
+                <div className="absolute top-full left-0 mt-2 z-[1000] w-full min-w-[340px] md:min-w-[520px]">
+                  <PriceCalendar
+                    basePrice={calendarBasePrice}
+                    roundTrip={roundTrip}
+                    onToggleRoundTrip={setRoundTrip}
+                    selectedDeparture={departureDateObj}
+                    selectedReturn={returnDateObj}
+                    onSelectDeparture={setDepartureDateObj}
+                    onSelectReturn={setReturnDateObj}
+                    onApply={() => handleCalendarApply(setCalendarOpenSearch)}
+                    onClear={handleCalendarClear}
+                  />
+                </div>
+              )}
             </div>
-
-            {calendarOpenSearch && (
-              <PriceCalendar
-                basePrice={calendarBasePrice}
-                roundTrip={roundTrip}
-                onToggleRoundTrip={setRoundTrip}
-                selectedDeparture={departureDateObj}
-                selectedReturn={returnDateObj}
-                onSelectDeparture={setDepartureDateObj}
-                onSelectReturn={setReturnDateObj}
-                onApply={() => handleCalendarApply(setCalendarOpenSearch)}
-                onClear={handleCalendarClear}
-              />
-            )}
 
             <div>
               <label className="text-xs text-gray-500 mb-1 block font-medium">🕐 Heure de départ</label>
