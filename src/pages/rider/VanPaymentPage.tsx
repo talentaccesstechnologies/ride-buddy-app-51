@@ -122,8 +122,8 @@ export default function VanPaymentPage() {
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 space-y-6">
             {/* Promo code / Wallet */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-3">Code promo ou Wallet Caby</h2>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-3 text-gray-900">Code promo ou Wallet Caby</h2>
               <div className="flex gap-2 mb-3">
                 <Input
                   value={promoCode}
