@@ -106,39 +106,52 @@ const InspireMapView: React.FC<InspireMapViewProps> = ({
               onMouseLeave={() => setHoveredCity(null)}
               onClick={() => onSelectDestination(dest.city)}
             >
-              {/* Price tag - orange pill */}
-              <div
-                className="whitespace-nowrap text-center"
-                style={{
+              {/* City name label */}
+              <div style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                color: '#333',
+                textAlign: 'center',
+                marginBottom: '2px',
+                textShadow: '0 0 3px #fff, 0 0 6px #fff, 1px 1px 2px #fff',
+                whiteSpace: 'nowrap',
+              }}>
+                {dest.city}
+              </div>
+              {/* Orange price badge with square marker */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                margin: '0 auto',
+                width: 'fit-content',
+                transform: isHovered ? 'scale(1.15)' : 'scale(1)',
+                transition: 'transform 0.15s ease',
+              }}>
+                <div style={{
+                  width: '10px',
+                  height: '10px',
+                  backgroundColor: '#FF6600',
+                  borderRadius: '2px',
+                  flexShrink: 0,
+                }} />
+                <div style={{
                   backgroundColor: '#FF6600',
                   color: '#fff',
-                  fontSize: '12px',
+                  fontSize: '13px',
                   fontWeight: 900,
-                  padding: '6px 10px',
-                  borderRadius: '6px',
-                  border: '2px solid #fff',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.35)',
-                  lineHeight: 1,
-                  transform: isHovered ? 'scale(1.2)' : 'scale(1)',
-                  transition: 'transform 0.15s ease',
-                }}
-              >
-                CHF {dest.priceFrom}
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  lineHeight: 1.2,
+                  whiteSpace: 'nowrap',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
+                }}>
+                  CHF {dest.priceFrom}
+                </div>
               </div>
-              {/* Arrow */}
-              <div
-                className="mx-auto"
-                style={{
-                  width: 0,
-                  height: 0,
-                  borderLeft: '7px solid transparent',
-                  borderRight: '7px solid transparent',
-                  borderTop: '7px solid #FF6600',
-                }}
-              />
               {/* Fav indicator */}
               {isFav && (
-                <Heart className="absolute -top-1 -right-1 w-3 h-3 fill-red-500 text-red-500" />
+                <Heart className="absolute -top-1 -right-2 w-3.5 h-3.5 fill-red-500 text-red-500" style={{ filter: 'drop-shadow(0 0 2px #fff)' }} />
               )}
 
               {/* Tooltip on hover */}
