@@ -548,9 +548,11 @@ const CabyVanPage: React.FC = () => {
                   </select>
                 </div>
 
-                <div className="flex-1">
-                  <input type="date" value={dateAller} onChange={(e) => setDateAller(e.target.value)}
-                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" />
+                <div className="flex-1 relative">
+                  <button onClick={() => setCalendarOpen(!calendarOpen)}
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-left font-medium text-gray-900 hover:bg-gray-100 transition-colors">
+                    {calendarDateLabel || '📅 Date'}
+                  </button>
                 </div>
 
                 <div className="w-full md:w-32">
@@ -570,16 +572,20 @@ const CabyVanPage: React.FC = () => {
                 </Button>
               </div>
 
-              {roundTrip && (
-                <div className="flex gap-3 mt-3">
-                  <div className="flex-1">
-                    <input type="date" value={dateRetour} onChange={(e) => setDateRetour(e.target.value)}
-                      className="w-full h-10 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900"
-                      placeholder="Date retour" />
-                  </div>
-                  <div className="flex items-center text-xs text-emerald-600 font-medium">
-                    <span>-5% aller-retour appliqué</span>
-                  </div>
+              {/* Price Calendar Dropdown — Hero */}
+              {calendarOpen && (
+                <div className="mt-3">
+                  <PriceCalendar
+                    basePrice={calendarBasePrice}
+                    roundTrip={roundTrip}
+                    onToggleRoundTrip={setRoundTrip}
+                    selectedDeparture={departureDateObj}
+                    selectedReturn={returnDateObj}
+                    onSelectDeparture={setDepartureDateObj}
+                    onSelectReturn={setReturnDateObj}
+                    onApply={() => handleCalendarApply(setCalendarOpen)}
+                    onClear={handleCalendarClear}
+                  />
                 </div>
               )}
             </div>
