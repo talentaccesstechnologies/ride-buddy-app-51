@@ -171,7 +171,6 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
     <div
       className="bg-white rounded-b-xl flex flex-col w-full"
       style={{
-        maxHeight: '85vh',
         boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
       }}
     >
@@ -191,14 +190,14 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
       </div>
 
       {/* Months with navigation arrows */}
-      <div className="relative flex-1 overflow-y-auto min-h-0">
+      <div className="relative">
         {/* Nav arrows — absolute positioned */}
         <button onClick={goBack} disabled={isCurrentMonth}
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
           <ChevronLeft className="w-4 h-4" style={{ color: GOLD }} />
         </button>
         <button onClick={goForward}
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors">
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors">
           <ChevronRight className="w-4 h-4" style={{ color: GOLD }} />
         </button>
 
@@ -222,8 +221,8 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: '#ef4444' }} /> Très élevé</span>
       </div>
 
-      {/* Footer — sticky */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-100 px-5 py-3 rounded-b-xl">
+      {/* Footer */}
+      <div className="bg-white border-t border-gray-100 px-5 py-3 rounded-b-xl mt-2">
         {roundTrip && selectedDeparture && selectedReturn && (
           <div className="mb-2 text-xs text-gray-500 flex items-center gap-2 flex-wrap">
             <span>Aller : <strong className="text-gray-900">{formatDateLabel(selectedDeparture)}</strong></span>

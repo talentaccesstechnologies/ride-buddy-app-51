@@ -526,19 +526,13 @@ const CabyVanPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-white">
         {/* Full-screen hero — fixed height like EasyJet */}
-        <div className="relative h-[480px] md:h-[520px] overflow-hidden">
+        <div className="relative h-[480px] md:h-[520px]" style={{ overflow: 'visible' }}>
           <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover object-center" />
           <div className="absolute inset-0 bg-black/25" />
 
           {/* Search engine card — absolutely positioned at top */}
           <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[90%] max-w-[880px] z-10">
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] p-5 md:p-6">
-              {/* Back button inside card */}
-              <div className="flex items-center gap-2 mb-3">
-                <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-gray-500 text-xs font-medium hover:text-gray-800 transition-colors">
-                  <ArrowLeft className="w-3.5 h-3.5" /> Services
-                </button>
-              </div>
               {/* Line 1: Service tabs */}
               <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-3">
                 <button className="px-4 py-2 rounded-lg text-xs font-bold text-white" style={{ backgroundColor: GOLD }}>
