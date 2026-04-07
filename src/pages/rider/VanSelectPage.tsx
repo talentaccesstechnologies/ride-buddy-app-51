@@ -499,7 +499,19 @@ const VanSelectPage: React.FC = () => {
             {roundTripDiscount > 0 && <p className="text-[10px] text-emerald-600 font-medium">-5% aller-retour</p>}
           </div>
           <Button disabled={!canContinue}
-            onClick={() => navigate('/caby/van')}
+            onClick={() => {
+              const p = new URLSearchParams(searchParams);
+              if (selectedOutbound) {
+                p.set('price', String(selectedOutbound.price));
+                p.set('time', selectedOutbound.departure);
+                p.set('arrivalTime', selectedOutbound.arrival);
+              }
+              if (selectedReturn) {
+                p.set('returnTime', selectedReturn.departure);
+                p.set('returnArrivalTime', selectedReturn.arrival);
+              }
+              navigate(`/caby/van/pack?${p}`);
+            }}
             className="h-10 px-6 rounded-xl text-white font-bold text-sm disabled:opacity-40"
             style={{ backgroundColor: canContinue ? GOLD : undefined }}>
             Continuer →
