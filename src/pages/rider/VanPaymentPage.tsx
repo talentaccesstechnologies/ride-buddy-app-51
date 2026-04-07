@@ -197,24 +197,25 @@ export default function VanPaymentPage() {
               {paymentMethod === 'card' && (
                 <div className="mt-4 space-y-3">
                   <div>
-                    <Label>Numéro de carte</Label>
+                    <Label className="text-gray-900">Numéro de carte</Label>
                     <Input
                       value={cardNumber}
                       onChange={e => setCardNumber(e.target.value)}
                       placeholder="4242 4242 4242 4242"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <Label>Expiration</Label>
-                      <Input value={expiry} onChange={e => setExpiry(e.target.value)} placeholder="MM/AA" />
+                      <Label className="text-gray-900">Expiration</Label>
+                      <Input value={expiry} onChange={e => setExpiry(e.target.value)} placeholder="MM/AA" className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400" />
                     </div>
                     <div>
-                      <Label>CVV</Label>
-                      <Input value={cvv} onChange={e => setCvv(e.target.value)} placeholder="123" type="password" />
+                      <Label className="text-gray-900">CVV</Label>
+                      <Input value={cvv} onChange={e => setCvv(e.target.value)} placeholder="123" type="password" className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400" />
                     </div>
                   </div>
-                  <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm cursor-pointer text-gray-900">
                     <Checkbox checked={saveCard} onCheckedChange={v => setSaveCard(!!v)} />
                     Sauvegarder cette carte
                   </label>
