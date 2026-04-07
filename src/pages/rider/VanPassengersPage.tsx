@@ -91,8 +91,8 @@ export default function VanPassengersPage() {
             </div>
 
             {/* Travel reason */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-3">Raison du voyage</h2>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-3 text-gray-900">Raison du voyage</h2>
               <div className="flex gap-6">
                 {['affaires', 'loisirs'].map(r => (
                   <label key={r} className="flex items-center gap-2 cursor-pointer text-sm">
