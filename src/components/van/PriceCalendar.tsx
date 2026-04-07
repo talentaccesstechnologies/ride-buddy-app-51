@@ -169,12 +169,10 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
 
   return (
     <div
-      className="bg-white rounded-xl flex flex-col"
+      className="bg-white rounded-b-xl flex flex-col w-full"
       style={{
-        width: 720,
-        maxWidth: 'calc(100vw - 48px)',
         maxHeight: '85vh',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
       }}
     >
       {/* Toggle */}

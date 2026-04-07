@@ -620,6 +620,23 @@ const CabyVanPage: React.FC = () => {
                 </Button>
               </div>
             </div>
+
+              {/* Calendar dropdown — full width under the card */}
+              {calendarOpen && (
+                <div ref={calendarRef} className="mt-1 z-[200]">
+                  <PriceCalendar
+                    basePrice={calendarBasePrice}
+                    roundTrip={roundTrip}
+                    onToggleRoundTrip={setRoundTrip}
+                    selectedDeparture={departureDateObj}
+                    selectedReturn={returnDateObj}
+                    onSelectDeparture={setDepartureDateObj}
+                    onSelectReturn={setReturnDateObj}
+                    onApply={() => handleCalendarApply(setCalendarOpen)}
+                    onClear={handleCalendarClear}
+                  />
+                </div>
+              )}
           </div>
         </div>
 
