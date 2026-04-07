@@ -32,11 +32,11 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
                 loading="lazy"
               />
             </div>
-            <div className="p-5">
-              <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight">
+            <div className="p-5 flex flex-col flex-1">
+              <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight min-h-[56px]">
                 Traversez les Alpes en Van
               </h3>
-              <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+              <p className="text-sm text-gray-500 mt-2 leading-relaxed flex-1">
                 Verbier, Zermatt, Davos... Les plus belles stations accessibles en un trajet.
               </p>
               <div className="flex items-center gap-1.5 mt-4 font-bold text-sm" style={{ color: GOLD }}>
