@@ -127,7 +127,7 @@ export default function VanPaymentPage() {
                   value={promoCode}
                   onChange={e => setPromoCode(e.target.value)}
                   placeholder="Code promo"
-                  className="flex-1"
+                  className="flex-1 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                 />
                 <button className="px-4 py-2 rounded-lg text-sm font-semibold bg-gray-100 hover:bg-gray-200 text-gray-900">
                   Appliquer
