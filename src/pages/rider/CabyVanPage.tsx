@@ -230,6 +230,8 @@ const CabyVanPage: React.FC = () => {
   const [step, setStep] = useState<Step>('hero');
   const [filter, setFilter] = useState<SegmentFilter>('all');
   const carouselRef = useRef<HTMLDivElement>(null);
+  const calendarRef = useRef<HTMLDivElement>(null);
+  const calendarSearchRef = useRef<HTMLDivElement>(null);
 
   const [from, setFrom] = useState('Genève');
   const [to, setTo] = useState('');
@@ -240,6 +242,32 @@ const CabyVanPage: React.FC = () => {
   const [dateRetour, setDateRetour] = useState('');
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [calendarOpenSearch, setCalendarOpenSearch] = useState(false);
+
+  // Close calendars on click outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (calendarOpen && calendarRef.current && !calendarRef.current.contains(e.target as Node)) {
+        setCalendarOpen(false);
+      }
+      if (calendarOpenSearch && calendarSearchRef.current && !calendarSearchRef.current.contains(e.target as Node)) {
+        setCalendarOpenSearch(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [calendarOpen, calendarOpenSearch]);
+
+  // Close calendars on Escape
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setCalendarOpen(false);
+        setCalendarOpenSearch(false);
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
   const [departureDateObj, setDepartureDateObj] = useState<Date | null>(null);
   const [returnDateObj, setReturnDateObj] = useState<Date | null>(null);
   const [timeRetour, setTimeRetour] = useState('');
@@ -561,7 +589,7 @@ const CabyVanPage: React.FC = () => {
                     {calendarDateLabel || '📅 Date'}
                   </button>
                   {calendarOpen && (
-                    <div className="absolute top-full left-0 mt-2 z-[1000]">
+                    <div ref={calendarRef} className="absolute top-full left-0 mt-2 z-[1000]">
                       <PriceCalendar
                         basePrice={calendarBasePrice}
                         roundTrip={roundTrip}
@@ -987,7 +1015,7 @@ const CabyVanPage: React.FC = () => {
                 {calendarDateLabel || 'Choisir une date — voir les prix'}
               </button>
               {calendarOpenSearch && (
-                <div className="absolute top-full left-0 mt-2 z-[1000] w-full min-w-[340px] md:min-w-[520px]">
+                <div ref={calendarSearchRef} className="absolute top-full left-0 mt-2 z-[1000] w-full min-w-[340px] md:min-w-[520px]">
                   <PriceCalendar
                     basePrice={calendarBasePrice}
                     roundTrip={roundTrip}
