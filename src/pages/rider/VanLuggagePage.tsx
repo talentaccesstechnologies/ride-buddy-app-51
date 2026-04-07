@@ -138,7 +138,7 @@ export default function VanLuggagePage() {
                     }}
                   >
                     <span className="text-3xl">{eq.icon}</span>
-                    <p className="font-medium text-sm mt-2">{eq.label}</p>
+                    <p className="font-medium text-sm mt-2 text-gray-900">{eq.label}</p>
                     <p className="text-xs mt-1" style={{ color: GOLD }}>+CHF {eq.price}</p>
                   </button>
                 ))}
