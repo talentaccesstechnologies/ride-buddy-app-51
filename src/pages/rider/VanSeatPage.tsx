@@ -158,31 +158,29 @@ export default function VanSeatPage() {
                 {/* Aisle divider */}
                 <div className="flex items-center gap-2 px-4">
                   <div className="flex-1 border-t border-dashed border-gray-200" />
-                  <span className="text-[10px] text-gray-300 uppercase tracking-wider">allée</span>
+                  <span className="text-[10px] text-gray-300 uppercase tracking-wider">rang 2</span>
                   <div className="flex-1 border-t border-dashed border-gray-200" />
                 </div>
 
-                {/* Row 2: Captain seats */}
-                <div className="grid grid-cols-[1fr_20px_1fr] items-center">
+                {/* Row 2: Banquette 3 places */}
+                <div className="grid grid-cols-3 gap-2">
                   <SeatBtn seat={SEATS[1]} selected={selectedSeat === 2} onSelect={() => toggle(2)} />
-                  <div className="flex justify-center">
-                    <div className="w-px h-10 bg-gray-100" />
-                  </div>
                   <SeatBtn seat={SEATS[2]} selected={selectedSeat === 3} onSelect={() => toggle(3)} />
+                  <SeatBtn seat={SEATS[3]} selected={selectedSeat === 4} onSelect={() => toggle(4)} />
                 </div>
 
                 {/* Aisle divider */}
                 <div className="flex items-center gap-2 px-4">
                   <div className="flex-1 border-t border-dashed border-gray-200" />
-                  <span className="text-[10px] text-gray-300 uppercase tracking-wider">allée</span>
+                  <span className="text-[10px] text-gray-300 uppercase tracking-wider">rang 3</span>
                   <div className="flex-1 border-t border-dashed border-gray-200" />
                 </div>
 
-                {/* Row 3: Bench */}
+                {/* Row 3: Banquette 3 places */}
                 <div className="grid grid-cols-3 gap-2">
-                  <SeatBtn seat={SEATS[3]} selected={selectedSeat === 4} onSelect={() => toggle(4)} />
                   <SeatBtn seat={SEATS[4]} selected={selectedSeat === 5} onSelect={() => toggle(5)} />
                   <SeatBtn seat={SEATS[5]} selected={selectedSeat === 6} onSelect={() => toggle(6)} />
+                  <SeatBtn seat={SEATS[6]} selected={selectedSeat === 7} onSelect={() => toggle(7)} />
                 </div>
               </div>
 
