@@ -39,11 +39,11 @@ export default function VanOptionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <BookingStepper currentStep={5} />
       <div className="max-w-6xl mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Options supplémentaires</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Options supplémentaires</h1>
           <button onClick={forward} className="text-sm hover:underline" style={{ color: GOLD }}>
             Passer les options →
           </button>
