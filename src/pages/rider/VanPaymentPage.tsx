@@ -150,8 +150,8 @@ export default function VanPaymentPage() {
             </div>
 
             {/* Recap */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-3">Récapitulatif</h2>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-3 text-gray-900">Récapitulatif</h2>
               {items.map((item, i) => (
                 <div key={i} className="flex justify-between text-sm py-1">
                   <span className="text-gray-600">{item.label}</span>
