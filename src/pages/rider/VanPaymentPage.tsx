@@ -225,7 +225,7 @@ export default function VanPaymentPage() {
             </div>
 
             {/* CGU */}
-            <div className="bg-white rounded-xl border p-5 space-y-3">
+            <div className="bg-white rounded-xl border p-5 space-y-3 text-gray-900">
               <label className="flex items-start gap-2 text-sm cursor-pointer">
                 <Checkbox checked={cgu1} onCheckedChange={v => setCgu1(!!v)} />
                 <span>Je certifie avoir 18 ans ou plus et avoir lu les <a href="#" className="underline" style={{ color: GOLD }}>conditions générales de Caby Van</a></span>
