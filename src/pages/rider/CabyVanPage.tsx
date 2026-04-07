@@ -7,6 +7,7 @@ import {
   Info, ChevronDown, ChevronUp, Edit2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import DestinationCarousel from '@/components/van/DestinationCarousel';
 import zermattImg from '@/assets/zermatt.jpg';
 import zurichImg from '@/assets/zurich.jpg';
 import verbierImg from '@/assets/verbier.jpg';
@@ -641,38 +642,8 @@ const CabyVanPage: React.FC = () => {
 
         {/* White content below hero */}
         <div className="bg-white">
-        {/* ③ DESTINATIONS POPULAIRES — EasyJet grid */}
-        <section className="max-w-5xl mx-auto px-4 pt-12">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-black text-gray-900 uppercase tracking-tight">Nos meilleures destinations au meilleur prix</h2>
-            <p className="text-sm text-gray-500 mt-2">Réservez tôt et économisez jusqu'à 30%</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {DEST_CARDS.map((dest) => (
-              <button key={dest.to} onClick={() => { setTo(dest.to); setStep('search'); }}
-                className="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all group bg-white border border-gray-100 text-left">
-                <div className="h-[140px] md:h-[160px] overflow-hidden relative">
-                  <img src={dest.image ?? FALLBACK_IMAGE} alt={dest.to}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                    onError={({ currentTarget }) => {
-                      currentTarget.onerror = null;
-                      currentTarget.src = FALLBACK_IMAGE;
-                    }}
-                  />
-                </div>
-                <div className="p-4">
-                  <p className="text-base font-bold text-gray-900">{dest.to}</p>
-                  <p className="text-xs text-gray-500">De {dest.from}</p>
-                  <div className="flex items-center justify-between mt-2">
-                    <span className="text-lg font-black" style={{ color: GOLD }}>dès CHF {dest.fromPrice}</span>
-                    <span className="text-[10px] text-gray-400">{dest.month}</span>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* ③ DESTINATIONS POPULAIRES — Carousel */}
+        <DestinationCarousel onSelect={(city) => { setTo(city); setStep('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
 
         {/* ④ LAST MINUTE BANNER */}
         <section className="max-w-5xl mx-auto px-4 mt-12">
