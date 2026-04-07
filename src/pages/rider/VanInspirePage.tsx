@@ -3,68 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Heart, Map, Grid3X3, ChevronDown, ArrowLeft, X } from 'lucide-react';
 import BottomNav from '@/components/rider/BottomNav';
 import InspireMapView from '@/components/van/InspireMapView';
-
-// Import all destination images
-import zermattImg from '@/assets/zermatt.jpg';
-import zurichImg from '@/assets/zurich.jpg';
-import verbierImg from '@/assets/verbier.jpg';
-import lausanneImg from '@/assets/lausanne.jpg';
-import annecyImg from '@/assets/annecy.jpg';
-import lyonImg from '@/assets/lyon.jpg';
-import baleImg from '@/assets/bale.jpg';
-import berneImg from '@/assets/berne.jpg';
-import chamberyImg from '@/assets/chambery.jpg';
-import chamonixImg from '@/assets/chamonix.jpg';
-import sionImg from '@/assets/sion.jpg';
-import neuchatelImg from '@/assets/neuchatel.jpg';
-import montreuxImg from '@/assets/montreux.jpg';
-import davosImg from '@/assets/davos.jpg';
-import gstaadImg from '@/assets/gstaad.jpg';
-import parisImg from '@/assets/paris.jpg';
-import milanImg from '@/assets/milan.jpg';
-import munichImg from '@/assets/munich.jpg';
+import { ALL_DESTINATIONS, IMAGE_MAP, type Destination } from '@/lib/destinationData';
 
 const GOLD = '#C9A84C';
-
-const IMAGE_MAP: Record<string, string> = {
-  Zurich: zurichImg, Lausanne: lausanneImg, Verbier: verbierImg, Zermatt: zermattImg,
-  Annecy: annecyImg, Lyon: lyonImg, 'Bâle': baleImg, Berne: berneImg,
-  'Chambéry': chamberyImg, Chamonix: chamonixImg, Sion: sionImg,
-  'Neuchâtel': neuchatelImg, Montreux: montreuxImg, Davos: davosImg,
-  Gstaad: gstaadImg, Paris: parisImg, Milan: milanImg, Munich: munichImg,
-};
-
-interface Destination {
-  city: string;
-  country: string;
-  countryFlag: string;
-  region: 'suisse' | 'france' | 'italie' | 'allemagne';
-  category: 'ville' | 'ski' | 'lac' | 'nature';
-  priceFrom: number;
-  lat: number;
-  lng: number;
-}
-
-const ALL_DESTINATIONS: Destination[] = [
-  { city: 'Zurich', country: 'Suisse', countryFlag: '🇨🇭', region: 'suisse', category: 'ville', priceFrom: 54, lat: 47.3769, lng: 8.5417 },
-  { city: 'Lausanne', country: 'Suisse', countryFlag: '🇨🇭', region: 'suisse', category: 'ville', priceFrom: 18, lat: 46.5197, lng: 6.6323 },
-  { city: 'Berne', country: 'Suisse', countryFlag: '🇨🇭', region: 'suisse', category: 'ville', priceFrom: 39, lat: 46.9480, lng: 7.4474 },
-  { city: 'Bâle', country: 'Suisse', countryFlag: '🇨🇭', region: 'suisse', category: 'ville', priceFrom: 52, lat: 47.5596, lng: 7.5886 },
-  { city: 'Sion', country: 'Suisse', countryFlag: '🇨🇭', region: 'suisse', category: 'nature', priceFrom: 45, lat: 46.2333, lng: 7.3500 },
-  { city: 'Montreux', country: 'Suisse', countryFlag: '🇨🇭', region: 'suisse', category: 'lac', priceFrom: 29, lat: 46.4312, lng: 6.9107 },
-  { city: 'Neuchâtel', country: 'Suisse', countryFlag: '🇨🇭', region: 'suisse', category: 'lac', priceFrom: 32, lat: 46.9900, lng: 6.9293 },
-  { city: 'Verbier', country: 'Suisse', countryFlag: '🇨🇭', region: 'suisse', category: 'ski', priceFrom: 35, lat: 46.0967, lng: 7.2286 },
-  { city: 'Zermatt', country: 'Suisse', countryFlag: '🇨🇭', region: 'suisse', category: 'ski', priceFrom: 55, lat: 46.0207, lng: 7.7491 },
-  { city: 'Davos', country: 'Suisse', countryFlag: '🇨🇭', region: 'suisse', category: 'ski', priceFrom: 45, lat: 46.8027, lng: 9.8360 },
-  { city: 'Gstaad', country: 'Suisse', countryFlag: '🇨🇭', region: 'suisse', category: 'ski', priceFrom: 62, lat: 46.4748, lng: 7.2863 },
-  { city: 'Chamonix', country: 'France', countryFlag: '🇫🇷', region: 'france', category: 'ski', priceFrom: 28, lat: 45.9237, lng: 6.8694 },
-  { city: 'Annecy', country: 'France', countryFlag: '🇫🇷', region: 'france', category: 'lac', priceFrom: 15, lat: 45.8992, lng: 6.1294 },
-  { city: 'Lyon', country: 'France', countryFlag: '🇫🇷', region: 'france', category: 'ville', priceFrom: 42, lat: 45.7640, lng: 4.8357 },
-  { city: 'Chambéry', country: 'France', countryFlag: '🇫🇷', region: 'france', category: 'ville', priceFrom: 32, lat: 45.5646, lng: 5.9178 },
-  { city: 'Paris', country: 'France', countryFlag: '🇫🇷', region: 'france', category: 'ville', priceFrom: 65, lat: 48.8566, lng: 2.3522 },
-  { city: 'Milan', country: 'Italie', countryFlag: '🇮🇹', region: 'italie', category: 'ville', priceFrom: 79, lat: 45.4642, lng: 9.1900 },
-  { city: 'Munich', country: 'Allemagne', countryFlag: '🇩🇪', region: 'allemagne', category: 'ville', priceFrom: 72, lat: 48.1351, lng: 11.5820 },
-];
 
 type ViewMode = 'grid' | 'map';
 type BudgetFilter = 'all' | 'under30' | 'under50' | 'under80';
