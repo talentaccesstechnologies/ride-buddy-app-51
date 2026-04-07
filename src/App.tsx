@@ -97,6 +97,7 @@ const App = () => (
               <Route path="/caby/services" element={<ServicesPage />} />
               <Route path="/caby/express" element={<CabyExpressPage />} />
               <Route path="/caby/van" element={<CabyVanPage />} />
+              <Route path="/caby/van/select" element={<VanSelectPage />} />
               <Route path="/caby/crossborder" element={<CabyCrossBorderPage />} />
               <Route path="/caby/night" element={<CabyNightPage />} />
               <Route path="/caby/pass" element={<CabyPassPage />} />
