@@ -60,15 +60,15 @@ export default function VanLuggagePage() {
           <div className="flex-1 space-y-6">
             {/* Included vs add-on illustration */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white rounded-xl border p-5 text-center">
+              <div className="bg-white rounded-xl border p-5 text-center text-gray-900">
                 <span className="text-4xl">🎒</span>
-                <h3 className="font-semibold mt-2">Petit bagage</h3>
+                <h3 className="font-semibold mt-2 text-gray-900">Petit bagage</h3>
                 <p className="text-green-600 text-sm font-medium mt-1">✓ Inclus pour tous</p>
                 <p className="text-xs text-gray-500 mt-1">Max. 40×30×20 cm — Sous le siège</p>
               </div>
-              <div className="bg-white rounded-xl border p-5 text-center">
+              <div className="bg-white rounded-xl border p-5 text-center text-gray-900">
                 <span className="text-4xl">🧳</span>
-                <h3 className="font-semibold mt-2">Grande valise</h3>
+                <h3 className="font-semibold mt-2 text-gray-900">Grande valise</h3>
                 <p className="text-sm font-medium mt-1" style={{ color: GOLD }}>+CHF 8 par personne</p>
                 <p className="text-xs text-gray-500 mt-1">Max. 55×40×20 cm — Dans le coffre</p>
               </div>
