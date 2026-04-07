@@ -172,13 +172,13 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
           {/* Colonne centre — grande carte Zermatt */}
           <button
             onClick={() => onSelectDestination('Zermatt')}
-            className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left"
+            className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left relative"
           >
-            <div className="h-[200px] md:h-full md:min-h-[320px] overflow-hidden">
+            <div className="h-[320px] overflow-hidden">
               <img src={zermattImg} alt="Zermatt" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
             </div>
-            <div className="p-4 md:absolute md:bottom-0 md:left-0 md:right-0 md:bg-gradient-to-t md:from-black/70 md:to-transparent md:p-5">
-              <p className="text-base font-bold text-gray-900 md:text-white">🎿 Zermatt</p>
+            <div className="p-4">
+              <p className="text-base font-bold text-gray-900">🎿 Zermatt</p>
               <p className="text-lg font-black mt-1" style={{ color: GOLD }}>dès CHF 55</p>
             </div>
           </button>
