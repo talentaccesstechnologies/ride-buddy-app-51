@@ -135,8 +135,8 @@ export default function VanPaymentPage() {
                   Appliquer
                 </button>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span>Wallet Caby : CHF {walletBalance.toFixed(2)} disponible</span>
+              <div className="flex items-center justify-between text-sm text-gray-900">
+                <span className="text-gray-700">Wallet Caby : CHF {walletBalance.toFixed(2)} disponible</span>
                 <button
                   onClick={() => setUseWallet(!useWallet)}
                   className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
