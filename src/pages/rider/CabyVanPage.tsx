@@ -181,19 +181,21 @@ const POPULAR_DESTINATIONS = [
   { city: 'Lausanne', emoji: '🏛️', price: 29, img: '🇨🇭' },
 ];
 
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&h=400&fit=crop&q=80';
+
 const DEST_CARDS = [
-  { from: 'Genève', to: 'Zurich', image: 'https://source.unsplash.com/600x400/?zurich,switzerland,lake,city&sig=1', fromPrice: 54, month: 'avr. 2026' },
-  { from: 'Genève', to: 'Annecy', image: 'https://source.unsplash.com/600x400/?annecy,france,canal,lake&sig=2', fromPrice: 15, month: 'avr. 2026' },
-  { from: 'Genève', to: 'Lausanne', image: 'https://source.unsplash.com/600x400/?lausanne,lake-leman,switzerland&sig=3', fromPrice: 18, month: 'avr. 2026' },
-  { from: 'Genève', to: 'Verbier', image: 'https://source.unsplash.com/600x400/?verbier,ski,alps,switzerland&sig=4', fromPrice: 35, month: 'avr. 2026' },
-  { from: 'Genève', to: 'Lyon', image: 'https://source.unsplash.com/600x400/?lyon,france,fourviere,basilica&sig=5', fromPrice: 42, month: 'avr. 2026' },
-  { from: 'Genève', to: 'Zermatt', image: 'https://source.unsplash.com/600x400/?zermatt,matterhorn,switzerland&sig=6', fromPrice: 55, month: 'mai 2026' },
+  { from: 'Genève', to: 'Zurich', image: 'https://images.unsplash.com/photo-1620735692151-26a7e0748429?w=600&h=400&fit=crop&q=80', fromPrice: 54, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Annecy', image: 'https://images.unsplash.com/photo-1565117893989-ee90deeff391?w=600&h=400&fit=crop&q=80', fromPrice: 15, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Lausanne', image: 'https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=600&h=400&fit=crop&q=80', fromPrice: 18, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Verbier', image: 'https://images.unsplash.com/photo-1551524559-8af4e6624178?w=600&h=400&fit=crop&q=80', fromPrice: 35, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Lyon', image: 'https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=600&h=400&fit=crop&q=80', fromPrice: 42, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Zermatt', image: 'https://images.unsplash.com/photo-1531168556467-80aace0d0144?w=600&h=400&fit=crop&q=80', fromPrice: 55, month: 'mai 2026' },
 ];
 
 const EDITORIAL_CARDS = [
-  { title: 'TRAVERSEZ LES ALPES EN VAN', desc: 'De Genève au Cervin en toute sérénité. Sièges confortables, Wi-Fi, vue panoramique.', image: 'https://source.unsplash.com/800x500/?zermatt,matterhorn,switzerland&sig=10', cta: 'Explorer', dest: 'Zermatt' },
-  { title: 'GENÈVE ↔ LYON EN 1H45', desc: 'La ligne la plus demandée. Départs quotidiens, prix imbattable vs le train.', image: 'https://source.unsplash.com/800x500/?lyon,france,fourviere,basilica&sig=11', cta: 'Réserver', dest: 'Lyon' },
-  { title: 'STATIONS DE SKI — RÉSERVEZ TÔT', desc: 'Verbier, Chamonix, Zermatt. Early Bird -30%. Skis transportés gratuitement.', image: 'https://source.unsplash.com/800x500/?verbier,ski,alps,switzerland&sig=12', cta: 'Voir les offres', dest: 'Verbier' },
+  { title: 'TRAVERSEZ LES ALPES EN VAN', desc: 'De Genève au Cervin en toute sérénité. Sièges confortables, Wi-Fi, vue panoramique.', image: 'https://images.unsplash.com/photo-1531168556467-80aace0d0144?w=800&h=500&fit=crop&q=80', cta: 'Explorer', dest: 'Zermatt' },
+  { title: 'GENÈVE ↔ LYON EN 1H45', desc: 'La ligne la plus demandée. Départs quotidiens, prix imbattable vs le train.', image: 'https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=800&h=500&fit=crop&q=80', cta: 'Réserver', dest: 'Lyon' },
+  { title: 'STATIONS DE SKI — RÉSERVEZ TÔT', desc: 'Verbier, Chamonix, Zermatt. Early Bird -30%. Skis transportés gratuitement.', image: 'https://images.unsplash.com/photo-1551524559-8af4e6624178?w=800&h=500&fit=crop&q=80', cta: 'Voir les offres', dest: 'Verbier' },
 ];
 
 const FILTER_TABS: { key: SegmentFilter; label: string; icon: string; badge?: string }[] = [
@@ -606,13 +608,12 @@ const CabyVanPage: React.FC = () => {
               <button key={dest.to} onClick={() => { setTo(dest.to); setStep('search'); }}
                 className="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all group bg-white border border-gray-100 text-left">
                 <div className="h-[140px] md:h-[160px] overflow-hidden relative">
-                  <img src={dest.image} alt={dest.to}
+                  <img src={dest.image ?? FALLBACK_IMAGE} alt={dest.to}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      e.currentTarget.parentElement!.style.background = 'linear-gradient(135deg, #C9A84C, #8B6914)';
-                      e.currentTarget.parentElement!.innerHTML = `<span style="color:white;font-weight:800;font-size:1.5rem;display:flex;align-items:center;justify-content:center;height:100%">${dest.to}</span>`;
+                    onError={({ currentTarget }) => {
+                      currentTarget.onerror = null;
+                      currentTarget.src = FALLBACK_IMAGE;
                     }}
                   />
                 </div>
@@ -718,7 +719,7 @@ const CabyVanPage: React.FC = () => {
             {EDITORIAL_CARDS.map(card => (
               <button key={card.title} onClick={() => { setTo(card.dest); setStep('search'); }}
                 className="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all group text-left relative h-[280px]">
-                <img src={card.image} alt={card.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
+                <img src={card.image ?? FALLBACK_IMAGE} alt={card.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" onError={({ currentTarget }) => { currentTarget.onerror = null; currentTarget.src = FALLBACK_IMAGE; }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
                   <h3 className="text-base font-black text-white uppercase tracking-wide leading-tight">{card.title}</h3>
