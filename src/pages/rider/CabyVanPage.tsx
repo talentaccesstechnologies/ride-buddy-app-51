@@ -179,6 +179,21 @@ const POPULAR_DESTINATIONS = [
   { city: 'Lausanne', emoji: '🏛️', price: 29, img: '🇨🇭' },
 ];
 
+const DEST_CARDS = [
+  { from: 'Genève', to: 'Zurich', image: 'https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=600&q=80', fromPrice: 54, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Annecy', image: 'https://images.unsplash.com/photo-1507272931001-fc06c17cedc4?w=600&q=80', fromPrice: 15, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Lausanne', image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=600&q=80', fromPrice: 18, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Verbier', image: 'https://images.unsplash.com/photo-1551524559-8af4e6624178?w=600&q=80', fromPrice: 35, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Lyon', image: 'https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=600&q=80', fromPrice: 42, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Zermatt', image: 'https://images.unsplash.com/photo-1529983601738-76e7cb012926?w=600&q=80', fromPrice: 55, month: 'mai 2026' },
+];
+
+const EDITORIAL_CARDS = [
+  { title: 'TRAVERSEZ LES ALPES EN VAN', desc: 'De Genève au Cervin en toute sérénité. Sièges confortables, Wi-Fi, vue panoramique.', image: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80', cta: 'Explorer', dest: 'Zermatt' },
+  { title: 'GENÈVE ↔ LYON EN 1H45', desc: 'La ligne la plus demandée. Départs quotidiens, prix imbattable vs le train.', image: 'https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=800&q=80', cta: 'Réserver', dest: 'Lyon' },
+  { title: 'STATIONS DE SKI — RÉSERVEZ TÔT', desc: 'Verbier, Chamonix, Zermatt. Early Bird -30%. Skis transportés gratuitement.', image: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=800&q=80', cta: 'Voir les offres', dest: 'Verbier' },
+];
+
 const FILTER_TABS: { key: SegmentFilter; label: string; icon: string; badge?: string }[] = [
   { key: 'all', label: 'Tous', icon: '🗺️' },
   { key: 'grand_geneve', label: 'Grand Genève', icon: '🚗', badge: "112'000 frontaliers" },
@@ -443,195 +458,131 @@ const CabyVanPage: React.FC = () => {
     );
   }
 
-  // ── HERO ──
+  // ── HERO — EasyJet-inspired Landing ──
   if (step === 'hero') {
     return (
-      <div className="min-h-screen bg-white pb-24">
-        {/* Flash Deal Banner */}
-        {flashDeals.length > 0 && (
-          <div className="px-4 pt-12 pb-0">
-            <FlashDealBanner deal={flashDeals[0]} onBook={() => setStep('search')} />
-          </div>
-        )}
+      <div className="min-h-screen bg-white">
+        {/* ① HERO SECTION — Full screen photo + text */}
+        <div className="relative h-[480px] md:h-[540px] overflow-hidden">
+          <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/70" />
 
-        <div className={`relative ${flashDeals.length > 0 ? 'mt-3' : ''}`}>
-          {/* Hero background */}
-          <div className="relative h-[280px] overflow-hidden">
-            <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover" width={1920} height={1080} />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
-
-            {!flashDeals.length && (
-              <div className="absolute top-12 left-5 z-10">
-                <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-white/90 text-sm font-medium bg-black/20 backdrop-blur-sm rounded-full px-3 py-1.5">
-                  <ArrowLeft className="w-4 h-4" /> Services
-                </button>
-              </div>
-            )}
-
-            <div className="absolute bottom-8 left-0 right-0 px-6 z-10">
-              <h1 className="text-3xl font-extrabold text-white leading-tight">Voyagez malin.<br />Écolo. Confortable.</h1>
-              <p className="text-white/80 text-sm mt-2">Réservez un siège, pas un taxi. Moins cher que le train.</p>
-            </div>
+          <div className="absolute top-6 left-6 z-10">
+            <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-white/90 text-sm font-medium bg-white/15 backdrop-blur-md rounded-full px-4 py-2 hover:bg-white/25 transition-colors">
+              <ArrowLeft className="w-4 h-4" /> Services
+            </button>
           </div>
 
-          {/* Search card — flows naturally, no absolute positioning */}
-          <div className="px-4 -mt-10 relative z-20">
-            <div className="bg-white rounded-2xl shadow-2xl p-5 border border-gray-100">
+          <div className="absolute bottom-0 left-0 right-0 px-6 pb-28 md:pb-32 z-10 text-center">
+            <h1 className="text-4xl md:text-5xl font-black text-white leading-tight tracking-tight">
+              VOYAGEZ MALIN.
+            </h1>
+            <p className="text-xl md:text-2xl font-bold text-white/90 mt-2">GENÈVE ↔ TOUTE LA SUISSE.</p>
+            <p className="text-white/70 text-sm md:text-base mt-3">Siège partagé · Chauffeur certifié · Dès CHF 9</p>
+          </div>
+        </div>
+
+        {/* ① SEARCH BAR — Overlapping hero, becomes sticky */}
+        <div className="sticky top-0 z-40 -mt-20">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 md:p-5">
+              {/* Trip type toggle */}
               <div className="flex items-center gap-2 mb-4">
-                <button onClick={() => setRoundTrip(false)} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${!roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600'}`}
+                <button onClick={() => setRoundTrip(false)} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${!roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                   style={!roundTrip ? { backgroundColor: GOLD } : {}}>Aller simple</button>
-                <button onClick={() => setRoundTrip(true)} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-1.5 ${roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600'}`}
+                <button onClick={() => setRoundTrip(true)} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-1.5 ${roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                   style={roundTrip ? { backgroundColor: GOLD } : {}}>
                   Aller-retour
                   <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-white/20">-5%</span>
                 </button>
               </div>
 
-              <div className="relative mb-3">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                <select value={from} onChange={(e) => { setFrom(e.target.value); setTo(''); }}
-                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 pl-9 pr-4 text-sm text-gray-900 font-medium">
-                  {ALL_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-
-              <div className="flex justify-center -my-1.5 relative z-10">
-                <button onClick={() => { const t = from; setFrom(to || from); setTo(t); }}
-                  className="w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center shadow-sm hover:border-amber-400 transition-colors">
-                  <ArrowRight className="w-3.5 h-3.5 text-gray-500 rotate-90" />
-                </button>
-              </div>
-
-              <div className="relative mb-3">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-red-500" />
-                <select value={to} onChange={(e) => setTo(e.target.value)}
-                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 pl-9 pr-4 text-sm text-gray-900 font-medium">
-                  <option value="">Destination</option>
-                  {getDestinationsFrom(from, 'all').map(c => {
-                    const r = findRoute(from, c);
-                    return <option key={c} value={c}>{c} — dès CHF {r?.basePrice}</option>;
-                  })}
-                </select>
-              </div>
-
-              <div className="flex gap-2 mb-3">
-                <div className="flex-1">
-                  <input type="date" value={dateAller} onChange={(e) => setDateAller(e.target.value)}
-                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
-                </div>
-                <div className="flex-1">
-                  <select value={timeAller} onChange={(e) => setTimeAller(e.target.value)}
-                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
-                    <option value="">Heure ▼</option>
-                    {availableTimeSlotsAller.map(s => (
-                      <option key={s.time} value={s.time}>
-                        {s.time === 'custom' ? '🕐 Personnalisée' : `${s.time} ${s.rushLevel === 'rush' ? '🔴' : s.rushLevel === 'creux' ? '🟢' : '🟡'}`}
-                      </option>
-                    ))}
+              {/* Desktop: horizontal row / Mobile: stacked */}
+              <div className="flex flex-col md:flex-row gap-3">
+                <div className="flex-1 relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
+                  <select value={from} onChange={(e) => { setFrom(e.target.value); setTo(''); }}
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 pl-9 pr-4 text-sm text-gray-900 font-medium">
+                    {ALL_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
-              </div>
-              {timeAller === 'custom' && (
-                <div className="mb-3">
-                  <input type="time" value={customTimeAller} onChange={(e) => setCustomTimeAller(e.target.value)}
-                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
+
+                <div className="hidden md:flex items-center">
+                  <button onClick={() => { const t = from; setFrom(to || from); setTo(t); }}
+                    className="w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center hover:border-amber-400 transition-colors">
+                    <ArrowRight className="w-3.5 h-3.5 text-gray-500" />
+                  </button>
                 </div>
-              )}
-              {effectiveTimeAller && selectedRoute && (
-                <div className="mb-3 flex items-center gap-2 text-xs text-gray-500 px-1">
-                  <Timer className="w-3.5 h-3.5" />
-                  <span>Arrivée estimée : <span className="font-bold text-gray-900">{estimatedArrivalAller}</span> ({formatDuration(selectedRoute.duration)})</span>
-                  {selectedAllerRush && RUSH_BADGE[selectedAllerRush] && (
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${RUSH_BADGE[selectedAllerRush].color}`}>{RUSH_BADGE[selectedAllerRush].label}</span>
-                  )}
+
+                <div className="flex-1 relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-500" />
+                  <select value={to} onChange={(e) => setTo(e.target.value)}
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 pl-9 pr-4 text-sm text-gray-900 font-medium">
+                    <option value="">Destination</option>
+                    {getDestinationsFrom(from, 'all').map(c => {
+                      const r = findRoute(from, c);
+                      return <option key={c} value={c}>{c} — dès CHF {r?.basePrice}</option>;
+                    })}
+                  </select>
                 </div>
-              )}
-              <div className="flex gap-2 mb-3">
-                <div className="w-28 flex items-center gap-1 rounded-xl bg-gray-50 border border-gray-200 px-2">
-                  <Users className="w-4 h-4 text-gray-400" />
-                  <button onClick={() => setPassengers(Math.max(1, passengers - 1))} className="w-7 h-7 flex items-center justify-center text-gray-500 font-bold">−</button>
-                  <span className="text-sm font-bold text-gray-900 w-4 text-center">{passengers}</span>
-                  <button onClick={() => setPassengers(Math.min(7, passengers + 1))} className="w-7 h-7 flex items-center justify-center text-gray-500 font-bold">+</button>
+
+                <div className="flex-1">
+                  <input type="date" value={dateAller} onChange={(e) => setDateAller(e.target.value)}
+                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" />
                 </div>
+
+                <div className="w-full md:w-32">
+                  <div className="flex items-center gap-1 h-12 rounded-xl bg-gray-50 border border-gray-200 px-3">
+                    <Users className="w-4 h-4 text-gray-400" />
+                    <button onClick={() => setPassengers(Math.max(1, passengers - 1))} className="w-7 h-7 flex items-center justify-center text-gray-500 font-bold">−</button>
+                    <span className="text-sm font-bold text-gray-900 w-4 text-center">{passengers}</span>
+                    <button onClick={() => setPassengers(Math.min(7, passengers + 1))} className="w-7 h-7 flex items-center justify-center text-gray-500 font-bold">+</button>
+                  </div>
+                </div>
+
+                <Button onClick={() => { if (from && to) handleSearch(); else setStep('search'); }}
+                  className="h-12 px-6 md:px-8 rounded-xl text-white font-bold text-sm shadow-lg hover:shadow-xl transition-shadow"
+                  style={{ backgroundColor: GOLD }}>
+                  <Search className="w-4 h-4 mr-2" />
+                  Rechercher
+                </Button>
               </div>
 
               {roundTrip && (
-                <div className="flex gap-2 mb-3">
+                <div className="flex gap-3 mt-3">
                   <div className="flex-1">
                     <input type="date" value={dateRetour} onChange={(e) => setDateRetour(e.target.value)}
-                      className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
+                      className="w-full h-10 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900"
+                      placeholder="Date retour" />
                   </div>
-                  <div className="flex-1">
-                    <select value={timeRetour} onChange={(e) => setTimeRetour(e.target.value)}
-                      className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900 font-medium">
-                      <option value="">Heure ▼</option>
-                      {availableTimeSlotsRetour.map(s => (
-                        <option key={s.time} value={s.time}>
-                          {s.time === 'custom' ? '🕐 Personnalisée' : `${s.time} ${s.rushLevel === 'rush' ? '🔴' : s.rushLevel === 'creux' ? '🟢' : '🟡'}`}
-                        </option>
-                      ))}
-                    </select>
+                  <div className="flex items-center text-xs text-emerald-600 font-medium">
+                    <span>-5% aller-retour appliqué</span>
                   </div>
                 </div>
               )}
-              {roundTrip && timeRetour === 'custom' && (
-                <div className="mb-3">
-                  <input type="time" value={customTimeRetour} onChange={(e) => setCustomTimeRetour(e.target.value)}
-                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-gray-900" />
-                </div>
-              )}
-              {roundTrip && effectiveTimeRetour && selectedRoute && (
-                <div className="mb-3 flex items-center gap-2 text-xs text-gray-500 px-1">
-                  <Timer className="w-3.5 h-3.5" />
-                  <span>Retour arrivée : <span className="font-bold text-gray-900">{estimatedArrivalRetour}</span> · -5% aller-retour</span>
-                </div>
-              )}
-
-              <Button onClick={() => { if (from && to) handleSearch(); else setStep('search'); }}
-                className="w-full h-12 rounded-xl text-white font-bold text-base shadow-lg hover:shadow-xl transition-shadow"
-                style={{ backgroundColor: GOLD }}>
-                <Search className="w-4 h-4 mr-2" />
-                Rechercher un trajet
-              </Button>
             </div>
           </div>
         </div>
 
-
-        {/* Info banner */}
-        <div className="px-5 mt-6">
-          <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 flex items-start gap-2">
-            <span className="text-sm mt-0.5">💡</span>
-            <p className="text-xs text-amber-800">Les prix augmentent à chaque réservation. Les early birds économisent jusqu'à <span className="font-bold">30%</span>.</p>
+        {/* ③ DESTINATIONS POPULAIRES — EasyJet grid */}
+        <section className="max-w-5xl mx-auto px-4 mt-12">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-black text-gray-900 uppercase tracking-tight">Nos meilleures destinations au meilleur prix</h2>
+            <p className="text-sm text-gray-500 mt-2">Réservez tôt et économisez jusqu'à 30%</p>
           </div>
-        </div>
-
-        {/* Destinations carousel */}
-        <section className="mt-6 px-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Destinations populaires</h2>
-            <div className="flex gap-1">
-              <button onClick={() => scrollCarousel('left')} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
-                <ChevronLeft className="w-4 h-4 text-gray-600" />
-              </button>
-              <button onClick={() => scrollCarousel('right')} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
-                <ChevronRight className="w-4 h-4 text-gray-600" />
-              </button>
-            </div>
-          </div>
-          <div ref={carouselRef} className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1">
-            {POPULAR_DESTINATIONS.map((dest) => (
-              <button key={dest.city} onClick={() => { setTo(dest.city); setStep('search'); }}
-                className="flex-shrink-0 w-[160px] rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow group bg-white border border-gray-100">
-                <div className="h-24 bg-gradient-to-br from-gray-800 to-gray-600 flex items-center justify-center text-4xl relative">
-                  <span>{dest.emoji}</span>
-                  <div className="absolute top-2 right-2"><span className="text-lg">{dest.img}</span></div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {DEST_CARDS.map((dest) => (
+              <button key={dest.to} onClick={() => { setTo(dest.to); setStep('search'); }}
+                className="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all group bg-white border border-gray-100 text-left">
+                <div className="h-[140px] md:h-[160px] overflow-hidden">
+                  <img src={dest.image} alt={dest.to} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                 </div>
-                <div className="p-3">
-                  <p className="text-sm font-bold text-gray-900 truncate">{dest.city}</p>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-xs text-gray-500">dès</span>
-                    <span className="text-sm font-bold" style={{ color: GOLD }}>CHF {dest.price}</span>
+                <div className="p-4">
+                  <p className="text-base font-bold text-gray-900">{dest.to}</p>
+                  <p className="text-xs text-gray-500">De {dest.from}</p>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-lg font-black" style={{ color: GOLD }}>dès CHF {dest.fromPrice}</span>
+                    <span className="text-[10px] text-gray-400">{dest.month}</span>
                   </div>
                 </div>
               </button>
@@ -639,86 +590,133 @@ const CabyVanPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Filter chips */}
-        <section className="mt-8 px-5">
-          <h2 className="text-xl font-bold text-gray-900 mb-3">Explorer par catégorie</h2>
-          <div className="flex gap-2 flex-wrap">
-            {FILTER_TABS.map(f => (
-              <button key={f.key} onClick={() => { setFilter(f.key); setStep('search'); }}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors border border-gray-200">
-                <span>{f.icon}</span>{f.label}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* Last minute deals */}
-        {activeDeals.length > 0 && (
-          <section className="mt-8 px-5">
-            <div className="flex items-center gap-2 mb-4">
-              <Zap className="w-5 h-5 text-red-500" />
-              <h2 className="text-xl font-bold text-gray-900">Offres Last Minute</h2>
-              <span className="text-[10px] text-gray-400 ml-auto">Mise à jour auto</span>
+        {/* ④ LAST MINUTE BANNER */}
+        <section className="max-w-5xl mx-auto px-4 mt-12">
+          <div className="rounded-2xl p-5 text-center" style={{ backgroundColor: GOLD }}>
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <Zap className="w-5 h-5 text-white" />
+              <h3 className="text-lg font-black text-white uppercase tracking-wide">Des sièges à moins de CHF 19</h3>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {activeDeals.map((deal, i) => (
+            <p className="text-white/80 text-sm">Partez cette semaine ! Places limitées.</p>
+          </div>
+          {activeDeals.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
+              {activeDeals.slice(0, 4).map((deal, i) => (
                 <motion.div key={deal.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
                   className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
                   <div className="absolute top-3 left-3">
                     <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-emerald-500 text-white">−{deal.discount}%</span>
                   </div>
-                  <div className="absolute top-3 right-3">
-                    <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-gray-100 text-gray-700">{deal.urgencyLabel}</span>
-                  </div>
                   <div className="mt-8">
-                    <div className="flex items-center gap-1">
-                      <span>{deal.flag}</span>
-                      <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Siège partagé</p>
-                    </div>
-                    <p className="text-base font-bold text-gray-900 mt-0.5">{deal.from} → {deal.to}</p>
+                    <p className="text-sm font-bold text-gray-900">{deal.from} → {deal.to}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-sm text-gray-400 line-through">CHF {deal.basePrice}</span>
+                      <span className="text-xs text-gray-400 line-through">CHF {deal.basePrice}</span>
                       <span className="text-lg font-black" style={{ color: GOLD }}>CHF {deal.finalPrice}</span>
                     </div>
                     <div className="flex items-center justify-between mt-1.5">
-                      <p className="text-xs text-gray-500">{deal.seatsAvailable} sièges restants</p>
+                      <p className="text-[10px] text-gray-500">{deal.seatsAvailable} places</p>
                       {deal.countdown && <p className="text-[10px] font-bold text-red-500 animate-pulse">{deal.countdown}</p>}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 mt-3">
-                    <Button onClick={() => { setFrom(deal.from); setTo(deal.to); setStep('search'); }}
-                      className="flex-1 h-8 rounded-lg text-white text-xs font-bold" style={{ backgroundColor: GOLD }}>
-                      Réserver
-                    </Button>
-                  </div>
+                  <Button onClick={() => { setFrom(deal.from); setTo(deal.to); setStep('search'); }}
+                    className="w-full mt-3 h-8 rounded-lg text-white text-xs font-bold" style={{ backgroundColor: GOLD }}>
+                    Réserver
+                  </Button>
                 </motion.div>
               ))}
             </div>
-          </section>
-        )}
+          )}
+        </section>
 
-        {/* Trust stats */}
-        <section className="mt-10 px-5 mb-8">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* ⑤ POURQUOI CABY VAN */}
+        <section className="max-w-5xl mx-auto px-4 mt-16">
+          <h2 className="text-2xl font-black text-gray-900 text-center mb-8 uppercase tracking-tight">Pourquoi choisir Caby Van</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: <Car className="w-6 h-6" />, value: "2'400+", label: 'trajets/mois' },
-              { icon: <Star className="w-6 h-6" />, value: '4.9/5', label: 'satisfaction' },
-              { icon: <Leaf className="w-6 h-6" />, value: '6×', label: 'moins de CO₂' },
-              { icon: <Shield className="w-6 h-6" />, value: '100%', label: 'certifiés' },
-            ].map((stat) => (
-              <div key={stat.label} className="bg-gray-50 rounded-2xl p-4 text-center border border-gray-100">
-                <div className="flex justify-center mb-2 text-gray-600">{stat.icon}</div>
-                <p className="text-lg font-extrabold text-gray-900">{stat.value}</p>
-                <p className="text-xs text-gray-500">{stat.label}</p>
+              { icon: <Leaf className="w-8 h-8 text-emerald-500" />, title: 'ÉCOLOGIQUE', desc: '6× moins de CO₂ vs voiture solo. Partagez un VAN, réduisez votre empreinte.' },
+              { icon: <span className="text-3xl">💰</span>, title: 'ÉCONOMIQUE', desc: 'Moins cher que le train CFF. Prix dynamiques — réservez tôt, payez moins.' },
+              { icon: <Shield className="w-8 h-8 text-blue-500" />, title: 'FIABLE', desc: 'Chauffeur certifié Caby. Assurance trajet incluse. Remboursement garanti.' },
+            ].map(item => (
+              <div key={item.title} className="bg-gray-50 rounded-2xl p-8 text-center border border-gray-100">
+                <div className="flex justify-center mb-4">{item.icon}</div>
+                <h3 className="text-sm font-black text-gray-900 uppercase tracking-wider mb-2">{item.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
+        {/* ⑥ CABY PASS */}
+        <section className="mt-16">
+          <div className="py-12 px-4" style={{ backgroundColor: '#FDF8EE' }}>
+            <div className="max-w-4xl mx-auto text-center">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Star className="w-5 h-5" style={{ color: GOLD }} />
+                <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Caby Pass · Vivez une expérience VIP</h2>
+              </div>
+              <p className="text-sm text-gray-600 max-w-xl mx-auto mb-6">
+                Voyageur régulier sur la ligne Genève-Zurich ou Annecy-Genève ?<br />
+                Le Caby Pass est rentabilisé dès 3 trajets par mois.
+              </p>
+              <div className="inline-flex items-center gap-3 bg-white rounded-2xl px-8 py-5 shadow-lg border border-amber-200">
+                <div className="text-left">
+                  <p className="text-2xl font-black text-gray-900">CHF 29<span className="text-sm font-normal text-gray-500">/mois</span></p>
+                  <p className="text-xs text-gray-500 mt-1">-10% sur tous vos trajets · Annulation flexible incluse</p>
+                </div>
+                <Button onClick={() => navigate('/caby-pass')}
+                  className="h-11 px-6 rounded-xl text-white font-bold text-sm"
+                  style={{ backgroundColor: GOLD }}>
+                  Je découvre →
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ⑦ DESTINATIONS PHARES — Editorial cards */}
+        <section className="max-w-5xl mx-auto px-4 mt-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {EDITORIAL_CARDS.map(card => (
+              <button key={card.title} onClick={() => { setTo(card.dest); setStep('search'); }}
+                className="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all group text-left relative h-[280px]">
+                <img src={card.image} alt={card.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
+                  <h3 className="text-base font-black text-white uppercase tracking-wide leading-tight">{card.title}</h3>
+                  <p className="text-xs text-white/70 mt-1.5 leading-relaxed">{card.desc}</p>
+                  <span className="inline-flex items-center gap-1 mt-3 text-xs font-bold text-white/90 border border-white/30 rounded-full px-3 py-1.5 hover:bg-white/10 transition-colors">
+                    {card.cta} <ArrowRight className="w-3 h-3" />
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* ⑧ COMPTEUR COMMUNAUTAIRE — Social proof */}
+        <section className="mt-16 bg-gray-50 border-y border-gray-100 py-10">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {[
+                { icon: '🚗', value: "2'847", label: 'trajets ce mois' },
+                { icon: '👥', value: "8'234", label: 'voyageurs satisfaits' },
+                { icon: '🌿', value: '42 tonnes', label: 'CO₂ économisées' },
+                { icon: '⭐', value: '4.9/5', label: 'satisfaction' },
+              ].map(stat => (
+                <div key={stat.label} className="text-center">
+                  <span className="text-2xl">{stat.icon}</span>
+                  <p className="text-2xl md:text-3xl font-black text-gray-900 mt-1">{stat.value}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Cross-border CTA */}
-        <section className="px-5 mb-8">
+        <section className="max-w-5xl mx-auto px-4 mt-12">
           <button onClick={() => navigate('/caby/crossborder')}
-            className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 p-5 text-left shadow-lg">
+            className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-left shadow-lg hover:shadow-xl transition-shadow">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-lg">🌍</span>
               <h3 className="text-base font-bold text-white">Caby Cross-Border</h3>
@@ -730,18 +728,7 @@ const CabyVanPage: React.FC = () => {
           </button>
         </section>
 
-        {/* Abonnement CTA */}
-        <section className="px-5 mb-10">
-          <button onClick={() => setStep('abonnement')}
-            className="w-full rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50 p-5 text-left">
-            <div className="flex items-center gap-2 mb-1">
-              <CreditCard className="w-5 h-5" style={{ color: GOLD }} />
-              <h3 className="text-base font-bold text-gray-900">Abonnement Frontalier</h3>
-            </div>
-            <p className="text-sm text-gray-600">Dès CHF 299/mois · Trajets illimités · Réservation prioritaire</p>
-          </button>
-        </section>
-
+        <div className="h-24" />
         <BottomNav />
       </div>
     );
