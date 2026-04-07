@@ -15,6 +15,7 @@ import neuchatelImg from '@/assets/neuchatel.jpg';
 import montreuxImg from '@/assets/montreux.jpg';
 import davosImg from '@/assets/davos.jpg';
 import gstaadImg from '@/assets/gstaad.jpg';
+import parisImg from '@/assets/paris.jpg';
 
 const GOLD = '#C9A84C';
 const FALLBACK_IMAGE = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Montreux_and_Lake_Geneva.jpg/640px-Montreux_and_Lake_Geneva.jpg';
