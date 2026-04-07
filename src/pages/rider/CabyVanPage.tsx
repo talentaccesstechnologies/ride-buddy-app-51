@@ -36,6 +36,7 @@ import AncillarySelector from '@/components/van/AncillarySelector';
 import { getPickupPoints, hasAirportSelected, type PickupPoint } from '@/lib/pickupPoints';
 import { Plane } from 'lucide-react';
 import PlacesAutocomplete from '@/components/shared/PlacesAutocomplete';
+import CityAutocomplete from '@/components/van/CityAutocomplete';
 import PriceCalendar from '@/components/van/PriceCalendar';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'extras' | 'passenger' | 'payment' | 'confirm' | 'abonnement';
@@ -531,13 +532,12 @@ const CabyVanPage: React.FC = () => {
 
               {/* Desktop: horizontal row / Mobile: stacked */}
               <div className="flex flex-col md:flex-row gap-3">
-                <div className="flex-1 relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
-                  <select value={from} onChange={(e) => { setFrom(e.target.value); setTo(''); }}
-                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 pl-9 pr-4 text-sm text-gray-900 font-medium">
-                    {ALL_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
+                <CityAutocomplete
+                  value={from}
+                  onChange={(c) => { setFrom(c); setTo(''); }}
+                  placeholder="Ville, gare, aéroport..."
+                  iconColor="#10b981"
+                />
 
                 <div className="hidden md:flex items-center">
                   <button onClick={() => { const t = from; setFrom(to || from); setTo(t); }}
@@ -546,17 +546,12 @@ const CabyVanPage: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="flex-1 relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-500" />
-                  <select value={to} onChange={(e) => setTo(e.target.value)}
-                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 pl-9 pr-4 text-sm text-gray-900 font-medium">
-                    <option value="">Destination</option>
-                    {getDestinationsFrom(from, 'all').map(c => {
-                      const r = findRoute(from, c);
-                      return <option key={c} value={c}>{c} — dès CHF {r?.basePrice}</option>;
-                    })}
-                  </select>
-                </div>
+                <CityAutocomplete
+                  value={to}
+                  onChange={setTo}
+                  placeholder="Destination"
+                  iconColor="#ef4444"
+                />
 
                 <div className="flex-1 relative">
                   <button onClick={() => setCalendarOpen(!calendarOpen)}
