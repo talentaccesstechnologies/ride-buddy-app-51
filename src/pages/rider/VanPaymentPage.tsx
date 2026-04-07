@@ -117,7 +117,7 @@ export default function VanPaymentPage() {
     <div className="min-h-screen bg-gray-50">
       <BookingStepper currentStep={6} />
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold mb-6">Paiement</h1>
+        <h1 className="text-2xl font-bold mb-6 text-gray-900">Paiement</h1>
 
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 space-y-6">
