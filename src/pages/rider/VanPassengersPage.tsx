@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import BookingStepper from '@/components/van/BookingStepper';
 import BookingSidebar, { BookingItem } from '@/components/van/BookingSidebar';
@@ -20,11 +20,17 @@ export default function VanPassengersPage() {
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '', phone: '',
     reason: 'loisirs', flightNumber: '',
-    cguAccepted: false, covoiturageAccepted: false,
   });
   const [passengerNames, setPassengerNames] = useState<{ first: string; last: string }[]>(
     Array.from({ length: Math.max(0, passengers - 1) }, () => ({ first: '', last: '' }))
   );
+
+  // CGU checkboxes
+  const alreadyAccepted = localStorage.getItem('cabyvan_terms_accepted') === 'true';
+  const [check1, setCheck1] = useState(alreadyAccepted);
+  const [check2, setCheck2] = useState(alreadyAccepted);
+  const [check3, setCheck3] = useState(alreadyAccepted);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   const update = (key: string, val: string | boolean) => setForm(f => ({ ...f, [key]: val }));
 
@@ -33,7 +39,20 @@ export default function VanPassengersPage() {
   ];
   if (packPrice > 0) items.push({ label: 'Formule choisie', amount: packPrice });
 
-  const canContinue = form.firstName && form.lastName && form.email && form.cguAccepted && form.covoiturageAccepted;
+  const formValid = !!(form.firstName && form.lastName && form.email);
+  const allChecked = check1 && check2 && check3;
+  const canContinue = formValid && allChecked;
+
+  const handleContinue = () => {
+    if (!allChecked) {
+      setSubmitAttempted(true);
+      return;
+    }
+    localStorage.setItem('cabyvan_terms_accepted', 'true');
+    localStorage.setItem('cabyvan_terms_date', new Date().toISOString());
+    const p = new URLSearchParams(params);
+    navigate(`/caby/van/seat?${p}`);
+  };
 
   const forward = () => {
     const p = new URLSearchParams(params);
@@ -112,6 +131,8 @@ export default function VanPassengersPage() {
                       <Label>Prénom (Adulte {i + 2})</Label>
                       <Input
                         value={p.first}
+                        className="bg-white"
+                        placeholder="Prénom"
                         onChange={e => {
                           const copy = [...passengerNames];
                           copy[i] = { ...copy[i], first: e.target.value };
@@ -123,6 +144,8 @@ export default function VanPassengersPage() {
                       <Label>Nom (Adulte {i + 2})</Label>
                       <Input
                         value={p.last}
+                        className="bg-white"
+                        placeholder="Nom"
                         onChange={e => {
                           const copy = [...passengerNames];
                           copy[i] = { ...copy[i], last: e.target.value };
@@ -147,22 +170,57 @@ export default function VanPassengersPage() {
               />
             </div>
 
-            {/* CGU */}
-            <div className="bg-white rounded-xl border p-5 space-y-3 text-gray-900">
-              <label className="flex items-start gap-2 cursor-pointer text-sm">
-                <Checkbox
-                  checked={form.cguAccepted}
-                  onCheckedChange={v => update('cguAccepted', !!v)}
-                />
-                <span>Je confirme avoir lu et accepté les <a href="#" className="underline" style={{ color: GOLD }}>conditions générales de Caby</a></span>
-              </label>
-              <label className="flex items-start gap-2 cursor-pointer text-sm">
-                <Checkbox
-                  checked={form.covoiturageAccepted}
-                  onCheckedChange={v => update('covoiturageAccepted', !!v)}
-                />
-                <span>Je certifie que ce trajet constitue du covoiturage avec partage de frais</span>
-              </label>
+            {/* CGU Section */}
+            <div className="rounded-xl border p-5 space-y-4" style={{ background: '#fafaf7', borderColor: '#e8e0cc' }}>
+              <h3 className="text-[15px] font-bold text-gray-900">Conditions d'utilisation</h3>
+
+              <div className="flex flex-wrap gap-3 text-[13px] text-gray-500">
+                <span className="bg-white border rounded-full px-3 py-1">🤝 Covoiturage entre particuliers</span>
+                <span className="bg-white border rounded-full px-3 py-1">🛡️ Assurance trajet incluse</span>
+                <span className="bg-white border rounded-full px-3 py-1">🔄 Annulation flexible disponible</span>
+                <span className="bg-white border rounded-full px-3 py-1">⏰ Ponctualité requise</span>
+              </div>
+
+              <div className="space-y-3 pt-1">
+                <label className="flex items-start gap-3 cursor-pointer text-sm">
+                  <Checkbox
+                    checked={check1}
+                    onCheckedChange={v => setCheck1(!!v)}
+                    className="mt-0.5"
+                  />
+                  <span>
+                    J'ai lu et j'accepte les{' '}
+                    <a href="/caby/van/terms" target="_blank" className="underline font-medium" style={{ color: GOLD }}>
+                      Conditions Générales d'Utilisation
+                    </a>
+                    {' '}de Caby Van
+                  </span>
+                </label>
+
+                <label className="flex items-start gap-3 cursor-pointer text-sm">
+                  <Checkbox
+                    checked={check2}
+                    onCheckedChange={v => setCheck2(!!v)}
+                    className="mt-0.5"
+                  />
+                  <span>Je comprends que ce service constitue du covoiturage avec partage de frais entre particuliers</span>
+                </label>
+
+                <label className="flex items-start gap-3 cursor-pointer text-sm">
+                  <Checkbox
+                    checked={check3}
+                    onCheckedChange={v => setCheck3(!!v)}
+                    className="mt-0.5"
+                  />
+                  <span>Je certifie avoir au moins 18 ans</span>
+                </label>
+              </div>
+
+              {submitAttempted && !allChecked && (
+                <p className="text-red-500 text-[13px]">
+                  ⚠️ Veuillez accepter les conditions générales pour continuer
+                </p>
+              )}
             </div>
           </div>
 
@@ -177,7 +235,7 @@ export default function VanPassengersPage() {
               returnTime={params.get('returnTime') || undefined}
               returnArrivalTime={params.get('returnArrivalTime') || undefined}
               items={items}
-              onContinue={forward}
+              onContinue={handleContinue}
               continueDisabled={!canContinue}
             />
           </div>
