@@ -19,6 +19,24 @@ interface PriceCalendarProps {
   onClear: () => void;
 }
 
+function getPriceForDate(date: Date, basePrice: number) {
+  const day = date.getDay();
+  let m = 1.0;
+  if (day === 1 || day === 5) m = 1.20;
+  else if (day === 0 || day === 6) m = 1.10;
+  else m = 0.90;
+  const daysUntil = Math.floor((date.getTime() - Date.now()) / 86400000);
+  if (daysUntil >= 14) m *= 0.85;
+  return Math.round(basePrice * m);
+}
+
+function getPriceColor(price: number, basePrice: number) {
+  if (price <= basePrice * 0.80) return '#22c55e';
+  if (price <= basePrice) return '#6b7280';
+  if (price <= basePrice * 1.15) return '#f59e0b';
+  return '#ef4444';
+}
+
 function getMonthDays(year: number, month: number) {
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
@@ -39,81 +57,77 @@ function isBetween(d: Date, start: Date, end: Date) {
   return d.getTime() > start.getTime() && d.getTime() < end.getTime();
 }
 
+// Cell sizes
+const CELL_W = 52;
+const CELL_H = 60;
+const CELL_W_M = 42;
+const CELL_H_M = 52;
+
 const MonthGrid: React.FC<{
-  year: number; month: number;
+  year: number; month: number; basePrice: number;
   selectedDeparture: Date | null; selectedReturn: Date | null;
   roundTrip: boolean; onClickDay: (d: Date) => void;
-}> = ({ year, month, selectedDeparture, selectedReturn, roundTrip, onClickDay }) => {
+  mobile?: boolean;
+}> = ({ year, month, basePrice, selectedDeparture, selectedReturn, roundTrip, onClickDay, mobile }) => {
   const days = useMemo(() => getMonthDays(year, month), [year, month]);
   const today = new Date(); today.setHours(0, 0, 0, 0);
+  const cw = mobile ? CELL_W_M : CELL_W;
+  const ch = mobile ? CELL_H_M : CELL_H;
 
   return (
     <div>
-      <div className="text-center text-sm font-bold uppercase tracking-widest mb-4" style={{ color: GOLD }}>
+      <div className="text-center font-bold uppercase tracking-widest mb-3" style={{ color: GOLD, fontSize: mobile ? 13 : 14 }}>
         {MONTHS_FR[month]} {year}
       </div>
-      <div className="grid grid-cols-7 mb-2">
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(7, ${cw}px)`, gap: '3px', justifyContent: 'center', marginBottom: 4 }}>
         {DAYS_FR.map(d => (
-          <div key={d} className="text-center text-xs text-gray-400 font-medium py-1">{d}</div>
+          <div key={d} style={{ width: cw, textAlign: 'center', fontSize: 11, color: '#999', fontWeight: 500 }}>{d}</div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-y-1">
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(7, ${cw}px)`, gap: '3px', justifyContent: 'center' }}>
         {days.map((day, i) => {
-          if (!day) return <div key={`e-${i}`} className="aspect-square" />;
+          if (!day) return <div key={`e-${i}`} style={{ width: cw, height: ch }} />;
           const isPast = day < today;
+          const price = isPast ? null : getPriceForDate(day, basePrice);
+          const pColor = price != null ? getPriceColor(price, basePrice) : '#ccc';
           const isDep = isSameDay(day, selectedDeparture);
           const isRet = isSameDay(day, selectedReturn);
           const inRange = roundTrip && selectedDeparture && selectedReturn && isBetween(day, selectedDeparture, selectedReturn);
-          const isRangeStart = isDep && roundTrip && selectedReturn;
-          const isRangeEnd = isRet && roundTrip && selectedDeparture;
+          const isSelected = isDep || isRet;
 
           let bg = 'transparent';
           let textColor = '#1a1a1a';
-          let fontWeight = 400;
-          let radius = '9999px';
-
-          if (isPast) {
-            textColor = '#d1d5db';
-          } else if (isRangeStart) {
-            bg = GOLD; textColor = '#fff'; fontWeight = 700; radius = '9999px 0 0 9999px';
-          } else if (isRangeEnd) {
-            bg = GOLD; textColor = '#fff'; fontWeight = 700; radius = '0 9999px 9999px 0';
-          } else if (isDep || isRet) {
-            bg = GOLD; textColor = '#fff'; fontWeight = 700;
-          } else if (inRange) {
-            bg = '#f5f0e8'; textColor = GOLD; radius = '0';
-          }
+          let radius = '8px';
+          if (isPast) { textColor = '#d1d5db'; }
+          else if (isDep && roundTrip && selectedReturn) { bg = GOLD; textColor = '#fff'; radius = '8px 0 0 8px'; }
+          else if (isRet && roundTrip && selectedDeparture) { bg = GOLD; textColor = '#fff'; radius = '0 8px 8px 0'; }
+          else if (isSelected) { bg = GOLD; textColor = '#fff'; }
+          else if (inRange) { bg = '#f5f0e8'; textColor = GOLD; radius = '0'; }
 
           return (
             <button
               key={day.toISOString()}
               disabled={isPast}
               onClick={() => !isPast && onClickDay(day)}
-              className="aspect-square flex items-center justify-center text-[15px] transition-colors"
               style={{
-                backgroundColor: bg,
-                color: textColor,
-                fontWeight,
-                borderRadius: radius,
-                cursor: isPast ? 'not-allowed' : 'pointer',
-                border: 'none',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                width: cw, height: ch, borderRadius: radius, gap: 4,
+                backgroundColor: bg, color: textColor, border: 'none',
+                cursor: isPast ? 'not-allowed' : 'pointer', opacity: isPast ? 0.35 : 1,
+                transition: 'background-color 0.15s',
               }}
-              onMouseEnter={(e) => {
-                if (!isPast && !(isDep || isRet)) {
-                  e.currentTarget.style.backgroundColor = inRange ? '#f5f0e8' : '#f5f0e8';
-                  e.currentTarget.style.color = GOLD;
-                  e.currentTarget.style.fontWeight = '600';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isPast && !(isDep || isRet)) {
-                  e.currentTarget.style.backgroundColor = inRange ? '#f5f0e8' : 'transparent';
-                  e.currentTarget.style.color = inRange ? GOLD : '#1a1a1a';
-                  e.currentTarget.style.fontWeight = inRange ? '400' : '400';
-                }
-              }}
+              onMouseEnter={(e) => { if (!isPast && !isSelected) { e.currentTarget.style.backgroundColor = '#f5f0e8'; e.currentTarget.style.color = GOLD; }}}
+              onMouseLeave={(e) => { if (!isPast && !isSelected) { e.currentTarget.style.backgroundColor = inRange ? '#f5f0e8' : 'transparent'; e.currentTarget.style.color = inRange ? GOLD : '#1a1a1a'; }}}
             >
-              {day.getDate()}
+              <span style={{ fontSize: mobile ? 13 : 15, fontWeight: isSelected ? 700 : 500, lineHeight: 1 }}>
+                {day.getDate()}
+              </span>
+              {price != null && (
+                <span style={{ fontSize: mobile ? 10 : 11, fontWeight: 600, lineHeight: 1, color: isSelected ? 'rgba(255,255,255,0.8)' : pColor }}>
+                  {price}
+                </span>
+              )}
+              {isPast && <span style={{ fontSize: 10, lineHeight: 1, color: '#d1d5db' }}>—</span>}
             </button>
           );
         })}
@@ -123,7 +137,7 @@ const MonthGrid: React.FC<{
 };
 
 const PriceCalendar: React.FC<PriceCalendarProps> = ({
-  roundTrip, onToggleRoundTrip,
+  basePrice, roundTrip, onToggleRoundTrip,
   selectedDeparture, selectedReturn,
   onSelectDeparture, onSelectReturn,
   onApply, onClear,
@@ -135,17 +149,14 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
 
   const nextMonth = viewMonth === 11 ? 0 : viewMonth + 1;
   const nextYear = viewMonth === 11 ? viewYear + 1 : viewYear;
-
   const isCurrentMonth = viewYear === now.getFullYear() && viewMonth === now.getMonth();
 
   const goBack = () => {
     if (isCurrentMonth) return;
-    if (viewMonth === 0) { setViewMonth(11); setViewYear(viewYear - 1); }
-    else setViewMonth(viewMonth - 1);
+    if (viewMonth === 0) { setViewMonth(11); setViewYear(viewYear - 1); } else setViewMonth(viewMonth - 1);
   };
   const goForward = () => {
-    if (viewMonth === 11) { setViewMonth(0); setViewYear(viewYear + 1); }
-    else setViewMonth(viewMonth + 1);
+    if (viewMonth === 11) { setViewMonth(0); setViewYear(viewYear + 1); } else setViewMonth(viewMonth + 1);
   };
 
   const handleDayClick = (d: Date) => {
@@ -158,7 +169,7 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
   const formatDateLabel = (d: Date) => `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`;
 
   return (
-    <div className="bg-white rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.15)] flex flex-col w-[calc(100vw-32px)] md:w-[900px]"
+    <div className="bg-white rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.15)] flex flex-col w-[calc(100vw-32px)] md:w-[960px] md:min-w-[960px]"
       style={{ maxHeight: '85vh' }}>
       {/* Toggle */}
       <div className="flex items-center gap-2 px-6 pt-5 pb-3">
@@ -175,7 +186,7 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
         </button>
       </div>
 
-      {/* Navigation arrows + months */}
+      {/* Navigation */}
       <div className="flex items-center px-6 pb-2">
         <button onClick={goBack} disabled={isCurrentMonth}
           className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
@@ -188,17 +199,23 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
         </button>
       </div>
 
-      {/* Calendar grids */}
+      {/* Grids */}
       <div className="flex-1 overflow-y-auto min-h-0 px-6 pb-4">
-        {/* Desktop: two months */}
-        <div className="hidden md:grid grid-cols-2 gap-x-10">
-          <MonthGrid year={viewYear} month={viewMonth} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
-          <MonthGrid year={nextYear} month={nextMonth} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
+        <div className="hidden md:grid grid-cols-2 gap-x-8">
+          <MonthGrid year={viewYear} month={viewMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
+          <MonthGrid year={nextYear} month={nextMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
         </div>
-        {/* Mobile: single month */}
         <div className="md:hidden">
-          <MonthGrid year={viewYear} month={viewMonth} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
+          <MonthGrid year={viewYear} month={viewMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} mobile />
         </div>
+      </div>
+
+      {/* Legend */}
+      <div className="flex items-center justify-center gap-4 px-6 py-2 border-t border-gray-100 text-[10px] text-gray-500">
+        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ background: '#22c55e' }} /> Meilleur prix</span>
+        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ background: '#6b7280' }} /> Standard</span>
+        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ background: '#f59e0b' }} /> Élevé</span>
+        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ background: '#ef4444' }} /> Très élevé</span>
       </div>
 
       {/* Footer */}
@@ -222,9 +239,7 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
             className="text-xs font-medium hover:underline" style={{ color: GOLD }}>
             Effacer la sélection
           </button>
-          <Button
-            onClick={onApply}
-            disabled={!selectedDeparture || (roundTrip && !selectedReturn)}
+          <Button onClick={onApply} disabled={!selectedDeparture || (roundTrip && !selectedReturn)}
             className="px-6 h-9 rounded-xl text-white text-xs font-bold disabled:opacity-40"
             style={{ backgroundColor: GOLD }}>
             Appliquer
