@@ -684,6 +684,9 @@ const CabyVanPage: React.FC = () => {
           )}
         </section>
 
+        {/* ④b SECTIONS ÉDITORIALES */}
+        <EditorialSections onSelectDestination={(city) => { setTo(city); setStep('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
+
         {/* ⑤ POURQUOI CABY VAN */}
         <section className="max-w-5xl mx-auto px-4 mt-16">
           <h2 className="text-2xl font-black text-gray-900 text-center mb-8 uppercase tracking-tight">Pourquoi choisir Caby Van</h2>
