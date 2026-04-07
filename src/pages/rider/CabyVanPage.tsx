@@ -558,41 +558,22 @@ const CabyVanPage: React.FC = () => {
                     className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-left font-medium text-gray-900 hover:bg-gray-100 transition-colors">
                     {calendarDateLabel || '📅 Date'}
                   </button>
+                  {calendarOpen && (
+                    <div className="absolute top-full left-0 mt-2 z-[1000]">
+                      <PriceCalendar
+                        basePrice={calendarBasePrice}
+                        roundTrip={roundTrip}
+                        onToggleRoundTrip={setRoundTrip}
+                        selectedDeparture={departureDateObj}
+                        selectedReturn={returnDateObj}
+                        onSelectDeparture={setDepartureDateObj}
+                        onSelectReturn={setReturnDateObj}
+                        onApply={() => handleCalendarApply(setCalendarOpen)}
+                        onClear={handleCalendarClear}
+                      />
+                    </div>
+                  )}
                 </div>
-
-                <div className="w-full md:w-32">
-                  <div className="flex items-center gap-1 h-12 rounded-xl bg-gray-50 border border-gray-200 px-3">
-                    <Users className="w-4 h-4 text-gray-400" />
-                    <button onClick={() => setPassengers(Math.max(1, passengers - 1))} className="w-7 h-7 flex items-center justify-center text-gray-500 font-bold">−</button>
-                    <span className="text-sm font-bold text-gray-900 w-4 text-center">{passengers}</span>
-                    <button onClick={() => setPassengers(Math.min(7, passengers + 1))} className="w-7 h-7 flex items-center justify-center text-gray-500 font-bold">+</button>
-                  </div>
-                </div>
-
-                <Button onClick={() => { if (from && to) handleSearch(); else setStep('search'); }}
-                  className="h-12 px-6 md:px-8 rounded-xl text-white font-bold text-sm shadow-lg hover:shadow-xl transition-shadow"
-                  style={{ backgroundColor: GOLD }}>
-                  <Search className="w-4 h-4 mr-2" />
-                  Rechercher
-                </Button>
-              </div>
-
-              {/* Price Calendar Dropdown — Hero */}
-              {calendarOpen && (
-                <div className="mt-3">
-                  <PriceCalendar
-                    basePrice={calendarBasePrice}
-                    roundTrip={roundTrip}
-                    onToggleRoundTrip={setRoundTrip}
-                    selectedDeparture={departureDateObj}
-                    selectedReturn={returnDateObj}
-                    onSelectDeparture={setDepartureDateObj}
-                    onSelectReturn={setReturnDateObj}
-                    onApply={() => handleCalendarApply(setCalendarOpen)}
-                    onClear={handleCalendarClear}
-                  />
-                </div>
-              )}
             </div>
           </div>
         </div>
