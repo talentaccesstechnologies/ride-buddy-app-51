@@ -13,23 +13,24 @@ interface Seat {
   taken: boolean;
 }
 
-// Mercedes V-Class 7 places (vue de dessus) :
-// Rang 1 : Chauffeur | Passager 1
-// Rang 2 : Siège capitaine 2 | [allée] | Siège capitaine 3
-// Rang 3 : Banquette 4 | 5 | 6
+// Mercedes V-Class 7 places :
+// Rang 1 : Chauffeur | Passager 1 (avant)
+// Rang 2 : Banquette 3 places (2, 3, 4)
+// Rang 3 : Banquette 3 places (5, 6, 7)
 const SEATS: Seat[] = [
   { id: 1, category: 'avant', price: 8, taken: false },
-  { id: 2, category: 'capitaine', price: 5, taken: false },
-  { id: 3, category: 'capitaine', price: 5, taken: true },
-  { id: 4, category: 'banquette', price: 0, taken: false },
-  { id: 5, category: 'banquette', price: 0, taken: true },
-  { id: 6, category: 'banquette', price: 0, taken: false },
+  { id: 2, category: 'milieu', price: 5, taken: false },
+  { id: 3, category: 'milieu', price: 5, taken: true },
+  { id: 4, category: 'milieu', price: 5, taken: false },
+  { id: 5, category: 'arriere', price: 0, taken: false },
+  { id: 6, category: 'arriere', price: 0, taken: true },
+  { id: 7, category: 'arriere', price: 0, taken: false },
 ];
 
 const CAT_META: Record<string, { bg: string; border: string; selectedBg: string; label: string; price: string; desc: string }> = {
   avant: { bg: '#FEF3C7', border: GOLD, selectedBg: GOLD, label: 'Avant', price: '+CHF 8', desc: 'Place passager avant, meilleure vue' },
-  capitaine: { bg: '#D1FAE5', border: '#10B981', selectedBg: '#10B981', label: 'Capitaine', price: '+CHF 5', desc: 'Siège capitaine individuel, confort optimal' },
-  banquette: { bg: '#F3F4F6', border: '#9CA3AF', selectedBg: '#6B7280', label: 'Banquette', price: 'Gratuit', desc: 'Banquette arrière 3 places' },
+  milieu: { bg: '#D1FAE5', border: '#10B981', selectedBg: '#10B981', label: 'Rang 2', price: '+CHF 5', desc: 'Banquette centrale, bon confort' },
+  arriere: { bg: '#F3F4F6', border: '#9CA3AF', selectedBg: '#6B7280', label: 'Rang 3', price: 'Gratuit', desc: 'Banquette arrière' },
 };
 
 function SeatBtn({ seat, selected, onSelect }: { seat: Seat; selected: boolean; onSelect: () => void }) {
