@@ -525,43 +525,24 @@ const CabyVanPage: React.FC = () => {
   if (step === 'hero') {
     return (
       <div className="min-h-screen bg-white">
-        {/* ① HERO SECTION — Full screen photo + text */}
-        <div className="relative h-[480px] md:h-[540px] overflow-hidden">
-          <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/70" />
-
-          <div className="absolute top-6 left-6 z-10">
-            <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-white/90 text-sm font-medium bg-white/15 backdrop-blur-md rounded-full px-4 py-2 hover:bg-white/25 transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Services
-            </button>
-          </div>
-
-          <div className="absolute bottom-0 left-0 right-0 px-6 pb-28 md:pb-32 z-10 text-center">
-            <h1 className="text-4xl md:text-5xl font-black text-white leading-tight tracking-tight">
-              VOYAGEZ MALIN.
-            </h1>
-            <p className="text-xl md:text-2xl font-bold text-white/90 mt-2">GENÈVE ↔ TOUTE LA SUISSE.</p>
-            <p className="text-white/70 text-sm md:text-base mt-3">Siège partagé · Chauffeur certifié · Dès CHF 9</p>
-          </div>
-        </div>
-
-        {/* ① SEARCH BAR — Overlapping hero, becomes sticky */}
-        <div className="sticky top-0 z-40 -mt-20">
-          <div className="max-w-5xl mx-auto px-4">
-            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 md:p-5">
-              {/* Trip type toggle */}
-              <div className="flex items-center gap-2 mb-4">
-                <button onClick={() => setRoundTrip(false)} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${!roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+        {/* ① SEARCH BAR — Sticky at top like EasyJet */}
+        <div className="sticky top-0 z-40 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+          <div className="max-w-6xl mx-auto px-4 py-3">
+            {/* Trip type toggle + fields on single row (desktop) */}
+            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+              {/* Toggle */}
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button onClick={() => setRoundTrip(false)} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${!roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                   style={!roundTrip ? { backgroundColor: GOLD } : {}}>Aller simple</button>
-                <button onClick={() => setRoundTrip(true)} className={`px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-1.5 ${roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                <button onClick={() => setRoundTrip(true)} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1 ${roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                   style={roundTrip ? { backgroundColor: GOLD } : {}}>
                   Aller-retour
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-white/20">-5%</span>
+                  <span className="text-[9px] font-bold px-1 py-0.5 rounded-full bg-white/20">-5%</span>
                 </button>
               </div>
 
-              {/* Desktop: horizontal row / Mobile: stacked */}
-              <div className="flex flex-col md:flex-row gap-3">
+              {/* Fields row */}
+              <div className="flex flex-col md:flex-row flex-1 gap-2 md:gap-2 md:items-center">
                 <CityAutocomplete
                   value={from}
                   onChange={(c) => { setFrom(c); setTo(''); }}
@@ -569,10 +550,10 @@ const CabyVanPage: React.FC = () => {
                   iconColor="#10b981"
                 />
 
-                <div className="hidden md:flex items-center">
+                <div className="hidden md:flex items-center shrink-0">
                   <button onClick={() => { const t = from; setFrom(to || from); setTo(t); }}
-                    className="w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center hover:border-amber-400 transition-colors">
-                    <ArrowRight className="w-3.5 h-3.5 text-gray-500" />
+                    className="w-7 h-7 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center hover:border-amber-400 transition-colors">
+                    <ArrowRight className="w-3 h-3 text-gray-500" />
                   </button>
                 </div>
 
@@ -583,9 +564,9 @@ const CabyVanPage: React.FC = () => {
                   iconColor="#ef4444"
                 />
 
-                <div className="flex-1 relative">
+                <div className="flex-1 relative min-w-0">
                   <button onClick={() => setCalendarOpen(!calendarOpen)}
-                    className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-left font-medium text-gray-900 hover:bg-gray-100 transition-colors">
+                    className="w-full h-10 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-left font-medium text-gray-900 hover:bg-gray-100 transition-colors truncate">
                     {calendarDateLabel || '📅 Date'}
                   </button>
                   {calendarOpen && (
@@ -605,23 +586,43 @@ const CabyVanPage: React.FC = () => {
                   )}
                 </div>
 
-                <div className="w-full md:w-32">
-                  <div className="flex items-center gap-1 h-12 rounded-xl bg-gray-50 border border-gray-200 px-3">
-                    <Users className="w-4 h-4 text-gray-400" />
-                    <button onClick={() => setPassengers(Math.max(1, passengers - 1))} className="w-7 h-7 flex items-center justify-center text-gray-500 font-bold">−</button>
+                <div className="w-full md:w-28 shrink-0">
+                  <div className="flex items-center gap-1 h-10 rounded-xl bg-gray-50 border border-gray-200 px-2">
+                    <Users className="w-3.5 h-3.5 text-gray-400" />
+                    <button onClick={() => setPassengers(Math.max(1, passengers - 1))} className="w-6 h-6 flex items-center justify-center text-gray-500 font-bold text-sm">−</button>
                     <span className="text-sm font-bold text-gray-900 w-4 text-center">{passengers}</span>
-                    <button onClick={() => setPassengers(Math.min(7, passengers + 1))} className="w-7 h-7 flex items-center justify-center text-gray-500 font-bold">+</button>
+                    <button onClick={() => setPassengers(Math.min(7, passengers + 1))} className="w-6 h-6 flex items-center justify-center text-gray-500 font-bold text-sm">+</button>
                   </div>
                 </div>
 
                 <Button onClick={() => { if (from && to) handleSearch(); else setStep('search'); }}
-                  className="h-12 px-6 md:px-8 rounded-xl text-white font-bold text-sm shadow-lg hover:shadow-xl transition-shadow"
+                  className="h-10 px-5 md:px-6 rounded-xl text-white font-bold text-sm shadow-lg hover:shadow-xl transition-shadow shrink-0"
                   style={{ backgroundColor: GOLD }}>
-                  <Search className="w-4 h-4 mr-2" />
+                  <Search className="w-4 h-4 mr-1.5" />
                   Rechercher
                 </Button>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* ② HERO SECTION — Full photo + text */}
+        <div className="relative h-[400px] md:h-[480px] overflow-hidden">
+          <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/70" />
+
+          <div className="absolute top-4 left-4 z-10">
+            <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-white/90 text-sm font-medium bg-white/15 backdrop-blur-md rounded-full px-4 py-2 hover:bg-white/25 transition-colors">
+              <ArrowLeft className="w-4 h-4" /> Services
+            </button>
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0 px-6 pb-10 md:pb-14 z-10 text-center">
+            <h1 className="text-4xl md:text-5xl font-black text-white leading-tight tracking-tight">
+              VOYAGEZ MALIN.
+            </h1>
+            <p className="text-xl md:text-2xl font-bold text-white/90 mt-2">GENÈVE ↔ TOUTE LA SUISSE.</p>
+            <p className="text-white/70 text-sm md:text-base mt-3">Siège partagé · Chauffeur certifié · Dès CHF 9</p>
           </div>
         </div>
 
