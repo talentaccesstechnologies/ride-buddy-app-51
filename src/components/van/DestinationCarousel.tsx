@@ -29,6 +29,7 @@ const IMAGE_MAP: Record<string, string> = {
   Annecy: annecyImg,
   Lyon: lyonImg,
   'Bâle': baleImg,
+  Berne: berneImg,
 };
 
 const ALL_DESTINATIONS: DestinationItem[] = [
