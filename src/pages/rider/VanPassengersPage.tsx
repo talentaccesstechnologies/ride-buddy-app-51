@@ -54,8 +54,8 @@ export default function VanPassengersPage() {
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 space-y-6">
             {/* Contact info */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-4">Coordonnées du réservant</h2>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-4 text-gray-900">Coordonnées du réservant</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>Prénom</Label>
