@@ -1473,15 +1473,38 @@ const CabyVanPage: React.FC = () => {
     );
   }
 
-  // ── SEAT SELECTION + ANCILLARIES ──
+  // ── STEP 3: SEAT SELECTION ──
   if (step === 'seat' && selectedSlot && selectedRoute) {
+    const currentStep = 3;
     return (
-      <div className="min-h-screen bg-white pb-24">
-        <div className="px-5 pt-14">
-          <button onClick={() => setStep('results')} className="flex items-center gap-1 text-gray-500 mb-4">
-            <ArrowLeft className="w-4 h-4" /> Créneaux
+      <div className="min-h-screen bg-gray-50">
+        {/* STEPPER */}
+        <div className="bg-white border-b border-gray-200 px-4 py-3">
+          <div className="max-w-6xl mx-auto flex items-center justify-between">
+            {STEPPER_STEPS.map((s, i) => (
+              <React.Fragment key={s.num}>
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                    s.num < currentStep ? 'bg-emerald-500 text-white' :
+                    s.num === currentStep ? 'text-white' :
+                    'bg-gray-200 text-gray-500'
+                  }`} style={s.num === currentStep ? { backgroundColor: GOLD } : {}}>
+                    {s.num < currentStep ? <Check className="w-3.5 h-3.5" /> : s.num}
+                  </div>
+                  <span className={`text-xs font-medium hidden md:inline ${s.num === currentStep ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</span>
+                </div>
+                {i < STEPPER_STEPS.length - 1 && <div className={`flex-1 h-0.5 mx-2 ${s.num < currentStep ? 'bg-emerald-500' : 'bg-gray-200'}`} />}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+
+        <div className="max-w-3xl mx-auto px-5 py-8">
+          <button onClick={() => setStep('results')} className="flex items-center gap-1 text-gray-500 mb-6">
+            <ArrowLeft className="w-4 h-4" /> Retour aux véhicules
           </button>
-          <div className="rounded-2xl bg-gray-50 border border-gray-200 p-4 mb-6">
+
+          <div className="rounded-2xl bg-white border border-gray-200 p-4 mb-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-bold text-gray-900">{from} → {to}</p>
@@ -1491,10 +1514,12 @@ const CabyVanPage: React.FC = () => {
             </div>
           </div>
 
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Choisissez votre siège</h3>
-          <div className="rounded-2xl bg-gray-50 border border-gray-200 p-6 mb-6">
+          <h2 className="text-lg font-bold text-gray-900 mb-2">Choisissez votre siège</h2>
+          <p className="text-sm text-gray-500 mb-4">Un siège choisi = un engagement. Sélectionnez votre place préférée dans le VAN.</p>
+
+          <div className="rounded-2xl bg-white border border-gray-200 p-6 mb-6 shadow-sm">
             <div className="relative mx-auto" style={{ width: 200 }}>
-              <div className="border-2 border-gray-200 rounded-3xl p-4 pt-10 pb-6 bg-white">
+              <div className="border-2 border-gray-200 rounded-3xl p-4 pt-10 pb-6 bg-gray-50">
                 <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] text-gray-400 font-bold">AVANT ▲</div>
                 <div className="flex justify-start mb-4">
                   <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-xs text-gray-400 border border-gray-200">🚐</div>
@@ -1511,40 +1536,347 @@ const CabyVanPage: React.FC = () => {
             </div>
           </div>
 
+          {selectedSeat && (
+            <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 mb-6 flex items-center gap-2">
+              <Check className="w-4 h-4 text-emerald-600" />
+              <p className="text-sm text-emerald-700 font-medium">Siège N°{selectedSeat} sélectionné — {[1, 2].includes(selectedSeat) ? 'Rang avant, fenêtre' : [3, 5].includes(selectedSeat) ? 'Fenêtre' : 'Couloir'}</p>
+            </div>
+          )}
+
+          <Button onClick={() => setStep('extras')} disabled={!selectedSeat}
+            className="w-full text-white font-bold rounded-xl h-12 disabled:opacity-40 shadow-lg"
+            style={{ backgroundColor: GOLD }}>
+            Continuer vers les extras
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── STEP 4: EXTRAS & OPTIONS ──
+  if (step === 'extras' && selectedSlot && selectedRoute) {
+    const currentStep = 4;
+    const extrasTotal = slotPrice + ancillaryTotal + INSURANCE_FEE;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* STEPPER */}
+        <div className="bg-white border-b border-gray-200 px-4 py-3">
+          <div className="max-w-6xl mx-auto flex items-center justify-between">
+            {STEPPER_STEPS.map((s, i) => (
+              <React.Fragment key={s.num}>
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                    s.num < currentStep ? 'bg-emerald-500 text-white' :
+                    s.num === currentStep ? 'text-white' :
+                    'bg-gray-200 text-gray-500'
+                  }`} style={s.num === currentStep ? { backgroundColor: GOLD } : {}}>
+                    {s.num < currentStep ? <Check className="w-3.5 h-3.5" /> : s.num}
+                  </div>
+                  <span className={`text-xs font-medium hidden md:inline ${s.num === currentStep ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</span>
+                </div>
+                {i < STEPPER_STEPS.length - 1 && <div className={`flex-1 h-0.5 mx-2 ${s.num < currentStep ? 'bg-emerald-500' : 'bg-gray-200'}`} />}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+
+        <div className="max-w-3xl mx-auto px-5 py-8">
+          <button onClick={() => setStep('seat')} className="flex items-center gap-1 text-gray-500 mb-6">
+            <ArrowLeft className="w-4 h-4" /> Retour au siège
+          </button>
+
+          <h2 className="text-lg font-bold text-gray-900 mb-2">Personnalisez votre trajet</h2>
+          <p className="text-sm text-gray-500 mb-6">Ajoutez des extras pour un voyage encore plus confortable. Vous êtes déjà engagé — profitez-en !</p>
+
           {/* Ancillary options */}
           <div className="mb-6">
             <AncillarySelector selected={ancillaries} onChange={setAncillaries} basePrice={slotPrice} />
           </div>
 
-          <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 mb-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">Total</span>
-              <span className="text-2xl font-black text-gray-900">CHF {totalPrice}</span>
+          {/* Insurance (always included) */}
+          <div className="rounded-2xl bg-blue-50 border border-blue-200 p-4 mb-6 flex items-start gap-3">
+            <Shield className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-bold text-blue-900">🛡️ Assurance trajet Caby</p>
+              <p className="text-xs text-blue-700 mt-0.5">Protection passager incluse sur tous les trajets</p>
             </div>
-            {ancillaryTotal > 0 && <p className="text-[10px] text-gray-500 mt-1">Siège CHF {slotPrice} + options CHF {ancillaryTotal}</p>}
+            <p className="text-sm font-bold text-blue-900">CHF {INSURANCE_FEE.toFixed(2)}</p>
           </div>
 
-          <Button onClick={() => setStep('confirm')} disabled={!selectedSeat}
-            className="w-full text-white font-bold rounded-xl h-12 disabled:opacity-40 shadow-lg"
+          {/* Total recap */}
+          <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 mb-6">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Siège N°{selectedSeat}</span>
+                <span className="font-bold text-gray-900">CHF {slotPrice}</span>
+              </div>
+              {ancillaryTotal > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Options</span>
+                  <span className="font-bold text-gray-900">+CHF {ancillaryTotal}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Assurance trajet</span>
+                <span className="font-bold text-gray-900">CHF {INSURANCE_FEE.toFixed(2)}</span>
+              </div>
+              <div className="border-t border-amber-300 pt-2 mt-2 flex justify-between">
+                <span className="text-sm font-bold text-gray-900">Total</span>
+                <span className="text-xl font-black text-gray-900">CHF {extrasTotal.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          <Button onClick={() => setStep('passenger')}
+            className="w-full text-white font-bold rounded-xl h-12 shadow-lg"
             style={{ backgroundColor: GOLD }}>
-            Confirmer et payer
+            Continuer
           </Button>
         </div>
-        <BottomNav />
       </div>
     );
   }
 
-  // ── CONFIRMATION ──
+  // ── STEP 5: PASSENGER INFO ──
+  if (step === 'passenger' && selectedSlot && selectedRoute) {
+    const currentStep = 5;
+    const canContinue = passengerFirstName.trim() && passengerLastName.trim() && passengerEmail.trim() && passengerPhone.trim();
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* STEPPER */}
+        <div className="bg-white border-b border-gray-200 px-4 py-3">
+          <div className="max-w-6xl mx-auto flex items-center justify-between">
+            {STEPPER_STEPS.map((s, i) => (
+              <React.Fragment key={s.num}>
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                    s.num < currentStep ? 'bg-emerald-500 text-white' :
+                    s.num === currentStep ? 'text-white' :
+                    'bg-gray-200 text-gray-500'
+                  }`} style={s.num === currentStep ? { backgroundColor: GOLD } : {}}>
+                    {s.num < currentStep ? <Check className="w-3.5 h-3.5" /> : s.num}
+                  </div>
+                  <span className={`text-xs font-medium hidden md:inline ${s.num === currentStep ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</span>
+                </div>
+                {i < STEPPER_STEPS.length - 1 && <div className={`flex-1 h-0.5 mx-2 ${s.num < currentStep ? 'bg-emerald-500' : 'bg-gray-200'}`} />}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+
+        <div className="max-w-3xl mx-auto px-5 py-8">
+          <button onClick={() => setStep('extras')} className="flex items-center gap-1 text-gray-500 mb-6">
+            <ArrowLeft className="w-4 h-4" /> Retour aux extras
+          </button>
+
+          <h2 className="text-lg font-bold text-gray-900 mb-2">Vos informations</h2>
+          <p className="text-sm text-gray-500 mb-6">Nous avons besoin de vos coordonnées pour votre e-ticket et le chauffeur.</p>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-medium text-gray-600 mb-1 block">Prénom *</label>
+                <input type="text" value={passengerFirstName} onChange={(e) => setPassengerFirstName(e.target.value)}
+                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900"
+                  placeholder="Jean" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-600 mb-1 block">Nom *</label>
+                <input type="text" value={passengerLastName} onChange={(e) => setPassengerLastName(e.target.value)}
+                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900"
+                  placeholder="Dupont" />
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 mb-1 block">Email *</label>
+              <input type="email" value={passengerEmail} onChange={(e) => setPassengerEmail(e.target.value)}
+                className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900"
+                placeholder="jean.dupont@email.com" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 mb-1 block">Téléphone *</label>
+              <input type="tel" value={passengerPhone} onChange={(e) => setPassengerPhone(e.target.value)}
+                className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900"
+                placeholder="+41 79 123 45 67" />
+            </div>
+
+            {isAirport && (
+              <div>
+                <label className="text-xs font-medium text-gray-600 mb-1 block">✈️ Numéro de vol (optionnel)</label>
+                <input type="text" value={passengerFlightNo} onChange={(e) => setPassengerFlightNo(e.target.value)}
+                  className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900"
+                  placeholder="LX 1234" />
+                <p className="text-[10px] text-gray-400 mt-1">Le chauffeur suivra votre vol en temps réel</p>
+              </div>
+            )}
+
+            <div>
+              <label className="text-xs font-medium text-gray-600 mb-1 block">🧳 Nombre de bagages</label>
+              <div className="flex items-center gap-3">
+                <button onClick={() => setPassengerBagCount(Math.max(0, passengerBagCount - 1))} className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600 font-bold border border-gray-200">−</button>
+                <span className="text-lg font-bold text-gray-900 w-8 text-center">{passengerBagCount}</span>
+                <button onClick={() => setPassengerBagCount(Math.min(5, passengerBagCount + 1))} className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600 font-bold border border-gray-200">+</button>
+                <span className="text-xs text-gray-500 ml-2">1 inclus, +CHF 10/bagage sup.</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-xl bg-gray-50 border border-gray-200 p-3 flex items-start gap-2">
+            <Shield className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+            <p className="text-[11px] text-gray-500">Vos données sont protégées et ne sont partagées qu'avec votre chauffeur pour ce trajet. Le numéro de téléphone est masqué pendant la course.</p>
+          </div>
+
+          <Button onClick={() => setStep('payment')} disabled={!canContinue}
+            className="w-full mt-6 text-white font-bold rounded-xl h-12 disabled:opacity-40 shadow-lg"
+            style={{ backgroundColor: GOLD }}>
+            Continuer vers le paiement
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── STEP 6: PAYMENT ──
+  if (step === 'payment' && selectedSlot && selectedRoute) {
+    const currentStep = 6;
+    const extraBagFee = Math.max(0, passengerBagCount - 1) * 10;
+    const grandTotal = slotPrice + ancillaryTotal + INSURANCE_FEE + extraBagFee;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* STEPPER */}
+        <div className="bg-white border-b border-gray-200 px-4 py-3">
+          <div className="max-w-6xl mx-auto flex items-center justify-between">
+            {STEPPER_STEPS.map((s, i) => (
+              <React.Fragment key={s.num}>
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                    s.num < currentStep ? 'bg-emerald-500 text-white' :
+                    s.num === currentStep ? 'text-white' :
+                    'bg-gray-200 text-gray-500'
+                  }`} style={s.num === currentStep ? { backgroundColor: GOLD } : {}}>
+                    {s.num < currentStep ? <Check className="w-3.5 h-3.5" /> : s.num}
+                  </div>
+                  <span className={`text-xs font-medium hidden md:inline ${s.num === currentStep ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</span>
+                </div>
+                {i < STEPPER_STEPS.length - 1 && <div className={`flex-1 h-0.5 mx-2 ${s.num < currentStep ? 'bg-emerald-500' : 'bg-gray-200'}`} />}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+
+        <div className="max-w-3xl mx-auto px-5 py-8">
+          <button onClick={() => setStep('passenger')} className="flex items-center gap-1 text-gray-500 mb-6">
+            <ArrowLeft className="w-4 h-4" /> Retour
+          </button>
+
+          <h2 className="text-lg font-bold text-gray-900 mb-6">Paiement</h2>
+
+          {/* Recap */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm mb-6">
+            <h4 className="text-sm font-bold text-gray-900 mb-4">Récapitulatif de la commande</h4>
+            <div className="space-y-2.5">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">{from} → {to} · Siège N°{selectedSeat}</span>
+                <span className="font-bold text-gray-900">CHF {slotPrice}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">{selectedSlot.departure} → {selectedSlot.arrivalEstimate} · {dateAller || "Aujourd'hui"}</span>
+                <span className="text-xs text-gray-400">{formatDuration(selectedRoute.duration)}</span>
+              </div>
+              {ancillaryTotal > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Options extras</span>
+                  <span className="font-bold text-gray-900">+CHF {ancillaryTotal}</span>
+                </div>
+              )}
+              {extraBagFee > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Bagages supplémentaires (×{passengerBagCount - 1})</span>
+                  <span className="font-bold text-gray-900">+CHF {extraBagFee}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Assurance trajet Caby</span>
+                <span className="font-bold text-gray-900">CHF {INSURANCE_FEE.toFixed(2)}</span>
+              </div>
+              <div className="border-t border-gray-200 pt-3 mt-3 flex justify-between">
+                <span className="text-base font-bold text-gray-900">Total à payer</span>
+                <span className="text-2xl font-black text-gray-900">CHF {grandTotal.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Passenger recap */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm mb-6">
+            <h4 className="text-sm font-bold text-gray-900 mb-3">Passager</h4>
+            <p className="text-sm text-gray-700">{passengerFirstName} {passengerLastName}</p>
+            <p className="text-xs text-gray-500">{passengerEmail} · {passengerPhone}</p>
+            {passengerFlightNo && <p className="text-xs text-blue-600 mt-1">✈️ Vol {passengerFlightNo}</p>}
+          </div>
+
+          {/* Payment method */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm mb-6">
+            <h4 className="text-sm font-bold text-gray-900 mb-4">Moyen de paiement</h4>
+            <div className="space-y-3">
+              {([
+                { key: 'card' as const, label: '💳 Carte bancaire', desc: 'Visa, Mastercard, AMEX' },
+                { key: 'twint' as const, label: '🟣 TWINT', desc: 'Paiement mobile suisse' },
+                { key: 'applepay' as const, label: '🍎 Apple Pay', desc: 'Paiement rapide' },
+              ]).map(pm => (
+                <label key={pm.key} onClick={() => setPaymentMethod(pm.key)}
+                  className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
+                    paymentMethod === pm.key ? 'border-amber-400 bg-amber-50' : 'border-gray-200 hover:bg-gray-50'
+                  }`}>
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    paymentMethod === pm.key ? 'border-amber-500' : 'border-gray-300'
+                  }`}>
+                    {paymentMethod === pm.key && <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: GOLD }} />}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">{pm.label}</p>
+                    <p className="text-[11px] text-gray-500">{pm.desc}</p>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Legal */}
+          <div className="rounded-xl bg-gray-50 border border-gray-200 p-3 mb-6 flex items-start gap-2">
+            <Info className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+            <p className="text-[10px] text-gray-500">
+              En confirmant, vous acceptez les CGU de Caby. Ce trajet est organisé dans le cadre du covoiturage au sens de l'article L3132-1 du Code des transports. Le prix couvre uniquement les frais de trajet. Remboursement garanti en cas d'annulation par Caby.
+            </p>
+          </div>
+
+          <Button onClick={() => setStep('confirm')}
+            className="w-full text-white font-bold rounded-xl h-12 shadow-lg"
+            style={{ backgroundColor: GOLD }}>
+            <CreditCard className="w-4 h-4 mr-2" />
+            Payer CHF {grandTotal.toFixed(2)}
+          </Button>
+
+          <div className="mt-4 flex items-center justify-center gap-4 text-[10px] text-gray-400">
+            <span>🔒 Paiement sécurisé</span>
+            <span>🛡️ Garanti Caby</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── STEP 7: CONFIRMATION ──
   if (step === 'confirm' && selectedSlot && selectedRoute) {
+    const extraBagFee = Math.max(0, passengerBagCount - 1) * 10;
+    const grandTotal = slotPrice + ancillaryTotal + INSURANCE_FEE + extraBagFee;
     return (
       <div className="min-h-screen bg-white pb-24">
-        <div className="px-5 pt-14 text-center">
+        <div className="px-5 pt-14 text-center max-w-2xl mx-auto">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
             <Check className="w-8 h-8 text-emerald-600" />
           </motion.div>
           <h2 className="text-xl font-bold text-gray-900 mb-1">Réservation confirmée !</h2>
-          <p className="text-sm text-gray-500 mb-6">Votre e-ticket a été envoyé par email</p>
+          <p className="text-sm text-gray-500 mb-6">Votre e-ticket a été envoyé à {passengerEmail || 'votre email'}</p>
 
           {/* Pickup/Dropoff detail cards */}
           {(effectivePickupAddress || effectiveDropoffAddress) && (
@@ -1564,9 +1896,6 @@ const CabyVanPage: React.FC = () => {
                   <p className="text-[10px] font-bold uppercase tracking-wider text-red-500 mb-1">🏁 Point de dépose</p>
                   <p className="text-sm font-bold text-gray-900">{dropoffLabel}</p>
                   <p className="text-xs text-gray-500">{effectiveDropoffAddress}</p>
-                  {estimatedArrivalAller && (
-                    <p className="text-xs text-gray-600 mt-1">🕐 Arrivée estimée : {estimatedArrivalAller}</p>
-                  )}
                 </div>
               )}
             </div>
@@ -1578,6 +1907,7 @@ const CabyVanPage: React.FC = () => {
             </div>
             <div className="p-5 space-y-3">
               {[
+                ['Passager', `${passengerFirstName} ${passengerLastName}`],
                 ['Trajet', `${from} → ${to}`],
                 ['Date', dateAller || "Aujourd'hui"],
                 ['Départ', selectedSlot.departure],
@@ -1601,7 +1931,7 @@ const CabyVanPage: React.FC = () => {
               )}
               <div className="border-t border-dashed border-gray-200 pt-3 flex justify-between text-sm">
                 <span className="text-gray-500">Total payé</span>
-                <span className="text-xl font-black text-gray-900">CHF {totalPrice}</span>
+                <span className="text-xl font-black text-gray-900">CHF {grandTotal.toFixed(2)}</span>
               </div>
             </div>
             <div className="border-t border-dashed border-gray-200 p-5 flex flex-col items-center bg-gray-50">
@@ -1612,7 +1942,17 @@ const CabyVanPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-6 flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-3">
+          {/* Action buttons */}
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <Button variant="outline" className="rounded-xl h-11 border-gray-300 text-gray-700 text-sm">
+              📅 Ajouter au calendrier
+            </Button>
+            <Button variant="outline" className="rounded-xl h-11 border-gray-300 text-gray-700 text-sm">
+              📄 Télécharger PDF
+            </Button>
+          </div>
+
+          <div className="mt-4 flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-3">
             <Leaf className="w-5 h-5 text-emerald-600 flex-shrink-0" />
             <p className="text-xs text-emerald-700 text-left">🌿 Trajet partagé — vous économisez <span className="font-bold">{Math.round(selectedRoute.duration * 0.12)} kg de CO₂</span> vs voiture solo</p>
           </div>
