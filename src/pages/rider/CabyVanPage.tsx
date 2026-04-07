@@ -623,14 +623,16 @@ const CabyVanPage: React.FC = () => {
             )}
           </div>
 
-          {/* Tagline — absolutely positioned at bottom of hero */}
-          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-center w-full z-10 px-6" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
-            <h1 className="text-[42px] md:text-5xl font-black text-white leading-tight" style={{ letterSpacing: '-0.5px' }}>
-              VOYAGEZ MALIN.
-            </h1>
-            <p className="text-[22px] md:text-2xl font-bold text-white mt-1">GENÈVE ↔ TOUTE LA SUISSE.</p>
-            <p className="text-[15px] text-white/90 mt-1">Siège partagé · Chauffeur certifié · Dès CHF 9</p>
-          </div>
+          {/* Tagline — hidden when calendar is open */}
+          {!calendarOpen && (
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-center w-full z-10 px-6" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
+              <h1 className="text-[42px] md:text-5xl font-black text-white leading-tight" style={{ letterSpacing: '-0.5px' }}>
+                VOYAGEZ MALIN.
+              </h1>
+              <p className="text-[22px] md:text-2xl font-bold text-white mt-1">GENÈVE ↔ TOUTE LA SUISSE.</p>
+              <p className="text-[15px] text-white/90 mt-1">Siège partagé · Chauffeur certifié · Dès CHF 9</p>
+            </div>
+          )}
         </div>
 
         {/* White content below hero */}
