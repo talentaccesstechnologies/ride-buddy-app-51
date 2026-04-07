@@ -46,11 +46,11 @@ export default function VanLuggagePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <BookingStepper currentStep={4} />
       <div className="max-w-6xl mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Vos bagages à bord</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Vos bagages à bord</h1>
           <button onClick={forward} className="text-sm hover:underline" style={{ color: GOLD }}>
             Passer les bagages →
           </button>
