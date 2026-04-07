@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, ArrowRight, Leaf, Users, Clock, MapPin, Luggage, Bike, QrCode, Check, X,
@@ -235,7 +235,9 @@ const SeatButton: React.FC<{ seat: number; taken: boolean; selected: boolean; on
 
 const CabyVanPage: React.FC = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<Step>('hero');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const destinationParam = searchParams.get('destination') || '';
+  const [step, setStep] = useState<Step>(destinationParam ? 'search' : 'hero');
   const [filter, setFilter] = useState<SegmentFilter>('all');
   const carouselRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
@@ -243,7 +245,7 @@ const CabyVanPage: React.FC = () => {
 
   const [activeService, setActiveService] = useState<'trajets' | 'ski' | 'crossborder'>('trajets');
   const [from, setFrom] = useState('Genève');
-  const [to, setTo] = useState('');
+  const [to, setTo] = useState(destinationParam);
 
   const serviceCities: Record<string, string[]> = {
     trajets: ['Genève', 'Genève Aéroport (GVA)', 'Lausanne', 'Zurich', 'Zurich Aéroport (ZRH)', 'Berne', 'Bâle', 'Sion', 'Martigny', 'Montreux', 'Vevey', 'Neuchâtel', 'Fribourg', 'Nyon', 'Yverdon-les-Bains', 'La Chaux-de-Fonds', 'Brigue', 'Lugano'],
