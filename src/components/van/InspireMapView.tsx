@@ -97,31 +97,40 @@ const InspireMapView: React.FC<InspireMapViewProps> = ({
             key={dest.city}
             position={{ lat: dest.lat, lng: dest.lng }}
             mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+            getPixelPositionOffset={() => ({ x: 0, y: 0 })}
           >
             <div
               className="relative cursor-pointer"
-              style={{ transform: 'translate(-50%, -100%)' }}
+              style={{ transform: 'translate(-50%, -100%)', overflow: 'visible' }}
               onMouseEnter={() => setHoveredCity(dest.city)}
               onMouseLeave={() => setHoveredCity(null)}
               onClick={() => onSelectDestination(dest.city)}
             >
-              {/* Price tag - EasyJet style orange badge */}
+              {/* Price tag - orange pill */}
               <div
-                className="px-3 py-1.5 rounded text-white text-xs font-black whitespace-nowrap transition-transform"
+                className="whitespace-nowrap text-center"
                 style={{
                   backgroundColor: '#FF6600',
-                  transform: isHovered ? 'scale(1.2)' : 'scale(1)',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                  color: '#fff',
+                  fontSize: '12px',
+                  fontWeight: 900,
+                  padding: '6px 10px',
+                  borderRadius: '6px',
                   border: '2px solid #fff',
-                  letterSpacing: '0.02em',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.35)',
+                  lineHeight: 1,
+                  transform: isHovered ? 'scale(1.2)' : 'scale(1)',
+                  transition: 'transform 0.15s ease',
                 }}
               >
                 CHF {dest.priceFrom}
               </div>
               {/* Arrow */}
               <div
-                className="w-0 h-0 mx-auto"
+                className="mx-auto"
                 style={{
+                  width: 0,
+                  height: 0,
                   borderLeft: '7px solid transparent',
                   borderRight: '7px solid transparent',
                   borderTop: '7px solid #FF6600',
