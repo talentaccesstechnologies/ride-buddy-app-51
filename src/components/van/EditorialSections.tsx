@@ -12,6 +12,7 @@ interface EditorialSectionsProps {
 }
 
 const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestination }) => {
+  const navigate = useNavigate();
   return (
     <>
       {/* SECTION 1 — NOS TRAJETS PHARES */}
