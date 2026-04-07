@@ -122,8 +122,8 @@ export default function VanLuggagePage() {
             </div>
 
             {/* Special equipment */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-4">Équipements spéciaux</h2>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-4 text-gray-900">Équipements spéciaux</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {SPECIAL_EQUIPMENT.map(eq => (
                   <button
