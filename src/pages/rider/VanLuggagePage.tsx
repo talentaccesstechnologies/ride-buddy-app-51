@@ -66,12 +66,28 @@ export default function VanLuggagePage() {
                 <p className="text-green-600 text-sm font-medium mt-1">✓ Inclus pour tous</p>
                 <p className="text-xs text-gray-500 mt-1">Max. 40×30×20 cm — Sous le siège</p>
               </div>
-              <div className="bg-white rounded-xl border p-5 text-center text-gray-900">
+              <button
+                onClick={() => {
+                  const copy = [...largeBag];
+                  copy[0] = !copy[0];
+                  setLargeBag(sameForAll ? Array(passengers).fill(copy[0]) : copy);
+                }}
+                className={`bg-white rounded-xl border-2 p-5 text-center transition-all hover:shadow-md cursor-pointer ${
+                  largeBag[0] ? 'ring-2 ring-offset-1' : ''
+                }`}
+                style={{
+                  borderColor: largeBag[0] ? GOLD : '#e5e7eb',
+                  // @ts-ignore
+                  '--tw-ring-color': GOLD + '60',
+                }}
+              >
                 <span className="text-4xl">🧳</span>
                 <h3 className="font-semibold mt-2 text-gray-900">Grande valise</h3>
-                <p className="text-sm font-medium mt-1" style={{ color: GOLD }}>+CHF 8 par personne</p>
+                <p className="text-sm font-medium mt-1" style={{ color: GOLD }}>
+                  {largeBag[0] ? 'Ajoutée ✓' : '+CHF 8 par personne'}
+                </p>
                 <p className="text-xs text-gray-500 mt-1">Max. 55×40×20 cm — Dans le coffre</p>
-              </div>
+              </button>
             </div>
 
             {/* Per passenger */}
