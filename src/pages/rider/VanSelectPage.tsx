@@ -354,7 +354,19 @@ const VanSelectPage: React.FC = () => {
 
         <Button
           disabled={!canContinue}
-          onClick={() => navigate('/caby/van')}
+          onClick={() => {
+            const p = new URLSearchParams(searchParams);
+            if (selectedOutbound) {
+              p.set('price', String(selectedOutbound.price));
+              p.set('time', selectedOutbound.departure);
+              p.set('arrivalTime', selectedOutbound.arrival);
+            }
+            if (selectedReturn) {
+              p.set('returnTime', selectedReturn.departure);
+              p.set('returnArrivalTime', selectedReturn.arrival);
+            }
+            navigate(`/caby/van/pack?${p}`);
+          }}
           className="w-full h-11 rounded-xl text-white font-bold text-sm disabled:opacity-40 shadow-lg"
           style={{ backgroundColor: canContinue ? GOLD : undefined }}>
           Continuer →
