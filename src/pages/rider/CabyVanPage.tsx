@@ -230,6 +230,34 @@ const CabyVanPage: React.FC = () => {
   const [step, setStep] = useState<Step>('hero');
   const [filter, setFilter] = useState<SegmentFilter>('all');
   const carouselRef = useRef<HTMLDivElement>(null);
+  const calendarRef = useRef<HTMLDivElement>(null);
+  const calendarSearchRef = useRef<HTMLDivElement>(null);
+
+  // Close calendars on click outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (calendarOpen && calendarRef.current && !calendarRef.current.contains(e.target as Node)) {
+        setCalendarOpen(false);
+      }
+      if (calendarOpenSearch && calendarSearchRef.current && !calendarSearchRef.current.contains(e.target as Node)) {
+        setCalendarOpenSearch(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [calendarOpen, calendarOpenSearch]);
+
+  // Close calendars on Escape
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setCalendarOpen(false);
+        setCalendarOpenSearch(false);
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
 
   const [from, setFrom] = useState('Genève');
   const [to, setTo] = useState('');
