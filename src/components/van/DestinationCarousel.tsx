@@ -31,6 +31,7 @@ const IMAGE_MAP: Record<string, string> = {
   Lyon: lyonImg,
   'Bâle': baleImg,
   Berne: berneImg,
+  'Chambéry': chamberyImg,
 };
 
 const ALL_DESTINATIONS: DestinationItem[] = [
