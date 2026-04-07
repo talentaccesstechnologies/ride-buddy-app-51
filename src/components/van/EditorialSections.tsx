@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import annecyImg from '@/assets/annecy.jpg';
 import zermattImg from '@/assets/zermatt.jpg';
@@ -11,6 +12,7 @@ interface EditorialSectionsProps {
 }
 
 const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestination }) => {
+  const navigate = useNavigate();
   return (
     <>
       {/* SECTION 1 — NOS TRAJETS PHARES */}
@@ -21,7 +23,7 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1 — Traversez les Alpes */}
           <button
-            onClick={() => onSelectDestination('Verbier')}
+            onClick={() => navigate('/caby/van/inspire?category=ski')}
             className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left flex flex-col"
           >
             <div className="h-[200px] overflow-hidden">
@@ -47,7 +49,7 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
 
           {/* Card 2 — Genève ↔ Lyon */}
           <button
-            onClick={() => onSelectDestination('Lyon')}
+            onClick={() => navigate('/caby/van/inspire?category=ville')}
             className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left flex flex-col"
           >
             <div className="h-[200px] overflow-hidden">
@@ -73,7 +75,7 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
 
           {/* Card 3 — Stations de Ski */}
           <button
-            onClick={() => onSelectDestination('Chamonix')}
+            onClick={() => navigate('/caby/van/inspire?category=ski')}
             className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left flex flex-col"
           >
             <div className="h-[200px] overflow-hidden">
