@@ -7,6 +7,7 @@ import {
   Info, ChevronDown, ChevronUp, Edit2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import DestinationCarousel from '@/components/van/DestinationCarousel';
 import zermattImg from '@/assets/zermatt.jpg';
 import zurichImg from '@/assets/zurich.jpg';
 import verbierImg from '@/assets/verbier.jpg';
