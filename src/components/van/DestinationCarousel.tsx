@@ -17,6 +17,7 @@ import davosImg from '@/assets/davos.jpg';
 import gstaadImg from '@/assets/gstaad.jpg';
 import parisImg from '@/assets/paris.jpg';
 import milanImg from '@/assets/milan.jpg';
+import munichImg from '@/assets/munich.jpg';
 
 const GOLD = '#C9A84C';
 const FALLBACK_IMAGE = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Montreux_and_Lake_Geneva.jpg/640px-Montreux_and_Lake_Geneva.jpg';
@@ -48,6 +49,7 @@ const IMAGE_MAP: Record<string, string> = {
   Gstaad: gstaadImg,
   Paris: parisImg,
   Milan: milanImg,
+  Munich: munichImg,
 };
 
 const ALL_DESTINATIONS: DestinationItem[] = [
