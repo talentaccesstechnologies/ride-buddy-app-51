@@ -49,7 +49,7 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
 
           {/* Card 2 — Genève ↔ Lyon */}
           <button
-            onClick={() => onSelectDestination('Lyon')}
+            onClick={() => navigate('/caby/van/inspire?category=ville')}
             className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left flex flex-col"
           >
             <div className="h-[200px] overflow-hidden">
