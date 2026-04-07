@@ -105,12 +105,15 @@ const InspireMapView: React.FC<InspireMapViewProps> = ({
               onMouseLeave={() => setHoveredCity(null)}
               onClick={() => onSelectDestination(dest.city)}
             >
-              {/* Price tag */}
+              {/* Price tag - EasyJet style orange badge */}
               <div
-                className="px-2.5 py-1 rounded-md text-white text-xs font-bold shadow-lg whitespace-nowrap transition-transform"
+                className="px-3 py-1.5 rounded text-white text-xs font-black whitespace-nowrap transition-transform"
                 style={{
-                  backgroundColor: GOLD,
-                  transform: isHovered ? 'scale(1.15)' : 'scale(1)',
+                  backgroundColor: '#FF6600',
+                  transform: isHovered ? 'scale(1.2)' : 'scale(1)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                  border: '2px solid #fff',
+                  letterSpacing: '0.02em',
                 }}
               >
                 CHF {dest.priceFrom}
@@ -119,9 +122,9 @@ const InspireMapView: React.FC<InspireMapViewProps> = ({
               <div
                 className="w-0 h-0 mx-auto"
                 style={{
-                  borderLeft: '6px solid transparent',
-                  borderRight: '6px solid transparent',
-                  borderTop: `6px solid ${GOLD}`,
+                  borderLeft: '7px solid transparent',
+                  borderRight: '7px solid transparent',
+                  borderTop: '7px solid #FF6600',
                 }}
               />
               {/* Fav indicator */}
