@@ -812,6 +812,7 @@ const CabyVanPage: React.FC = () => {
         </section>
 
         <div className="h-24" />
+        </div>{/* end bg-white */}
         <BottomNav />
       </div>
     );
