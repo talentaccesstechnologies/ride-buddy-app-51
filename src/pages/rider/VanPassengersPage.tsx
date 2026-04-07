@@ -18,7 +18,7 @@ export default function VanPassengersPage() {
   const packPrice = parseFloat(params.get('packPrice') || '0');
 
   const [form, setForm] = useState({
-    firstName: '', lastName: '', email: '', phone: '', country: 'Suisse',
+    firstName: '', lastName: '', email: '', phone: '',
     reason: 'loisirs', flightNumber: '',
     cguAccepted: false, covoiturageAccepted: false,
   });
@@ -59,33 +59,19 @@ export default function VanPassengersPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>Prénom</Label>
-                  <Input value={form.firstName} onChange={e => update('firstName', e.target.value)} />
+                  <Input value={form.firstName} onChange={e => update('firstName', e.target.value)} placeholder="Prénom" className="bg-white" />
                 </div>
                 <div>
                   <Label>Nom</Label>
-                  <Input value={form.lastName} onChange={e => update('lastName', e.target.value)} />
+                  <Input value={form.lastName} onChange={e => update('lastName', e.target.value)} placeholder="Nom" className="bg-white" />
                 </div>
                 <div>
                   <Label>Email</Label>
-                  <Input type="email" value={form.email} onChange={e => update('email', e.target.value)} />
+                  <Input type="email" value={form.email} onChange={e => update('email', e.target.value)} placeholder="email@exemple.com" className="bg-white" />
                 </div>
                 <div>
                   <Label>Téléphone</Label>
-                  <Input value={form.phone} onChange={e => update('phone', e.target.value)} placeholder="+41 79 000 00 00" />
-                </div>
-                <div>
-                  <Label>Pays</Label>
-                  <select
-                    className="w-full border rounded-md px-3 py-2 text-sm"
-                    value={form.country}
-                    onChange={e => update('country', e.target.value)}
-                  >
-                    <option>Suisse</option>
-                    <option>France</option>
-                    <option>Allemagne</option>
-                    <option>Italie</option>
-                    <option>Autriche</option>
-                  </select>
+                  <Input value={form.phone} onChange={e => update('phone', e.target.value)} placeholder="+41 79 000 00 00" className="bg-white" />
                 </div>
               </div>
             </div>
