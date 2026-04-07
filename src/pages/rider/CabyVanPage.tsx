@@ -1047,6 +1047,9 @@ const CabyVanPage: React.FC = () => {
                 <span className="text-sm">💰</span>
                 <p className="text-[11px] text-emerald-700 font-medium">Créneau creux — prix réduit −5%</p>
               </div>
+            )}
+
+            {roundTrip && timeRetour === 'custom' && (
               <div>
                 <label className="text-xs text-gray-500 mb-1 block font-medium">Heure personnalisée retour</label>
                 <input type="time" value={customTimeRetour} onChange={(e) => setCustomTimeRetour(e.target.value)}
