@@ -112,6 +112,7 @@ const App = () => (
               <Route path="/caby/van/select" element={<VanSelectPage />} />
               <Route path="/caby/van/pack" element={<VanPackPage />} />
               <Route path="/caby/van/passengers" element={<VanPassengersPage />} />
+              <Route path="/caby/van/terms" element={<VanTermsPage />} />
               <Route path="/caby/van/seat" element={<VanSeatPage />} />
               <Route path="/caby/van/luggage" element={<VanLuggagePage />} />
               <Route path="/caby/van/options" element={<VanOptionsPage />} />
