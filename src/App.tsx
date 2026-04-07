@@ -26,6 +26,7 @@ import TripTracking from "./pages/rider/TripTracking";
 import ServicesPage from "./pages/rider/ServicesPage";
 import CabyExpressPage from "./pages/rider/CabyExpressPage";
 import CabyVanPage from "./pages/rider/CabyVanPage";
+import VanSelectPage from "./pages/rider/VanSelectPage";
 import CabyNightPage from "./pages/rider/CabyNightPage";
 import CabyPassPage from "./pages/rider/CabyPassPage";
 import CabyBusinessPage from "./pages/rider/CabyBusinessPage";
@@ -97,6 +98,7 @@ const App = () => (
               <Route path="/caby/services" element={<ServicesPage />} />
               <Route path="/caby/express" element={<CabyExpressPage />} />
               <Route path="/caby/van" element={<CabyVanPage />} />
+              <Route path="/caby/van/select" element={<VanSelectPage />} />
               <Route path="/caby/crossborder" element={<CabyCrossBorderPage />} />
               <Route path="/caby/night" element={<CabyNightPage />} />
               <Route path="/caby/pass" element={<CabyPassPage />} />
