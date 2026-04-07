@@ -179,6 +179,21 @@ const POPULAR_DESTINATIONS = [
   { city: 'Lausanne', emoji: '🏛️', price: 29, img: '🇨🇭' },
 ];
 
+const DEST_CARDS = [
+  { from: 'Genève', to: 'Zurich', image: 'https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=600&q=80', fromPrice: 54, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Annecy', image: 'https://images.unsplash.com/photo-1507272931001-fc06c17cedc4?w=600&q=80', fromPrice: 15, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Lausanne', image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=600&q=80', fromPrice: 18, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Verbier', image: 'https://images.unsplash.com/photo-1551524559-8af4e6624178?w=600&q=80', fromPrice: 35, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Lyon', image: 'https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=600&q=80', fromPrice: 42, month: 'avr. 2026' },
+  { from: 'Genève', to: 'Zermatt', image: 'https://images.unsplash.com/photo-1529983601738-76e7cb012926?w=600&q=80', fromPrice: 55, month: 'mai 2026' },
+];
+
+const EDITORIAL_CARDS = [
+  { title: 'TRAVERSEZ LES ALPES EN VAN', desc: 'De Genève au Cervin en toute sérénité. Sièges confortables, Wi-Fi, vue panoramique.', image: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80', cta: 'Explorer', dest: 'Zermatt' },
+  { title: 'GENÈVE ↔ LYON EN 1H45', desc: 'La ligne la plus demandée. Départs quotidiens, prix imbattable vs le train.', image: 'https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=800&q=80', cta: 'Réserver', dest: 'Lyon' },
+  { title: 'STATIONS DE SKI — RÉSERVEZ TÔT', desc: 'Verbier, Chamonix, Zermatt. Early Bird -30%. Skis transportés gratuitement.', image: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=800&q=80', cta: 'Voir les offres', dest: 'Verbier' },
+];
+
 const FILTER_TABS: { key: SegmentFilter; label: string; icon: string; badge?: string }[] = [
   { key: 'all', label: 'Tous', icon: '🗺️' },
   { key: 'grand_geneve', label: 'Grand Genève', icon: '🚗', badge: "112'000 frontaliers" },
