@@ -37,7 +37,7 @@ import { getPickupPoints, hasAirportSelected, type PickupPoint } from '@/lib/pic
 import { Plane } from 'lucide-react';
 import PlacesAutocomplete from '@/components/shared/PlacesAutocomplete';
 
-type Step = 'hero' | 'search' | 'results' | 'seat' | 'confirm' | 'abonnement';
+type Step = 'hero' | 'search' | 'results' | 'seat' | 'extras' | 'passenger' | 'payment' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
 
 // ── VEHICLE DATA ──
