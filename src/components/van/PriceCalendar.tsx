@@ -192,27 +192,27 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
         </button>
       </div>
 
-      {/* Navigation */}
-      <div className="flex items-center px-5 pb-1">
+      {/* Months with navigation arrows */}
+      <div className="relative flex-1 overflow-y-auto min-h-0">
+        {/* Nav arrows — absolute positioned */}
         <button onClick={goBack} disabled={isCurrentMonth}
-          className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
-          <ChevronLeft className="w-4 h-4 text-gray-500" />
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+          <ChevronLeft className="w-4 h-4" style={{ color: GOLD }} />
         </button>
-        <div className="flex-1" />
         <button onClick={goForward}
-          className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
-          <ChevronRight className="w-4 h-4 text-gray-500" />
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors">
+          <ChevronRight className="w-4 h-4" style={{ color: GOLD }} />
         </button>
-      </div>
 
-      {/* Grids */}
-      <div className="flex-1 overflow-y-auto min-h-0 px-5 pb-3">
-        <div className="hidden md:grid grid-cols-2 gap-x-6">
-          <MonthGrid year={viewYear} month={viewMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
-          <MonthGrid year={nextYear} month={nextMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
-        </div>
-        <div className="md:hidden">
-          <MonthGrid year={viewYear} month={viewMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} mobile />
+        {/* Grids with side padding for arrows */}
+        <div className="px-12 pb-3">
+          <div className="hidden md:grid grid-cols-2 gap-x-6">
+            <MonthGrid year={viewYear} month={viewMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
+            <MonthGrid year={nextYear} month={nextMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
+          </div>
+          <div className="md:hidden">
+            <MonthGrid year={viewYear} month={viewMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} mobile />
+          </div>
         </div>
       </div>
 
