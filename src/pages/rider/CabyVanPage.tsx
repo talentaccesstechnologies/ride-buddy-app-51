@@ -190,7 +190,7 @@ const DEST_CARDS = [
   { from: 'Genève', to: 'Lausanne', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Lausanne_and_Lake_Geneva_from_Signal_2010.jpg/640px-Lausanne_and_Lake_Geneva_from_Signal_2010.jpg', fromPrice: 18, month: 'avr. 2026' },
   { from: 'Genève', to: 'Verbier', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Verbier_-_2012.jpg/640px-Verbier_-_2012.jpg', fromPrice: 35, month: 'avr. 2026' },
   { from: 'Genève', to: 'Lyon', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Lyon_Fourviere.jpg/640px-Lyon_Fourviere.jpg', fromPrice: 42, month: 'avr. 2026' },
-  { from: 'Genève', to: 'Zermatt', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Zermatt_-_Matterhorn.jpg/640px-Zermatt_-_Matterhorn.jpg', fromPrice: 55, month: 'mai 2026' },
+  { from: 'Genève', to: 'Zermatt', image: zermattImg, fromPrice: 55, month: 'mai 2026' },
 ];
 
 const EDITORIAL_CARDS = [
