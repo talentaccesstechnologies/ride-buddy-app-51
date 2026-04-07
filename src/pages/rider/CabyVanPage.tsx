@@ -233,8 +233,25 @@ const CabyVanPage: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement>(null);
   const calendarSearchRef = useRef<HTMLDivElement>(null);
 
+  const [activeService, setActiveService] = useState<'trajets' | 'ski' | 'crossborder'>('trajets');
   const [from, setFrom] = useState('Genève');
   const [to, setTo] = useState('');
+
+  const serviceCities: Record<string, string[]> = {
+    trajets: ['Genève', 'Genève Aéroport (GVA)', 'Lausanne', 'Zurich', 'Zurich Aéroport (ZRH)', 'Berne', 'Bâle', 'Sion', 'Martigny', 'Montreux', 'Vevey', 'Neuchâtel', 'Fribourg', 'Nyon', 'Yverdon-les-Bains', 'La Chaux-de-Fonds', 'Brigue', 'Lugano'],
+    ski: ['Genève', 'Lausanne', 'Verbier', 'Zermatt', 'Davos', 'Gstaad', 'Engelberg', 'Arosa', 'Chamonix', 'Morzine', 'Courchevel', "Val d'Isère", 'Sion', 'Martigny'],
+    crossborder: ['Genève', 'Annecy', 'Lyon', 'Lyon Aéroport (LYS)', 'Annemasse', 'Ferney-Voltaire', 'Gex', 'Chambéry', 'Grenoble', 'Thonon-les-Bains', 'Évian-les-Bains', 'Milan', 'Munich', 'Paris', 'Strasbourg'],
+  };
+  const currentFilterCities = serviceCities[activeService];
+
+  const handleServiceChange = (service: 'trajets' | 'ski' | 'crossborder') => {
+    setActiveService(service);
+    setTo('');
+    setDepartureDateObj(null);
+    setReturnDateObj(null);
+  };
+
+  const destPlaceholder = activeService === 'ski' ? 'Verbier, Zermatt, Chamonix...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Zurich, Lausanne, Berne...';
   const [dateAller, setDateAller] = useState('');
   const [timeAller, setTimeAller] = useState('');
   const [passengers, setPassengers] = useState(1);
