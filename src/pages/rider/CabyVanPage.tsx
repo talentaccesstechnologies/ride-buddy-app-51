@@ -233,8 +233,25 @@ const CabyVanPage: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement>(null);
   const calendarSearchRef = useRef<HTMLDivElement>(null);
 
+  const [activeService, setActiveService] = useState<'trajets' | 'ski' | 'crossborder'>('trajets');
   const [from, setFrom] = useState('Genève');
   const [to, setTo] = useState('');
+
+  const serviceCities: Record<string, string[]> = {
+    trajets: ['Genève', 'Genève Aéroport (GVA)', 'Lausanne', 'Zurich', 'Zurich Aéroport (ZRH)', 'Berne', 'Bâle', 'Sion', 'Martigny', 'Montreux', 'Vevey', 'Neuchâtel', 'Fribourg', 'Nyon', 'Yverdon-les-Bains', 'La Chaux-de-Fonds', 'Brigue', 'Lugano'],
+    ski: ['Genève', 'Lausanne', 'Verbier', 'Zermatt', 'Davos', 'Gstaad', 'Engelberg', 'Arosa', 'Chamonix', 'Morzine', 'Courchevel', "Val d'Isère", 'Sion', 'Martigny'],
+    crossborder: ['Genève', 'Annecy', 'Lyon', 'Lyon Aéroport (LYS)', 'Annemasse', 'Ferney-Voltaire', 'Gex', 'Chambéry', 'Grenoble', 'Thonon-les-Bains', 'Évian-les-Bains', 'Milan', 'Munich', 'Paris', 'Strasbourg'],
+  };
+  const currentFilterCities = serviceCities[activeService];
+
+  const handleServiceChange = (service: 'trajets' | 'ski' | 'crossborder') => {
+    setActiveService(service);
+    setTo('');
+    setDepartureDateObj(null);
+    setReturnDateObj(null);
+  };
+
+  const destPlaceholder = activeService === 'ski' ? 'Verbier, Zermatt, Chamonix...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Zurich, Lausanne, Berne...';
   const [dateAller, setDateAller] = useState('');
   const [timeAller, setTimeAller] = useState('');
   const [passengers, setPassengers] = useState(1);
@@ -535,15 +552,13 @@ const CabyVanPage: React.FC = () => {
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] p-5 md:p-6">
               {/* Line 1: Service tabs */}
               <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-3">
-                <button className="px-4 py-2 rounded-lg text-xs font-bold text-white" style={{ backgroundColor: GOLD }}>
-                  🚐 Trajets
-                </button>
-                <button className="px-4 py-2 rounded-lg text-xs font-bold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
-                  🎿 Ski
-                </button>
-                <button className="px-4 py-2 rounded-lg text-xs font-bold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
-                  🌍 Cross-Border
-                </button>
+                {([['trajets', '🚐 Trajets'], ['ski', '🎿 Ski'], ['crossborder', '🌍 Cross-Border']] as const).map(([key, label]) => (
+                  <button key={key} onClick={() => handleServiceChange(key)}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${activeService === key ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                    style={activeService === key ? { backgroundColor: GOLD } : {}}>
+                    {label}
+                  </button>
+                ))}
                 <div className="flex-1" />
                 <div className="flex items-center gap-1.5">
                   <button onClick={() => setRoundTrip(false)} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${!roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
@@ -563,6 +578,7 @@ const CabyVanPage: React.FC = () => {
                   onChange={(c) => { setFrom(c); setTo(''); }}
                   placeholder="Ville, gare, aéroport..."
                   iconColor="#10b981"
+                  filterCities={currentFilterCities}
                 />
                 <div className="hidden md:flex items-center shrink-0">
                   <button onClick={() => { const t = from; setFrom(to || from); setTo(t); }}
@@ -573,8 +589,9 @@ const CabyVanPage: React.FC = () => {
                 <CityAutocomplete
                   value={to}
                   onChange={setTo}
-                  placeholder="Destination"
+                  placeholder={destPlaceholder}
                   iconColor="#ef4444"
+                  filterCities={currentFilterCities}
                 />
                 <div className="flex-1 min-w-0">
                   <button onClick={() => setCalendarOpen(!calendarOpen)}
