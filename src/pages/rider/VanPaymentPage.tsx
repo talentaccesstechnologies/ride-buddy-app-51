@@ -165,7 +165,7 @@ export default function VanPaymentPage() {
                 </div>
               )}
               <hr className="my-2" />
-              <div className="flex justify-between font-bold text-lg">
+              <div className="flex justify-between font-bold text-lg text-gray-900">
                 <span>TOTAL</span>
                 <span>CHF {finalTotal.toFixed(2)}</span>
               </div>
