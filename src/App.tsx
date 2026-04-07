@@ -27,6 +27,7 @@ import ServicesPage from "./pages/rider/ServicesPage";
 import CabyExpressPage from "./pages/rider/CabyExpressPage";
 import CabyVanPage from "./pages/rider/CabyVanPage";
 import VanSelectPage from "./pages/rider/VanSelectPage";
+import CabyNightPage from "./pages/rider/CabyNightPage";
 import CabyPassPage from "./pages/rider/CabyPassPage";
 import CabyBusinessPage from "./pages/rider/CabyBusinessPage";
 import ActivityPage from "./pages/rider/ActivityPage";
