@@ -171,7 +171,6 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
     <div
       className="bg-white rounded-b-xl flex flex-col w-full"
       style={{
-        maxHeight: '85vh',
         boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
       }}
     >
