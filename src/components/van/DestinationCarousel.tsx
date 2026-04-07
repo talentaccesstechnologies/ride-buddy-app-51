@@ -13,6 +13,7 @@ import chamonixImg from '@/assets/chamonix.jpg';
 import sionImg from '@/assets/sion.jpg';
 import neuchatelImg from '@/assets/neuchatel.jpg';
 import montreuxImg from '@/assets/montreux.jpg';
+import davosImg from '@/assets/davos.jpg';
 
 const GOLD = '#C9A84C';
 const FALLBACK_IMAGE = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Montreux_and_Lake_Geneva.jpg/640px-Montreux_and_Lake_Geneva.jpg';
@@ -40,6 +41,7 @@ const IMAGE_MAP: Record<string, string> = {
   Sion: sionImg,
   'Neuchâtel': neuchatelImg,
   Montreux: montreuxImg,
+  Davos: davosImg,
 };
 
 const ALL_DESTINATIONS: DestinationItem[] = [
