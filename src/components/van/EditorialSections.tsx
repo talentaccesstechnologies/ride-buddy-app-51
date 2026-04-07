@@ -23,7 +23,7 @@ const EditorialSections: React.FC<EditorialSectionsProps> = ({ onSelectDestinati
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1 — Traversez les Alpes */}
           <button
-            onClick={() => onSelectDestination('Verbier')}
+            onClick={() => navigate('/caby/van/inspire?category=ski')}
             className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all text-left flex flex-col"
           >
             <div className="h-[200px] overflow-hidden">
