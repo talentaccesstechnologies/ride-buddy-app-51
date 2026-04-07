@@ -638,8 +638,10 @@ const CabyVanPage: React.FC = () => {
           </div>
         </div>
 
+        {/* White content below hero */}
+        <div className="bg-white">
         {/* ③ DESTINATIONS POPULAIRES — EasyJet grid */}
-        <section className="max-w-5xl mx-auto px-4 mt-12">
+        <section className="max-w-5xl mx-auto px-4 pt-12">
           <div className="text-center mb-8">
             <h2 className="text-2xl md:text-3xl font-black text-gray-900 uppercase tracking-tight">Nos meilleures destinations au meilleur prix</h2>
             <p className="text-sm text-gray-500 mt-2">Réservez tôt et économisez jusqu'à 30%</p>
