@@ -41,6 +41,7 @@ const IMAGE_MAP: Record<string, string> = {
   Sion: sionImg,
   'Neuchâtel': neuchatelImg,
   Montreux: montreuxImg,
+  Davos: davosImg,
 };
 
 const ALL_DESTINATIONS: DestinationItem[] = [
