@@ -143,6 +143,7 @@ export default function VanPassengersPage() {
                 value={form.flightNumber}
                 onChange={e => update('flightNumber', e.target.value)}
                 placeholder="ex: LX 1234"
+                className="bg-white"
               />
             </div>
 
