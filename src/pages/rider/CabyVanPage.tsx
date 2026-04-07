@@ -552,15 +552,13 @@ const CabyVanPage: React.FC = () => {
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] p-5 md:p-6">
               {/* Line 1: Service tabs */}
               <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-3">
-                <button className="px-4 py-2 rounded-lg text-xs font-bold text-white" style={{ backgroundColor: GOLD }}>
-                  🚐 Trajets
-                </button>
-                <button className="px-4 py-2 rounded-lg text-xs font-bold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
-                  🎿 Ski
-                </button>
-                <button className="px-4 py-2 rounded-lg text-xs font-bold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
-                  🌍 Cross-Border
-                </button>
+                {([['trajets', '🚐 Trajets'], ['ski', '🎿 Ski'], ['crossborder', '🌍 Cross-Border']] as const).map(([key, label]) => (
+                  <button key={key} onClick={() => handleServiceChange(key)}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${activeService === key ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                    style={activeService === key ? { backgroundColor: GOLD } : {}}>
+                    {label}
+                  </button>
+                ))}
                 <div className="flex-1" />
                 <div className="flex items-center gap-1.5">
                   <button onClick={() => setRoundTrip(false)} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${!roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
