@@ -8,28 +8,29 @@ const GOLD = '#C9A84C';
 
 interface Seat {
   id: number;
-  category: 'avant' | 'capitaine' | 'banquette';
+  category: 'avant' | 'milieu' | 'arriere';
   price: number;
   taken: boolean;
 }
 
-// Mercedes V-Class 7 places (vue de dessus) :
-// Rang 1 : Chauffeur | Passager 1
-// Rang 2 : Siège capitaine 2 | [allée] | Siège capitaine 3
-// Rang 3 : Banquette 4 | 5 | 6
+// Mercedes V-Class 7 places :
+// Rang 1 : Chauffeur | Passager 1 (avant)
+// Rang 2 : Banquette 3 places (2, 3, 4)
+// Rang 3 : Banquette 3 places (5, 6, 7)
 const SEATS: Seat[] = [
   { id: 1, category: 'avant', price: 8, taken: false },
-  { id: 2, category: 'capitaine', price: 5, taken: false },
-  { id: 3, category: 'capitaine', price: 5, taken: true },
-  { id: 4, category: 'banquette', price: 0, taken: false },
-  { id: 5, category: 'banquette', price: 0, taken: true },
-  { id: 6, category: 'banquette', price: 0, taken: false },
+  { id: 2, category: 'milieu', price: 5, taken: false },
+  { id: 3, category: 'milieu', price: 5, taken: true },
+  { id: 4, category: 'milieu', price: 5, taken: false },
+  { id: 5, category: 'arriere', price: 0, taken: false },
+  { id: 6, category: 'arriere', price: 0, taken: true },
+  { id: 7, category: 'arriere', price: 0, taken: false },
 ];
 
 const CAT_META: Record<string, { bg: string; border: string; selectedBg: string; label: string; price: string; desc: string }> = {
   avant: { bg: '#FEF3C7', border: GOLD, selectedBg: GOLD, label: 'Avant', price: '+CHF 8', desc: 'Place passager avant, meilleure vue' },
-  capitaine: { bg: '#D1FAE5', border: '#10B981', selectedBg: '#10B981', label: 'Capitaine', price: '+CHF 5', desc: 'Siège capitaine individuel, confort optimal' },
-  banquette: { bg: '#F3F4F6', border: '#9CA3AF', selectedBg: '#6B7280', label: 'Banquette', price: 'Gratuit', desc: 'Banquette arrière 3 places' },
+  milieu: { bg: '#D1FAE5', border: '#10B981', selectedBg: '#10B981', label: 'Rang 2', price: '+CHF 5', desc: 'Banquette centrale, bon confort' },
+  arriere: { bg: '#F3F4F6', border: '#9CA3AF', selectedBg: '#6B7280', label: 'Rang 3', price: 'Gratuit', desc: 'Banquette arrière' },
 };
 
 function SeatBtn({ seat, selected, onSelect }: { seat: Seat; selected: boolean; onSelect: () => void }) {
@@ -157,31 +158,29 @@ export default function VanSeatPage() {
                 {/* Aisle divider */}
                 <div className="flex items-center gap-2 px-4">
                   <div className="flex-1 border-t border-dashed border-gray-200" />
-                  <span className="text-[10px] text-gray-300 uppercase tracking-wider">allée</span>
+                  <span className="text-[10px] text-gray-300 uppercase tracking-wider">rang 2</span>
                   <div className="flex-1 border-t border-dashed border-gray-200" />
                 </div>
 
-                {/* Row 2: Captain seats */}
-                <div className="grid grid-cols-[1fr_20px_1fr] items-center">
+                {/* Row 2: Banquette 3 places */}
+                <div className="grid grid-cols-3 gap-2">
                   <SeatBtn seat={SEATS[1]} selected={selectedSeat === 2} onSelect={() => toggle(2)} />
-                  <div className="flex justify-center">
-                    <div className="w-px h-10 bg-gray-100" />
-                  </div>
                   <SeatBtn seat={SEATS[2]} selected={selectedSeat === 3} onSelect={() => toggle(3)} />
+                  <SeatBtn seat={SEATS[3]} selected={selectedSeat === 4} onSelect={() => toggle(4)} />
                 </div>
 
                 {/* Aisle divider */}
                 <div className="flex items-center gap-2 px-4">
                   <div className="flex-1 border-t border-dashed border-gray-200" />
-                  <span className="text-[10px] text-gray-300 uppercase tracking-wider">allée</span>
+                  <span className="text-[10px] text-gray-300 uppercase tracking-wider">rang 3</span>
                   <div className="flex-1 border-t border-dashed border-gray-200" />
                 </div>
 
-                {/* Row 3: Bench */}
+                {/* Row 3: Banquette 3 places */}
                 <div className="grid grid-cols-3 gap-2">
-                  <SeatBtn seat={SEATS[3]} selected={selectedSeat === 4} onSelect={() => toggle(4)} />
                   <SeatBtn seat={SEATS[4]} selected={selectedSeat === 5} onSelect={() => toggle(5)} />
                   <SeatBtn seat={SEATS[5]} selected={selectedSeat === 6} onSelect={() => toggle(6)} />
+                  <SeatBtn seat={SEATS[6]} selected={selectedSeat === 7} onSelect={() => toggle(7)} />
                 </div>
               </div>
 
