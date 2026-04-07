@@ -530,16 +530,15 @@ const CabyVanPage: React.FC = () => {
           <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover object-center" />
           <div className="absolute inset-0 bg-black/25" />
 
-          {/* Back button */}
-          <div className="absolute top-4 left-4 z-10">
-            <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-white/90 text-sm font-medium bg-white/15 backdrop-blur-md rounded-full px-4 py-2 hover:bg-white/25 transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Services
-            </button>
-          </div>
-
           {/* Search engine card — absolutely positioned at top */}
           <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[90%] max-w-[880px] z-10">
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] p-5 md:p-6">
+              {/* Back button inside card */}
+              <div className="flex items-center gap-2 mb-3">
+                <button onClick={() => navigate('/caby/services')} className="flex items-center gap-1 text-gray-500 text-xs font-medium hover:text-gray-800 transition-colors">
+                  <ArrowLeft className="w-3.5 h-3.5" /> Services
+                </button>
+              </div>
               {/* Line 1: Service tabs */}
               <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-3">
                 <button className="px-4 py-2 rounded-lg text-xs font-bold text-white" style={{ backgroundColor: GOLD }}>
@@ -624,14 +623,16 @@ const CabyVanPage: React.FC = () => {
             )}
           </div>
 
-          {/* Tagline — absolutely positioned at bottom of hero */}
-          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-center w-full z-10 px-6" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
-            <h1 className="text-[42px] md:text-5xl font-black text-white leading-tight" style={{ letterSpacing: '-0.5px' }}>
-              VOYAGEZ MALIN.
-            </h1>
-            <p className="text-[22px] md:text-2xl font-bold text-white mt-1">GENÈVE ↔ TOUTE LA SUISSE.</p>
-            <p className="text-[15px] text-white/90 mt-1">Siège partagé · Chauffeur certifié · Dès CHF 9</p>
-          </div>
+          {/* Tagline — hidden when calendar is open */}
+          {!calendarOpen && (
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-center w-full z-10 px-6" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
+              <h1 className="text-[42px] md:text-5xl font-black text-white leading-tight" style={{ letterSpacing: '-0.5px' }}>
+                VOYAGEZ MALIN.
+              </h1>
+              <p className="text-[22px] md:text-2xl font-bold text-white mt-1">GENÈVE ↔ TOUTE LA SUISSE.</p>
+              <p className="text-[15px] text-white/90 mt-1">Siège partagé · Chauffeur certifié · Dès CHF 9</p>
+            </div>
+          )}
         </div>
 
         {/* White content below hero */}
