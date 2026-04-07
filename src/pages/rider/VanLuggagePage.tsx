@@ -46,11 +46,11 @@ export default function VanLuggagePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <BookingStepper currentStep={4} />
       <div className="max-w-6xl mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Vos bagages à bord</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Vos bagages à bord</h1>
           <button onClick={forward} className="text-sm hover:underline" style={{ color: GOLD }}>
             Passer les bagages →
           </button>
@@ -60,27 +60,27 @@ export default function VanLuggagePage() {
           <div className="flex-1 space-y-6">
             {/* Included vs add-on illustration */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white rounded-xl border p-5 text-center">
+              <div className="bg-white rounded-xl border p-5 text-center text-gray-900">
                 <span className="text-4xl">🎒</span>
-                <h3 className="font-semibold mt-2">Petit bagage</h3>
+                <h3 className="font-semibold mt-2 text-gray-900">Petit bagage</h3>
                 <p className="text-green-600 text-sm font-medium mt-1">✓ Inclus pour tous</p>
                 <p className="text-xs text-gray-500 mt-1">Max. 40×30×20 cm — Sous le siège</p>
               </div>
-              <div className="bg-white rounded-xl border p-5 text-center">
+              <div className="bg-white rounded-xl border p-5 text-center text-gray-900">
                 <span className="text-4xl">🧳</span>
-                <h3 className="font-semibold mt-2">Grande valise</h3>
+                <h3 className="font-semibold mt-2 text-gray-900">Grande valise</h3>
                 <p className="text-sm font-medium mt-1" style={{ color: GOLD }}>+CHF 8 par personne</p>
                 <p className="text-xs text-gray-500 mt-1">Max. 55×40×20 cm — Dans le coffre</p>
               </div>
             </div>
 
             {/* Per passenger */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-4">Par passager</h2>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-4 text-gray-900">Par passager</h2>
 
               {Array.from({ length: passengers }).map((_, i) => (
                 <div key={i} className="mb-4 last:mb-0">
-                  <p className="font-medium text-sm mb-2">👤 Passager {i + 1}</p>
+                  <p className="font-medium text-sm mb-2 text-gray-900">👤 Passager {i + 1}</p>
                   <div className="space-y-2 ml-4">
                     <div className="flex items-center gap-2 text-sm">
                       <span>🎒</span>
@@ -122,8 +122,8 @@ export default function VanLuggagePage() {
             </div>
 
             {/* Special equipment */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-4">Équipements spéciaux</h2>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-4 text-gray-900">Équipements spéciaux</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {SPECIAL_EQUIPMENT.map(eq => (
                   <button
@@ -138,7 +138,7 @@ export default function VanLuggagePage() {
                     }}
                   >
                     <span className="text-3xl">{eq.icon}</span>
-                    <p className="font-medium text-sm mt-2">{eq.label}</p>
+                    <p className="font-medium text-sm mt-2 text-gray-900">{eq.label}</p>
                     <p className="text-xs mt-1" style={{ color: GOLD }}>+CHF {eq.price}</p>
                   </button>
                 ))}
