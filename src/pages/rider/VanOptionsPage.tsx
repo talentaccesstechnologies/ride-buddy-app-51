@@ -39,11 +39,11 @@ export default function VanOptionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <BookingStepper currentStep={5} />
       <div className="max-w-6xl mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Options supplémentaires</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Options supplémentaires</h1>
           <button onClick={forward} className="text-sm hover:underline" style={{ color: GOLD }}>
             Passer les options →
           </button>
@@ -58,27 +58,27 @@ export default function VanOptionsPage() {
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h2 className="font-bold text-lg">CABY FLEX</h2>
-                  <p className="text-sm text-gray-500">Flexibilité maximale sur votre trajet</p>
+                  <h2 className="font-bold text-lg text-gray-900">CABY FLEX</h2>
+                  <p className="text-sm text-gray-600">Flexibilité maximale sur votre trajet</p>
                 </div>
                 <span className="font-bold" style={{ color: GOLD }}>CHF 9.00 <span className="text-xs font-normal text-gray-400">/pers.</span></span>
               </div>
 
               <div className="grid grid-cols-3 gap-4 mb-5">
                 <div className="text-center">
-                  <Clock className="w-6 h-6 mx-auto mb-1 text-gray-500" />
-                  <p className="text-xs font-medium">Dernière minute</p>
-                  <p className="text-[10px] text-gray-400">Modifiez jusqu'à 2h avant</p>
+                  <Clock className="w-6 h-6 mx-auto mb-1 text-gray-600" />
+                  <p className="text-xs font-medium text-gray-900">Dernière minute</p>
+                  <p className="text-[10px] text-gray-500">Modifiez jusqu'à 2h avant</p>
                 </div>
                 <div className="text-center">
-                  <CalendarCheck className="w-6 h-6 mx-auto mb-1 text-gray-500" />
-                  <p className="text-xs font-medium">Flexibilité</p>
-                  <p className="text-[10px] text-gray-400">Changez heure ou créneau</p>
+                  <CalendarCheck className="w-6 h-6 mx-auto mb-1 text-gray-600" />
+                  <p className="text-xs font-medium text-gray-900">Flexibilité</p>
+                  <p className="text-[10px] text-gray-500">Changez heure ou créneau</p>
                 </div>
                 <div className="text-center">
-                  <Coins className="w-6 h-6 mx-auto mb-1 text-gray-500" />
-                  <p className="text-xs font-medium">Économies</p>
-                  <p className="text-[10px] text-gray-400">Pas de frais de modification</p>
+                  <Coins className="w-6 h-6 mx-auto mb-1 text-gray-600" />
+                  <p className="text-xs font-medium text-gray-900">Économies</p>
+                  <p className="text-[10px] text-gray-500">Pas de frais de modification</p>
                 </div>
               </div>
 
@@ -99,20 +99,20 @@ export default function VanOptionsPage() {
               style={{ borderColor: insurance ? GOLD : '#e5e7eb' }}
             >
               <div className="flex items-center gap-2 mb-1">
-                <h2 className="font-bold text-lg">ASSURER MON TRAJET</h2>
+                <h2 className="font-bold text-lg text-gray-900">ASSURER MON TRAJET</h2>
                 <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Choix populaire</span>
               </div>
-              <p className="text-sm text-gray-500 mb-4">Proposé par 🛡️ Wakam Assurance</p>
+              <p className="text-sm text-gray-600 mb-4">Proposé par 🛡️ Wakam Assurance</p>
 
               <div
                 className="border rounded-lg p-4 mb-4"
                 style={{ borderColor: insurance ? GOLD : '#e5e7eb' }}
               >
                 <div className="flex justify-between items-start mb-3">
-                  <h3 className="font-semibold text-sm">Annulation & Bagages</h3>
+                  <h3 className="font-semibold text-sm text-gray-900">Annulation & Bagages</h3>
                   <span className="font-bold" style={{ color: GOLD }}>CHF 4.90</span>
                 </div>
-                <ul className="space-y-1.5 text-sm text-gray-600">
+                <ul className="space-y-1.5 text-sm text-gray-700">
                   <li className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Annulation : jusqu'à CHF 500</li>
                   <li className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Bagages perdus : jusqu'à CHF 300</li>
                   <li className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Assistance retard : jusqu'à CHF 100</li>
