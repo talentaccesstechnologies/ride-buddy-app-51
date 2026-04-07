@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import DestinationCarousel from '@/components/van/DestinationCarousel';
+import EditorialSections from '@/components/van/EditorialSections';
 import zermattImg from '@/assets/zermatt.jpg';
 import zurichImg from '@/assets/zurich.jpg';
 import verbierImg from '@/assets/verbier.jpg';
