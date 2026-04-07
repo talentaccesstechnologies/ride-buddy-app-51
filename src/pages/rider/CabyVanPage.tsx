@@ -605,8 +605,16 @@ const CabyVanPage: React.FC = () => {
             {DEST_CARDS.map((dest) => (
               <button key={dest.to} onClick={() => { setTo(dest.to); setStep('search'); }}
                 className="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all group bg-white border border-gray-100 text-left">
-                <div className="h-[140px] md:h-[160px] overflow-hidden">
-                  <img src={dest.image} alt={dest.to} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                <div className="h-[140px] md:h-[160px] overflow-hidden relative">
+                  <img src={dest.image} alt={dest.to}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.parentElement!.style.background = 'linear-gradient(135deg, #C9A84C, #8B6914)';
+                      e.currentTarget.parentElement!.innerHTML = `<span style="color:white;font-weight:800;font-size:1.5rem;display:flex;align-items:center;justify-content:center;height:100%">${dest.to}</span>`;
+                    }}
+                  />
                 </div>
                 <div className="p-4">
                   <p className="text-base font-bold text-gray-900">{dest.to}</p>
