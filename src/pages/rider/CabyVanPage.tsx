@@ -602,7 +602,7 @@ const CabyVanPage: React.FC = () => {
                     {calendarDateLabel || '📅 Dates de voyage'}
                   </button>
                   {calendarOpen && (
-                    <div ref={calendarRef} className="absolute top-full right-0 md:left-0 mt-2 z-[1000]">
+                    <div ref={calendarRef} className="absolute top-full left-0 mt-2 z-[1000]">
                       <PriceCalendar
                         basePrice={calendarBasePrice}
                         roundTrip={roundTrip}
