@@ -3,13 +3,10 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const GOLD = '#C9A84C';
-const DAYS_FR = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+const DAYS_FR = ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'];
 const MONTHS_FR = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
-interface PriceForDate {
-  price: number;
-  color: 'green' | 'gray' | 'orange' | 'red';
-}
+interface PriceForDate { price: number; color: 'green' | 'gray' | 'orange' | 'red'; }
 
 interface PriceCalendarProps {
   basePrice: number;
@@ -25,33 +22,21 @@ interface PriceCalendarProps {
 
 function getPriceForDate(date: Date, basePrice: number): PriceForDate {
   const day = date.getDay();
-  const isWeekend = day === 0 || day === 6;
-  const isMondayMorning = day === 1;
-  const isFridayEvening = day === 5;
-
   let multiplier = 1.0;
-  if (isMondayMorning || isFridayEvening) multiplier = 1.20;
-  else if (isWeekend) multiplier = 1.10;
+  if (day === 1 || day === 5) multiplier = 1.20;
+  else if (day === 0 || day === 6) multiplier = 1.10;
   else multiplier = 0.90;
-
   const daysUntil = Math.floor((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
   if (daysUntil >= 14) multiplier *= 0.85;
-
   const price = Math.round(basePrice * multiplier);
   const color: PriceForDate['color'] =
     price <= basePrice * 0.85 ? 'green' :
     price <= basePrice ? 'gray' :
     price <= basePrice * 1.15 ? 'orange' : 'red';
-
   return { price, color };
 }
 
-const COLOR_MAP = {
-  green: 'text-emerald-600',
-  gray: 'text-gray-500',
-  orange: 'text-amber-600',
-  red: 'text-red-600',
-};
+const PRICE_COLORS = { green: '#059669', gray: '#6b7280', orange: '#d97706', red: '#dc2626' };
 
 function getMonthDays(year: number, month: number) {
   const firstDay = new Date(year, month, 1);
@@ -77,53 +62,66 @@ const MonthGrid: React.FC<{
   year: number; month: number; basePrice: number;
   selectedDeparture: Date | null; selectedReturn: Date | null;
   roundTrip: boolean; onClickDay: (d: Date) => void;
-  compact?: boolean;
-}> = ({ year, month, basePrice, selectedDeparture, selectedReturn, roundTrip, onClickDay, compact }) => {
+  cellH: number;
+}> = ({ year, month, basePrice, selectedDeparture, selectedReturn, roundTrip, onClickDay, cellH }) => {
   const days = useMemo(() => getMonthDays(year, month), [year, month]);
   const today = new Date(); today.setHours(0, 0, 0, 0);
 
   return (
-    <div className="flex-1 min-w-0">
-      <h3 className="text-xs font-bold text-gray-900 text-center mb-2">
+    <div>
+      <div style={{ textAlign: 'center', fontSize: 13, fontWeight: 700, color: '#1a1a1a', marginBottom: 8 }}>
         {MONTHS_FR[month]} {year}
-      </h3>
-      <div className="grid grid-cols-7" style={{ gap: '2px', padding: '0 4px' }}>
+      </div>
+      {/* Day headers */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 42px)', gap: '2px', justifyContent: 'center', marginBottom: 4 }}>
         {DAYS_FR.map(d => (
-          <div key={d} className="text-center text-[9px] font-bold text-gray-400 pb-1">{d}</div>
+          <div key={d} style={{ width: 42, textAlign: 'center', fontSize: 11, color: '#999', fontWeight: 500 }}>{d}</div>
         ))}
+      </div>
+      {/* Day cells */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 42px)', gap: '2px', justifyContent: 'center' }}>
         {days.map((day, i) => {
-          if (!day) return <div key={`e-${i}`} style={{ height: compact ? 44 : 52 }} />;
+          if (!day) return <div key={`e-${i}`} style={{ width: 42, height: cellH }} />;
           const isPast = day < today;
           const priceInfo = isPast ? null : getPriceForDate(day, basePrice);
           const isDep = isSameDay(day, selectedDeparture);
           const isRet = isSameDay(day, selectedReturn);
           const inRange = roundTrip && selectedDeparture && selectedReturn && isBetween(day, selectedDeparture, selectedReturn);
+          const isSelected = isDep || isRet;
 
           return (
             <button
               key={day.toISOString()}
               disabled={isPast}
               onClick={() => !isPast && onClickDay(day)}
-              className={`flex flex-col items-center justify-center transition-all rounded-lg
-                ${isPast ? 'opacity-30 cursor-not-allowed' : 'hover:bg-amber-50 cursor-pointer'}
-                ${isDep || isRet ? 'text-white' : ''}
-                ${inRange ? 'bg-amber-50' : ''}
-              `}
               style={{
-                height: compact ? 44 : 52,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 42,
+                height: cellH,
+                borderRadius: 8,
+                cursor: isPast ? 'not-allowed' : 'pointer',
+                padding: '4px 0',
                 gap: 3,
-                ...(isDep || isRet ? { backgroundColor: GOLD } : {}),
+                border: 'none',
+                opacity: isPast ? 0.3 : 1,
+                backgroundColor: isSelected ? GOLD : inRange ? '#FEF3C7' : 'transparent',
+                transition: 'background-color 0.15s',
               }}
+              onMouseEnter={(e) => { if (!isPast && !isSelected) e.currentTarget.style.backgroundColor = inRange ? '#FEF3C7' : '#FFFBEB'; }}
+              onMouseLeave={(e) => { if (!isPast && !isSelected) e.currentTarget.style.backgroundColor = inRange ? '#FEF3C7' : 'transparent'; }}
             >
-              <span className={`text-[13px] font-medium leading-none ${isDep || isRet ? 'text-white' : 'text-gray-900'}`}>
+              <span style={{ fontSize: 14, fontWeight: 500, lineHeight: 1, color: isSelected ? '#fff' : '#1a1a1a' }}>
                 {day.getDate()}
               </span>
               {priceInfo && !isPast ? (
-                <span className={`text-[10px] font-semibold leading-none ${isDep || isRet ? 'text-white/80' : COLOR_MAP[priceInfo.color]}`}>
+                <span style={{ fontSize: 10, lineHeight: 1, fontWeight: 600, color: isSelected ? 'rgba(255,255,255,0.8)' : PRICE_COLORS[priceInfo.color] }}>
                   {priceInfo.price}
                 </span>
               ) : isPast ? (
-                <span className="text-[10px] text-gray-300 leading-none">—</span>
+                <span style={{ fontSize: 10, lineHeight: 1, color: '#ccc' }}>—</span>
               ) : null}
             </button>
           );
@@ -157,106 +155,106 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
   };
 
   const handleDayClick = (d: Date) => {
-    if (!roundTrip) {
-      onSelectDeparture(d);
-      onSelectReturn(null);
-      setSelectingReturn(false);
-      return;
-    }
-    if (!selectingReturn || !selectedDeparture) {
-      onSelectDeparture(d);
-      onSelectReturn(null);
-      setSelectingReturn(true);
-    } else {
-      if (d.getTime() <= selectedDeparture.getTime()) {
-        onSelectDeparture(d);
-        onSelectReturn(null);
-        setSelectingReturn(true);
-      } else {
-        onSelectReturn(d);
-        setSelectingReturn(false);
-      }
-    }
+    if (!roundTrip) { onSelectDeparture(d); onSelectReturn(null); setSelectingReturn(false); return; }
+    if (!selectingReturn || !selectedDeparture) { onSelectDeparture(d); onSelectReturn(null); setSelectingReturn(true); }
+    else if (d.getTime() <= selectedDeparture.getTime()) { onSelectDeparture(d); onSelectReturn(null); setSelectingReturn(true); }
+    else { onSelectReturn(d); setSelectingReturn(false); }
   };
 
   const MONTHS_SHORT = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
   const formatDateLabel = (d: Date) => `${String(d.getDate()).padStart(2, '0')} ${MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}`;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-xl w-full max-w-2xl max-h-[85vh] md:max-h-[480px] overflow-hidden flex flex-col">
+    <div style={{
+      background: '#fff',
+      borderRadius: 16,
+      border: '1px solid #e5e7eb',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+      width: 560,
+      maxHeight: '85vh',
+      display: 'flex',
+      flexDirection: 'column',
+    }}
+    className="max-md:!w-[320px]"
+    >
       {/* Round trip toggle */}
-      <div className="flex items-center gap-2 px-4 pt-3 pb-2 shrink-0">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px 8px' }}>
         <button onClick={() => { onToggleRoundTrip(false); onSelectReturn(null); setSelectingReturn(false); }}
-          className={`px-3 py-1.5 rounded-full text-[11px] font-bold transition-all ${!roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-          style={!roundTrip ? { backgroundColor: GOLD } : {}}>
+          style={{
+            padding: '6px 14px', borderRadius: 20, fontSize: 11, fontWeight: 700, border: 'none', cursor: 'pointer',
+            backgroundColor: !roundTrip ? GOLD : '#f3f4f6', color: !roundTrip ? '#fff' : '#4b5563',
+          }}>
           Aller simple
         </button>
         <button onClick={() => onToggleRoundTrip(true)}
-          className={`px-3 py-1.5 rounded-full text-[11px] font-bold transition-all flex items-center gap-1 ${roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-          style={roundTrip ? { backgroundColor: GOLD } : {}}>
+          style={{
+            padding: '6px 14px', borderRadius: 20, fontSize: 11, fontWeight: 700, border: 'none', cursor: 'pointer',
+            backgroundColor: roundTrip ? GOLD : '#f3f4f6', color: roundTrip ? '#fff' : '#4b5563',
+            display: 'flex', alignItems: 'center', gap: 6,
+          }}>
           🔄 Aller-retour
-          <span className="text-[8px] px-1 py-0.5 rounded-full bg-white/20 font-bold">-5%</span>
+          <span style={{ fontSize: 8, padding: '2px 6px', borderRadius: 10, background: 'rgba(255,255,255,0.2)', fontWeight: 700 }}>-5%</span>
         </button>
       </div>
 
       {/* Month navigation */}
-      <div className="flex items-center justify-between px-4 pb-1 shrink-0">
-        <button onClick={goBack} className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
-          <ChevronLeft className="w-3.5 h-3.5 text-gray-600" />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px 4px' }}>
+        <button onClick={goBack} style={{ width: 28, height: 28, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent' }}>
+          <ChevronLeft style={{ width: 14, height: 14, color: '#4b5563' }} />
         </button>
-        <div className="flex-1" />
-        <button onClick={goForward} className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
-          <ChevronRight className="w-3.5 h-3.5 text-gray-600" />
+        <div style={{ flex: 1 }} />
+        <button onClick={goForward} style={{ width: 28, height: 28, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent' }}>
+          <ChevronRight style={{ width: 14, height: 14, color: '#4b5563' }} />
         </button>
       </div>
 
-      {/* Calendar grids — scrollable area */}
-      <div className="flex-1 overflow-y-auto px-4 min-h-0">
-        <div className="hidden md:flex gap-4">
-          <MonthGrid year={viewYear} month={viewMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
-          <div className="w-px bg-gray-200 shrink-0" />
-          <MonthGrid year={nextYear} month={nextMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
+      {/* Calendar grids */}
+      <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+        {/* Desktop: two months */}
+        <div className="hidden md:grid" style={{ gridTemplateColumns: '1fr 1px 1fr', gap: '0 16px', padding: '4px 16px 12px' }}>
+          <MonthGrid year={viewYear} month={viewMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} cellH={56} />
+          <div style={{ background: '#e5e7eb' }} />
+          <MonthGrid year={nextYear} month={nextMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} cellH={56} />
         </div>
-        <div className="md:hidden">
-          <MonthGrid year={viewYear} month={viewMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} compact />
+        {/* Mobile: single month */}
+        <div className="md:hidden" style={{ padding: '4px 12px 12px' }}>
+          <MonthGrid year={viewYear} month={viewMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} cellH={48} />
         </div>
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-3 px-4 py-1.5 text-[9px] shrink-0 border-t border-gray-100">
-        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Meilleur prix</span>
-        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-gray-400" /> Standard</span>
-        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Élevé</span>
-        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-red-500" /> Rush</span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, padding: '6px 16px', borderTop: '1px solid #f3f4f6', fontSize: 9 }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><span style={{ width: 6, height: 6, borderRadius: '50%', background: '#059669' }} /> Meilleur prix</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><span style={{ width: 6, height: 6, borderRadius: '50%', background: '#9ca3af' }} /> Standard</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><span style={{ width: 6, height: 6, borderRadius: '50%', background: '#d97706' }} /> Élevé</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><span style={{ width: 6, height: 6, borderRadius: '50%', background: '#dc2626' }} /> Rush</span>
       </div>
 
-      {/* Footer — sticky bottom */}
-      <div className="px-4 py-2.5 border-t border-gray-100 bg-white shrink-0">
+      {/* Footer */}
+      <div style={{ padding: '10px 16px', borderTop: '1px solid #f3f4f6', background: '#fff', borderRadius: '0 0 16px 16px' }}>
         {roundTrip && selectedDeparture && selectedReturn && (
-          <div className="mb-2 space-y-1 text-[11px] text-gray-600">
-            <div className="flex justify-between">
-              <span>Aller</span>
-              <span className="font-medium text-gray-900">{formatDateLabel(selectedDeparture)}</span>
+          <div style={{ marginBottom: 8, fontSize: 11, color: '#6b7280' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Aller</span><span style={{ fontWeight: 500, color: '#1a1a1a' }}>{formatDateLabel(selectedDeparture)}</span>
             </div>
-            <div className="flex justify-between">
-              <span>Retour</span>
-              <span className="font-medium text-gray-900">{formatDateLabel(selectedReturn)}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+              <span>Retour</span><span style={{ fontWeight: 500, color: '#1a1a1a' }}>{formatDateLabel(selectedReturn)}</span>
             </div>
-            <div className="flex justify-between text-emerald-600 font-medium">
-              <span>Remise aller-retour</span>
-              <span>-5% ✓</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, color: '#059669', fontWeight: 500 }}>
+              <span>Remise aller-retour</span><span>-5% ✓</span>
             </div>
           </div>
         )}
         {!roundTrip && selectedDeparture && (
-          <div className="mb-2 text-[11px] text-gray-600">
-            <span>Aller : </span>
-            <span className="font-medium text-gray-900">{formatDateLabel(selectedDeparture)}</span>
+          <div style={{ marginBottom: 8, fontSize: 11, color: '#6b7280' }}>
+            Aller : <span style={{ fontWeight: 500, color: '#1a1a1a' }}>{formatDateLabel(selectedDeparture)}</span>
           </div>
         )}
-        <div className="flex items-center justify-between">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <button onClick={() => { onClear(); setSelectingReturn(false); }}
-            className="text-[11px] font-medium hover:underline" style={{ color: GOLD }}>
+            style={{ fontSize: 11, fontWeight: 500, color: GOLD, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'none' }}
+            onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+            onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}>
             Effacer
           </button>
           <Button
