@@ -87,12 +87,12 @@ const MonthGrid: React.FC<{
       <h3 className="text-xs font-bold text-gray-900 text-center mb-2">
         {MONTHS_FR[month]} {year}
       </h3>
-      <div className="grid grid-cols-7 gap-0">
+      <div className="grid grid-cols-7" style={{ gap: '2px', padding: '0 4px' }}>
         {DAYS_FR.map(d => (
           <div key={d} className="text-center text-[9px] font-bold text-gray-400 pb-1">{d}</div>
         ))}
         {days.map((day, i) => {
-          if (!day) return <div key={`e-${i}`} className={compact ? 'h-10' : 'h-11'} />;
+          if (!day) return <div key={`e-${i}`} style={{ height: compact ? 44 : 52 }} />;
           const isPast = day < today;
           const priceInfo = isPast ? null : getPriceForDate(day, basePrice);
           const isDep = isSameDay(day, selectedDeparture);
@@ -104,22 +104,26 @@ const MonthGrid: React.FC<{
               key={day.toISOString()}
               disabled={isPast}
               onClick={() => !isPast && onClickDay(day)}
-              className={`relative flex flex-col items-center justify-center ${compact ? 'h-10' : 'h-11'} transition-all text-center rounded-md mx-px mb-px
+              className={`flex flex-col items-center justify-center transition-all rounded-lg
                 ${isPast ? 'opacity-30 cursor-not-allowed' : 'hover:bg-amber-50 cursor-pointer'}
-                ${isDep || isRet ? 'text-white rounded-lg' : ''}
+                ${isDep || isRet ? 'text-white' : ''}
                 ${inRange ? 'bg-amber-50' : ''}
               `}
-              style={(isDep || isRet) ? { backgroundColor: GOLD } : {}}
+              style={{
+                height: compact ? 44 : 52,
+                gap: 3,
+                ...(isDep || isRet ? { backgroundColor: GOLD } : {}),
+              }}
             >
-              <span className={`text-[11px] font-bold leading-none ${isDep || isRet ? 'text-white' : 'text-gray-900'}`}>
+              <span className={`text-[13px] font-medium leading-none ${isDep || isRet ? 'text-white' : 'text-gray-900'}`}>
                 {day.getDate()}
               </span>
               {priceInfo && !isPast ? (
-                <span className={`text-[8px] font-semibold leading-none mt-0.5 ${isDep || isRet ? 'text-white/80' : COLOR_MAP[priceInfo.color]}`}>
+                <span className={`text-[10px] font-semibold leading-none ${isDep || isRet ? 'text-white/80' : COLOR_MAP[priceInfo.color]}`}>
                   {priceInfo.price}
                 </span>
               ) : isPast ? (
-                <span className="text-[8px] text-gray-300 mt-0.5">—</span>
+                <span className="text-[10px] text-gray-300 leading-none">—</span>
               ) : null}
             </button>
           );
