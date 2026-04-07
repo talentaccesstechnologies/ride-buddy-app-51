@@ -176,34 +176,34 @@ const VanInspirePage: React.FC = () => {
         {/* Toolbar */}
         <div className="flex items-center justify-between mt-6 pb-4 border-b border-gray-200 flex-wrap gap-3">
           <div className="flex items-center gap-4 text-sm">
-            <span className="text-gray-500 font-medium">{filtered.length} destinations à partir de {origin}</span>
+            <span className="text-gray-700 font-semibold">{filtered.length} destinations à partir de {origin}</span>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowWishlistOnly(!showWishlistOnly)}
-              className={`flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full border transition-all ${showWishlistOnly ? 'border-red-300 bg-red-50 text-red-600' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+              className={`flex items-center gap-1.5 text-sm px-4 py-2 rounded-full border-2 font-semibold transition-all ${showWishlistOnly ? 'border-red-400 bg-red-50 text-red-600 shadow-sm' : 'border-gray-300 text-gray-700 bg-white hover:border-gray-400 shadow-sm'}`}
             >
-              <Heart className={`w-4 h-4 ${showWishlistOnly ? 'fill-red-500 text-red-500' : ''}`} />
+              <Heart className={`w-4 h-4 ${showWishlistOnly ? 'fill-red-500 text-red-500' : 'text-gray-500'}`} />
               Favoris ({wishlist.length})
             </button>
 
-            <div className="flex items-center bg-gray-100 rounded-full p-0.5">
+            <div className="flex items-center bg-gray-200 rounded-full p-0.5 shadow-inner">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-full transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm' : ''}`}
+                className={`p-2 rounded-full transition-all ${viewMode === 'grid' ? 'bg-white shadow-md text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 <Grid3X3 className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode('map')}
-                className={`p-2 rounded-full transition-all ${viewMode === 'map' ? 'bg-white shadow-sm' : ''}`}
+                className={`p-2 rounded-full transition-all ${viewMode === 'map' ? 'bg-white shadow-md text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 <Map className="w-4 h-4" />
               </button>
             </div>
 
             <select value={sortMode} onChange={e => setSortMode(e.target.value as SortMode)}
-              className="text-sm border border-gray-200 rounded-full px-3 py-1.5 bg-white cursor-pointer">
+              className="text-sm border-2 border-gray-300 rounded-full px-4 py-2 bg-white cursor-pointer font-semibold text-gray-700 shadow-sm hover:border-gray-400 transition-all">
               <option value="price">Budget : ordre croissant</option>
               <option value="alpha">A → Z</option>
             </select>
