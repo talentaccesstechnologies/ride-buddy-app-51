@@ -363,6 +363,23 @@ const CabyVanPage: React.FC = () => {
   const totalPrice = slotPrice + ancillaryTotal;
 
   const handleSearch = () => { if (from && to && from !== to && selectedRoute) setStep('results'); };
+
+  const formatDateForInput = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const formatDateDisplay = (d: Date | null) => d ? `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}` : '';
+
+  const handleCalendarApply = (setter: (v: boolean) => void) => {
+    if (departureDateObj) setDateAller(formatDateForInput(departureDateObj));
+    if (returnDateObj) { setDateRetour(formatDateForInput(returnDateObj)); setRoundTrip(true); }
+    setter(false);
+  };
+  const handleCalendarClear = () => { setDepartureDateObj(null); setReturnDateObj(null); setDateAller(''); setDateRetour(''); };
+
+  const calendarDateLabel = departureDateObj
+    ? (returnDateObj
+      ? `${formatDateDisplay(departureDateObj)} → ${formatDateDisplay(returnDateObj)}`
+      : formatDateDisplay(departureDateObj))
+    : '';
+  const calendarBasePrice = selectedRoute?.basePrice || 65;
   const handleSelectSlot = (slot: VanSlot) => { setSelectedSlot(slot); setSelectedSeat(null); setAncillaries({}); setStep('seat'); };
   const handleVehicleContinue = () => {
     if (!selectedSlot && selectedRoute) {
