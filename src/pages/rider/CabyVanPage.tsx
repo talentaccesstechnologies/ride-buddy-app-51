@@ -524,11 +524,11 @@ const CabyVanPage: React.FC = () => {
   // ── HERO — EasyJet-inspired Landing ──
   if (step === 'hero') {
     return (
-      <div className="min-h-screen">
-        {/* Full-screen hero background */}
-        <div className="relative min-h-[600px] md:min-h-[700px]">
-          <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
+      <div className="min-h-screen bg-white">
+        {/* Full-screen hero — fixed height like EasyJet */}
+        <div className="relative h-[480px] md:h-[520px] overflow-hidden">
+          <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover object-center" />
+          <div className="absolute inset-0 bg-black/25" />
 
           {/* Back button */}
           <div className="absolute top-4 left-4 z-10">
@@ -537,8 +537,8 @@ const CabyVanPage: React.FC = () => {
             </button>
           </div>
 
-          {/* Search engine card — centered, not sticky */}
-          <div className="relative z-10 max-w-[900px] mx-auto mt-12 md:mt-16 px-4 md:px-6">
+          {/* Search engine card — absolutely positioned at top */}
+          <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[90%] max-w-[880px] z-10">
             <div className="bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.15)] p-5 md:p-6">
               {/* Line 1: Service tabs */}
               <div className="flex items-center gap-2 mb-4 border-b border-gray-100 pb-3">
@@ -552,7 +552,6 @@ const CabyVanPage: React.FC = () => {
                   🌍 Cross-Border
                 </button>
                 <div className="flex-1" />
-                {/* Round trip toggle */}
                 <div className="flex items-center gap-1.5">
                   <button onClick={() => setRoundTrip(false)} className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${!roundTrip ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                     style={!roundTrip ? { backgroundColor: GOLD } : {}}>Aller simple</button>
@@ -572,28 +571,24 @@ const CabyVanPage: React.FC = () => {
                   placeholder="Ville, gare, aéroport..."
                   iconColor="#10b981"
                 />
-
                 <div className="hidden md:flex items-center shrink-0">
                   <button onClick={() => { const t = from; setFrom(to || from); setTo(t); }}
                     className="w-7 h-7 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center hover:border-amber-400 transition-colors">
                     <ArrowRight className="w-3 h-3 text-gray-500" />
                   </button>
                 </div>
-
                 <CityAutocomplete
                   value={to}
                   onChange={setTo}
                   placeholder="Destination"
                   iconColor="#ef4444"
                 />
-
                 <div className="flex-1 min-w-0">
                   <button onClick={() => setCalendarOpen(!calendarOpen)}
                     className="w-full h-11 rounded-xl bg-gray-50 border border-gray-200 px-3 text-sm text-left font-medium text-gray-900 hover:bg-gray-100 transition-colors truncate">
                     {calendarDateLabel || '📅 Dates de voyage'}
                   </button>
                 </div>
-
                 <div className="w-full md:w-28 shrink-0">
                   <div className="flex items-center gap-1 h-11 rounded-xl bg-gray-50 border border-gray-200 px-2">
                     <Users className="w-3.5 h-3.5 text-gray-400" />
@@ -602,7 +597,6 @@ const CabyVanPage: React.FC = () => {
                     <button onClick={() => setPassengers(Math.min(7, passengers + 1))} className="w-6 h-6 flex items-center justify-center text-gray-500 font-bold text-sm">+</button>
                   </div>
                 </div>
-
                 <Button onClick={() => { if (from && to) handleSearch(); else setStep('search'); }}
                   className="h-11 px-6 rounded-xl text-white font-bold text-sm shadow-lg hover:shadow-xl transition-shadow shrink-0"
                   style={{ backgroundColor: GOLD }}>
@@ -630,13 +624,13 @@ const CabyVanPage: React.FC = () => {
             )}
           </div>
 
-          {/* Hero text — BELOW the search card */}
-          <div className="relative z-10 text-center mt-6 pb-12 px-6" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
-            <h1 className="text-[42px] md:text-5xl font-black text-white leading-tight tracking-tight">
+          {/* Tagline — absolutely positioned at bottom of hero */}
+          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-center w-full z-10 px-6" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
+            <h1 className="text-[42px] md:text-5xl font-black text-white leading-tight" style={{ letterSpacing: '-0.5px' }}>
               VOYAGEZ MALIN.
             </h1>
-            <p className="text-lg md:text-2xl font-bold text-white/90 mt-2">GENÈVE ↔ TOUTE LA SUISSE.</p>
-            <p className="text-white/70 text-[15px] md:text-base mt-3">Siège partagé · Chauffeur certifié · Dès CHF 9</p>
+            <p className="text-[22px] md:text-2xl font-bold text-white mt-1">GENÈVE ↔ TOUTE LA SUISSE.</p>
+            <p className="text-[15px] text-white/90 mt-1">Siège partagé · Chauffeur certifié · Dès CHF 9</p>
           </div>
         </div>
 
