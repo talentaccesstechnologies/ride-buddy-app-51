@@ -374,10 +374,13 @@ const CabyVanPage: React.FC = () => {
   };
   const handleCalendarClear = () => { setDepartureDateObj(null); setReturnDateObj(null); setDateAller(''); setDateRetour(''); };
 
+  const MONTHS_SHORT = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+  const formatDateShort = (d: Date) => `${String(d.getDate()).padStart(2, '0')} ${MONTHS_SHORT[d.getMonth()]}`;
+
   const calendarDateLabel = departureDateObj
     ? (returnDateObj
-      ? `${formatDateDisplay(departureDateObj)} → ${formatDateDisplay(returnDateObj)}`
-      : formatDateDisplay(departureDateObj))
+      ? `${formatDateShort(departureDateObj)} → ${formatDateShort(returnDateObj)} ${returnDateObj.getFullYear()} · -5%`
+      : `${formatDateShort(departureDateObj)} ${departureDateObj.getFullYear()}`)
     : '';
   const calendarBasePrice = selectedRoute?.basePrice || 65;
   const handleSelectSlot = (slot: VanSlot) => { setSelectedSlot(slot); setSelectedSeat(null); setAncillaries({}); setStep('seat'); };

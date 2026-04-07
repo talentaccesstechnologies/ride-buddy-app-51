@@ -176,11 +176,9 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
     }
   };
 
-  const nightsCount = selectedDeparture && selectedReturn
-    ? Math.round((selectedReturn.getTime() - selectedDeparture.getTime()) / (1000 * 60 * 60 * 24))
-    : 0;
-
-  const formatShort = (d: Date) => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+  const MONTHS_SHORT = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+  const formatDateLabel = (d: Date) => `${String(d.getDate()).padStart(2, '0')} ${MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}`;
+  const formatShort = (d: Date) => `${String(d.getDate()).padStart(2, '0')} ${MONTHS_SHORT[d.getMonth()]}`;
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-xl p-4 md:p-6 w-full max-w-2xl">
@@ -230,21 +228,34 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-100">
-        <button onClick={() => { onClear(); setSelectingReturn(false); }}
-          className="text-xs font-medium hover:underline" style={{ color: GOLD }}>
-          Effacer la sélection
-        </button>
-
-        <div className="flex items-center gap-3">
-          {roundTrip && selectedDeparture && selectedReturn && (
-            <span className="text-xs text-gray-500">
-              {formatShort(selectedDeparture)} → {formatShort(selectedReturn)} · {nightsCount} nuit{nightsCount > 1 ? 's' : ''} · <span className="font-bold text-emerald-600">-5%</span>
-            </span>
-          )}
-          {!roundTrip && selectedDeparture && (
-            <span className="text-xs text-gray-500">{formatShort(selectedDeparture)}</span>
-          )}
+      <div className="mt-5 pt-4 border-t border-gray-100">
+        {roundTrip && selectedDeparture && selectedReturn && (
+          <div className="mb-4 space-y-1.5 text-xs text-gray-600">
+            <div className="flex justify-between">
+              <span>Aller</span>
+              <span className="font-medium text-gray-900">{formatDateLabel(selectedDeparture)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Retour</span>
+              <span className="font-medium text-gray-900">{formatDateLabel(selectedReturn)}</span>
+            </div>
+            <div className="flex justify-between text-emerald-600 font-medium">
+              <span>Remise aller-retour</span>
+              <span>-5% ✓</span>
+            </div>
+          </div>
+        )}
+        {!roundTrip && selectedDeparture && (
+          <div className="mb-4 text-xs text-gray-600">
+            <span>Aller : </span>
+            <span className="font-medium text-gray-900">{formatDateLabel(selectedDeparture)}</span>
+          </div>
+        )}
+        <div className="flex items-center justify-between">
+          <button onClick={() => { onClear(); setSelectingReturn(false); }}
+            className="text-xs font-medium hover:underline" style={{ color: GOLD }}>
+            Effacer
+          </button>
           <Button
             onClick={onApply}
             disabled={!selectedDeparture || (roundTrip && !selectedReturn)}
