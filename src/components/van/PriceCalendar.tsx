@@ -190,14 +190,14 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
       </div>
 
       {/* Months with navigation arrows */}
-      <div className="relative flex-1 overflow-y-auto min-h-0">
+      <div className="relative">
         {/* Nav arrows — absolute positioned */}
         <button onClick={goBack} disabled={isCurrentMonth}
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
           <ChevronLeft className="w-4 h-4" style={{ color: GOLD }} />
         </button>
         <button onClick={goForward}
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors">
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors">
           <ChevronRight className="w-4 h-4" style={{ color: GOLD }} />
         </button>
 
