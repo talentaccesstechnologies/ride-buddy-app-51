@@ -191,7 +191,7 @@ export default function VanPaymentPage() {
                       className="accent-[#C9A84C]"
                     />
                     {m.icon}
-                    <span className="text-sm font-medium">{m.label}</span>
+                    <span className="text-sm font-medium text-gray-900">{m.label}</span>
                   </label>
                 ))}
               </div>
