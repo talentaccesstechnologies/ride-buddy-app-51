@@ -99,10 +99,10 @@ export default function VanOptionsPage() {
               style={{ borderColor: insurance ? GOLD : '#e5e7eb' }}
             >
               <div className="flex items-center gap-2 mb-1">
-                <h2 className="font-bold text-lg">ASSURER MON TRAJET</h2>
+                <h2 className="font-bold text-lg text-gray-900">ASSURER MON TRAJET</h2>
                 <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Choix populaire</span>
               </div>
-              <p className="text-sm text-gray-500 mb-4">Proposé par 🛡️ Wakam Assurance</p>
+              <p className="text-sm text-gray-600 mb-4">Proposé par 🛡️ Wakam Assurance</p>
 
               <div
                 className="border rounded-lg p-4 mb-4"
