@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Heart, Map, Grid3X3, ChevronDown, ArrowLeft, X } from 'lucide-react';
 import BottomNav from '@/components/rider/BottomNav';
+import InspireMapView from '@/components/van/InspireMapView';
 
 // Import all destination images
 import zermattImg from '@/assets/zermatt.jpg';
