@@ -10,6 +10,7 @@ import baleImg from '@/assets/bale.jpg';
 import berneImg from '@/assets/berne.jpg';
 import chamberyImg from '@/assets/chambery.jpg';
 import chamonixImg from '@/assets/chamonix.jpg';
+import sionImg from '@/assets/sion.jpg';
 
 const GOLD = '#C9A84C';
 const FALLBACK_IMAGE = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Montreux_and_Lake_Geneva.jpg/640px-Montreux_and_Lake_Geneva.jpg';
@@ -34,6 +35,7 @@ const IMAGE_MAP: Record<string, string> = {
   Berne: berneImg,
   'Chambéry': chamberyImg,
   Chamonix: chamonixImg,
+  Sion: sionImg,
 };
 
 const ALL_DESTINATIONS: DestinationItem[] = [
