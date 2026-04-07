@@ -18,7 +18,7 @@ export default function VanPassengersPage() {
   const packPrice = parseFloat(params.get('packPrice') || '0');
 
   const [form, setForm] = useState({
-    firstName: '', lastName: '', email: '', phone: '', country: 'Suisse',
+    firstName: '', lastName: '', email: '', phone: '',
     reason: 'loisirs', flightNumber: '',
     cguAccepted: false, covoiturageAccepted: false,
   });
