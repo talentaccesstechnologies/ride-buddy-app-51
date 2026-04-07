@@ -161,7 +161,7 @@ export default function VanPassengersPage() {
             </div>
 
             {/* CGU */}
-            <div className="bg-white rounded-xl border p-5 space-y-3">
+            <div className="bg-white rounded-xl border p-5 space-y-3 text-gray-900">
               <label className="flex items-start gap-2 cursor-pointer text-sm">
                 <Checkbox
                   checked={form.cguAccepted}
