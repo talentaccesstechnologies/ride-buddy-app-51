@@ -101,7 +101,7 @@ export default function VanSeatPage() {
             {/* Van layout */}
             <div className="bg-white rounded-xl border p-6 max-w-sm mx-auto">
               <div className="text-center mb-4">
-                <span className="text-2xl">🚐</span>
+                <img src={vanVclass} alt="Mercedes V-Class" className="w-16 h-auto mx-auto object-contain" />
                 <p className="text-xs text-gray-400 mt-1">Avant du VAN</p>
               </div>
 
