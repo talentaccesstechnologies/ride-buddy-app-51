@@ -47,6 +47,7 @@ const IMAGE_MAP: Record<string, string> = {
   Davos: davosImg,
   Gstaad: gstaadImg,
   Paris: parisImg,
+  Milan: milanImg,
 };
 
 const ALL_DESTINATIONS: DestinationItem[] = [
