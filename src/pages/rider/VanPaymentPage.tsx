@@ -38,8 +38,6 @@ export default function VanPaymentPage() {
   const [promoCode, setPromoCode] = useState('');
   const [useWallet, setUseWallet] = useState(false);
   const [saveCard, setSaveCard] = useState(false);
-  const [cgu1, setCgu1] = useState(false);
-  const [cgu2, setCgu2] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
 
@@ -47,7 +45,7 @@ export default function VanPaymentPage() {
   const walletApplied = useWallet ? Math.min(walletBalance, total) : 0;
   const finalTotal = total - walletApplied;
 
-  const canPay = cgu1 && cgu2 && (paymentMethod !== 'card' || (cardNumber && expiry && cvv));
+  const canPay = paymentMethod !== 'card' || (cardNumber && expiry && cvv);
 
   const handlePay = () => {
     setProcessing(true);
@@ -129,7 +127,7 @@ export default function VanPaymentPage() {
                   value={promoCode}
                   onChange={e => setPromoCode(e.target.value)}
                   placeholder="Code promo"
-                  className="flex-1"
+                  className="flex-1 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                 />
                 <button className="px-4 py-2 rounded-lg text-sm font-semibold bg-gray-100 hover:bg-gray-200 text-gray-900">
                   Appliquer
@@ -199,24 +197,25 @@ export default function VanPaymentPage() {
               {paymentMethod === 'card' && (
                 <div className="mt-4 space-y-3">
                   <div>
-                    <Label>Numéro de carte</Label>
+                    <Label className="text-gray-900">Numéro de carte</Label>
                     <Input
                       value={cardNumber}
                       onChange={e => setCardNumber(e.target.value)}
                       placeholder="4242 4242 4242 4242"
+                      className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <Label>Expiration</Label>
-                      <Input value={expiry} onChange={e => setExpiry(e.target.value)} placeholder="MM/AA" />
+                      <Label className="text-gray-900">Expiration</Label>
+                      <Input value={expiry} onChange={e => setExpiry(e.target.value)} placeholder="MM/AA" className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400" />
                     </div>
                     <div>
-                      <Label>CVV</Label>
-                      <Input value={cvv} onChange={e => setCvv(e.target.value)} placeholder="123" type="password" />
+                      <Label className="text-gray-900">CVV</Label>
+                      <Input value={cvv} onChange={e => setCvv(e.target.value)} placeholder="123" type="password" className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400" />
                     </div>
                   </div>
-                  <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm cursor-pointer text-gray-900">
                     <Checkbox checked={saveCard} onCheckedChange={v => setSaveCard(!!v)} />
                     Sauvegarder cette carte
                   </label>
@@ -224,17 +223,6 @@ export default function VanPaymentPage() {
               )}
             </div>
 
-            {/* CGU */}
-            <div className="bg-white rounded-xl border p-5 space-y-3 text-gray-900">
-              <label className="flex items-start gap-2 text-sm cursor-pointer">
-                <Checkbox checked={cgu1} onCheckedChange={v => setCgu1(!!v)} />
-                <span>Je certifie avoir 18 ans ou plus et avoir lu les <a href="#" className="underline" style={{ color: GOLD }}>conditions générales de Caby Van</a></span>
-              </label>
-              <label className="flex items-start gap-2 text-sm cursor-pointer">
-                <Checkbox checked={cgu2} onCheckedChange={v => setCgu2(!!v)} />
-                <span>Je confirme que ce trajet constitue du covoiturage avec partage de frais entre particuliers</span>
-              </label>
-            </div>
 
             {/* Pay button */}
             <div className="text-center">
