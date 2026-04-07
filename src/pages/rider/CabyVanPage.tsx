@@ -232,6 +232,17 @@ const CabyVanPage: React.FC = () => {
   const [expandedDetails, setExpandedDetails] = useState<string | null>(null);
   const [sameVehicleReturn, setSameVehicleReturn] = useState(true);
 
+  // Passenger info (step 5)
+  const [passengerFirstName, setPassengerFirstName] = useState('');
+  const [passengerLastName, setPassengerLastName] = useState('');
+  const [passengerPhone, setPassengerPhone] = useState('');
+  const [passengerEmail, setPassengerEmail] = useState('');
+  const [passengerFlightNo, setPassengerFlightNo] = useState('');
+  const [passengerBagCount, setPassengerBagCount] = useState(1);
+
+  // Payment method (step 6)
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'twint' | 'applepay'>('card');
+
   // Pickup / Dropoff
   const [pickupLabel, setPickupLabel] = useState('');
   const [pickupAddress, setPickupAddress] = useState('');
