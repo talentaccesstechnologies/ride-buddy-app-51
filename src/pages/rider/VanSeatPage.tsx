@@ -2,60 +2,61 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import BookingStepper from '@/components/van/BookingStepper';
 import BookingSidebar, { BookingItem } from '@/components/van/BookingSidebar';
-import vanVclass from '@/assets/van-vclass.png';
+import vanInterior from '@/assets/van-interior.png';
 
 const GOLD = '#C9A84C';
 
 interface Seat {
   id: number;
-  label: string;
-  category: 'avant' | 'standard' | 'arriere';
+  category: 'avant' | 'capitaine' | 'banquette';
   price: number;
   taken: boolean;
 }
 
-// Mercedes V-Class 7 places layout:
-// Row 1: Driver | Passenger 1 (avant)
-// Row 2: Seat 2 (captain) | [aisle] | Seat 3 (captain) (standard)
-// Row 3: Seat 4 | Seat 5 | Seat 6 (bench) (arriere)
+// Mercedes V-Class 7 places (vue de dessus) :
+// Rang 1 : Chauffeur | Passager 1
+// Rang 2 : Siège capitaine 2 | [allée] | Siège capitaine 3
+// Rang 3 : Banquette 4 | 5 | 6
 const SEATS: Seat[] = [
-  { id: 1, label: '1', category: 'avant', price: 8, taken: false },
-  { id: 2, label: '2', category: 'standard', price: 5, taken: false },
-  { id: 3, label: '3', category: 'standard', price: 5, taken: true },
-  { id: 4, label: '4', category: 'arriere', price: 0, taken: false },
-  { id: 5, label: '5', category: 'arriere', price: 0, taken: true },
-  { id: 6, label: '6', category: 'arriere', price: 0, taken: false },
+  { id: 1, category: 'avant', price: 8, taken: false },
+  { id: 2, category: 'capitaine', price: 5, taken: false },
+  { id: 3, category: 'capitaine', price: 5, taken: true },
+  { id: 4, category: 'banquette', price: 0, taken: false },
+  { id: 5, category: 'banquette', price: 0, taken: true },
+  { id: 6, category: 'banquette', price: 0, taken: false },
 ];
 
-const CAT_META = {
+const CAT_META: Record<string, { bg: string; border: string; selectedBg: string; label: string; price: string; desc: string }> = {
   avant: { bg: '#FEF3C7', border: GOLD, selectedBg: GOLD, label: 'Avant', price: '+CHF 8', desc: 'Place passager avant, meilleure vue' },
-  standard: { bg: '#D1FAE5', border: '#10B981', selectedBg: '#10B981', label: 'Capitaine', price: '+CHF 5', desc: 'Siège capitaine individuel, confort optimal' },
-  arriere: { bg: '#F3F4F6', border: '#9CA3AF', selectedBg: '#6B7280', label: 'Banquette', price: 'Gratuit', desc: 'Banquette arrière 3 places' },
+  capitaine: { bg: '#D1FAE5', border: '#10B981', selectedBg: '#10B981', label: 'Capitaine', price: '+CHF 5', desc: 'Siège capitaine individuel, confort optimal' },
+  banquette: { bg: '#F3F4F6', border: '#9CA3AF', selectedBg: '#6B7280', label: 'Banquette', price: 'Gratuit', desc: 'Banquette arrière 3 places' },
 };
 
-function SeatButton({ seat, selected, onSelect }: { seat: Seat; selected: boolean; onSelect: () => void }) {
+function SeatBtn({ seat, selected, onSelect }: { seat: Seat; selected: boolean; onSelect: () => void }) {
   const cat = CAT_META[seat.category];
   if (seat.taken) {
     return (
-      <div className="h-16 rounded-lg bg-gray-200 border-2 border-gray-300 flex items-center justify-center cursor-not-allowed">
-        <span className="text-gray-400 text-lg">✕</span>
+      <div className="h-[60px] rounded-xl bg-gray-100 border-2 border-gray-200 flex items-center justify-center cursor-not-allowed">
+        <span className="text-gray-300 text-base">✕</span>
       </div>
     );
   }
   return (
     <button
       onClick={onSelect}
-      className={`h-16 rounded-lg border-2 flex flex-col items-center justify-center text-sm font-semibold transition-all ${
-        selected ? 'shadow-lg scale-105 text-white' : 'hover:scale-[1.03] cursor-pointer'
+      className={`h-[60px] rounded-xl border-2 flex flex-col items-center justify-center font-semibold transition-all ${
+        selected ? 'shadow-lg scale-105 text-white ring-2 ring-offset-2' : 'hover:scale-[1.03] cursor-pointer'
       }`}
       style={{
         backgroundColor: selected ? cat.selectedBg : cat.bg,
-        borderColor: selected ? cat.selectedBg : cat.border + '80',
-        color: selected ? 'white' : '#374151',
+        borderColor: selected ? cat.selectedBg : cat.border + '60',
+        color: selected ? 'white' : '#1f2937',
+        // @ts-ignore
+        '--tw-ring-color': selected ? cat.selectedBg + '40' : undefined,
       }}
     >
-      <span className="text-base">{seat.id}</span>
-      <span className="text-[10px] font-normal opacity-70">{cat.price}</span>
+      <span className="text-lg leading-none">{seat.id}</span>
+      <span className="text-[10px] font-normal mt-0.5 opacity-70">{cat.price}</span>
     </button>
   );
 }
@@ -73,7 +74,8 @@ export default function VanSeatPage() {
   const [tab, setTab] = useState<'aller' | 'retour'>('aller');
   const hasReturn = !!params.get('returnDate');
 
-  const seatPrice = selectedSeat ? SEATS.find(s => s.id === selectedSeat)?.price || 0 : 0;
+  const selectedSeatData = selectedSeat ? SEATS.find(s => s.id === selectedSeat) : null;
+  const seatPrice = selectedSeatData?.price || 0;
 
   const items: BookingItem[] = [
     { label: `Trajet ${from} → ${to}`, amount: price },
@@ -89,11 +91,8 @@ export default function VanSeatPage() {
   };
 
   const trySkip = () => {
-    if (!selectedSeat) {
-      setShowSkipModal(true);
-    } else {
-      forward();
-    }
+    if (!selectedSeat) setShowSkipModal(true);
+    else forward();
   };
 
   const toggle = (id: number) => setSelectedSeat(prev => prev === id ? null : id);
@@ -128,43 +127,68 @@ export default function VanSeatPage() {
               </div>
             )}
 
-            {/* Van layout - Mercedes V-Class */}
-            <div className="bg-white rounded-2xl border-2 border-gray-200 p-6 max-w-[340px] mx-auto relative">
-              {/* Front of van */}
-              <div className="text-center mb-3">
-                <img src={vanVclass} alt="Mercedes V-Class" className="w-20 h-auto mx-auto object-contain" />
-                <p className="text-[11px] text-gray-400 mt-1 uppercase tracking-wider font-medium">Avant du véhicule</p>
+            {/* Interior image */}
+            <div className="max-w-[380px] mx-auto mb-4">
+              <img
+                src={vanInterior}
+                alt="Vue intérieure Mercedes V-Class"
+                className="w-full rounded-xl object-contain"
+                loading="lazy"
+              />
+            </div>
+
+            {/* Van seat map */}
+            <div className="bg-white rounded-2xl border-2 border-gray-200 max-w-[340px] mx-auto overflow-hidden">
+              {/* Header */}
+              <div className="bg-gray-900 text-white text-center py-2.5 text-xs font-medium uppercase tracking-wider">
+                ▲ Avant du véhicule
               </div>
 
-              <div className="border-t border-dashed border-gray-200 mb-4" />
-
-              {/* Row 1: Driver + Seat 1 */}
-              <div className="grid grid-cols-[1fr_16px_1fr] gap-0 mb-3">
-                <div className="h-16 rounded-lg bg-gray-900 flex items-center justify-center text-white text-xs font-medium gap-1.5">
-                  <span>🧑‍✈️</span> Chauffeur
+              <div className="p-5 space-y-3">
+                {/* Row 1: Driver + Seat 1 */}
+                <div className="grid grid-cols-[1fr_20px_1fr] items-center">
+                  <div className="h-[60px] rounded-xl bg-gray-900 flex items-center justify-center text-white text-xs font-medium gap-1.5">
+                    <span className="text-base">🧑‍✈️</span> Chauffeur
+                  </div>
+                  <div />
+                  <SeatBtn seat={SEATS[0]} selected={selectedSeat === 1} onSelect={() => toggle(1)} />
                 </div>
-                <div />
-                <SeatButton seat={SEATS[0]} selected={selectedSeat === 1} onSelect={() => toggle(1)} />
-              </div>
 
-              {/* Row 2: Captain seats (2 individual with aisle) */}
-              <div className="grid grid-cols-[1fr_16px_1fr] gap-0 mb-3">
-                <SeatButton seat={SEATS[1]} selected={selectedSeat === 2} onSelect={() => toggle(2)} />
-                <div className="flex items-center justify-center">
-                  <div className="w-px h-full bg-gray-200" />
+                {/* Aisle divider */}
+                <div className="flex items-center gap-2 px-4">
+                  <div className="flex-1 border-t border-dashed border-gray-200" />
+                  <span className="text-[10px] text-gray-300 uppercase tracking-wider">allée</span>
+                  <div className="flex-1 border-t border-dashed border-gray-200" />
                 </div>
-                <SeatButton seat={SEATS[2]} selected={selectedSeat === 3} onSelect={() => toggle(3)} />
+
+                {/* Row 2: Captain seats */}
+                <div className="grid grid-cols-[1fr_20px_1fr] items-center">
+                  <SeatBtn seat={SEATS[1]} selected={selectedSeat === 2} onSelect={() => toggle(2)} />
+                  <div className="flex justify-center">
+                    <div className="w-px h-10 bg-gray-100" />
+                  </div>
+                  <SeatBtn seat={SEATS[2]} selected={selectedSeat === 3} onSelect={() => toggle(3)} />
+                </div>
+
+                {/* Aisle divider */}
+                <div className="flex items-center gap-2 px-4">
+                  <div className="flex-1 border-t border-dashed border-gray-200" />
+                  <span className="text-[10px] text-gray-300 uppercase tracking-wider">allée</span>
+                  <div className="flex-1 border-t border-dashed border-gray-200" />
+                </div>
+
+                {/* Row 3: Bench */}
+                <div className="grid grid-cols-3 gap-2">
+                  <SeatBtn seat={SEATS[3]} selected={selectedSeat === 4} onSelect={() => toggle(4)} />
+                  <SeatBtn seat={SEATS[4]} selected={selectedSeat === 5} onSelect={() => toggle(5)} />
+                  <SeatBtn seat={SEATS[5]} selected={selectedSeat === 6} onSelect={() => toggle(6)} />
+                </div>
               </div>
 
-              {/* Row 3: Bench (3 seats) */}
-              <div className="grid grid-cols-3 gap-2 mb-3">
-                <SeatButton seat={SEATS[3]} selected={selectedSeat === 4} onSelect={() => toggle(4)} />
-                <SeatButton seat={SEATS[4]} selected={selectedSeat === 5} onSelect={() => toggle(5)} />
-                <SeatButton seat={SEATS[5]} selected={selectedSeat === 6} onSelect={() => toggle(6)} />
+              {/* Footer */}
+              <div className="bg-gray-100 text-center py-2 text-[11px] text-gray-400 font-medium uppercase tracking-wider">
+                ▼ Arrière du véhicule
               </div>
-
-              <div className="border-t border-dashed border-gray-200 mt-2 mb-2" />
-              <p className="text-center text-[11px] text-gray-400 uppercase tracking-wider font-medium">Arrière du véhicule</p>
             </div>
 
             {/* Legend */}
@@ -176,17 +200,17 @@ export default function VanSeatPage() {
                 </span>
               ))}
               <span className="flex items-center gap-1.5">
-                <span className="w-3.5 h-3.5 rounded bg-gray-200 border-2 border-gray-300 flex items-center justify-center text-[8px]">✕</span>
+                <span className="w-3.5 h-3.5 rounded bg-gray-100 border-2 border-gray-200" />
                 Occupé
               </span>
             </div>
 
             {/* Selection feedback */}
-            {selectedSeat && (
-              <div className="bg-white rounded-xl border-2 p-4 mt-5 text-center" style={{ borderColor: GOLD + '60' }}>
+            {selectedSeatData && (
+              <div className="bg-white rounded-xl border-2 p-4 mt-5 text-center max-w-[340px] mx-auto" style={{ borderColor: GOLD + '60' }}>
                 <p className="font-semibold text-gray-900">Siège {selectedSeat} sélectionné</p>
                 <p className="text-sm text-gray-500 mt-0.5">
-                  {CAT_META[SEATS.find(s => s.id === selectedSeat)!.category].desc} — {seatPrice > 0 ? `+CHF ${seatPrice}` : 'Gratuit'}
+                  {CAT_META[selectedSeatData.category].desc} — {seatPrice > 0 ? `+CHF ${seatPrice}` : 'Gratuit'}
                 </p>
               </div>
             )}
