@@ -156,7 +156,7 @@ const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
           onChange={(e) => { setQuery(e.target.value); if (!isOpen) setIsOpen(true); }}
           onKeyDown={handleKeyDown}
           placeholder={value || placeholder}
-          className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 pl-9 pr-9 text-sm text-gray-900 font-medium focus:border-amber-400 focus:ring-1 focus:ring-amber-200 transition-colors outline-none"
+          className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 pl-9 pr-9 text-base text-gray-900 font-medium placeholder:text-[15px] placeholder:text-gray-400 focus:border-amber-400 focus:ring-1 focus:ring-amber-200 transition-colors outline-none"
         />
         {(value || query) && (
           <button onClick={() => { onChange(''); setQuery(''); setIsOpen(true); }}
