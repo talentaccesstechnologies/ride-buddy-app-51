@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Heart, Map, Grid3X3, ChevronDown, ArrowLeft, X } from 'lucide-react';
 import BottomNav from '@/components/rider/BottomNav';
+import InspireMapView from '@/components/van/InspireMapView';
 
 // Import all destination images
 import zermattImg from '@/assets/zermatt.jpg';
@@ -263,73 +264,14 @@ const VanInspirePage: React.FC = () => {
       ) : (
         /* Map View */
         <div className="max-w-6xl mx-auto px-4">
-          <div className="relative w-full h-[500px] rounded-2xl overflow-hidden border border-gray-200 bg-gray-100">
-            {/* Simple map placeholder with markers */}
-            <div className="absolute inset-0">
-              <img
-                src={`https://maps.googleapis.com/maps/api/staticmap?center=46.8,7.5&zoom=6&size=1200x600&maptype=roadmap&style=feature:all|element:labels|visibility:on${filtered.map(d => `&markers=color:0xC9A84C|label:${d.priceFrom}|${d.lat},${d.lng}`).join('')}&key=`}
-                alt="Map"
-                className="w-full h-full object-cover"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-              />
-              {/* Fallback CSS map */}
-              <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-green-50 flex items-center justify-center">
-                <div className="relative w-full h-full">
-                  {filtered.map(dest => {
-                    // Simple projection: lat/lng to % position
-                    const minLat = 44.5, maxLat = 49.5, minLng = 1.5, maxLng = 12.5;
-                    const x = ((dest.lng - minLng) / (maxLng - minLng)) * 90 + 5;
-                    const y = ((maxLat - dest.lat) / (maxLat - minLat)) * 85 + 5;
-                    const isFav = wishlist.includes(dest.city);
-                    return (
-                      <button
-                        key={dest.city}
-                        onClick={() => selectDestination(dest.city)}
-                        className="absolute transform -translate-x-1/2 -translate-y-full group/marker z-10"
-                        style={{ left: `${x}%`, top: `${y}%` }}
-                      >
-                        <div className="relative">
-                          <div className="px-2 py-1 rounded-md text-white text-xs font-bold shadow-lg whitespace-nowrap"
-                            style={{ backgroundColor: GOLD }}>
-                            CHF {dest.priceFrom}
-                          </div>
-                          <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent mx-auto"
-                            style={{ borderTopColor: GOLD }} />
-                          {/* Tooltip */}
-                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/marker:block">
-                            <div className="bg-white rounded-xl shadow-xl p-2 w-[160px] border border-gray-100">
-                              {IMAGE_MAP[dest.city] && (
-                                <img src={IMAGE_MAP[dest.city]} alt={dest.city} className="w-full h-[80px] object-cover rounded-lg mb-2" />
-                              )}
-                              <p className="text-sm font-bold text-gray-900">{dest.city}</p>
-                              <p className="text-xs text-gray-500">{dest.country}</p>
-                              <p className="text-sm font-black mt-1" style={{ color: GOLD }}>dès CHF {dest.priceFrom}</p>
-                            </div>
-                          </div>
-                        </div>
-                        {isFav && (
-                          <Heart className="absolute -top-1 -right-1 w-3 h-3 fill-red-500 text-red-500" />
-                        )}
-                      </button>
-                    );
-                  })}
-                  {/* Background text */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
-                    <span className="text-6xl font-black text-gray-400 uppercase">SUISSE</span>
-                  </div>
-                  {/* Simple country labels */}
-                  <span className="absolute text-xs font-medium text-gray-400 uppercase" style={{ left: '25%', top: '70%' }}>FRANCE</span>
-                  <span className="absolute text-xs font-medium text-gray-400 uppercase" style={{ left: '55%', top: '15%' }}>ALLEMAGNE</span>
-                  <span className="absolute text-xs font-medium text-gray-400 uppercase" style={{ left: '65%', top: '85%' }}>ITALIE</span>
-                  <span className="absolute text-xs font-medium text-gray-400 uppercase" style={{ left: '45%', top: '50%' }}>SUISSE</span>
-                </div>
-              </div>
-            </div>
-            {/* Map controls */}
-            <div className="absolute top-4 right-4 flex flex-col gap-2">
-              <button className="w-8 h-8 bg-white rounded shadow border border-gray-200 flex items-center justify-center text-gray-600 font-bold hover:bg-gray-50">+</button>
-              <button className="w-8 h-8 bg-white rounded shadow border border-gray-200 flex items-center justify-center text-gray-600 font-bold hover:bg-gray-50">−</button>
-            </div>
+          <div className="relative w-full h-[500px] rounded-2xl overflow-hidden border border-gray-200">
+            <InspireMapView
+              destinations={filtered}
+              wishlist={wishlist}
+              onSelectDestination={selectDestination}
+              onToggleWishlist={toggleWishlist}
+              imageMap={IMAGE_MAP}
+            />
           </div>
         </div>
       )}
