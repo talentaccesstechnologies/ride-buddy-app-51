@@ -235,6 +235,10 @@ const CabyVanPage: React.FC = () => {
   const [passengers, setPassengers] = useState(1);
   const [roundTrip, setRoundTrip] = useState(false);
   const [dateRetour, setDateRetour] = useState('');
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [calendarOpenSearch, setCalendarOpenSearch] = useState(false);
+  const [departureDateObj, setDepartureDateObj] = useState<Date | null>(null);
+  const [returnDateObj, setReturnDateObj] = useState<Date | null>(null);
   const [timeRetour, setTimeRetour] = useState('');
   const [customTimeAller, setCustomTimeAller] = useState('');
   const [customTimeRetour, setCustomTimeRetour] = useState('');
