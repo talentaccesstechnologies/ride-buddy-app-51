@@ -26,6 +26,7 @@ import TripTracking from "./pages/rider/TripTracking";
 import ServicesPage from "./pages/rider/ServicesPage";
 import CabyExpressPage from "./pages/rider/CabyExpressPage";
 import CabyVanPage from "./pages/rider/CabyVanPage";
+import VanInspirePage from "./pages/rider/VanInspirePage";
 import VanSelectPage from "./pages/rider/VanSelectPage";
 import VanPackPage from "./pages/rider/VanPackPage";
 import VanPassengersPage from "./pages/rider/VanPassengersPage";
