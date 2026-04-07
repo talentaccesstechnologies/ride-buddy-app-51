@@ -41,11 +41,11 @@ export default function VanPassengersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       <BookingStepper currentStep={2} />
       <div className="max-w-6xl mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Informations passagers</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Informations passagers</h1>
           <button onClick={forward} className="text-sm hover:underline" style={{ color: GOLD }}>
             Passer cette étape →
           </button>
@@ -54,8 +54,8 @@ export default function VanPassengersPage() {
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 space-y-6">
             {/* Contact info */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-4">Coordonnées du réservant</h2>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-4 text-gray-900">Coordonnées du réservant</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>Prénom</Label>
@@ -91,8 +91,8 @@ export default function VanPassengersPage() {
             </div>
 
             {/* Travel reason */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-3">Raison du voyage</h2>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-3 text-gray-900">Raison du voyage</h2>
               <div className="flex gap-6">
                 {['affaires', 'loisirs'].map(r => (
                   <label key={r} className="flex items-center gap-2 cursor-pointer text-sm">
@@ -110,9 +110,9 @@ export default function VanPassengersPage() {
 
             {/* Additional passengers */}
             {passengerNames.length > 0 && (
-              <div className="bg-white rounded-xl border p-5">
+              <div className="bg-white rounded-xl border p-5 text-gray-900">
                 <div className="flex justify-between items-center mb-3">
-                  <h2 className="font-semibold">Passagers supplémentaires</h2>
+                  <h2 className="font-semibold text-gray-900">Passagers supplémentaires</h2>
                   <button
                     className="text-xs hover:underline" style={{ color: GOLD }}
                     onClick={() => setPassengerNames(ps => ps.map(() => ({ first: form.firstName, last: form.lastName })))}
@@ -150,9 +150,9 @@ export default function VanPassengersPage() {
             )}
 
             {/* Flight number */}
-            <div className="bg-white rounded-xl border p-5">
-              <h2 className="font-semibold mb-2">Numéro de vol (optionnel)</h2>
-              <p className="text-xs text-gray-500 mb-3">Votre chauffeur suivra votre vol en temps réel</p>
+            <div className="bg-white rounded-xl border p-5 text-gray-900">
+              <h2 className="font-semibold mb-2 text-gray-900">Numéro de vol (optionnel)</h2>
+              <p className="text-xs text-gray-600 mb-3">Votre chauffeur suivra votre vol en temps réel</p>
               <Input
                 value={form.flightNumber}
                 onChange={e => update('flightNumber', e.target.value)}
@@ -161,7 +161,7 @@ export default function VanPassengersPage() {
             </div>
 
             {/* CGU */}
-            <div className="bg-white rounded-xl border p-5 space-y-3">
+            <div className="bg-white rounded-xl border p-5 space-y-3 text-gray-900">
               <label className="flex items-start gap-2 cursor-pointer text-sm">
                 <Checkbox
                   checked={form.cguAccepted}
