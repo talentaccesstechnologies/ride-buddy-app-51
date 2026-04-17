@@ -14,13 +14,11 @@ import verbierImg from '@/assets/verbier.jpg';
 import lausanneImg from '@/assets/lausanne.jpg';
 import annecyImg from '@/assets/annecy.jpg';
 import lyonImg from '@/assets/lyon.jpg';
-const vehicleImages = {
-  van_shared: 'https://images.unsplash.com/photo-1612838320302-4b3b3b3b3b3b?w=600&q=80&fit=crop&crop=center',
-  berline_standard: 'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=600&q=80',
-  suv_premium: 'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?w=600&q=80',
-  van_private_standard: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
-  van_private_premium: 'https://images.unsplash.com/photo-1609520505218-7421df82e44e?w=600&q=80',
-};
+import parisImg from '@/assets/paris.jpg';
+import milanImg from '@/assets/milan.jpg';
+import montreuxImg from '@/assets/montreux.jpg';
+import chamonixImg from '@/assets/chamonix.jpg';
+import { vehicleImages } from '@/lib/localImages';
 import {
   cabyVanRoutes, ROUTES, ALL_CITIES, findRoute, getDestinationsFrom, generateSlotsForRoute,
   formatDuration, SEGMENT_META,
@@ -775,7 +773,7 @@ const CabyVanPage: React.FC = () => {
                     tag: 'Ski & Montagne',
                     title: 'Traversez les Alpes en van dès CHF 35',
                     desc: "Des pistes à perte de vue, l'air pur des sommets. Votre van vous attend au pied des Alpes.",
-                    img: 'https://images.unsplash.com/photo-1491555103944-7c647fd857e6?w=600&q=80&fit=crop',
+                    img: chamonixImg,
                     cta: 'Je réserve mon van',
                     action: () => { handleServiceChange('ski'); setStep('search'); },
                   },
@@ -783,7 +781,7 @@ const CabyVanPage: React.FC = () => {
                     tag: 'Cross-Border',
                     title: 'Séjour Annecy — le lac de Haute-Savoie',
                     desc: 'Ses canaux, son lac turquoise, ses ruelles médiévales. Annecy, à 45 minutes de Genève.',
-                    img: 'https://images.unsplash.com/photo-1533395427226-788cee25cc7b?w=600&q=80&fit=crop',
+                    img: annecyImg,
                     cta: 'Je réserve mon trajet',
                     action: () => { setTo('Annecy'); setStep('search'); },
                   },
@@ -791,7 +789,7 @@ const CabyVanPage: React.FC = () => {
                     tag: 'Suisse romande',
                     title: 'Dès CHF 54 : Zurich, Berne, Bâle',
                     desc: "Vivante, créative, surprenante. La Suisse comme vous ne l'avez jamais vue.",
-                    img: 'https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=600&q=80&fit=crop',
+                    img: zurichImg,
                     cta: 'Je réserve mon trajet',
                     action: () => { setTo('Zurich'); setStep('search'); },
                   },
@@ -881,7 +879,7 @@ const CabyVanPage: React.FC = () => {
                   </button>
                 </div>
                 <img
-                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop"
+                  src={montreuxImg}
                   alt="Lac Léman"
                   style={{ width: '100%', height: 340, objectFit: 'cover', display: 'block' }}
                 />
@@ -902,11 +900,11 @@ const CabyVanPage: React.FC = () => {
               </div>
               <div className="caby-pgridp" style={{ display: 'grid', gridTemplateColumns: '718.35px 394.64px', gap: 18.35, alignItems: 'start', marginTop: 28, justifyContent: 'center' }}>
                 <div style={{ width: 718.35, height: 431, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', columnGap: 18.35, rowGap: 38.55 }}>
-                  <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80&fit=crop" alt="Paris" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
-                  <img src="https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=400&q=80&fit=crop" alt="Lausanne" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
-                  <img src="https://images.unsplash.com/photo-1513581166391-887a96ddeafd?w=400&q=80&fit=crop" alt="Milan" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
+                  <img src={parisImg} alt="Paris" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
+                  <img src={lausanneImg} alt="Lausanne" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
+                  <img src={milanImg} alt="Milan" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
                   <div style={{ width: 350, height: 253.97, borderRadius: 8, overflow: 'hidden', position: 'relative' }}>
-                    <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80&fit=crop" alt="Caby" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block' }} />
+                    <img src={zermattImg} alt="Caby" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block' }} />
                     <div style={{ position: 'absolute', inset: 0, background: 'rgba(201,168,76,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 900, color: '#0A0A0A', letterSpacing: '-1px' }}>caby</span>
                     </div>

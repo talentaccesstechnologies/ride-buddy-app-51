@@ -10,7 +10,7 @@ const recentRides = [
     location: 'Av. de la Gare des Eaux-Vives 19',
     date: '14 Fév · 13:13',
     amount: 'CHF 40.73',
-    image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=200&h=200&fit=crop',
+    image: '/placeholder.svg',
   },
   {
     id: '2',
@@ -26,7 +26,7 @@ const recentRides = [
     location: 'Aéroport de Genève',
     date: '13 Fév · 09:15',
     amount: 'CHF 55.00',
-    image: 'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=200&h=200&fit=crop',
+    image: '/placeholder.svg',
   },
 ];
 
