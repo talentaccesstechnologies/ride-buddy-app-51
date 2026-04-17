@@ -224,6 +224,7 @@ const CabyVanPage: React.FC = () => {
   const [dateAller, setDateAller] = useState('');
   const [timeAller, setTimeAller] = useState('');
   const [passengers, setPassengers] = useState(1);
+  const [children, setChildren] = useState(0);
   const [roundTrip, setRoundTrip] = useState(false);
   const [dateRetour, setDateRetour] = useState('');
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -350,7 +351,7 @@ const CabyVanPage: React.FC = () => {
 
   const handleSearch = () => {
     if (from && to && from !== to && selectedRoute) {
-      const params = new URLSearchParams({ from, to, passengers: String(passengers) });
+      const params = new URLSearchParams({ from, to, passengers: String(passengers), children: String(children) });
       if (dateAller) params.set('date', dateAller);
       if (roundTrip && dateRetour) params.set('returnDate', dateRetour);
       navigate(`/caby/van/select?${params.toString()}`);
@@ -600,10 +601,18 @@ const CabyVanPage: React.FC = () => {
                 {/* Qui */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
                   <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>Qui</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <button onClick={() => setPassengers(Math.max(1, passengers - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>−</button>
-                    <span style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{passengers} adulte{passengers > 1 ? 's' : ''}</span>
-                    <button onClick={() => setPassengers(Math.min(7, passengers + 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>+</button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' as const }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <button onClick={() => setPassengers(Math.max(1, passengers - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>−</button>
+                      <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{passengers} ad.</span>
+                      <button onClick={() => setPassengers(Math.min(7, passengers + 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>+</button>
+                    </div>
+                    <span style={{ color: '#D0CDC4', fontSize: 12 }}>·</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <button onClick={() => setChildren(Math.max(0, children - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>−</button>
+                      <span style={{ fontSize: 13, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{children} enf.</span>
+                      <button onClick={() => setChildren(Math.min(6, children + 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>+</button>
+                    </div>
                   </div>
                 </div>
                 {/* CTA Bouton */}
@@ -1041,13 +1050,22 @@ const CabyVanPage: React.FC = () => {
             {effectiveTimeAller && selectedAllerRush === 'creux' && (<div className="rounded-xl bg-emerald-50 border border-emerald-200 p-2.5 flex items-center gap-2"><span className="text-sm">💰</span><p className="text-[11px] text-emerald-700 font-medium">Créneau creux — prix réduit −5%</p></div>)}
             {roundTrip && timeRetour === 'custom' && (<div><label className="text-xs text-gray-500 mb-1 block font-medium">Heure personnalisée retour</label><input type="time" value={customTimeRetour} onChange={(e) => setCustomTimeRetour(e.target.value)} className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" /></div>)}
             {roundTrip && effectiveTimeRetour && selectedRoute && (<div className="rounded-xl bg-blue-50 border border-blue-200 p-3 flex items-center gap-2"><Timer className="w-4 h-4 text-blue-500 flex-shrink-0" /><div className="flex-1"><p className="text-sm text-gray-900 font-medium">Retour arrivée : <span className="font-bold">{estimatedArrivalRetour}</span></p><p className="text-[10px] text-gray-500">Retour le même soir · -5% aller-retour</p></div>{selectedRetourRush && RUSH_BADGE[selectedRetourRush] && (<span className={`text-[9px] font-bold px-2 py-1 rounded-full border ${RUSH_BADGE[selectedRetourRush].color}`}>{RUSH_BADGE[selectedRetourRush].label}</span>)}</div>)}
-            <div>
-              <label className="text-xs text-gray-500 mb-1 block font-medium">Passagers</label>
-              <div className="flex items-center gap-3">
-                <button onClick={() => setPassengers(Math.max(1, passengers - 1))} className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600">−</button>
-                <span className="text-lg font-bold text-gray-900 w-8 text-center">{passengers}</span>
-                <button onClick={() => setPassengers(Math.min(7, passengers + 1))} className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600">+</button>
-                <Users className="w-4 h-4 text-gray-400 ml-1" />
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block font-medium">👤 Adultes</label>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPassengers(Math.max(1, passengers - 1))} className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-base font-bold text-gray-600">−</button>
+                  <span className="text-base font-bold text-gray-900 flex-1 text-center">{passengers}</span>
+                  <button onClick={() => setPassengers(Math.min(7, passengers + 1))} className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-base font-bold text-gray-600">+</button>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block font-medium">🧒 Enfants <span className="text-gray-400 font-normal">(2-12 ans)</span></label>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setChildren(Math.max(0, children - 1))} className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-base font-bold text-gray-600">−</button>
+                  <span className="text-base font-bold text-gray-900 flex-1 text-center">{children}</span>
+                  <button onClick={() => setChildren(Math.min(6, children + 1))} className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-base font-bold text-gray-600">+</button>
+                </div>
               </div>
             </div>
             <Button onClick={handleSearch} disabled={!selectedRoute} className="w-full mt-4 text-white font-bold rounded-xl h-12 disabled:opacity-40 shadow-lg" style={{ backgroundColor: GOLD }}>
