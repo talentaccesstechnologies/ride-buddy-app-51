@@ -28,7 +28,6 @@ import {
   type VanSlot, type VanRoute, type SegmentFilter,
 } from '@/lib/cabyVanPricing';
 import BottomNav from '@/components/rider/BottomNav';
-import HeroCabyVan from '@/components/van/HeroCabyVan';
 import heroImg from '@/assets/van-hero-alps.jpg';
 import {
   calculateLastMinuteDiscount, applyLastMinutePrice, formatCountdown,
@@ -473,11 +472,191 @@ const CabyVanPage: React.FC = () => {
 
   // ── HERO — EasyJet-inspired Landing ──
   if (step === 'hero') {
+    const heroCities = serviceCities[activeService] || [];
+    const heroCanSubmit = !!from && !!to && from !== to && !!dateAller && (!roundTrip || !!dateRetour);
     return (
       <div className="min-h-screen bg-white">
 
-        {/* ═══ HERO PLEIN ÉCRAN — Composant dédié ═══ */}
-        <HeroCabyVan />
+        {/* ═══ HERO PLEIN ÉCRAN — Moteur EasyJet inline ═══ */}
+        <section
+          className="relative w-full bg-cover bg-center"
+          style={{
+            backgroundImage: `linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0.45) 100%), url(${heroImg})`,
+            minHeight: 760,
+          }}
+        >
+          <div className="mx-auto pt-8" style={{ width: 1200 }}>
+            {/* ====== MOTEUR 1200px ====== */}
+            <div className="bg-white rounded-2xl shadow-2xl px-6 py-5" style={{ width: 1200 }}>
+              {/* Onglets + toggle */}
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-7">
+                  {([
+                    { key: 'trajets', icon: '🚐', label: 'Trajets' },
+                    { key: 'ski', icon: '🎿', label: 'Ski' },
+                    { key: 'crossborder', icon: '🌐', label: 'Cross-Border' },
+                  ] as const).map(t => (
+                    <button
+                      key={t.key}
+                      onClick={() => handleServiceChange(t.key)}
+                      className={`flex items-center gap-2 pb-2 text-[15px] font-medium transition relative ${
+                        activeService === t.key ? '' : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                      style={activeService === t.key ? { color: GOLD } : {}}
+                    >
+                      <span className="text-base">{t.icon}</span>
+                      {t.label}
+                      {activeService === t.key && (
+                        <span className="absolute left-0 right-0 -bottom-0.5 h-[2px] rounded-full" style={{ backgroundColor: GOLD }} />
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex items-center bg-slate-100 rounded-full p-1">
+                  <button
+                    onClick={() => setRoundTrip(false)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition ${!roundTrip ? 'text-white shadow' : 'text-slate-700'}`}
+                    style={!roundTrip ? { backgroundColor: GOLD } : {}}
+                  >
+                    Aller simple
+                  </button>
+                  <button
+                    onClick={() => setRoundTrip(true)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition flex items-center gap-1.5 ${roundTrip ? 'text-white shadow' : 'text-slate-700'}`}
+                    style={roundTrip ? { backgroundColor: GOLD } : {}}
+                  >
+                    Aller-retour
+                    <span className="text-[11px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-semibold">-5%</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Grille 224/228/228/228/208 */}
+              <div
+                className="grid items-stretch border border-slate-200 rounded-xl overflow-hidden"
+                style={{ gridTemplateColumns: '224px 228px 228px 228px 208px' }}
+              >
+                {/* DE */}
+                <div className="px-4 py-3">
+                  <div className="text-[11px] text-slate-500 font-semibold tracking-wider mb-1">DE</div>
+                  <div className="flex items-center gap-2 text-[15px] font-medium text-slate-900">
+                    <span>🇨🇭</span><span>{from || 'Genève'}</span>
+                  </div>
+                </div>
+
+                {/* À */}
+                <div className="px-4 py-3 border-l border-slate-200">
+                  <div className="text-[11px] text-slate-500 font-semibold tracking-wider mb-1">À</div>
+                  <select
+                    value={to}
+                    onChange={(e) => setTo(e.target.value)}
+                    className="w-full bg-transparent text-[15px] font-medium text-slate-900 outline-none cursor-pointer"
+                  >
+                    <option value="">Pays, ville, gare…</option>
+                    {heroCities.filter(c => c !== from).map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* DATES */}
+                <div className="px-4 py-3 border-l border-slate-200">
+                  <div className="text-[11px] text-slate-500 font-semibold tracking-wider mb-1">DATES DE VOYAGE</div>
+                  {!roundTrip ? (
+                    <input
+                      type="date"
+                      value={dateAller}
+                      min={formatDateForInput(new Date())}
+                      onChange={(e) => setDateAller(e.target.value)}
+                      className="w-full bg-transparent text-[15px] font-medium text-slate-900 outline-none"
+                    />
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="date"
+                        value={dateAller}
+                        min={formatDateForInput(new Date())}
+                        onChange={(e) => setDateAller(e.target.value)}
+                        className="flex-1 min-w-0 bg-transparent text-[13px] font-medium text-slate-900 outline-none"
+                      />
+                      <span className="text-slate-400">→</span>
+                      <input
+                        type="date"
+                        value={dateRetour}
+                        min={dateAller || formatDateForInput(new Date())}
+                        onChange={(e) => setDateRetour(e.target.value)}
+                        className="flex-1 min-w-0 bg-transparent text-[13px] font-medium text-slate-900 outline-none"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* QUI */}
+                <div className="px-4 py-3 border-l border-slate-200">
+                  <div className="text-[11px] text-slate-500 font-semibold tracking-wider mb-1">QUI</div>
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => setPassengers(Math.max(1, passengers - 1))}
+                      disabled={passengers <= 1}
+                      className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 disabled:opacity-30 text-slate-600"
+                    >−</button>
+                    <span className="text-[15px] font-medium text-slate-900">
+                      {passengers} {passengers > 1 ? 'adultes' : 'adulte'}
+                    </span>
+                    <button
+                      onClick={() => setPassengers(Math.min(8, passengers + 1))}
+                      disabled={passengers >= 8}
+                      className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 disabled:opacity-30 text-slate-600"
+                    >+</button>
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <button
+                  onClick={handleSearch}
+                  disabled={!heroCanSubmit}
+                  className="text-white font-bold text-[15px] leading-tight transition disabled:bg-slate-300 disabled:cursor-not-allowed"
+                  style={{ width: 208, backgroundColor: heroCanSubmit ? GOLD : undefined }}
+                >
+                  Afficher<br />les trajets
+                </button>
+              </div>
+            </div>
+
+            {/* Tagline */}
+            <div className="text-center text-white pt-24 pb-14">
+              <h1 className="font-serif text-white tracking-tight" style={{ fontSize: 64, lineHeight: 1.1, fontFamily: "'Playfair Display', Georgia, serif" }}>
+                Voyagez malin.<br />Genève ↔ Suisse &amp; Europe.
+              </h1>
+              <p className="mt-6 text-[15px] text-white/90 tracking-wide">
+                Siège partagé · Chauffeur certifié · Dès CHF 9
+              </p>
+            </div>
+
+            {/* Cards promo 440 × 248 */}
+            <div className="flex justify-center gap-6 pb-20">
+              {[
+                { title: 'DES SIÈGES À MOINS DE CHF 19*', desc: "Genève–Annecy, Genève–Lausanne, Genève–Zurich… Et la ligne Genève–Lyon à partir de CHF 42 ! Réservez tôt et économisez jusqu'à 30%.", cta: 'Je réserve mon trajet', onClick: () => handleServiceChange('trajets') },
+                { title: 'ET POURQUOI PAS UNE STATION DE SKI ?', desc: 'Verbier, Zermatt, Chamonix, Davos — votre station favorite en van partagé. Chauffeur certifié, skis pris en charge dès CHF 35.', cta: 'Je réserve mon van ski', onClick: () => handleServiceChange('ski') },
+              ].map((c, i) => (
+                <div key={i} className="bg-white/95 backdrop-blur rounded-2xl shadow-xl flex flex-col justify-between p-6" style={{ width: 440, height: 248 }}>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-[15px] tracking-tight">{c.title}</h3>
+                    <p className="mt-3 text-[13px] text-slate-600 leading-relaxed">{c.desc}</p>
+                  </div>
+                  <button
+                    onClick={c.onClick}
+                    className="self-center text-white font-semibold text-[14px] px-6 py-2.5 rounded-lg transition"
+                    style={{ backgroundColor: GOLD }}
+                  >
+                    {c.cta}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
         {/* ═══ SECTIONS SOUS LE HERO ═══ */}
         <div className="bg-white">
