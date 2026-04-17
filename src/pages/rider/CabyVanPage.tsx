@@ -475,125 +475,261 @@ const CabyVanPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-white">
 
-        {/* ═══ HERO PLEIN ÉCRAN ═══ */}
-        <div className="relative" style={{ minHeight: 620, overflow: 'visible' }}>
-          <img src={heroImg} alt="Lac Léman et Alpes suisses" className="absolute inset-0 w-full h-full object-cover object-center" style={{ minHeight: 620 }} />
-          <div className="absolute inset-0 bg-black/30" />
+        {/* IMAGE FOND PLEIN ÉCRAN */}
+        <div className="relative" style={{ minHeight: 680, overflow: 'visible' }}>
+          <img
+            src={heroImg}
+            alt="Lac Léman et Alpes suisses"
+            className="absolute inset-0 w-full h-full object-cover object-center"
+            style={{ minHeight: 680 }}
+          />
+          <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.30)' }} />
 
-          <div className="relative z-10 flex flex-col items-center" style={{ paddingTop: 30, paddingBottom: 60, paddingLeft: '5%', paddingRight: '5%' }}>
+          {/* CONTENU HERO */}
+          <div className="relative z-10 flex flex-col items-center" style={{ paddingTop: 32, paddingLeft: 20, paddingRight: 20 }}>
 
-            {/* ══ MOTEUR DE RECHERCHE — 1200px pixel-perfect EasyJet ══ */}
-            <div className="bg-white rounded-xl shadow-2xl" style={{ width: '100%', maxWidth: 1200, padding: '20px 22px 28px', margin: '30px 0 20px' }}>
+            {/* ═══ MOTEUR DE RECHERCHE 1200px ═══ */}
+            <div style={{
+              background: '#fff',
+              borderRadius: 12,
+              boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
+              width: '100%',
+              maxWidth: 1200,
+              padding: '20px 22px 28px',
+              margin: '0 0 20px 0',
+            }}>
 
-              {/* Onglets + toggle */}
+              {/* Onglets Trajets / Ski / Cross-Border + Toggle aller/retour */}
               <div style={{ display: 'flex', alignItems: 'center', borderBottom: '2px solid #E0DDD5', marginBottom: 18 }}>
-                {(['trajets', 'ski', 'crossborder'] as const).map(tab => {
-                  const labels = { trajets: { label: 'Trajets', icon: '🚐' }, ski: { label: 'Ski', icon: '🎿' }, crossborder: { label: 'Cross-Border', icon: '🌍' } };
-                  return (
-                    <button key={tab} onClick={() => handleServiceChange(tab)}
-                      style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '9px 16px', marginBottom: -2, borderBottom: `3px solid ${activeService === tab ? GOLD : 'transparent'}`, color: activeService === tab ? '#A07830' : '#888780', background: 'none', border: 'none', borderBottomWidth: 3, borderBottomStyle: 'solid' as const, borderBottomColor: activeService === tab ? GOLD : 'transparent', cursor: 'pointer', fontSize: 13, fontWeight: 500, fontFamily: 'inherit' }}>
-                      <span style={{ fontSize: 14 }}>{labels[tab].icon}</span>{labels[tab].label}
-                    </button>
-                  );
-                })}
-                <div style={{ marginLeft: 'auto', display: 'flex' }}>
-                  <button onClick={() => setRoundTrip(false)} style={{ fontSize: 12, fontWeight: 500, padding: '6px 12px', border: '1px solid #E0DDD5', cursor: 'pointer', borderRadius: '6px 0 0 6px', background: !roundTrip ? GOLD : '#fff', color: !roundTrip ? '#0A0A0A' : '#888780', fontFamily: 'inherit' }}>Aller simple</button>
-                  <button onClick={() => setRoundTrip(true)} style={{ fontSize: 12, fontWeight: 500, padding: '6px 12px', border: '1px solid #E0DDD5', borderLeft: 'none', cursor: 'pointer', borderRadius: '0 6px 6px 0', background: roundTrip ? GOLD : '#fff', color: roundTrip ? '#0A0A0A' : '#888780', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 4 }}>
+                {([
+                  { key: 'trajets' as const, label: 'Trajets', icon: '🚐' },
+                  { key: 'ski' as const, label: 'Ski', icon: '🎿' },
+                  { key: 'crossborder' as const, label: 'Cross-Border', icon: '🌍' },
+                ]).map(tab => (
+                  <button
+                    key={tab.key}
+                    onClick={() => handleServiceChange(tab.key)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 6,
+                      padding: '10px 18px', marginBottom: -2,
+                      background: 'none', border: 'none', cursor: 'pointer',
+                      fontFamily: 'inherit', fontSize: 13, fontWeight: 600,
+                      color: activeService === tab.key ? '#A07830' : '#888780',
+                      borderBottom: `3px solid ${activeService === tab.key ? '#C9A84C' : 'transparent'}`,
+                    }}
+                  >
+                    <span>{tab.icon}</span>{tab.label}
+                  </button>
+                ))}
+
+                {/* Toggle aller simple / aller-retour */}
+                <div style={{ marginLeft: 'auto', display: 'flex', gap: 0 }}>
+                  <button
+                    onClick={() => setRoundTrip(false)}
+                    style={{
+                      fontSize: 12, fontWeight: 600, padding: '6px 14px',
+                      border: '1.5px solid #E0DDD5', borderRadius: '6px 0 0 6px',
+                      cursor: 'pointer', fontFamily: 'inherit',
+                      background: !roundTrip ? '#C9A84C' : '#fff',
+                      color: !roundTrip ? '#0A0A0A' : '#888780',
+                    }}
+                  >Aller simple</button>
+                  <button
+                    onClick={() => setRoundTrip(true)}
+                    style={{
+                      fontSize: 12, fontWeight: 600, padding: '6px 14px',
+                      border: '1.5px solid #E0DDD5', borderLeft: 'none',
+                      borderRadius: '0 6px 6px 0',
+                      cursor: 'pointer', fontFamily: 'inherit',
+                      background: roundTrip ? '#C9A84C' : '#fff',
+                      color: roundTrip ? '#0A0A0A' : '#888780',
+                      display: 'flex', alignItems: 'center', gap: 6,
+                    }}
+                  >
                     Aller-retour
-                    <span style={{ background: '#E8F5E9', color: '#2E7D32', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 100, marginLeft: 3 }}>-5%</span>
+                    <span style={{ background: '#E8F5E9', color: '#2E7D32', fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 100 }}>-5%</span>
                   </button>
                 </div>
               </div>
 
-              {/* Champs — grille pixel-perfect */}
-              <div style={{ display: 'grid', gridTemplateColumns: '224px 228px 228px 228px 208px', gap: 10, alignItems: 'center' }}>
-                {/* De */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
-                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>De</div>
-                  <div style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{from}</div>
+              {/* GRILLE DES CHAMPS — 224 / 228 / 228 / 228 / 208px */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '224px 228px 228px 228px 208px',
+                gap: 10,
+                alignItems: 'center',
+              }}>
+
+                {/* DE */}
+                <div style={{ border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, display: 'flex', flexDirection: 'column', justifyContent: 'center', background: '#fff', cursor: 'default' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#888780', lineHeight: 1, marginBottom: 4 }}>De</div>
+                  <div style={{ fontSize: 14, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{from}</div>
                 </div>
+
                 {/* À */}
-                <div onClick={() => setStep('search')} style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
-                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>À</div>
-                  <div style={{ fontSize: 14, color: to ? '#1A1A1A' : '#B8B5AD', fontWeight: to ? 500 : 400, lineHeight: 1 }}>{to || (activeService === 'ski' ? 'Verbier, Zermatt...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Pays, ville, gare...')}</div>
+                <div
+                  onClick={() => setStep('search')}
+                  style={{ border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, display: 'flex', flexDirection: 'column', justifyContent: 'center', background: '#fff', cursor: 'pointer' }}
+                >
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#888780', lineHeight: 1, marginBottom: 4 }}>À</div>
+                  <div style={{ fontSize: 14, fontWeight: to ? 500 : 400, color: to ? '#1A1A1A' : '#B8B5AD', lineHeight: 1 }}>
+                    {to || (activeService === 'ski' ? 'Verbier, Zermatt...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Pays, ville, gare...')}
+                  </div>
                 </div>
-                {/* Dates */}
-                <div ref={calendarRef} style={{ position: 'relative' as const }}>
-                  <button onClick={() => setCalendarOpen(!calendarOpen)} style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const, width: '100%', textAlign: 'left', fontFamily: 'inherit' }}>
-                    <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>Dates de voyage</div>
-                    <div style={{ fontSize: 14, color: calendarDateLabel ? '#1A1A1A' : '#B8B5AD', fontWeight: calendarDateLabel ? 500 : 400, lineHeight: 1, whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis' }}>{calendarDateLabel || 'Choisir une date'}</div>
+
+                {/* DATES */}
+                <div ref={calendarRef} style={{ position: 'relative' }}>
+                  <button
+                    onClick={() => setCalendarOpen(!calendarOpen)}
+                    style={{ border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, display: 'flex', flexDirection: 'column', justifyContent: 'center', background: '#fff', cursor: 'pointer', width: '100%', textAlign: 'left', fontFamily: 'inherit' }}
+                  >
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#888780', lineHeight: 1, marginBottom: 4 }}>Dates de voyage</div>
+                    <div style={{ fontSize: 14, fontWeight: calendarDateLabel ? 500 : 400, color: calendarDateLabel ? '#1A1A1A' : '#B8B5AD', lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {calendarDateLabel || 'Choisir une date'}
+                    </div>
                   </button>
                   {calendarOpen && (
                     <div style={{ position: 'absolute', top: '100%', left: 0, zIndex: 200, marginTop: 4 }}>
-                      <PriceCalendar basePrice={calendarBasePrice} roundTrip={roundTrip} onToggleRoundTrip={setRoundTrip} selectedDeparture={departureDateObj} selectedReturn={returnDateObj} onSelectDeparture={setDepartureDateObj} onSelectReturn={setReturnDateObj} onApply={() => handleCalendarApply(setCalendarOpen)} onClear={handleCalendarClear} />
+                      <PriceCalendar
+                        basePrice={calendarBasePrice}
+                        roundTrip={roundTrip}
+                        onToggleRoundTrip={setRoundTrip}
+                        selectedDeparture={departureDateObj}
+                        selectedReturn={returnDateObj}
+                        onSelectDeparture={setDepartureDateObj}
+                        onSelectReturn={setReturnDateObj}
+                        onApply={() => handleCalendarApply(setCalendarOpen)}
+                        onClear={handleCalendarClear}
+                      />
                     </div>
                   )}
                 </div>
-                {/* Qui */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
-                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>Qui</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <button onClick={() => setPassengers(Math.max(1, passengers - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>−</button>
-                    <span style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{passengers} adulte{passengers > 1 ? 's' : ''}</span>
-                    <button onClick={() => setPassengers(Math.min(7, passengers + 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>+</button>
+
+                {/* QUI */}
+                <div style={{ border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, display: 'flex', flexDirection: 'column', justifyContent: 'center', background: '#fff' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#888780', lineHeight: 1, marginBottom: 4 }}>Qui</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <button onClick={() => setPassengers(Math.max(1, passengers - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>−</button>
+                    <span style={{ fontSize: 14, fontWeight: 500, color: '#1A1A1A', minWidth: 80, textAlign: 'center' }}>{passengers} adulte{passengers > 1 ? 's' : ''}</span>
+                    <button onClick={() => setPassengers(Math.min(7, passengers + 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>+</button>
                   </div>
                 </div>
-                {/* CTA Bouton */}
+
+                {/* BOUTON CTA — 208×48px */}
                 <button
                   onClick={() => { if (from && to) handleSearch(); else setStep('search'); }}
-                  style={{ width: 208, height: 48, margin: 0, padding: 0, background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, fontFamily: 'inherit', fontSize: 14, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' as const, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' as const, lineHeight: 1.3, transition: 'background 0.15s' }}
+                  style={{
+                    width: 208, height: 48,
+                    background: '#C9A84C', color: '#0A0A0A',
+                    border: 'none', borderRadius: 8,
+                    fontFamily: 'inherit', fontSize: 14, fontWeight: 700,
+                    cursor: 'pointer', lineHeight: 1.3,
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center',
+                    transition: 'background 0.15s',
+                  }}
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#E8C96A'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = GOLD; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#C9A84C'; }}
                 >
-                  Afficher<br/>les trajets
+                  Afficher<br />les trajets
                 </button>
+
               </div>
             </div>
 
-            {/* ══ TAGLINE ══ */}
-            <div style={{ textAlign: 'center', padding: '32px 0 48px', color: '#fff', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 4.5vw, 52px)', fontWeight: 900, lineHeight: 1.05, textShadow: '0 2px 16px rgba(0,0,0,0.5)', margin: 0, letterSpacing: '-0.5px' }}>
+            {/* ═══ TAGLINE ═══ */}
+            <div style={{ textAlign: 'center', padding: '32px 0 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+              <h1 style={{
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontSize: 'clamp(26px, 4vw, 52px)',
+                fontWeight: 900, color: '#fff', lineHeight: 1.05,
+                textShadow: '0 2px 16px rgba(0,0,0,0.5)',
+                margin: 0, letterSpacing: '-0.5px',
+              }}>
                 Voyagez malin.<br />Genève ↔ Suisse &amp; Europe.
               </h1>
-              <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', textShadow: '0 1px 8px rgba(0,0,0,0.4)', margin: 0 }}>
+              <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.85)', textShadow: '0 1px 8px rgba(0,0,0,0.4)', margin: 0 }}>
                 Siège partagé · Chauffeur certifié · Dès CHF 9
               </p>
             </div>
 
-            {/* ══ 2 CARDS PROMO — 440x248px ══ */}
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' as const }}>
-              <div style={{ background: 'rgba(255,255,255,0.96)', borderRadius: 12, width: 440, height: 248, padding: 15, margin: '0 14px 28px 14px', boxSizing: 'border-box' as const, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
+            {/* ═══ 2 CARDS PROMO 440×248px ═══ */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+
+              {/* Card 1 */}
+              <div style={{
+                background: 'rgba(255,255,255,0.97)', borderRadius: 12,
+                width: 440, height: 248, padding: 15,
+                margin: '0 14px 28px 14px', boxSizing: 'border-box',
+                display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+              }}>
                 <div>
-                  <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 10, lineHeight: 1.3, textTransform: 'uppercase' as const, letterSpacing: '-0.2px' }}>Des sièges à moins de CHF 19*</h2>
-                  <p style={{ fontSize: 13, color: '#888780', lineHeight: 1.6, margin: 0 }}>Genève–Annecy, Genève–Lausanne, Genève–Zurich... Et la ligne Genève–Lyon à partir de CHF 42 ! Réservez tôt et économisez jusqu'à 30%.</p>
+                  <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', margin: '0 0 10px 0', lineHeight: 1.3, textTransform: 'uppercase', letterSpacing: '-0.2px' }}>
+                    Des sièges à moins de CHF 19*
+                  </h2>
+                  <p style={{ fontSize: 13, color: '#888780', lineHeight: 1.6, margin: 0 }}>
+                    Genève–Annecy, Genève–Lausanne, Genève–Zurich... Et la ligne Genève–Lyon à partir de CHF 42 ! Réservez tôt et économisez jusqu'à 30%.
+                  </p>
                 </div>
-                <button onClick={() => setStep('search')} style={{ display: 'block', width: 215, height: 48, background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, padding: '11px 16px', boxSizing: 'border-box' as const, fontFamily: 'inherit', fontSize: 13, fontWeight: 700, cursor: 'pointer', textAlign: 'center', margin: '0 auto', transition: 'background 0.15s' }}
+                <button
+                  onClick={() => setStep('search')}
+                  style={{
+                    display: 'block', width: 215, height: 48,
+                    background: '#C9A84C', color: '#0A0A0A',
+                    border: 'none', borderRadius: 8,
+                    fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
+                    cursor: 'pointer', margin: '0 auto',
+                    transition: 'background 0.15s',
+                  }}
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#E8C96A'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = GOLD; }}
-                >Je réserve mon trajet</button>
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#C9A84C'; }}
+                >
+                  Je réserve mon trajet
+                </button>
               </div>
 
-              <div style={{ background: 'rgba(255,255,255,0.96)', borderRadius: 12, width: 440, height: 248, padding: 15, margin: '0 14px 28px 14px', boxSizing: 'border-box' as const, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
+              {/* Card 2 */}
+              <div style={{
+                background: 'rgba(255,255,255,0.97)', borderRadius: 12,
+                width: 440, height: 248, padding: 15,
+                margin: '0 14px 28px 14px', boxSizing: 'border-box',
+                display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+              }}>
                 <div>
-                  <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 10, lineHeight: 1.3, textTransform: 'uppercase' as const, letterSpacing: '-0.2px' }}>Et pourquoi pas une station de ski ?</h2>
-                  <p style={{ fontSize: 13, color: '#888780', lineHeight: 1.6, margin: 0 }}>Verbier, Zermatt, Chamonix, Davos — votre station favorite en van partagé. Chauffeur certifié, skis pris en charge dès CHF 35.</p>
+                  <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', margin: '0 0 10px 0', lineHeight: 1.3, textTransform: 'uppercase', letterSpacing: '-0.2px' }}>
+                    Et pourquoi pas une station de ski ?
+                  </h2>
+                  <p style={{ fontSize: 13, color: '#888780', lineHeight: 1.6, margin: 0 }}>
+                    Verbier, Zermatt, Chamonix, Davos — votre station favorite en van partagé. Chauffeur certifié, skis pris en charge dès CHF 35.
+                  </p>
                 </div>
-                <button onClick={() => { handleServiceChange('ski'); setStep('search'); }} style={{ display: 'block', width: 215, height: 48, background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, padding: '11px 16px', boxSizing: 'border-box' as const, fontFamily: 'inherit', fontSize: 13, fontWeight: 700, cursor: 'pointer', textAlign: 'center', margin: '0 auto', transition: 'background 0.15s' }}
+                <button
+                  onClick={() => { handleServiceChange('ski'); setStep('search'); }}
+                  style={{
+                    display: 'block', width: 215, height: 48,
+                    background: '#C9A84C', color: '#0A0A0A',
+                    border: 'none', borderRadius: 8,
+                    fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
+                    cursor: 'pointer', margin: '0 auto',
+                    transition: 'background 0.15s',
+                  }}
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#E8C96A'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = GOLD; }}
-                >Je réserve mon van ski</button>
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#C9A84C'; }}
+                >
+                  Je réserve mon van ski
+                </button>
               </div>
+
             </div>
-
           </div>
         </div>
 
-        {/* ═══ SECTIONS SOUS LE HERO ═══ */}
+        {/* SECTIONS SOUS LE HERO */}
         <div className="bg-white">
           <DestinationCarousel onSelect={(city) => { setTo(city); setStep('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
 
           <section className="max-w-5xl mx-auto px-4 mt-12">
-            <div className="rounded-2xl p-5 text-center" style={{ backgroundColor: GOLD }}>
+            <div className="rounded-2xl p-5 text-center" style={{ backgroundColor: '#C9A84C' }}>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <Zap className="w-5 h-5 text-white" />
                 <h3 className="text-lg font-black text-white uppercase tracking-wide">Des sièges à moins de CHF 19</h3>
@@ -612,7 +748,7 @@ const CabyVanPage: React.FC = () => {
                       <p className="text-sm font-bold text-gray-900">{deal.from} → {deal.to}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <span className="text-xs text-gray-400 line-through">CHF {deal.basePrice}</span>
-                        <span className="text-lg font-black" style={{ color: GOLD }}>CHF {deal.finalPrice}</span>
+                        <span className="text-lg font-black" style={{ color: '#C9A84C' }}>CHF {deal.finalPrice}</span>
                       </div>
                       <div className="flex items-center justify-between mt-1.5">
                         <p className="text-[10px] text-gray-500">{deal.seatsAvailable} places</p>
@@ -620,7 +756,7 @@ const CabyVanPage: React.FC = () => {
                       </div>
                     </div>
                     <Button onClick={() => { setFrom(deal.from); setTo(deal.to); setStep('search'); }}
-                      className="w-full mt-3 h-8 rounded-lg text-white text-xs font-bold" style={{ backgroundColor: GOLD }}>
+                      className="w-full mt-3 h-8 rounded-lg text-white text-xs font-bold" style={{ backgroundColor: '#C9A84C' }}>
                       Réserver
                     </Button>
                   </motion.div>
@@ -630,6 +766,7 @@ const CabyVanPage: React.FC = () => {
           </section>
 
           <EditorialSections onSelectDestination={(city) => { setTo(city); setStep('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
+
           <div className="h-24" />
         </div>
 
