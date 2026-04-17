@@ -474,181 +474,199 @@ const CabyVanPage: React.FC = () => {
   if (step === 'hero') {
     const heroCities = serviceCities[activeService] || [];
     const heroCanSubmit = !!from && !!to && from !== to && !!dateAller && (!roundTrip || !!dateRetour);
-    return (
-      <div className="min-h-screen bg-white">
+    const heroDateLabel = dateAller
+      ? (roundTrip && dateRetour
+          ? `${formatDateShort(new Date(dateAller))} → ${formatDateShort(new Date(dateRetour))}`
+          : formatDateShort(new Date(dateAller)))
+      : '';
+    const tabs: Array<{ key: 'trajets' | 'ski' | 'crossborder'; label: string; icon: JSX.Element }> = [
+      { key: 'trajets', label: 'Trajets', icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      )},
+      { key: 'ski', label: 'Ski', icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+      )},
+      { key: 'crossborder', label: 'Cross-Border', icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      )},
+    ];
 
-        {/* ═══ HERO PLEIN ÉCRAN — Moteur EasyJet inline ═══ */}
-        <section
-          className="relative w-full bg-cover bg-center"
-          style={{
-            backgroundImage: `linear-gradient(180deg, rgba(15,23,42,0.15) 0%, rgba(15,23,42,0.45) 100%), url(${heroImg})`,
-            minHeight: 760,
-          }}
-        >
-          <div className="mx-auto pt-8" style={{ width: 1200 }}>
-            {/* ====== MOTEUR 1200px ====== */}
-            <div className="bg-white rounded-2xl shadow-2xl px-6 py-5" style={{ width: 1200 }}>
-              {/* Onglets + toggle */}
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-7">
-                  {([
-                    { key: 'trajets', icon: '🚐', label: 'Trajets' },
-                    { key: 'ski', icon: '🎿', label: 'Ski' },
-                    { key: 'crossborder', icon: '🌐', label: 'Cross-Border' },
-                  ] as const).map(t => (
-                    <button
+    return (
+      <div className="min-h-screen" style={{ background: '#FFFFFF', fontFamily: "'DM Sans', sans-serif", color: '#1A1A1A' }}>
+        {/* ═══ HERO ═══ */}
+        <section style={{ position: 'relative', background: '#071020', overflow: 'hidden' }}>
+          <img
+            src={heroImg}
+            alt="Paysage alpin"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', opacity: 0.5 }}
+          />
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '65%', background: 'linear-gradient(to bottom, transparent 0%, rgba(7,16,32,0.72) 55%, rgba(7,16,32,0.88) 100%)', pointerEvents: 'none' }} />
+
+          <div style={{ position: 'relative', zIndex: 10, padding: '40px 5% 60px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {/* SCARD */}
+            <div style={{ background: 'rgba(255,255,255,0.97)', borderRadius: 12, margin: '30px 0 20px', padding: '20px 22px 28px', width: '100%', maxWidth: 1200, boxShadow: '0 8px 40px rgba(0,0,0,0.3)', flexShrink: 0 }}>
+              {/* STABS */}
+              <div style={{ display: 'flex', alignItems: 'center', borderBottom: '2px solid #E0DDD5', marginBottom: 18, flexWrap: 'wrap', gap: 0 }}>
+                {tabs.map(t => {
+                  const active = activeService === t.key;
+                  return (
+                    <div
                       key={t.key}
                       onClick={() => handleServiceChange(t.key)}
-                      className={`flex items-center gap-2 pb-2 text-[15px] font-medium transition relative ${
-                        activeService === t.key ? '' : 'text-slate-600 hover:text-slate-900'
-                      }`}
-                      style={activeService === t.key ? { color: GOLD } : {}}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 5, padding: '9px 16px',
+                        fontSize: 13, fontWeight: 500,
+                        color: active ? '#A07830' : '#888780',
+                        borderBottom: `3px solid ${active ? '#C9A84C' : 'transparent'}`,
+                        marginBottom: -2, cursor: 'pointer', transition: 'all 0.15s', whiteSpace: 'nowrap',
+                      }}
                     >
-                      <span className="text-base">{t.icon}</span>
+                      <span style={{ width: 14, height: 14, flexShrink: 0, display: 'inline-flex' }}>{t.icon}</span>
                       {t.label}
-                      {activeService === t.key && (
-                        <span className="absolute left-0 right-0 -bottom-0.5 h-[2px] rounded-full" style={{ backgroundColor: GOLD }} />
-                      )}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="flex items-center bg-slate-100 rounded-full p-1">
-                  <button
+                    </div>
+                  );
+                })}
+                {/* TRIP TOGGLE */}
+                <div style={{ marginLeft: 'auto', display: 'flex', gap: 0 }}>
+                  <div
                     onClick={() => setRoundTrip(false)}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition ${!roundTrip ? 'text-white shadow' : 'text-slate-700'}`}
-                    style={!roundTrip ? { backgroundColor: GOLD } : {}}
-                  >
-                    Aller simple
-                  </button>
-                  <button
+                    style={{
+                      fontSize: 12, fontWeight: !roundTrip ? 700 : 500, padding: '6px 12px',
+                      border: `1px solid ${!roundTrip ? '#C9A84C' : '#E0DDD5'}`,
+                      borderRadius: '6px 0 0 6px', cursor: 'pointer',
+                      color: !roundTrip ? '#0A0A0A' : '#888780',
+                      background: !roundTrip ? '#C9A84C' : '#FFFFFF',
+                      whiteSpace: 'nowrap', transition: 'all 0.15s',
+                    }}
+                  >Aller simple</div>
+                  <div
                     onClick={() => setRoundTrip(true)}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition flex items-center gap-1.5 ${roundTrip ? 'text-white shadow' : 'text-slate-700'}`}
-                    style={roundTrip ? { backgroundColor: GOLD } : {}}
+                    style={{
+                      fontSize: 12, fontWeight: roundTrip ? 700 : 500, padding: '6px 12px',
+                      border: `1px solid ${roundTrip ? '#C9A84C' : '#E0DDD5'}`,
+                      borderLeft: 'none', borderRadius: '0 6px 6px 0', cursor: 'pointer',
+                      color: roundTrip ? '#0A0A0A' : '#888780',
+                      background: roundTrip ? '#C9A84C' : '#FFFFFF',
+                      whiteSpace: 'nowrap', transition: 'all 0.15s',
+                    }}
                   >
-                    Aller-retour
-                    <span className="text-[11px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-semibold">-5%</span>
-                  </button>
+                    Aller-retour <span style={{ background: '#E8F5E9', color: '#2E7D32', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 100, marginLeft: 3 }}>-5%</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Grille 224/228/228/228/208 */}
-              <div
-                className="grid items-stretch border border-slate-200 rounded-xl overflow-hidden"
-                style={{ gridTemplateColumns: '224px 228px 228px 228px 208px' }}
-              >
+              {/* SROW */}
+              <div style={{ display: 'grid', gridTemplateColumns: '224px 228px 228px 228px 208px', gap: 10, alignItems: 'center' }}>
                 {/* DE */}
-                <div className="px-4 py-3">
-                  <div className="text-[11px] text-slate-500 font-semibold tracking-wider mb-1">DE</div>
-                  <div className="flex items-center gap-2 text-[15px] font-medium text-slate-900">
-                    <span>🇨🇭</span><span>{from || 'Genève'}</span>
-                  </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '16px 14px', height: 48, background: '#FFFFFF', justifyContent: 'center' }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#888780', lineHeight: 1, marginBottom: 3 }}>De</div>
+                  <div style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{from || 'Genève'}</div>
                 </div>
 
                 {/* À */}
-                <div className="px-4 py-3 border-l border-slate-200">
-                  <div className="text-[11px] text-slate-500 font-semibold tracking-wider mb-1">À</div>
+                <label style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '16px 14px', height: 48, background: '#FFFFFF', justifyContent: 'center', cursor: 'pointer', position: 'relative' }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#888780', lineHeight: 1, marginBottom: 3 }}>À</div>
+                  {to ? (
+                    <div style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{to}</div>
+                  ) : (
+                    <div style={{ fontSize: 14, color: '#B8B5AD', lineHeight: 1 }}>Pays, ville, gare…</div>
+                  )}
                   <select
                     value={to}
                     onChange={(e) => setTo(e.target.value)}
-                    className="w-full bg-transparent text-[15px] font-medium text-slate-900 outline-none cursor-pointer"
+                    style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }}
                   >
                     <option value="">Pays, ville, gare…</option>
                     {heroCities.filter(c => c !== from).map(c => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
-                </div>
+                </label>
 
                 {/* DATES */}
-                <div className="px-4 py-3 border-l border-slate-200">
-                  <div className="text-[11px] text-slate-500 font-semibold tracking-wider mb-1">DATES DE VOYAGE</div>
-                  {!roundTrip ? (
-                    <input
-                      type="date"
-                      value={dateAller}
-                      min={formatDateForInput(new Date())}
-                      onChange={(e) => setDateAller(e.target.value)}
-                      className="w-full bg-transparent text-[15px] font-medium text-slate-900 outline-none"
-                    />
+                <label style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '16px 14px', height: 48, background: '#FFFFFF', justifyContent: 'center', cursor: 'pointer', position: 'relative' }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#888780', lineHeight: 1, marginBottom: 3 }}>Dates de voyage</div>
+                  {heroDateLabel ? (
+                    <div style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{heroDateLabel}</div>
                   ) : (
-                    <div className="flex items-center gap-1">
-                      <input
-                        type="date"
-                        value={dateAller}
-                        min={formatDateForInput(new Date())}
-                        onChange={(e) => setDateAller(e.target.value)}
-                        className="flex-1 min-w-0 bg-transparent text-[13px] font-medium text-slate-900 outline-none"
-                      />
-                      <span className="text-slate-400">→</span>
-                      <input
-                        type="date"
-                        value={dateRetour}
-                        min={dateAller || formatDateForInput(new Date())}
-                        onChange={(e) => setDateRetour(e.target.value)}
-                        className="flex-1 min-w-0 bg-transparent text-[13px] font-medium text-slate-900 outline-none"
-                      />
-                    </div>
+                    <div style={{ fontSize: 14, color: '#B8B5AD', lineHeight: 1 }}>Choisir une date</div>
                   )}
-                </div>
+                  <input
+                    type="date"
+                    value={dateAller}
+                    min={formatDateForInput(new Date())}
+                    onChange={(e) => setDateAller(e.target.value)}
+                    style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }}
+                  />
+                </label>
 
                 {/* QUI */}
-                <div className="px-4 py-3 border-l border-slate-200">
-                  <div className="text-[11px] text-slate-500 font-semibold tracking-wider mb-1">QUI</div>
-                  <div className="flex items-center justify-between">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '16px 14px', height: 48, background: '#FFFFFF', justifyContent: 'center' }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#888780', lineHeight: 1, marginBottom: 3 }}>Qui</div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', lineHeight: 1 }}>
                     <button
+                      type="button"
                       onClick={() => setPassengers(Math.max(1, passengers - 1))}
                       disabled={passengers <= 1}
-                      className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 disabled:opacity-30 text-slate-600"
+                      style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', border: 'none', background: 'transparent', cursor: 'pointer', color: '#888780', fontSize: 14, opacity: passengers <= 1 ? 0.3 : 1 }}
                     >−</button>
-                    <span className="text-[15px] font-medium text-slate-900">
+                    <span style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A' }}>
                       {passengers} {passengers > 1 ? 'adultes' : 'adulte'}
                     </span>
                     <button
+                      type="button"
                       onClick={() => setPassengers(Math.min(8, passengers + 1))}
                       disabled={passengers >= 8}
-                      className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 disabled:opacity-30 text-slate-600"
+                      style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', border: 'none', background: 'transparent', cursor: 'pointer', color: '#888780', fontSize: 14, opacity: passengers >= 8 ? 0.3 : 1 }}
                     >+</button>
                   </div>
                 </div>
 
-                {/* CTA */}
+                {/* SBTN */}
                 <button
+                  type="button"
                   onClick={handleSearch}
                   disabled={!heroCanSubmit}
-                  className="text-white font-bold text-[15px] leading-tight transition disabled:bg-slate-300 disabled:cursor-not-allowed"
-                  style={{ width: 208, backgroundColor: heroCanSubmit ? GOLD : undefined }}
+                  style={{
+                    background: heroCanSubmit ? '#C9A84C' : '#D8D5CC',
+                    color: '#0A0A0A', border: 'none', borderRadius: 8,
+                    fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700,
+                    width: 208, minWidth: 208, height: 48, margin: 0, padding: '0 10px',
+                    cursor: heroCanSubmit ? 'pointer' : 'not-allowed', whiteSpace: 'nowrap',
+                    transition: 'background 0.15s', lineHeight: 1, textAlign: 'center',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column',
+                  }}
                 >
                   Afficher<br />les trajets
                 </button>
               </div>
             </div>
 
-            {/* Tagline */}
-            <div className="text-center text-white pt-24 pb-14">
-              <h1 className="font-serif text-white tracking-tight" style={{ fontSize: 64, lineHeight: 1.1, fontFamily: "'Playfair Display', Georgia, serif" }}>
+            {/* HERO TAGLINE */}
+            <div style={{ textAlign: 'center', margin: 0, padding: '32px 0 48px', color: '#FFFFFF', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px,4.5vw,52px)', fontWeight: 900, lineHeight: 1.05, textShadow: '0 2px 16px rgba(0,0,0,0.5)', marginBottom: 10, letterSpacing: '-0.5px' }}>
                 Voyagez malin.<br />Genève ↔ Suisse &amp; Europe.
               </h1>
-              <p className="mt-6 text-[15px] text-white/90 tracking-wide">
+              <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', textShadow: '0 1px 8px rgba(0,0,0,0.4)' }}>
                 Siège partagé · Chauffeur certifié · Dès CHF 9
               </p>
             </div>
 
-            {/* Cards promo 440 × 248 */}
-            <div className="flex justify-center gap-6 pb-20">
+            {/* HERO CARDS */}
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' }}>
               {[
-                { title: 'DES SIÈGES À MOINS DE CHF 19*', desc: "Genève–Annecy, Genève–Lausanne, Genève–Zurich… Et la ligne Genève–Lyon à partir de CHF 42 ! Réservez tôt et économisez jusqu'à 30%.", cta: 'Je réserve mon trajet', onClick: () => handleServiceChange('trajets') },
-                { title: 'ET POURQUOI PAS UNE STATION DE SKI ?', desc: 'Verbier, Zermatt, Chamonix, Davos — votre station favorite en van partagé. Chauffeur certifié, skis pris en charge dès CHF 35.', cta: 'Je réserve mon van ski', onClick: () => handleServiceChange('ski') },
+                { title: 'Des sièges à moins de CHF 19*', desc: "Genève–Annecy, Genève–Lausanne, Genève–Zurich… Et la ligne Genève–Lyon à partir de CHF 42 ! Réservez tôt et économisez jusqu'à 30%.", cta: 'Je réserve mon trajet', onClick: () => handleServiceChange('trajets') },
+                { title: 'Et pourquoi pas une station de ski ?', desc: 'Verbier, Zermatt, Chamonix, Davos — votre station favorite en van partagé. Chauffeur certifié, skis pris en charge dès CHF 35.', cta: 'Je réserve mon van ski', onClick: () => handleServiceChange('ski') },
               ].map((c, i) => (
-                <div key={i} className="bg-white/95 backdrop-blur rounded-2xl shadow-xl flex flex-col justify-between p-6" style={{ width: 440, height: 248 }}>
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-[15px] tracking-tight">{c.title}</h3>
-                    <p className="mt-3 text-[13px] text-slate-600 leading-relaxed">{c.desc}</p>
+                <div key={i} style={{ background: 'rgba(255,255,255,0.96)', borderRadius: 12, width: 440, height: 248, padding: 15, margin: '0 14px 28px 14px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden', alignItems: 'flex-start' }}>
+                  <div style={{ width: '100%' }}>
+                    <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 10, lineHeight: 1.3, textTransform: 'uppercase', letterSpacing: '-0.2px' }}>{c.title}</h2>
+                    <p style={{ fontSize: 13, color: '#888780', lineHeight: 1.6, marginBottom: 18 }}>{c.desc}</p>
                   </div>
                   <button
+                    type="button"
                     onClick={c.onClick}
-                    className="self-center text-white font-semibold text-[14px] px-6 py-2.5 rounded-lg transition"
-                    style={{ backgroundColor: GOLD }}
+                    style={{ display: 'block', width: 215, height: 48, background: '#C9A84C', color: '#0A0A0A', border: 'none', borderRadius: 8, padding: '11px 16px', fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: 'background 0.15s', boxSizing: 'border-box', textAlign: 'center', margin: '0 auto' }}
                   >
                     {c.cta}
                   </button>
