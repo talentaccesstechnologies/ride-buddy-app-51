@@ -475,15 +475,81 @@ const CabyVanPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-white">
 
-        {/* IMAGE FOND PLEIN ÉCRAN */}
-        <div className="relative" style={{ minHeight: 680, overflow: 'visible' }}>
+        {/* ═══ HEADER GOLD STICKY ═══ */}
+        <header
+          style={{
+            background: GOLD,
+            padding: '0 5%',
+            height: 56,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            position: 'sticky',
+            top: 0,
+            zIndex: 200,
+          }}
+        >
+          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 900, color: '#0A0A0A', letterSpacing: '-1px' }}>
+            caby
+          </div>
+          <nav style={{ display: 'flex', gap: 2 }}>
+            {['Informations', 'Destinations', 'Caby Pass', 'Cross-Border', 'Ski'].map(label => (
+              <a
+                key={label}
+                href="#"
+                style={{ fontSize: 13, fontWeight: 500, color: 'rgba(0,0,0,0.75)', padding: '6px 14px', borderRadius: 6, textDecoration: 'none' }}
+                onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.background = 'rgba(0,0,0,0.1)')}
+                onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.background = 'transparent')}
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
+          <button
+            style={{ fontSize: 13, fontWeight: 600, color: '#0A0A0A', background: 'rgba(0,0,0,0.12)', border: 'none', borderRadius: 6, padding: '7px 16px', cursor: 'pointer', fontFamily: 'inherit' }}
+          >
+            Se connecter
+          </button>
+        </header>
+
+        {/* ═══ BANDEAU PROMO CABY PASS ═══ */}
+        <div
+          style={{
+            background: '#fff',
+            borderBottom: '1px solid #E0DDD5',
+            padding: '9px 5%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            fontSize: 13,
+          }}
+        >
+          <strong style={{ color: '#A07830' }}>Caby Pass</strong>
+          <span style={{ color: '#1A1A1A' }}>· −10% sur tous vos trajets dès CHF 29/mois ·</span>
+          <a href="#" style={{ color: '#A07830', fontWeight: 700, textDecoration: 'none' }}>
+            <strong>Inscrivez-vous</strong>
+          </a>
+        </div>
+
+        {/* ═══ HERO PLEIN ÉCRAN (TRAITEMENT SOMBRE EASYJET) ═══ */}
+        <div style={{ position: 'relative', background: '#071020', overflow: 'hidden', minHeight: 680 }}>
           <img
             src={heroImg}
             alt="Lac Léman et Alpes suisses"
-            className="absolute inset-0 w-full h-full object-cover object-center"
-            style={{ minHeight: 680 }}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', opacity: 0.5 }}
           />
-          <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.30)' }} />
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '65%',
+              background: 'linear-gradient(to bottom, transparent 0%, rgba(7,16,32,0.72) 55%, rgba(7,16,32,0.88) 100%)',
+              pointerEvents: 'none',
+            }}
+          />
 
           {/* CONTENU HERO */}
           <div className="relative z-10 flex flex-col items-center" style={{ paddingTop: 32, paddingLeft: 20, paddingRight: 20 }}>
