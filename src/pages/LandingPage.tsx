@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/shared/Logo';
-import riderImage from '@/assets/rider-mode.jpg';
-import driverImage from '@/assets/driver-mode.jpg';
+import riderImage from '@/assets/rider-mode.webp';
+import driverImage from '@/assets/driver-mode.webp';
 
 type Mode = 'rider' | 'driver';
 
