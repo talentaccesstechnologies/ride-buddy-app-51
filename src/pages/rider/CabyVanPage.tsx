@@ -1094,8 +1094,8 @@ const CabyVanPage: React.FC = () => {
         <div className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-6 flex-wrap">
-              <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-emerald-500" /><div><p className="text-sm font-bold text-gray-900">{from} → {to}</p><p className="text-[11px] text-gray-500">{dateAller || "Aujourd'hui"} {effectiveTimeAller ? `· ${effectiveTimeAller}` : ''} · {passengers} adulte{passengers > 1 ? 's' : ''}</p></div></div>
-              {roundTrip && (<div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-blue-500" /><div><p className="text-sm font-bold text-gray-900">{to} → {from}</p><p className="text-[11px] text-gray-500">{dateRetour || "Retour"} {effectiveTimeRetour ? `· ${effectiveTimeRetour}` : ''} · {passengers} adulte{passengers > 1 ? 's' : ''}</p></div></div>)}
+              <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-emerald-500" /><div><p className="text-sm font-bold text-gray-900">{from} → {to}</p><p className="text-[11px] text-gray-500">{dateAller || "Aujourd'hui"} {effectiveTimeAller ? `· ${effectiveTimeAller}` : ''} · {passengers} ad.{children > 0 ? ` · ${children} enf.` : ''}</p></div></div>
+              {roundTrip && (<div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-blue-500" /><div><p className="text-sm font-bold text-gray-900">{to} → {from}</p><p className="text-[11px] text-gray-500">{dateRetour || "Retour"} {effectiveTimeRetour ? `· ${effectiveTimeRetour}` : ''} · {passengers} ad.{children > 0 ? ` · ${children} enf.` : ''}</p></div></div>)}
             </div>
             <button onClick={() => setStep('search')} className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"><Edit2 className="w-3 h-3" /> Modifier le trajet</button>
           </div>
