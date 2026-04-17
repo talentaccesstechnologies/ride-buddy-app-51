@@ -7,8 +7,7 @@ import {
   Info, ChevronDown, ChevronUp, Edit2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import DestinationCarousel from '@/components/van/DestinationCarousel';
-import EditorialSections from '@/components/van/EditorialSections';
+
 import zermattImg from '@/assets/zermatt.jpg';
 import zurichImg from '@/assets/zurich.jpg';
 import verbierImg from '@/assets/verbier.jpg';
@@ -533,7 +532,7 @@ const CabyVanPage: React.FC = () => {
         </div>
 
         {/* ═══ HERO PLEIN ÉCRAN (TRAITEMENT SOMBRE EASYJET) ═══ */}
-        <div style={{ position: 'relative', background: '#071020', overflow: 'hidden', minHeight: 680 }}>
+        <div style={{ position: 'relative', background: '#071020', overflow: 'hidden', minHeight: 620 }}>
           <img
             src={heroImg}
             alt="Lac Léman et Alpes suisses"
@@ -551,287 +550,420 @@ const CabyVanPage: React.FC = () => {
             }}
           />
 
-          {/* CONTENU HERO */}
-          <div className="relative z-10 flex flex-col items-center" style={{ paddingTop: 32, paddingLeft: 20, paddingRight: 20 }}>
+          <div className="relative z-10 flex flex-col items-center" style={{ paddingTop: 40, paddingBottom: 60, paddingLeft: '5%', paddingRight: '5%' }}>
 
-            {/* ═══ MOTEUR DE RECHERCHE 1200px ═══ */}
-            <div style={{
-              background: '#fff',
-              borderRadius: 12,
-              boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
-              width: '100%',
-              maxWidth: 1200,
-              padding: '20px 22px 28px',
-              margin: '0 0 20px 0',
-            }}>
+            {/* ══ MOTEUR DE RECHERCHE — 1200px pixel-perfect EasyJet ══ */}
+            <div className="bg-white rounded-xl shadow-2xl" style={{ width: '100%', maxWidth: 1200, padding: '20px 22px 28px', margin: '30px 0 20px' }}>
 
-              {/* Onglets Trajets / Ski / Cross-Border + Toggle aller/retour */}
+              {/* Onglets + toggle */}
               <div style={{ display: 'flex', alignItems: 'center', borderBottom: '2px solid #E0DDD5', marginBottom: 18 }}>
-                {([
-                  { key: 'trajets' as const, label: 'Trajets', icon: '🚐' },
-                  { key: 'ski' as const, label: 'Ski', icon: '🎿' },
-                  { key: 'crossborder' as const, label: 'Cross-Border', icon: '🌍' },
-                ]).map(tab => (
-                  <button
-                    key={tab.key}
-                    onClick={() => handleServiceChange(tab.key)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 6,
-                      padding: '10px 18px', marginBottom: -2,
-                      background: 'none', border: 'none', cursor: 'pointer',
-                      fontFamily: 'inherit', fontSize: 13, fontWeight: 600,
-                      color: activeService === tab.key ? '#A07830' : '#888780',
-                      borderBottom: `3px solid ${activeService === tab.key ? '#C9A84C' : 'transparent'}`,
-                    }}
-                  >
-                    <span>{tab.icon}</span>{tab.label}
-                  </button>
-                ))}
-
-                {/* Toggle aller simple / aller-retour */}
-                <div style={{ marginLeft: 'auto', display: 'flex', gap: 0 }}>
-                  <button
-                    onClick={() => setRoundTrip(false)}
-                    style={{
-                      fontSize: 12, fontWeight: 600, padding: '6px 14px',
-                      border: '1.5px solid #E0DDD5', borderRadius: '6px 0 0 6px',
-                      cursor: 'pointer', fontFamily: 'inherit',
-                      background: !roundTrip ? '#C9A84C' : '#fff',
-                      color: !roundTrip ? '#0A0A0A' : '#888780',
-                    }}
-                  >Aller simple</button>
-                  <button
-                    onClick={() => setRoundTrip(true)}
-                    style={{
-                      fontSize: 12, fontWeight: 600, padding: '6px 14px',
-                      border: '1.5px solid #E0DDD5', borderLeft: 'none',
-                      borderRadius: '0 6px 6px 0',
-                      cursor: 'pointer', fontFamily: 'inherit',
-                      background: roundTrip ? '#C9A84C' : '#fff',
-                      color: roundTrip ? '#0A0A0A' : '#888780',
-                      display: 'flex', alignItems: 'center', gap: 6,
-                    }}
-                  >
+                {(['trajets', 'ski', 'crossborder'] as const).map(tab => {
+                  const labels = { trajets: { label: 'Trajets', icon: '🚐' }, ski: { label: 'Ski', icon: '🎿' }, crossborder: { label: 'Cross-Border', icon: '🌍' } };
+                  return (
+                    <button key={tab} onClick={() => handleServiceChange(tab)}
+                      style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '9px 16px', marginBottom: -2, borderBottom: `3px solid ${activeService === tab ? GOLD : 'transparent'}`, color: activeService === tab ? '#A07830' : '#888780', background: 'none', border: 'none', borderBottomWidth: 3, borderBottomStyle: 'solid' as const, borderBottomColor: activeService === tab ? GOLD : 'transparent', cursor: 'pointer', fontSize: 13, fontWeight: 500, fontFamily: 'inherit' }}>
+                      <span style={{ fontSize: 14 }}>{labels[tab].icon}</span>{labels[tab].label}
+                    </button>
+                  );
+                })}
+                <div style={{ marginLeft: 'auto', display: 'flex' }}>
+                  <button onClick={() => setRoundTrip(false)} style={{ fontSize: 12, fontWeight: 500, padding: '6px 12px', border: '1px solid #E0DDD5', cursor: 'pointer', borderRadius: '6px 0 0 6px', background: !roundTrip ? GOLD : '#fff', color: !roundTrip ? '#0A0A0A' : '#888780', fontFamily: 'inherit' }}>Aller simple</button>
+                  <button onClick={() => setRoundTrip(true)} style={{ fontSize: 12, fontWeight: 500, padding: '6px 12px', border: '1px solid #E0DDD5', borderLeft: 'none', cursor: 'pointer', borderRadius: '0 6px 6px 0', background: roundTrip ? GOLD : '#fff', color: roundTrip ? '#0A0A0A' : '#888780', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 4 }}>
                     Aller-retour
-                    <span style={{ background: '#E8F5E9', color: '#2E7D32', fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 100 }}>-5%</span>
+                    <span style={{ background: '#E8F5E9', color: '#2E7D32', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 100, marginLeft: 3 }}>-5%</span>
                   </button>
                 </div>
               </div>
 
-              {/* GRILLE DES CHAMPS — 224 / 228 / 228 / 228 / 208px */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: '224px 228px 228px 228px 208px',
-                gap: 10,
-                alignItems: 'center',
-              }}>
-
-                {/* DE */}
-                <div style={{ border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, display: 'flex', flexDirection: 'column', justifyContent: 'center', background: '#fff', cursor: 'default' }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#888780', lineHeight: 1, marginBottom: 4 }}>De</div>
-                  <div style={{ fontSize: 14, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{from}</div>
+              {/* Champs — grille pixel-perfect */}
+              <div style={{ display: 'grid', gridTemplateColumns: '224px 228px 228px 228px 208px', gap: 10, alignItems: 'center' }}>
+                {/* De */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>De</div>
+                  <div style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{from}</div>
                 </div>
-
                 {/* À */}
-                <div
-                  onClick={() => setStep('search')}
-                  style={{ border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, display: 'flex', flexDirection: 'column', justifyContent: 'center', background: '#fff', cursor: 'pointer' }}
-                >
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#888780', lineHeight: 1, marginBottom: 4 }}>À</div>
-                  <div style={{ fontSize: 14, fontWeight: to ? 500 : 400, color: to ? '#1A1A1A' : '#B8B5AD', lineHeight: 1 }}>
-                    {to || (activeService === 'ski' ? 'Verbier, Zermatt...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Pays, ville, gare...')}
-                  </div>
+                <div onClick={() => setStep('search')} style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>À</div>
+                  <div style={{ fontSize: 14, color: to ? '#1A1A1A' : '#B8B5AD', fontWeight: to ? 500 : 400, lineHeight: 1 }}>{to || (activeService === 'ski' ? 'Verbier, Zermatt...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Pays, ville, gare...')}</div>
                 </div>
-
-                {/* DATES */}
-                <div ref={calendarRef} style={{ position: 'relative' }}>
-                  <button
-                    onClick={() => setCalendarOpen(!calendarOpen)}
-                    style={{ border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, display: 'flex', flexDirection: 'column', justifyContent: 'center', background: '#fff', cursor: 'pointer', width: '100%', textAlign: 'left', fontFamily: 'inherit' }}
-                  >
-                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#888780', lineHeight: 1, marginBottom: 4 }}>Dates de voyage</div>
-                    <div style={{ fontSize: 14, fontWeight: calendarDateLabel ? 500 : 400, color: calendarDateLabel ? '#1A1A1A' : '#B8B5AD', lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {calendarDateLabel || 'Choisir une date'}
-                    </div>
+                {/* Dates */}
+                <div ref={calendarRef} style={{ position: 'relative' as const }}>
+                  <button onClick={() => setCalendarOpen(!calendarOpen)} style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const, width: '100%', textAlign: 'left', fontFamily: 'inherit' }}>
+                    <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>Dates de voyage</div>
+                    <div style={{ fontSize: 14, color: calendarDateLabel ? '#1A1A1A' : '#B8B5AD', fontWeight: calendarDateLabel ? 500 : 400, lineHeight: 1, whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis' }}>{calendarDateLabel || 'Choisir une date'}</div>
                   </button>
                   {calendarOpen && (
                     <div style={{ position: 'absolute', top: '100%', left: 0, zIndex: 200, marginTop: 4 }}>
-                      <PriceCalendar
-                        basePrice={calendarBasePrice}
-                        roundTrip={roundTrip}
-                        onToggleRoundTrip={setRoundTrip}
-                        selectedDeparture={departureDateObj}
-                        selectedReturn={returnDateObj}
-                        onSelectDeparture={setDepartureDateObj}
-                        onSelectReturn={setReturnDateObj}
-                        onApply={() => handleCalendarApply(setCalendarOpen)}
-                        onClear={handleCalendarClear}
-                      />
+                      <PriceCalendar basePrice={calendarBasePrice} roundTrip={roundTrip} onToggleRoundTrip={setRoundTrip} selectedDeparture={departureDateObj} selectedReturn={returnDateObj} onSelectDeparture={setDepartureDateObj} onSelectReturn={setReturnDateObj} onApply={() => handleCalendarApply(setCalendarOpen)} onClear={handleCalendarClear} />
                     </div>
                   )}
                 </div>
-
-                {/* QUI */}
-                <div style={{ border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, display: 'flex', flexDirection: 'column', justifyContent: 'center', background: '#fff' }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: '#888780', lineHeight: 1, marginBottom: 4 }}>Qui</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <button onClick={() => setPassengers(Math.max(1, passengers - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>−</button>
-                    <span style={{ fontSize: 14, fontWeight: 500, color: '#1A1A1A', minWidth: 80, textAlign: 'center' }}>{passengers} adulte{passengers > 1 ? 's' : ''}</span>
-                    <button onClick={() => setPassengers(Math.min(7, passengers + 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>+</button>
+                {/* Qui */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>Qui</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <button onClick={() => setPassengers(Math.max(1, passengers - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>−</button>
+                    <span style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{passengers} adulte{passengers > 1 ? 's' : ''}</span>
+                    <button onClick={() => setPassengers(Math.min(7, passengers + 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>+</button>
                   </div>
                 </div>
-
-                {/* BOUTON CTA — 208×48px */}
+                {/* CTA Bouton */}
                 <button
                   onClick={() => { if (from && to) handleSearch(); else setStep('search'); }}
-                  style={{
-                    width: 208, height: 48,
-                    background: '#C9A84C', color: '#0A0A0A',
-                    border: 'none', borderRadius: 8,
-                    fontFamily: 'inherit', fontSize: 14, fontWeight: 700,
-                    cursor: 'pointer', lineHeight: 1.3,
-                    display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', justifyContent: 'center',
-                    transition: 'background 0.15s',
-                  }}
+                  style={{ width: 208, height: 48, margin: 0, padding: 0, background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, fontFamily: 'inherit', fontSize: 14, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' as const, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' as const, lineHeight: 1.3, transition: 'background 0.15s' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#E8C96A'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#C9A84C'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = GOLD; }}
                 >
-                  Afficher<br />les trajets
+                  Afficher<br/>les trajets
                 </button>
-
               </div>
             </div>
 
-            {/* ═══ TAGLINE ═══ */}
-            <div style={{ textAlign: 'center', padding: '32px 0 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-              <h1 style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontSize: 'clamp(26px, 4vw, 52px)',
-                fontWeight: 900, color: '#fff', lineHeight: 1.05,
-                textShadow: '0 2px 16px rgba(0,0,0,0.5)',
-                margin: 0, letterSpacing: '-0.5px',
-              }}>
+            {/* ══ TAGLINE ══ */}
+            <div style={{ textAlign: 'center', padding: '32px 0 48px', color: '#fff', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 4.5vw, 52px)', fontWeight: 900, lineHeight: 1.05, textShadow: '0 2px 16px rgba(0,0,0,0.5)', margin: 0, letterSpacing: '-0.5px' }}>
                 Voyagez malin.<br />Genève ↔ Suisse &amp; Europe.
               </h1>
-              <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.85)', textShadow: '0 1px 8px rgba(0,0,0,0.4)', margin: 0 }}>
+              <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', textShadow: '0 1px 8px rgba(0,0,0,0.4)', margin: 0 }}>
                 Siège partagé · Chauffeur certifié · Dès CHF 9
               </p>
             </div>
 
-            {/* ═══ 2 CARDS PROMO 440×248px ═══ */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-
-              {/* Card 1 */}
-              <div style={{
-                background: 'rgba(255,255,255,0.97)', borderRadius: 12,
-                width: 440, height: 248, padding: 15,
-                margin: '0 14px 28px 14px', boxSizing: 'border-box',
-                display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-              }}>
+            {/* ══ 2 CARDS PROMO — 440x248px ══ */}
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' as const }}>
+              <div style={{ background: 'rgba(255,255,255,0.96)', borderRadius: 12, width: 440, height: 248, padding: 15, margin: '0 14px 28px 14px', boxSizing: 'border-box' as const, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
                 <div>
-                  <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', margin: '0 0 10px 0', lineHeight: 1.3, textTransform: 'uppercase', letterSpacing: '-0.2px' }}>
-                    Des sièges à moins de CHF 19*
-                  </h2>
-                  <p style={{ fontSize: 13, color: '#888780', lineHeight: 1.6, margin: 0 }}>
-                    Genève–Annecy, Genève–Lausanne, Genève–Zurich... Et la ligne Genève–Lyon à partir de CHF 42 ! Réservez tôt et économisez jusqu'à 30%.
-                  </p>
+                  <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 10, lineHeight: 1.3, textTransform: 'uppercase' as const, letterSpacing: '-0.2px' }}>Des sièges à moins de CHF 19*</h2>
+                  <p style={{ fontSize: 13, color: '#888780', lineHeight: 1.6, margin: 0 }}>Genève–Annecy, Genève–Lausanne, Genève–Zurich... Et la ligne Genève–Lyon à partir de CHF 42 ! Réservez tôt et économisez jusqu'à 30%.</p>
                 </div>
-                <button
-                  onClick={() => setStep('search')}
-                  style={{
-                    display: 'block', width: 215, height: 48,
-                    background: '#C9A84C', color: '#0A0A0A',
-                    border: 'none', borderRadius: 8,
-                    fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
-                    cursor: 'pointer', margin: '0 auto',
-                    transition: 'background 0.15s',
-                  }}
+                <button onClick={() => setStep('search')} style={{ display: 'block', width: 215, height: 48, background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, padding: '11px 16px', boxSizing: 'border-box' as const, fontFamily: 'inherit', fontSize: 13, fontWeight: 700, cursor: 'pointer', textAlign: 'center', margin: '0 auto', transition: 'background 0.15s' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#E8C96A'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#C9A84C'; }}
-                >
-                  Je réserve mon trajet
-                </button>
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = GOLD; }}
+                >Je réserve mon trajet</button>
               </div>
 
-              {/* Card 2 */}
-              <div style={{
-                background: 'rgba(255,255,255,0.97)', borderRadius: 12,
-                width: 440, height: 248, padding: 15,
-                margin: '0 14px 28px 14px', boxSizing: 'border-box',
-                display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-              }}>
+              <div style={{ background: 'rgba(255,255,255,0.96)', borderRadius: 12, width: 440, height: 248, padding: 15, margin: '0 14px 28px 14px', boxSizing: 'border-box' as const, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
                 <div>
-                  <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', margin: '0 0 10px 0', lineHeight: 1.3, textTransform: 'uppercase', letterSpacing: '-0.2px' }}>
-                    Et pourquoi pas une station de ski ?
-                  </h2>
-                  <p style={{ fontSize: 13, color: '#888780', lineHeight: 1.6, margin: 0 }}>
-                    Verbier, Zermatt, Chamonix, Davos — votre station favorite en van partagé. Chauffeur certifié, skis pris en charge dès CHF 35.
-                  </p>
+                  <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 10, lineHeight: 1.3, textTransform: 'uppercase' as const, letterSpacing: '-0.2px' }}>Et pourquoi pas une station de ski ?</h2>
+                  <p style={{ fontSize: 13, color: '#888780', lineHeight: 1.6, margin: 0 }}>Verbier, Zermatt, Chamonix, Davos — votre station favorite en van partagé. Chauffeur certifié, skis pris en charge dès CHF 35.</p>
                 </div>
-                <button
-                  onClick={() => { handleServiceChange('ski'); setStep('search'); }}
-                  style={{
-                    display: 'block', width: 215, height: 48,
-                    background: '#C9A84C', color: '#0A0A0A',
-                    border: 'none', borderRadius: 8,
-                    fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
-                    cursor: 'pointer', margin: '0 auto',
-                    transition: 'background 0.15s',
-                  }}
+                <button onClick={() => { handleServiceChange('ski'); setStep('search'); }} style={{ display: 'block', width: 215, height: 48, background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, padding: '11px 16px', boxSizing: 'border-box' as const, fontFamily: 'inherit', fontSize: 13, fontWeight: 700, cursor: 'pointer', textAlign: 'center', margin: '0 auto', transition: 'background 0.15s' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#E8C96A'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#C9A84C'; }}
-                >
-                  Je réserve mon van ski
-                </button>
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = GOLD; }}
+                >Je réserve mon van ski</button>
               </div>
-
             </div>
+
           </div>
         </div>
 
-        {/* SECTIONS SOUS LE HERO */}
+        {/* ═══ SECTIONS SOUS LE HERO ═══ */}
         <div className="bg-white">
-          <DestinationCarousel onSelect={(city) => { setTo(city); setStep('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
 
-          <section className="max-w-5xl mx-auto px-4 mt-12">
-            <div className="rounded-2xl p-5 text-center" style={{ backgroundColor: '#C9A84C' }}>
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <Zap className="w-5 h-5 text-white" />
-                <h3 className="text-lg font-black text-white uppercase tracking-wide">Des sièges à moins de CHF 19</h3>
+          {/* ═══ DESTINATIONS GRID — 6 colonnes 179.906px (référence HTML) ═══ */}
+          <section style={{ background: '#fff' }}>
+            <div style={{ maxWidth: 1200, margin: '0 auto', padding: '60px 20px' }}>
+              <div style={{ textAlign: 'center', marginBottom: 28 }}>
+                <h2 style={{ fontSize: 'clamp(18px, 3vw, 26px)', fontWeight: 700, color: '#1A1A1A', textTransform: 'uppercase', letterSpacing: '-0.3px', margin: 0 }}>
+                  Nos meilleures destinations au meilleur prix
+                </h2>
+                <p style={{ fontSize: 14, color: '#888780', marginTop: 4 }}>
+                  Réservez tôt et économisez jusqu'à 30%
+                </p>
               </div>
-              <p className="text-white/80 text-sm">Partez cette semaine ! Places limitées.</p>
-            </div>
-            {activeDeals.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
-                {activeDeals.slice(0, 4).map((deal, i) => (
-                  <motion.div key={deal.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-                    className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
-                    <div className="absolute top-3 left-3">
-                      <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-emerald-500 text-white">−{deal.discount}%</span>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 179.906px)', gap: 24, justifyContent: 'center', isolation: 'isolate' }}>
+                {[
+                  { city: 'Annecy',   img: annecyImg,   price: 15, month: 'avr. 2026' },
+                  { city: 'Lausanne', img: lausanneImg, price: 18, month: 'avr. 2026' },
+                  { city: 'Zurich',   img: zurichImg,   price: 54, month: 'avr. 2026' },
+                  { city: 'Verbier',  img: verbierImg,  price: 35, month: 'avr. 2026' },
+                  { city: 'Lyon',     img: lyonImg,     price: 42, month: 'avr. 2026' },
+                  { city: 'Zermatt',  img: zermattImg,  price: 55, month: 'mai 2026' },
+                ].map(d => (
+                  <div
+                    key={d.city}
+                    onClick={() => { setTo(d.city); setStep('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className="group relative overflow-hidden cursor-pointer bg-white transition-all duration-200"
+                    style={{ width: 179.906, minHeight: 303.13, borderRadius: 10, border: '1px solid #E0DDD5' }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
+                      (e.currentTarget as HTMLDivElement).style.borderColor = GOLD;
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
+                      (e.currentTarget as HTMLDivElement).style.borderColor = '#E0DDD5';
+                    }}
+                  >
+                    {/* Image wrap — image zoom + brightness on hover */}
+                    <div style={{ overflow: 'hidden', height: 132, flexShrink: 0 }}>
+                      <img
+                        src={d.img}
+                        alt={d.city}
+                        className="w-full h-full object-cover block transition-all duration-200 group-hover:scale-105 group-hover:brightness-75"
+                      />
                     </div>
-                    <div className="mt-8">
-                      <p className="text-sm font-bold text-gray-900">{deal.from} → {deal.to}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-xs text-gray-400 line-through">CHF {deal.basePrice}</span>
-                        <span className="text-lg font-black" style={{ color: '#C9A84C' }}>CHF {deal.finalPrice}</span>
+
+                    {/* Info block — slides up 48px on hover, warm off-white bg */}
+                    <div
+                      className="flex flex-col justify-between bg-white transition-all duration-200 group-hover:-translate-y-12 group-hover:bg-[#FDFAF4]"
+                      style={{ padding: '12px 14px', height: 171.13, boxSizing: 'border-box' }}
+                    >
+                      <div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A', marginBottom: 3 }}>{d.city}</div>
+                        <div style={{ fontSize: 11, color: '#888780', marginBottom: 8 }}>De Genève</div>
+                        <div
+                          className="transition-colors duration-200 group-hover:bg-[rgba(201,168,76,0.3)]"
+                          style={{ height: 1, background: '#E0DDD5', marginBottom: 8 }}
+                        />
                       </div>
-                      <div className="flex items-center justify-between mt-1.5">
-                        <p className="text-[10px] text-gray-500">{deal.seatsAvailable} places</p>
-                        {deal.countdown && <p className="text-[10px] font-bold text-red-500 animate-pulse">{deal.countdown}</p>}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                        <div style={{ fontSize: 12, color: '#888780', lineHeight: 1.3 }}>
+                          à partir de
+                          <strong style={{ fontSize: 16, fontWeight: 700, color: '#A07830', display: 'block', marginTop: 1 }}>
+                            CHF {d.price}
+                          </strong>
+                        </div>
+                        <div
+                          className="transition-opacity duration-150 group-hover:opacity-0"
+                          style={{ fontSize: 11, color: '#888780' }}
+                        >
+                          {d.month}
+                        </div>
                       </div>
                     </div>
-                    <Button onClick={() => { setFrom(deal.from); setTo(deal.to); setStep('search'); }}
-                      className="w-full mt-3 h-8 rounded-lg text-white text-xs font-bold" style={{ backgroundColor: '#C9A84C' }}>
-                      Réserver
-                    </Button>
-                  </motion.div>
+
+                    {/* Reveal button — slides up from bottom on hover */}
+                    <div
+                      className="absolute left-0 right-0 bottom-0 flex items-center justify-center translate-y-full group-hover:translate-y-0 transition-transform duration-200"
+                      style={{ height: 48, background: '#FDFAF4', padding: '8px 14px', zIndex: 3 }}
+                    >
+                      <button
+                        onClick={e => { e.stopPropagation(); setTo(d.city); setStep('search'); }}
+                        style={{ display: 'block', width: '100%', padding: '10px 0', background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, fontFamily: 'inherit', fontSize: 13, fontWeight: 700, textAlign: 'center', cursor: 'pointer', letterSpacing: '0.3px', transition: 'background 0.15s' }}
+                        onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = '#E8C96A')}
+                        onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = GOLD)}
+                      >
+                        En savoir plus
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
-            )}
+
+              <div style={{ fontSize: 11, color: '#888780', marginTop: 14, textAlign: 'center' }}>
+                * Prix valable pour 1 siège aller simple, toutes taxes incluses, à disponibilité limitée.
+              </div>
+            </div>
           </section>
 
-          <EditorialSections onSelectDestination={(city) => { setTo(city); setStep('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
+          {/* ═══ NOS DESTINATIONS PHARES — 3 cards hover reveal ═══ */}
+          <section style={{ background: '#F2F0E8', padding: '60px 5%' }}>
+            <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+              <div style={{ textAlign: 'center', marginBottom: 28 }}>
+                <h2 style={{ fontSize: 'clamp(18px, 3vw, 26px)', fontWeight: 700, color: '#1A1A1A', textTransform: 'uppercase', letterSpacing: '-0.3px', margin: 0 }}>
+                  Nos destinations phares
+                </h2>
+                <p style={{ fontSize: 14, color: '#888780', marginTop: 4 }}>
+                  Elles n'attendent plus que vous&nbsp;!
+                </p>
+              </div>
+              <div className="caby-pgrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginTop: 28, overflow: 'hidden' }}>
+                {[
+                  {
+                    tag: 'Ski & Montagne',
+                    title: 'Traversez les Alpes en van dès CHF 35',
+                    desc: "Des pistes à perte de vue, l'air pur des sommets. Votre van vous attend au pied des Alpes.",
+                    img: 'https://images.unsplash.com/photo-1491555103944-7c647fd857e6?w=600&q=80&fit=crop',
+                    cta: 'Je réserve mon van',
+                    action: () => { handleServiceChange('ski'); setStep('search'); },
+                  },
+                  {
+                    tag: 'Cross-Border',
+                    title: 'Séjour Annecy — le lac de Haute-Savoie',
+                    desc: 'Ses canaux, son lac turquoise, ses ruelles médiévales. Annecy, à 45 minutes de Genève.',
+                    img: 'https://images.unsplash.com/photo-1533395427226-788cee25cc7b?w=600&q=80&fit=crop',
+                    cta: 'Je réserve mon trajet',
+                    action: () => { setTo('Annecy'); setStep('search'); },
+                  },
+                  {
+                    tag: 'Suisse romande',
+                    title: 'Dès CHF 54 : Zurich, Berne, Bâle',
+                    desc: "Vivante, créative, surprenante. La Suisse comme vous ne l'avez jamais vue.",
+                    img: 'https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=600&q=80&fit=crop',
+                    cta: 'Je réserve mon trajet',
+                    action: () => { setTo('Zurich'); setStep('search'); },
+                  },
+                ].map(p => (
+                  <div
+                    key={p.tag}
+                    className="group relative overflow-hidden cursor-pointer bg-white transition-all duration-200"
+                    style={{ border: '1px solid #E0DDD5', borderRadius: 12, height: 556 }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 24px rgba(0,0,0,0.14)';
+                      (e.currentTarget as HTMLDivElement).style.borderColor = GOLD;
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
+                      (e.currentTarget as HTMLDivElement).style.borderColor = '#E0DDD5';
+                    }}
+                  >
+                    <div style={{ overflow: 'hidden', height: 312, flexShrink: 0 }}>
+                      <img
+                        src={p.img}
+                        alt={p.title}
+                        className="w-full h-full object-cover block transition-all duration-200 group-hover:scale-105 group-hover:brightness-75"
+                      />
+                    </div>
+                    <div
+                      className="flex flex-col bg-white transition-all duration-200 group-hover:-translate-y-[70px] group-hover:bg-[#FDFAF4]"
+                      style={{ padding: 24, height: 244, boxSizing: 'border-box', gap: 10 }}
+                    >
+                      <span style={{ display: 'inline-block', fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#A07830', background: 'rgba(201,168,76,0.12)', padding: '3px 10px', borderRadius: 100, alignSelf: 'flex-start' }}>
+                        {p.tag}
+                      </span>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A', textTransform: 'uppercase', letterSpacing: '-0.2px', lineHeight: 1.3 }}>
+                        {p.title}
+                      </div>
+                      <div style={{ fontSize: 12, fontWeight: 300, color: '#888780', lineHeight: 1.55, fontStyle: 'italic' }}>
+                        {p.desc}
+                      </div>
+                    </div>
+                    <div
+                      className="absolute left-0 right-0 bottom-0 flex items-center justify-center translate-y-full group-hover:translate-y-0 transition-transform duration-200"
+                      style={{ height: 70, background: '#FDFAF4', padding: '11px 0', boxSizing: 'border-box', zIndex: 3 }}
+                    >
+                      <button
+                        onClick={e => { e.stopPropagation(); p.action(); }}
+                        style={{ width: 215, height: 48, background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, fontFamily: 'inherit', fontSize: 13, fontWeight: 700, cursor: 'pointer', letterSpacing: '0.3px', transition: 'background 0.15s', padding: '11px 16px', boxSizing: 'border-box', textAlign: 'center' }}
+                        onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = '#E8C96A')}
+                        onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = GOLD)}
+                      >
+                        {p.cta}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ═══ NOTRE TRAJET COUP DE CŒUR — Lac Léman 2-col card ═══ */}
+          <section style={{ background: '#fff' }}>
+            <div style={{ maxWidth: 1200, margin: '0 auto', padding: '60px 20px' }}>
+              <div style={{ textAlign: 'center', marginBottom: 28 }}>
+                <h2 style={{ fontSize: 'clamp(18px, 3vw, 26px)', fontWeight: 700, color: '#1A1A1A', textTransform: 'uppercase', letterSpacing: '-0.3px', margin: 0 }}>
+                  Notre trajet coup de cœur
+                </h2>
+                <p style={{ fontSize: 14, color: '#888780', marginTop: 4 }}>
+                  Faites vos valises et réservez ce voyage dont vous rêvez tant&nbsp;!
+                </p>
+              </div>
+              <div className="caby-cccard" style={{ border: '1px solid #E0DDD5', borderRadius: 12, overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr 1fr', marginTop: 28 }}>
+                <div style={{ padding: '40px 44px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: GOLD, marginBottom: 12 }}>
+                    Coup de cœur Caby
+                  </div>
+                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 700, color: '#1A1A1A', lineHeight: 1.2, marginBottom: 12 }}>
+                    Le Lac Léman,<br />plein de vie.
+                  </div>
+                  <div style={{ fontSize: 14, color: '#888780', lineHeight: 1.7, marginBottom: 22 }}>
+                    Lausanne, Montreux, Évian — le Lac Léman est simple à vivre, proche, accueillant. Les choses ne sont pas artificielles. On les ressent.
+                  </div>
+                  <button
+                    onClick={() => { setTo('Lausanne'); setStep('search'); }}
+                    style={{ alignSelf: 'flex-start', background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, padding: '12px 24px', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, cursor: 'pointer', transition: 'background 0.15s' }}
+                    onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = '#E8C96A')}
+                    onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = GOLD)}
+                  >
+                    Partez sur le Léman
+                  </button>
+                </div>
+                <img
+                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop"
+                  alt="Lac Léman"
+                  style={{ width: '100%', height: 340, objectFit: 'cover', display: 'block' }}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* ═══ VOUS ÊTES À UN TRAJET DU BONHEUR — image grid + Caby Pass signup ═══ */}
+          <section style={{ background: '#F8F7F2', padding: '60px 5%' }}>
+            <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+              <div style={{ textAlign: 'center', marginBottom: 28 }}>
+                <h2 style={{ fontSize: 'clamp(18px, 3vw, 26px)', fontWeight: 700, color: '#1A1A1A', textTransform: 'uppercase', letterSpacing: '-0.3px', margin: 0 }}>
+                  Vous êtes à un trajet du bonheur...
+                </h2>
+                <p style={{ fontSize: 14, color: '#888780', marginTop: 4 }}>
+                  Découvrez la Suisse et ses voisins autrement
+                </p>
+              </div>
+              <div className="caby-pgridp" style={{ display: 'grid', gridTemplateColumns: '718.35px 394.64px', gap: 18.35, alignItems: 'start', marginTop: 28, justifyContent: 'center' }}>
+                <div style={{ width: 718.35, height: 431, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', columnGap: 18.35, rowGap: 38.55 }}>
+                  <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80&fit=crop" alt="Paris" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
+                  <img src="https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=400&q=80&fit=crop" alt="Lausanne" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
+                  <img src="https://images.unsplash.com/photo-1513581166391-887a96ddeafd?w=400&q=80&fit=crop" alt="Milan" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
+                  <div style={{ width: 350, height: 253.97, borderRadius: 8, overflow: 'hidden', position: 'relative' }}>
+                    <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80&fit=crop" alt="Caby" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(201,168,76,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 900, color: '#0A0A0A', letterSpacing: '-1px' }}>caby</span>
+                    </div>
+                  </div>
+                </div>
+                <div style={{ width: 394.64, height: 546.49, background: '#0A0A0A', borderRadius: 12, padding: '20px 32px', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+                  <div style={{ height: 70, display: 'flex', flexDirection: 'column', justifyContent: 'center', marginBottom: 10 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: GOLD, marginBottom: 6 }}>
+                      Voyageur régulier
+                    </div>
+                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>
+                      Caby Pass : Vivez une expérience VIP
+                    </div>
+                  </div>
+                  <div style={{ height: 286, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', marginBottom: 15 }}>
+                    <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
+                      Voyagez régulièrement sur les lignes Genève–Zurich ou Annecy–Genève&nbsp;? Rentabilisé dès 3 trajets par mois.
+                    </div>
+                    <div>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 40, fontWeight: 700, color: GOLD, lineHeight: 1 }}>
+                        CHF 29
+                      </div>
+                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>
+                        par mois · résiliable à tout moment
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {['−10% sur tous vos trajets', 'Réservation prioritaire', 'Annulation flexible'].map(benefit => (
+                        <div key={benefit} style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ color: GOLD, fontWeight: 700 }}>✓</span> {benefit}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setStep('abonnement')}
+                    style={{ width: 215, height: 48, background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, fontFamily: 'inherit', fontSize: 13, fontWeight: 700, cursor: 'pointer', padding: '11px 16px', boxSizing: 'border-box', textAlign: 'center', transition: 'background 0.15s', letterSpacing: '0.3px' }}
+                    onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = '#E8C96A')}
+                    onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = GOLD)}
+                  >
+                    Je m'abonne
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ═══ RESPONSIVE HELPERS pour les nouvelles sections ═══ */}
+          <style>{`
+            @media (max-width: 900px) {
+              .caby-pgrid { grid-template-columns: 1fr !important; }
+              .caby-cccard { grid-template-columns: 1fr !important; }
+              .caby-pgridp { grid-template-columns: 1fr !important; justify-content: stretch !important; }
+              .caby-pgridp > div:first-child { width: 100% !important; height: auto !important; }
+              .caby-pgridp > div:last-child { width: 100% !important; height: auto !important; }
+            }
+          `}</style>
 
           <div className="h-24" />
         </div>
