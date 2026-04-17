@@ -26,7 +26,7 @@ const demoCourses: RadarCourse[] = [
   {
     id: 'priv-1', type: 'private_client', source: 'qr_code',
     clientDisplayName: 'Sophie Laurent',
-    clientAvatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
+    clientAvatarUrl: undefined as unknown as string,
     clientIsProtected: false, clientRating: 4.9,
     clientNote: 'Client régulier — aéroport',
     pickupAddress: 'Rue du Rhône 48, Genève',
@@ -41,7 +41,7 @@ const demoCourses: RadarCourse[] = [
   {
     id: 'priv-2', type: 'private_client', source: 'qr_code',
     clientDisplayName: 'Marc Dupont',
-    clientAvatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    clientAvatarUrl: undefined as unknown as string,
     clientIsProtected: false, clientRating: 4.7,
     clientNote: 'Toujours ponctuel',
     pickupAddress: 'Place Bel-Air, Genève',
@@ -56,7 +56,7 @@ const demoCourses: RadarCourse[] = [
   {
     id: 'priv-3', type: 'private_client', source: 'phone',
     clientDisplayName: 'Émilie Favre',
-    clientAvatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+    clientAvatarUrl: undefined as unknown as string,
     clientIsProtected: false, clientRating: 5.0,
     clientNote: 'VIP — Hôtel Président Wilson',
     pickupAddress: 'Hôtel Président Wilson, Quai Wilson',
@@ -84,7 +84,7 @@ const demoCourses: RadarCourse[] = [
   {
     id: 'priv-5', type: 'private_client', source: 'qr_code',
     clientDisplayName: 'Nadia Benali',
-    clientAvatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
+    clientAvatarUrl: undefined as unknown as string,
     clientIsProtected: false, clientRating: 4.8,
     clientNote: 'Préfère la musique classique',
     pickupAddress: 'Rue de la Servette 72, Genève',
@@ -114,7 +114,7 @@ const demoCourses: RadarCourse[] = [
   {
     id: 'pool-2', type: 'caby_direct', source: 'caby_app',
     clientDisplayName: 'Laura M.',
-    clientAvatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
+    clientAvatarUrl: undefined as unknown as string,
     clientIsProtected: false, clientRating: 4.3,
     pickupAddress: 'Eaux-Vives, Genève',
     pickupLat: 46.2020, pickupLng: 6.1630,
@@ -141,7 +141,7 @@ const demoCourses: RadarCourse[] = [
   {
     id: 'pool-4', type: 'caby_direct', source: 'caby_app',
     clientDisplayName: 'Isabelle C.',
-    clientAvatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
+    clientAvatarUrl: undefined as unknown as string,
     clientIsProtected: false, clientRating: 4.8,
     pickupAddress: 'Pâquis, Rue de Berne 12',
     pickupLat: 46.2110, pickupLng: 6.1480,

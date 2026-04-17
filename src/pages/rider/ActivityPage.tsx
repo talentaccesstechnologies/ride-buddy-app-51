@@ -26,7 +26,7 @@ const mockRides: MockRide[] = [
     price: 18.50,
     driver: 'Mohamed B.',
     rating: 5,
-    image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&h=250&fit=crop',
+    image: '/placeholder.svg',
   },
   {
     id: '2',
@@ -36,7 +36,7 @@ const mockRides: MockRide[] = [
     price: 35.00,
     driver: 'Pierre C.',
     rating: 4,
-    image: 'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=400&h=250&fit=crop',
+    image: '/placeholder.svg',
   },
   {
     id: '3',
@@ -46,7 +46,7 @@ const mockRides: MockRide[] = [
     price: 0,
     driver: null,
     rating: null,
-    image: 'https://images.unsplash.com/photo-1573108037329-37aa135a142e?w=400&h=250&fit=crop',
+    image: '/placeholder.svg',
   },
 ];
 
