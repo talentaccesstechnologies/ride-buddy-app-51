@@ -1,19 +1,19 @@
 // Centralised local image references — replaces all external (Unsplash) URLs.
 // Avatars are generated as inline SVG data URIs (zero network, zero binary).
 
-import vehicleBerline from '@/assets/vehicle-berline.jpg';
-import vehicleSuv from '@/assets/vehicle-suv.jpg';
-import vehicleVanPremium from '@/assets/vehicle-van-premium.jpg';
-import vehicleVanShared from '@/assets/vehicle-van-shared.jpg';
+import vehicleBerline from '@/assets/vehicle-berline.webp';
+import vehicleSuv from '@/assets/vehicle-suv.webp';
+import vehicleVanPremium from '@/assets/vehicle-van-premium.webp';
+import vehicleVanShared from '@/assets/vehicle-van-shared.webp';
 
-import annecyImg from '@/assets/annecy.jpg';
-import zurichImg from '@/assets/zurich.jpg';
-import lausanneImg from '@/assets/lausanne.jpg';
-import milanImg from '@/assets/milan.jpg';
-import parisImg from '@/assets/paris.jpg';
-import montreuxImg from '@/assets/montreux.jpg';
-import zermattImg from '@/assets/zermatt.jpg';
-import chamonixImg from '@/assets/chamonix.jpg';
+import annecyImg from '@/assets/annecy.webp';
+import zurichImg from '@/assets/zurich.webp';
+import lausanneImg from '@/assets/lausanne.webp';
+import milanImg from '@/assets/milan.webp';
+import parisImg from '@/assets/paris.webp';
+import montreuxImg from '@/assets/montreux.webp';
+import zermattImg from '@/assets/zermatt.webp';
+import chamonixImg from '@/assets/chamonix.webp';
 
 // ─── Vehicle images (used in CabyVanPage seat selection) ───
 export const vehicleImages = {

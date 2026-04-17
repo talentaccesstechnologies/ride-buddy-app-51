@@ -8,16 +8,16 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-import zermattImg from '@/assets/zermatt.jpg';
-import zurichImg from '@/assets/zurich.jpg';
-import verbierImg from '@/assets/verbier.jpg';
-import lausanneImg from '@/assets/lausanne.jpg';
-import annecyImg from '@/assets/annecy.jpg';
-import lyonImg from '@/assets/lyon.jpg';
-import parisImg from '@/assets/paris.jpg';
-import milanImg from '@/assets/milan.jpg';
-import montreuxImg from '@/assets/montreux.jpg';
-import chamonixImg from '@/assets/chamonix.jpg';
+import zermattImg from '@/assets/zermatt.webp';
+import zurichImg from '@/assets/zurich.webp';
+import verbierImg from '@/assets/verbier.webp';
+import lausanneImg from '@/assets/lausanne.webp';
+import annecyImg from '@/assets/annecy.webp';
+import lyonImg from '@/assets/lyon.webp';
+import parisImg from '@/assets/paris.webp';
+import milanImg from '@/assets/milan.webp';
+import montreuxImg from '@/assets/montreux.webp';
+import chamonixImg from '@/assets/chamonix.webp';
 import { vehicleImages } from '@/lib/localImages';
 import {
   cabyVanRoutes, ROUTES, ALL_CITIES, findRoute, getDestinationsFrom, generateSlotsForRoute,
@@ -25,7 +25,7 @@ import {
   type VanSlot, type VanRoute, type SegmentFilter,
 } from '@/lib/cabyVanPricing';
 import BottomNav from '@/components/rider/BottomNav';
-import heroImg from '@/assets/van-hero-alps.jpg';
+import heroImg from '@/assets/van-hero-alps.webp';
 import {
   calculateLastMinuteDiscount, applyLastMinutePrice, formatCountdown,
   generateSimulatedDeals, type LastMinuteDeal,
