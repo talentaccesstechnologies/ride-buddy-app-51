@@ -43,6 +43,7 @@ import PlacesAutocomplete from '@/components/shared/PlacesAutocomplete';
 import CityAutocomplete from '@/components/van/CityAutocomplete';
 import PriceCalendar from '@/components/van/PriceCalendar';
 import WhoPopover from '@/components/van/WhoPopover';
+import CityPickerPopover from '@/components/van/CityPickerPopover';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'extras' | 'passenger' | 'payment' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
@@ -579,10 +580,13 @@ const CabyVanPage: React.FC = () => {
               {/* Champs — grille pixel-perfect */}
               <div style={{ display: 'grid', gridTemplateColumns: '224px 228px 228px 228px 208px', gap: 10, alignItems: 'center' }}>
                 {/* De */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
-                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>De</div>
-                  <div style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{from}</div>
-                </div>
+                <CityPickerPopover
+                  fieldLabel="De"
+                  placeholder="Ville de départ"
+                  value={from}
+                  cities={serviceCities[activeService]}
+                  onSelect={setFrom}
+                />
                 {/* À */}
                 <div onClick={() => setStep('search')} style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
                   <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>À</div>
