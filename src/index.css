@@ -192,6 +192,17 @@
 }
 
 @layer utilities {
+  /* Lisibilité globale (style easyJet) :
+     les utilitaires Tailwind text-gray-300/400/500 sont remappés vers
+     gray-800 pour un contraste suffisant sur fonds clairs.
+     Les écrans dark de Caby utilisent les tokens sémantiques HSL
+     (text-foreground / text-muted-foreground), donc ne sont pas affectés. */
+  .text-gray-300,
+  .text-gray-400,
+  .text-gray-500 {
+    color: rgb(31 41 55) !important; /* gray-800 */
+  }
+
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
