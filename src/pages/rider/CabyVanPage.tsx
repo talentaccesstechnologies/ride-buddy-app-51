@@ -27,7 +27,7 @@ import {
   type VanSlot, type VanRoute, type SegmentFilter,
 } from '@/lib/cabyVanPricing';
 import BottomNav from '@/components/rider/BottomNav';
-import heroImg from '@/assets/van-hero-alps.jpg';
+import heroImg from '@/assets/van-hero-alps.webp';
 import {
   calculateLastMinuteDiscount, applyLastMinutePrice, formatCountdown,
   generateSimulatedDeals, type LastMinuteDeal,
