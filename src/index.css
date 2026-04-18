@@ -192,6 +192,19 @@
 }
 
 @layer utilities {
+  /* Lisibilité globale (mode clair Van/Cross-Border) :
+     les gris trop clairs sont remontés vers gray-700/900 pour atteindre
+     un contraste comparable à easyJet. Ne touche pas aux fonds (bg-*),
+     ni aux bordures, ni au mode sombre Caby (qui utilise les tokens HSL). */
+  .bg-gray-50 .text-gray-300,
+  .bg-gray-50 .text-gray-400,
+  .bg-gray-50 .text-gray-500,
+  .bg-white .text-gray-300,
+  .bg-white .text-gray-400,
+  .bg-white .text-gray-500 {
+    color: rgb(31 41 55) !important; /* gray-800 */
+  }
+
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
