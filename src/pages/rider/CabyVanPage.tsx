@@ -593,7 +593,7 @@ const CabyVanPage: React.FC = () => {
                     <div style={{ fontSize: 14, color: calendarDateLabel ? '#1A1A1A' : '#B8B5AD', fontWeight: calendarDateLabel ? 500 : 400, lineHeight: 1, whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis' }}>{calendarDateLabel || 'Choisir une date'}</div>
                   </button>
                   {calendarOpen && (
-                    <div style={{ position: 'absolute', top: '100%', left: 0, zIndex: 200, marginTop: 4 }}>
+                    <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', zIndex: 200, marginTop: 8, width: 'min(1240px, calc(100vw - 24px))', maxWidth: 'min(1240px, calc(100vw - 24px))' }}>
                       <PriceCalendar basePrice={calendarBasePrice} roundTrip={roundTrip} onToggleRoundTrip={setRoundTrip} selectedDeparture={departureDateObj} selectedReturn={returnDateObj} onSelectDeparture={setDepartureDateObj} onSelectReturn={setReturnDateObj} onApply={() => handleCalendarApply(setCalendarOpen)} onClear={handleCalendarClear} />
                     </div>
                   )}
@@ -1035,7 +1035,7 @@ const CabyVanPage: React.FC = () => {
             <div className="relative">
               <label className="text-xs text-gray-500 mb-1 block font-medium">📅 Date du trajet</label>
               <button onClick={() => setCalendarOpenSearch(!calendarOpenSearch)} className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-left font-medium text-gray-900 hover:bg-gray-100 transition-colors">{calendarDateLabel || 'Choisir une date — voir les prix'}</button>
-              {calendarOpenSearch && (<div ref={calendarSearchRef} className="absolute top-full left-0 mt-2 z-[1000] w-full min-w-[340px] md:min-w-[520px]"><PriceCalendar basePrice={calendarBasePrice} roundTrip={roundTrip} onToggleRoundTrip={setRoundTrip} selectedDeparture={departureDateObj} selectedReturn={returnDateObj} onSelectDeparture={setDepartureDateObj} onSelectReturn={setReturnDateObj} onApply={() => handleCalendarApply(setCalendarOpenSearch)} onClear={handleCalendarClear} /></div>)}
+              {calendarOpenSearch && (<div ref={calendarSearchRef} className="absolute top-full left-1/2 z-[1000] mt-2 -translate-x-1/2" style={{ width: 'min(1240px, calc(100vw - 24px))', maxWidth: 'min(1240px, calc(100vw - 24px))' }}><PriceCalendar basePrice={calendarBasePrice} roundTrip={roundTrip} onToggleRoundTrip={setRoundTrip} selectedDeparture={departureDateObj} selectedReturn={returnDateObj} onSelectDeparture={setDepartureDateObj} onSelectReturn={setReturnDateObj} onApply={() => handleCalendarApply(setCalendarOpenSearch)} onClear={handleCalendarClear} /></div>)}
             </div>
             <div>
               <label className="text-xs text-gray-500 mb-1 block font-medium">🕐 Heure de départ</label>

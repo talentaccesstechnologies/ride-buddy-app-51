@@ -57,10 +57,10 @@ function isBetween(d: Date, start: Date, end: Date) {
   return d.getTime() > start.getTime() && d.getTime() < end.getTime();
 }
 
-const CW = 56;
-const CH = 64;
-const CW_M = 44;
-const CH_M = 54;
+const CW = 76;
+const CH = 88;
+const CW_M = 52;
+const CH_M = 64;
 
 const MonthGrid: React.FC<{
   year: number; month: number; basePrice: number;
@@ -169,13 +169,13 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
 
   return (
     <div
-      className="bg-white rounded-b-xl flex flex-col w-full"
+      className="bg-white rounded-[20px] flex flex-col w-full overflow-hidden"
       style={{
-        boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+        boxShadow: '0 18px 48px rgba(0,0,0,0.16)',
       }}
     >
       {/* Toggle */}
-      <div className="flex items-center gap-2 px-5 pt-4 pb-2">
+      <div className="flex items-center gap-2 px-6 pt-5 pb-3 md:px-8 md:pt-6 md:pb-4">
         <button onClick={() => { onToggleRoundTrip(false); onSelectReturn(null); setSelectingReturn(false); }}
           className="px-3 py-1.5 rounded-full text-xs font-bold transition-all"
           style={{ backgroundColor: !roundTrip ? GOLD : '#f3f4f6', color: !roundTrip ? '#fff' : '#6b7280' }}>
@@ -193,17 +193,17 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
       <div className="relative">
         {/* Nav arrows — absolute positioned */}
         <button onClick={goBack} disabled={isCurrentMonth}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
-          <ChevronLeft className="w-4 h-4" style={{ color: GOLD }} />
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors disabled:opacity-30 disabled:cursor-not-allowed md:left-5 md:w-12 md:h-12">
+          <ChevronLeft className="w-5 h-5" style={{ color: GOLD }} />
         </button>
         <button onClick={goForward}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors">
-          <ChevronRight className="w-4 h-4" style={{ color: GOLD }} />
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-amber-50 hover:border-amber-300 transition-colors md:right-5 md:w-12 md:h-12">
+          <ChevronRight className="w-5 h-5" style={{ color: GOLD }} />
         </button>
 
         {/* Grids with side padding for arrows */}
-        <div className="px-12 pb-3">
-          <div className="hidden md:grid grid-cols-2 gap-x-6">
+        <div className="px-5 pb-4 md:px-16 md:pb-6">
+          <div className="hidden md:grid grid-cols-2 gap-x-10">
             <MonthGrid year={viewYear} month={viewMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
             <MonthGrid year={nextYear} month={nextMonth} basePrice={basePrice} selectedDeparture={selectedDeparture} selectedReturn={selectedReturn} roundTrip={roundTrip} onClickDay={handleDayClick} />
           </div>
@@ -214,7 +214,7 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-3 px-5 py-2 border-t border-gray-100 text-[10px] text-gray-500">
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 px-5 py-3 border-t border-gray-100 text-[11px] text-gray-500 md:text-xs">
         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: '#22c55e' }} /> Meilleur prix</span>
         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: '#6b7280' }} /> Standard</span>
         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: '#f59e0b' }} /> Élevé</span>
@@ -222,9 +222,9 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
       </div>
 
       {/* Footer */}
-      <div className="bg-white border-t border-gray-100 px-5 py-3 rounded-b-xl mt-2">
+      <div className="bg-white border-t border-gray-100 px-5 py-4 rounded-b-[20px] md:px-8 md:py-5">
         {roundTrip && selectedDeparture && selectedReturn && (
-          <div className="mb-2 text-xs text-gray-500 flex items-center gap-2 flex-wrap">
+          <div className="mb-3 text-xs text-gray-500 flex items-center gap-2 flex-wrap md:text-sm">
             <span>Aller : <strong className="text-gray-900">{formatDateLabel(selectedDeparture)}</strong></span>
             <span>·</span>
             <span>Retour : <strong className="text-gray-900">{formatDateLabel(selectedReturn)}</strong></span>
@@ -233,17 +233,17 @@ const PriceCalendar: React.FC<PriceCalendarProps> = ({
           </div>
         )}
         {!roundTrip && selectedDeparture && (
-          <div className="mb-2 text-xs text-gray-500">
+          <div className="mb-3 text-xs text-gray-500 md:text-sm">
             Aller : <strong className="text-gray-900">{formatDateLabel(selectedDeparture)}</strong>
           </div>
         )}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <button onClick={() => { onClear(); setSelectingReturn(false); }}
-            className="text-xs font-medium hover:underline" style={{ color: GOLD }}>
+            className="text-sm font-medium hover:underline" style={{ color: GOLD }}>
             Effacer la sélection
           </button>
           <Button onClick={onApply} disabled={!selectedDeparture || (roundTrip && !selectedReturn)}
-            className="px-5 h-8 rounded-xl text-white text-xs font-bold disabled:opacity-40"
+            className="px-6 h-11 rounded-xl text-white text-sm font-bold disabled:opacity-40"
             style={{ backgroundColor: GOLD }}>
             Appliquer
           </Button>
