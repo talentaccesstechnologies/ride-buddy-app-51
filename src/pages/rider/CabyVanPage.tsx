@@ -42,6 +42,7 @@ import { Plane } from 'lucide-react';
 import PlacesAutocomplete from '@/components/shared/PlacesAutocomplete';
 import CityAutocomplete from '@/components/van/CityAutocomplete';
 import PriceCalendar from '@/components/van/PriceCalendar';
+import WhoPopover from '@/components/van/WhoPopover';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'extras' | 'passenger' | 'payment' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
@@ -225,6 +226,7 @@ const CabyVanPage: React.FC = () => {
   const [timeAller, setTimeAller] = useState('');
   const [passengers, setPassengers] = useState(1);
   const [children, setChildren] = useState(0);
+  const [babies, setBabies] = useState(0);
   const [roundTrip, setRoundTrip] = useState(false);
   const [dateRetour, setDateRetour] = useState('');
   const [calendarOpen, setCalendarOpen] = useState(false);
