@@ -588,10 +588,13 @@ const CabyVanPage: React.FC = () => {
                   onSelect={setFrom}
                 />
                 {/* À */}
-                <div onClick={() => setStep('search')} style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
-                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>À</div>
-                  <div style={{ fontSize: 14, color: to ? '#1A1A1A' : '#B8B5AD', fontWeight: to ? 500 : 400, lineHeight: 1 }}>{to || (activeService === 'ski' ? 'Verbier, Zermatt...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Pays, ville, gare...')}</div>
-                </div>
+                <CityPickerPopover
+                  fieldLabel="À"
+                  placeholder={activeService === 'ski' ? 'Verbier, Zermatt...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Pays, ville, gare...'}
+                  value={to}
+                  cities={serviceCities[activeService].filter(c => c !== from)}
+                  onSelect={setTo}
+                />
                 {/* Dates */}
                 <div ref={calendarRef} style={{ position: 'relative' as const }}>
                   <button onClick={() => setCalendarOpen(!calendarOpen)} style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const, width: '100%', textAlign: 'left', fontFamily: 'inherit' }}>
