@@ -128,14 +128,17 @@ export default function VanSeatPage() {
               </div>
             )}
 
-            {/* Interior image */}
-            <div className="max-w-[380px] mx-auto mb-4">
-              <img
-                src={vanInterior}
-                alt="Vue intérieure Mercedes V-Class"
-                className="w-full rounded-xl object-contain"
-                loading="lazy"
-              />
+            {/* Interior image — orientation verticale (avant en haut, comme easyJet) */}
+            <div className="max-w-[200px] mx-auto mb-4 overflow-hidden rounded-xl">
+              <div className="relative w-full" style={{ paddingBottom: '180%' }}>
+                <img
+                  src={vanInterior}
+                  alt="Vue intérieure Mercedes V-Class (avant en haut)"
+                  className="absolute top-1/2 left-1/2 h-full w-auto max-w-none object-contain"
+                  style={{ transform: 'translate(-50%, -50%) rotate(-90deg)' }}
+                  loading="lazy"
+                />
+              </div>
             </div>
 
             {/* Van seat map */}
