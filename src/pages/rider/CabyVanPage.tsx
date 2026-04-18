@@ -8,24 +8,26 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-import zermattImg from '@/assets/zermatt.webp';
-import zurichImg from '@/assets/zurich.webp';
-import verbierImg from '@/assets/verbier.webp';
-import lausanneImg from '@/assets/lausanne.webp';
-import annecyImg from '@/assets/annecy.webp';
-import lyonImg from '@/assets/lyon.webp';
-import parisImg from '@/assets/paris.webp';
-import milanImg from '@/assets/milan.webp';
-import montreuxImg from '@/assets/montreux.webp';
-import chamonixImg from '@/assets/chamonix.webp';
-import { vehicleImages } from '@/lib/localImages';
+import zermattImg from '@/assets/zermatt.jpg';
+import zurichImg from '@/assets/zurich.jpg';
+import verbierImg from '@/assets/verbier.jpg';
+import lausanneImg from '@/assets/lausanne.jpg';
+import annecyImg from '@/assets/annecy.jpg';
+import lyonImg from '@/assets/lyon.jpg';
+const vehicleImages = {
+  van_shared: 'https://images.unsplash.com/photo-1612838320302-4b3b3b3b3b3b?w=600&q=80&fit=crop&crop=center',
+  berline_standard: 'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=600&q=80',
+  suv_premium: 'https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?w=600&q=80',
+  van_private_standard: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+  van_private_premium: 'https://images.unsplash.com/photo-1609520505218-7421df82e44e?w=600&q=80',
+};
 import {
   cabyVanRoutes, ROUTES, ALL_CITIES, findRoute, getDestinationsFrom, generateSlotsForRoute,
   formatDuration, SEGMENT_META,
   type VanSlot, type VanRoute, type SegmentFilter,
 } from '@/lib/cabyVanPricing';
 import BottomNav from '@/components/rider/BottomNav';
-import heroImg from '@/assets/van-hero-alps.webp';
+import heroImg from '@/assets/van-hero-alps.jpg';
 import {
   calculateLastMinuteDiscount, applyLastMinutePrice, formatCountdown,
   generateSimulatedDeals, type LastMinuteDeal,
@@ -42,8 +44,6 @@ import { Plane } from 'lucide-react';
 import PlacesAutocomplete from '@/components/shared/PlacesAutocomplete';
 import CityAutocomplete from '@/components/van/CityAutocomplete';
 import PriceCalendar from '@/components/van/PriceCalendar';
-import WhoPopover from '@/components/van/WhoPopover';
-import CityPickerPopover from '@/components/van/CityPickerPopover';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'extras' | 'passenger' | 'payment' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
@@ -226,8 +226,6 @@ const CabyVanPage: React.FC = () => {
   const [dateAller, setDateAller] = useState('');
   const [timeAller, setTimeAller] = useState('');
   const [passengers, setPassengers] = useState(1);
-  const [children, setChildren] = useState(0);
-  const [babies, setBabies] = useState(0);
   const [roundTrip, setRoundTrip] = useState(false);
   const [dateRetour, setDateRetour] = useState('');
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -354,7 +352,7 @@ const CabyVanPage: React.FC = () => {
 
   const handleSearch = () => {
     if (from && to && from !== to && selectedRoute) {
-      const params = new URLSearchParams({ from, to, passengers: String(passengers), children: String(children) });
+      const params = new URLSearchParams({ from, to, passengers: String(passengers) });
       if (dateAller) params.set('date', dateAller);
       if (roundTrip && dateRetour) params.set('returnDate', dateRetour);
       navigate(`/caby/van/select?${params.toString()}`);
@@ -580,21 +578,15 @@ const CabyVanPage: React.FC = () => {
               {/* Champs — grille pixel-perfect */}
               <div style={{ display: 'grid', gridTemplateColumns: '224px 228px 228px 228px 208px', gap: 10, alignItems: 'center' }}>
                 {/* De */}
-                <CityPickerPopover
-                  fieldLabel="De"
-                  placeholder="Ville de départ"
-                  value={from}
-                  cities={serviceCities[activeService]}
-                  onSelect={setFrom}
-                />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>De</div>
+                  <div style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{from}</div>
+                </div>
                 {/* À */}
-                <CityPickerPopover
-                  fieldLabel="À"
-                  placeholder={activeService === 'ski' ? 'Verbier, Zermatt...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Pays, ville, gare...'}
-                  value={to}
-                  cities={serviceCities[activeService].filter(c => c !== from)}
-                  onSelect={setTo}
-                />
+                <div onClick={() => setStep('search')} style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>À</div>
+                  <div style={{ fontSize: 14, color: to ? '#1A1A1A' : '#B8B5AD', fontWeight: to ? 500 : 400, lineHeight: 1 }}>{to || (activeService === 'ski' ? 'Verbier, Zermatt...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Pays, ville, gare...')}</div>
+                </div>
                 {/* Dates */}
                 <div ref={calendarRef} style={{ position: 'relative' as const }}>
                   <button onClick={() => setCalendarOpen(!calendarOpen)} style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const, width: '100%', textAlign: 'left', fontFamily: 'inherit' }}>
@@ -602,19 +594,20 @@ const CabyVanPage: React.FC = () => {
                     <div style={{ fontSize: 14, color: calendarDateLabel ? '#1A1A1A' : '#B8B5AD', fontWeight: calendarDateLabel ? 500 : 400, lineHeight: 1, whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis' }}>{calendarDateLabel || 'Choisir une date'}</div>
                   </button>
                   {calendarOpen && (
-                    <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', zIndex: 200, marginTop: 8, width: 'min(1240px, calc(100vw - 24px))', maxWidth: 'min(1240px, calc(100vw - 24px))' }}>
+                    <div style={{ position: 'absolute', top: '100%', left: 0, zIndex: 200, marginTop: 4 }}>
                       <PriceCalendar basePrice={calendarBasePrice} roundTrip={roundTrip} onToggleRoundTrip={setRoundTrip} selectedDeparture={departureDateObj} selectedReturn={returnDateObj} onSelectDeparture={setDepartureDateObj} onSelectReturn={setReturnDateObj} onApply={() => handleCalendarApply(setCalendarOpen)} onClear={handleCalendarClear} />
                     </div>
                   )}
                 </div>
                 {/* Qui */}
-                <WhoPopover
-                  adults={passengers}
-                  children={children}
-                  babies={babies}
-                  onChange={(n) => { setPassengers(n.adults); setChildren(n.children); setBabies(n.babies); }}
-                  maxTotal={7}
-                />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>Qui</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <button onClick={() => setPassengers(Math.max(1, passengers - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>−</button>
+                    <span style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{passengers} adulte{passengers > 1 ? 's' : ''}</span>
+                    <button onClick={() => setPassengers(Math.min(7, passengers + 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>+</button>
+                  </div>
+                </div>
                 {/* CTA Bouton */}
                 <button
                   onClick={() => { if (from && to) handleSearch(); else setStep('search'); }}
@@ -782,7 +775,7 @@ const CabyVanPage: React.FC = () => {
                     tag: 'Ski & Montagne',
                     title: 'Traversez les Alpes en van dès CHF 35',
                     desc: "Des pistes à perte de vue, l'air pur des sommets. Votre van vous attend au pied des Alpes.",
-                    img: chamonixImg,
+                    img: 'https://images.unsplash.com/photo-1491555103944-7c647fd857e6?w=600&q=80&fit=crop',
                     cta: 'Je réserve mon van',
                     action: () => { handleServiceChange('ski'); setStep('search'); },
                   },
@@ -790,7 +783,7 @@ const CabyVanPage: React.FC = () => {
                     tag: 'Cross-Border',
                     title: 'Séjour Annecy — le lac de Haute-Savoie',
                     desc: 'Ses canaux, son lac turquoise, ses ruelles médiévales. Annecy, à 45 minutes de Genève.',
-                    img: annecyImg,
+                    img: 'https://images.unsplash.com/photo-1533395427226-788cee25cc7b?w=600&q=80&fit=crop',
                     cta: 'Je réserve mon trajet',
                     action: () => { setTo('Annecy'); setStep('search'); },
                   },
@@ -798,7 +791,7 @@ const CabyVanPage: React.FC = () => {
                     tag: 'Suisse romande',
                     title: 'Dès CHF 54 : Zurich, Berne, Bâle',
                     desc: "Vivante, créative, surprenante. La Suisse comme vous ne l'avez jamais vue.",
-                    img: zurichImg,
+                    img: 'https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=600&q=80&fit=crop',
                     cta: 'Je réserve mon trajet',
                     action: () => { setTo('Zurich'); setStep('search'); },
                   },
@@ -888,7 +881,7 @@ const CabyVanPage: React.FC = () => {
                   </button>
                 </div>
                 <img
-                  src={montreuxImg}
+                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop"
                   alt="Lac Léman"
                   style={{ width: '100%', height: 340, objectFit: 'cover', display: 'block' }}
                 />
@@ -909,11 +902,11 @@ const CabyVanPage: React.FC = () => {
               </div>
               <div className="caby-pgridp" style={{ display: 'grid', gridTemplateColumns: '718.35px 394.64px', gap: 18.35, alignItems: 'start', marginTop: 28, justifyContent: 'center' }}>
                 <div style={{ width: 718.35, height: 431, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', columnGap: 18.35, rowGap: 38.55 }}>
-                  <img src={parisImg} alt="Paris" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
-                  <img src={lausanneImg} alt="Lausanne" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
-                  <img src={milanImg} alt="Milan" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
+                  <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80&fit=crop" alt="Paris" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
+                  <img src="https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=400&q=80&fit=crop" alt="Lausanne" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
+                  <img src="https://images.unsplash.com/photo-1513581166391-887a96ddeafd?w=400&q=80&fit=crop" alt="Milan" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
                   <div style={{ width: 350, height: 253.97, borderRadius: 8, overflow: 'hidden', position: 'relative' }}>
-                    <img src={zermattImg} alt="Caby" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block' }} />
+                    <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80&fit=crop" alt="Caby" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block' }} />
                     <div style={{ position: 'absolute', inset: 0, background: 'rgba(201,168,76,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 36, fontWeight: 900, color: '#0A0A0A', letterSpacing: '-1px' }}>caby</span>
                     </div>
@@ -1035,7 +1028,7 @@ const CabyVanPage: React.FC = () => {
             <div className="relative">
               <label className="text-xs text-gray-500 mb-1 block font-medium">📅 Date du trajet</label>
               <button onClick={() => setCalendarOpenSearch(!calendarOpenSearch)} className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-left font-medium text-gray-900 hover:bg-gray-100 transition-colors">{calendarDateLabel || 'Choisir une date — voir les prix'}</button>
-              {calendarOpenSearch && (<div ref={calendarSearchRef} className="absolute top-full left-1/2 z-[1000] mt-2 -translate-x-1/2" style={{ width: 'min(1240px, calc(100vw - 24px))', maxWidth: 'min(1240px, calc(100vw - 24px))' }}><PriceCalendar basePrice={calendarBasePrice} roundTrip={roundTrip} onToggleRoundTrip={setRoundTrip} selectedDeparture={departureDateObj} selectedReturn={returnDateObj} onSelectDeparture={setDepartureDateObj} onSelectReturn={setReturnDateObj} onApply={() => handleCalendarApply(setCalendarOpenSearch)} onClear={handleCalendarClear} /></div>)}
+              {calendarOpenSearch && (<div ref={calendarSearchRef} className="absolute top-full left-0 mt-2 z-[1000] w-full min-w-[340px] md:min-w-[520px]"><PriceCalendar basePrice={calendarBasePrice} roundTrip={roundTrip} onToggleRoundTrip={setRoundTrip} selectedDeparture={departureDateObj} selectedReturn={returnDateObj} onSelectDeparture={setDepartureDateObj} onSelectReturn={setReturnDateObj} onApply={() => handleCalendarApply(setCalendarOpenSearch)} onClear={handleCalendarClear} /></div>)}
             </div>
             <div>
               <label className="text-xs text-gray-500 mb-1 block font-medium">🕐 Heure de départ</label>
@@ -1050,22 +1043,13 @@ const CabyVanPage: React.FC = () => {
             {effectiveTimeAller && selectedAllerRush === 'creux' && (<div className="rounded-xl bg-emerald-50 border border-emerald-200 p-2.5 flex items-center gap-2"><span className="text-sm">💰</span><p className="text-[11px] text-emerald-700 font-medium">Créneau creux — prix réduit −5%</p></div>)}
             {roundTrip && timeRetour === 'custom' && (<div><label className="text-xs text-gray-500 mb-1 block font-medium">Heure personnalisée retour</label><input type="time" value={customTimeRetour} onChange={(e) => setCustomTimeRetour(e.target.value)} className="w-full h-12 rounded-xl bg-gray-50 border border-gray-200 px-4 text-sm text-gray-900" /></div>)}
             {roundTrip && effectiveTimeRetour && selectedRoute && (<div className="rounded-xl bg-blue-50 border border-blue-200 p-3 flex items-center gap-2"><Timer className="w-4 h-4 text-blue-500 flex-shrink-0" /><div className="flex-1"><p className="text-sm text-gray-900 font-medium">Retour arrivée : <span className="font-bold">{estimatedArrivalRetour}</span></p><p className="text-[10px] text-gray-500">Retour le même soir · -5% aller-retour</p></div>{selectedRetourRush && RUSH_BADGE[selectedRetourRush] && (<span className={`text-[9px] font-bold px-2 py-1 rounded-full border ${RUSH_BADGE[selectedRetourRush].color}`}>{RUSH_BADGE[selectedRetourRush].label}</span>)}</div>)}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-gray-500 mb-1 block font-medium">👤 Adultes</label>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => setPassengers(Math.max(1, passengers - 1))} className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-base font-bold text-gray-600">−</button>
-                  <span className="text-base font-bold text-gray-900 flex-1 text-center">{passengers}</span>
-                  <button onClick={() => setPassengers(Math.min(7, passengers + 1))} className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-base font-bold text-gray-600">+</button>
-                </div>
-              </div>
-              <div>
-                <label className="text-xs text-gray-500 mb-1 block font-medium">🧒 Enfants <span className="text-gray-400 font-normal">(2-12 ans)</span></label>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => setChildren(Math.max(0, children - 1))} className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-base font-bold text-gray-600">−</button>
-                  <span className="text-base font-bold text-gray-900 flex-1 text-center">{children}</span>
-                  <button onClick={() => setChildren(Math.min(6, children + 1))} className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-base font-bold text-gray-600">+</button>
-                </div>
+            <div>
+              <label className="text-xs text-gray-500 mb-1 block font-medium">Passagers</label>
+              <div className="flex items-center gap-3">
+                <button onClick={() => setPassengers(Math.max(1, passengers - 1))} className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600">−</button>
+                <span className="text-lg font-bold text-gray-900 w-8 text-center">{passengers}</span>
+                <button onClick={() => setPassengers(Math.min(7, passengers + 1))} className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-lg font-bold text-gray-600">+</button>
+                <Users className="w-4 h-4 text-gray-400 ml-1" />
               </div>
             </div>
             <Button onClick={handleSearch} disabled={!selectedRoute} className="w-full mt-4 text-white font-bold rounded-xl h-12 disabled:opacity-40 shadow-lg" style={{ backgroundColor: GOLD }}>
@@ -1094,8 +1078,8 @@ const CabyVanPage: React.FC = () => {
         <div className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-6 flex-wrap">
-              <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-emerald-500" /><div><p className="text-sm font-bold text-gray-900">{from} → {to}</p><p className="text-[11px] text-gray-500">{dateAller || "Aujourd'hui"} {effectiveTimeAller ? `· ${effectiveTimeAller}` : ''} · {passengers} ad.{children > 0 ? ` · ${children} enf.` : ''}</p></div></div>
-              {roundTrip && (<div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-blue-500" /><div><p className="text-sm font-bold text-gray-900">{to} → {from}</p><p className="text-[11px] text-gray-500">{dateRetour || "Retour"} {effectiveTimeRetour ? `· ${effectiveTimeRetour}` : ''} · {passengers} ad.{children > 0 ? ` · ${children} enf.` : ''}</p></div></div>)}
+              <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-emerald-500" /><div><p className="text-sm font-bold text-gray-900">{from} → {to}</p><p className="text-[11px] text-gray-500">{dateAller || "Aujourd'hui"} {effectiveTimeAller ? `· ${effectiveTimeAller}` : ''} · {passengers} adulte{passengers > 1 ? 's' : ''}</p></div></div>
+              {roundTrip && (<div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-blue-500" /><div><p className="text-sm font-bold text-gray-900">{to} → {from}</p><p className="text-[11px] text-gray-500">{dateRetour || "Retour"} {effectiveTimeRetour ? `· ${effectiveTimeRetour}` : ''} · {passengers} adulte{passengers > 1 ? 's' : ''}</p></div></div>)}
             </div>
             <button onClick={() => setStep('search')} className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50"><Edit2 className="w-3 h-3" /> Modifier le trajet</button>
           </div>
@@ -1181,29 +1165,333 @@ const CabyVanPage: React.FC = () => {
   // ── STEP 3: SEAT ──
   if (step === 'seat' && selectedSlot && selectedRoute) {
     const currentStep = 3;
+
+    // Prix supplémentaire par rang (cohérent avec l'UX "Rang 1/2/3")
+    const getRowSurcharge = (seat: number): number => {
+      if (seat === 1 || seat === 2) return 8;  // Rang 1 - Avant (à côté du chauffeur)
+      if (seat === 3 || seat === 4 || seat === 5) return 5;  // Rang 2 - Intermédiaire
+      return 0;  // Rang 3 - Arrière (gratuit)
+    };
+    const seatSurcharge = selectedSeat ? getRowSurcharge(selectedSeat) : 0;
+    const seatRowLabel = !selectedSeat ? '' : (selectedSeat <= 2 ? 'Rang 1 · Avant' : selectedSeat <= 5 ? 'Rang 2 · Intermédiaire' : 'Rang 3 · Arrière');
+    const cartTotal = slotPrice + seatSurcharge;
+
+    const handleSkipSeats = () => {
+      // Attribue aléatoirement un siège gratuit (Rang 3) parmi les disponibles
+      const freeSeats = [6, 7].filter(s => !takenSeats.includes(s));
+      const anyFreeSeats = [3, 4, 5, 6, 7].filter(s => !takenSeats.includes(s));
+      const pool = freeSeats.length > 0 ? freeSeats : anyFreeSeats;
+      const pick = pool.length > 0 ? pool[Math.floor(Math.random() * pool.length)] : 1;
+      setSelectedSeat(pick);
+      setStep('extras');
+    };
+
+    // Helper pour rendre un siège schématique avec couleur par rang
+    const renderSchemSeat = (seat: number) => {
+      const taken = takenSeats.includes(seat);
+      const selected = selectedSeat === seat;
+      const surcharge = getRowSurcharge(seat);
+      let bgColor = '#F5F5F0';     // Rang 3 (gratuit)
+      let borderColor = '#E0DDD5';
+      let textColor = '#6B7280';
+      if (surcharge === 5) { bgColor = '#DCFCE7'; borderColor = '#86EFAC'; textColor = '#166534'; }  // vert menthe Rang 2
+      if (surcharge === 8) { bgColor = '#FEF3C7'; borderColor = '#FDE68A'; textColor = '#92400E'; }  // jaune doux Rang 1
+      if (taken) { bgColor = '#E5E7EB'; borderColor = '#D1D5DB'; textColor = '#9CA3AF'; }
+      if (selected) { bgColor = GOLD; borderColor = '#A07830'; textColor = '#0A0A0A'; }
+
+      return (
+        <button
+          key={seat}
+          disabled={taken}
+          onClick={() => setSelectedSeat(seat)}
+          style={{
+            width: 72,
+            height: 72,
+            borderRadius: 10,
+            background: bgColor,
+            border: `2px solid ${borderColor}`,
+            color: textColor,
+            fontFamily: 'inherit',
+            cursor: taken ? 'not-allowed' : 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 2,
+            transition: 'all 0.15s',
+            boxShadow: selected ? '0 4px 12px rgba(201,168,76,0.4)' : 'none',
+            transform: selected ? 'scale(1.05)' : 'scale(1)',
+          }}
+          aria-label={`Siège ${seat}${taken ? ' occupé' : surcharge ? ` +CHF ${surcharge}` : ' gratuit'}`}
+        >
+          {taken ? (
+            <X style={{ width: 16, height: 16 }} />
+          ) : (
+            <>
+              <span style={{ fontSize: 18, fontWeight: 700, lineHeight: 1 }}>{seat}</span>
+              <span style={{ fontSize: 10, fontWeight: 500, lineHeight: 1 }}>
+                {surcharge > 0 ? `+CHF ${surcharge}` : 'Gratuit'}
+              </span>
+            </>
+          )}
+        </button>
+      );
+    };
+
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="bg-white border-b border-gray-200 px-4 py-3"><div className="max-w-6xl mx-auto flex items-center justify-between">{STEPPER_STEPS.map((s, i) => (<React.Fragment key={s.num}><div className="flex items-center gap-1.5"><div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${s.num < currentStep ? 'bg-emerald-500 text-white' : s.num === currentStep ? 'text-white' : 'bg-gray-200 text-gray-500'}`} style={s.num === currentStep ? { backgroundColor: GOLD } : {}}>{s.num < currentStep ? <Check className="w-3.5 h-3.5" /> : s.num}</div><span className={`text-xs font-medium hidden md:inline ${s.num === currentStep ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</span></div>{i < STEPPER_STEPS.length - 1 && <div className={`flex-1 h-0.5 mx-2 ${s.num < currentStep ? 'bg-emerald-500' : 'bg-gray-200'}`} />}</React.Fragment>))}</div></div>
-        <div className="max-w-3xl mx-auto px-5 py-8">
-          <button onClick={() => setStep('results')} className="flex items-center gap-1 text-gray-500 mb-6"><ArrowLeft className="w-4 h-4" /> Retour aux véhicules</button>
-          <div className="rounded-2xl bg-white border border-gray-200 p-4 mb-6 shadow-sm"><div className="flex items-center justify-between"><div><p className="font-bold text-gray-900">{from} → {to}</p><p className="text-xs text-gray-500">{selectedSlot.departure} → {selectedSlot.arrivalEstimate} · {dateAller || "Aujourd'hui"}</p></div><p className="text-xl font-black" style={{ color: GOLD }}>CHF {slotPrice}</p></div></div>
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Choisissez votre siège</h2>
-          <p className="text-sm text-gray-500 mb-4">Un siège choisi = un engagement. Sélectionnez votre place préférée dans le VAN.</p>
-          <div className="rounded-2xl bg-white border border-gray-200 p-6 mb-6 shadow-sm">
-            <div className="relative mx-auto" style={{ width: 200 }}>
-              <div className="border-2 border-gray-200 rounded-3xl p-4 pt-10 pb-6 bg-gray-50">
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] text-gray-400 font-bold">AVANT ▲</div>
-                <div className="flex justify-start mb-4"><div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-xs text-gray-400 border border-gray-200">🚐</div></div>
-                <div className="flex justify-center gap-3 mb-3">{[1, 2].map(s => <SeatButton key={s} seat={s} taken={takenSeats.includes(s)} selected={selectedSeat === s} onSelect={setSelectedSeat} />)}</div>
-                <div className="flex justify-center gap-3 mb-3">{[3, 4, 5].map(s => <SeatButton key={s} seat={s} taken={takenSeats.includes(s)} selected={selectedSeat === s} onSelect={setSelectedSeat} />)}</div>
-                <div className="flex justify-center gap-3">{[6, 7].map(s => <SeatButton key={s} seat={s} taken={takenSeats.includes(s)} selected={selectedSeat === s} onSelect={setSelectedSeat} />)}</div>
+      <div className="min-h-screen" style={{ background: '#F8F7F2' }}>
+        {/* ═══ STEPPER ═══ (conservé identique aux autres steps) */}
+        <div className="bg-white border-b border-gray-200 px-4 py-3">
+          <div className="max-w-6xl mx-auto flex items-center justify-between">
+            {STEPPER_STEPS.map((s, i) => (
+              <React.Fragment key={s.num}>
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${s.num < currentStep ? 'bg-emerald-500 text-white' : s.num === currentStep ? 'text-white' : 'bg-gray-200 text-gray-500'}`} style={s.num === currentStep ? { backgroundColor: GOLD } : {}}>
+                    {s.num < currentStep ? <Check className="w-3.5 h-3.5" /> : s.num}
+                  </div>
+                  <span className={`text-xs font-medium hidden md:inline ${s.num === currentStep ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</span>
+                </div>
+                {i < STEPPER_STEPS.length - 1 && <div className={`flex-1 h-0.5 mx-2 ${s.num < currentStep ? 'bg-emerald-500' : 'bg-gray-200'}`} />}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+
+        {/* ═══ HEADER LIGNE (titre + retour + passer sièges) ═══ */}
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 20px 0' }}>
+          <button onClick={() => setStep('results')} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#6B7280', fontSize: 13, fontFamily: 'inherit', cursor: 'pointer', padding: 0, marginBottom: 16 }}>
+            <ArrowLeft style={{ width: 16, height: 16 }} /> Retour
+          </button>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 4 }}>
+            <div>
+              <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1A1A1A', margin: 0 }}>Où souhaitez-vous être assis ?</h2>
+              <p style={{ fontSize: 13, color: '#6B7280', marginTop: 4 }}>
+                {from} → {to}, {dateAller || "aujourd'hui"}
+              </p>
+            </div>
+            <button
+              onClick={handleSkipSeats}
+              style={{ background: 'none', border: 'none', color: GOLD, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', cursor: 'pointer', padding: 0, textDecoration: 'underline', textUnderlineOffset: 3 }}
+              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.color = '#A07830')}
+              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.color = GOLD)}
+            >
+              Passer les sièges →
+            </button>
+          </div>
+        </div>
+
+        {/* ═══ LAYOUT 2 COLONNES (plan à gauche, panier sticky à droite) ═══ */}
+        <div className="caby-seat-grid" style={{ maxWidth: 1200, margin: '0 auto', padding: '16px 20px 40px', display: 'grid', gridTemplateColumns: '1fr 360px', gap: 32, alignItems: 'start' }}>
+
+          {/* ─── COLONNE GAUCHE : PLAN DU VAN + ZONES TARIFAIRES ─── */}
+          <div>
+            <p style={{ fontSize: 13, color: '#4B5563', margin: '0 0 20px 0', lineHeight: 1.5 }}>
+              Chaque zone offre un niveau de confort différent. Choisissez la place qui vous convient.
+            </p>
+
+            {/* ── RANG 1 : AVANT (+CHF 8) ── */}
+            <div style={{ background: '#fff', border: '1px solid #FDE68A', borderRadius: 16, padding: 20, marginBottom: 16, boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', color: '#92400E', marginBottom: 4 }}>
+                    Rang 1 · Avant
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>
+                    Place à côté du chauffeur
+                  </div>
+                </div>
+                <div style={{ fontSize: 16, fontWeight: 900, color: '#92400E', whiteSpace: 'nowrap' }}>
+                  +CHF 8
+                </div>
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px 0', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {['Meilleure visibilité sur la route', 'Espace pour les jambes maximal', 'Premier à descendre à l\'arrivée'].map(bullet => (
+                  <li key={bullet} style={{ fontSize: 12, color: '#4B5563', display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                    <Check style={{ width: 14, height: 14, color: '#16A34A', flexShrink: 0, marginTop: 2 }} />
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+              {/* Plan schématique Rang 1 : chauffeur + 2 sièges */}
+              <div style={{ background: '#0F172A', borderRadius: 10, padding: '14px 20px', display: 'flex', justifyContent: 'center', gap: 14, alignItems: 'center' }}>
+                <div style={{ width: 72, height: 72, borderRadius: 10, background: '#1E293B', border: '2px dashed #475569', color: '#94A3B8', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 600, gap: 2 }}>
+                  <span style={{ fontSize: 18 }}>🧑‍✈️</span>
+                  <span>Chauffeur</span>
+                </div>
+                {renderSchemSeat(1)}
+                {renderSchemSeat(2)}
               </div>
             </div>
-            <div className="flex items-center justify-center gap-4 mt-4 text-[10px] text-gray-500"><span className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-gray-200" /> Occupé</span><span className="flex items-center gap-1"><div className="w-3 h-3 rounded" style={{ backgroundColor: GOLD }} /> Disponible</span><span className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-emerald-500" /> Votre siège</span></div>
+
+            {/* ── RANG 2 : INTERMÉDIAIRE (+CHF 5) ── */}
+            <div style={{ background: '#fff', border: '1px solid #86EFAC', borderRadius: 16, padding: 20, marginBottom: 16, boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', color: '#166534', marginBottom: 4 }}>
+                    Rang 2 · Intermédiaire
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>
+                    Confort équilibré
+                  </div>
+                </div>
+                <div style={{ fontSize: 16, fontWeight: 900, color: '#166534', whiteSpace: 'nowrap' }}>
+                  +CHF 5
+                </div>
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px 0', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {['Choix entre fenêtre ou couloir', 'Accès rapide à l\'entrée du van', 'Idéal pour voyager à plusieurs'].map(bullet => (
+                  <li key={bullet} style={{ fontSize: 12, color: '#4B5563', display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                    <Check style={{ width: 14, height: 14, color: '#16A34A', flexShrink: 0, marginTop: 2 }} />
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+              {/* Plan schématique Rang 2 : 3 sièges */}
+              <div style={{ background: '#0F172A', borderRadius: 10, padding: '14px 20px', display: 'flex', justifyContent: 'center', gap: 14 }}>
+                {renderSchemSeat(3)}
+                {renderSchemSeat(4)}
+                {renderSchemSeat(5)}
+              </div>
+            </div>
+
+            {/* ── RANG 3 : ARRIÈRE (GRATUIT) ── */}
+            <div style={{ background: '#fff', border: '1px solid #E0DDD5', borderRadius: 16, padding: 20, marginBottom: 16, boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', color: '#6B7280', marginBottom: 4 }}>
+                    Rang 3 · Arrière
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>
+                    Inclus dans votre tarif
+                  </div>
+                </div>
+                <div style={{ fontSize: 16, fontWeight: 900, color: '#4B5563', whiteSpace: 'nowrap' }}>
+                  Gratuit
+                </div>
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px 0', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {['Place avec fenêtre garantie', 'Intimité maximale à l\'arrière', 'Même niveau de sécurité & confort'].map(bullet => (
+                  <li key={bullet} style={{ fontSize: 12, color: '#4B5563', display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                    <Check style={{ width: 14, height: 14, color: '#16A34A', flexShrink: 0, marginTop: 2 }} />
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+              {/* Plan schématique Rang 3 : 2 sièges */}
+              <div style={{ background: '#0F172A', borderRadius: 10, padding: '14px 20px', display: 'flex', justifyContent: 'center', gap: 14 }}>
+                {renderSchemSeat(6)}
+                {renderSchemSeat(7)}
+              </div>
+            </div>
+
+            {/* Légende */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', padding: '16px 0 0', fontSize: 11, color: '#6B7280' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ display: 'inline-block', width: 14, height: 14, borderRadius: 4, background: '#FEF3C7', border: '1px solid #FDE68A' }} />
+                Avant (+CHF 8)
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ display: 'inline-block', width: 14, height: 14, borderRadius: 4, background: '#DCFCE7', border: '1px solid #86EFAC' }} />
+                Intermédiaire (+CHF 5)
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ display: 'inline-block', width: 14, height: 14, borderRadius: 4, background: '#F5F5F0', border: '1px solid #E0DDD5' }} />
+                Arrière (Gratuit)
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ display: 'inline-block', width: 14, height: 14, borderRadius: 4, background: GOLD }} />
+                Votre siège
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ display: 'inline-block', width: 14, height: 14, borderRadius: 4, background: '#E5E7EB' }} />
+                Occupé
+              </span>
+            </div>
           </div>
-          {selectedSeat && (<div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 mb-6 flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600" /><p className="text-sm text-emerald-700 font-medium">Siège N°{selectedSeat} sélectionné — {[1, 2].includes(selectedSeat) ? 'Rang avant, fenêtre' : [3, 5].includes(selectedSeat) ? 'Fenêtre' : 'Couloir'}</p></div>)}
-          <Button onClick={() => setStep('extras')} disabled={!selectedSeat} className="w-full text-white font-bold rounded-xl h-12 disabled:opacity-40 shadow-lg" style={{ backgroundColor: GOLD }}>Continuer vers les extras</Button>
+
+          {/* ─── COLONNE DROITE : PANIER STICKY ─── */}
+          <aside style={{ position: 'sticky', top: 24, background: '#fff', border: '1px solid #E0DDD5', borderRadius: 16, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', margin: '0 0 4px 0' }}>Panier</h3>
+            <p style={{ fontSize: 13, color: '#6B7280', margin: '0 0 20px 0' }}>
+              {from} → {to}
+            </p>
+
+            <div style={{ borderTop: '1px solid #F1F0EB', paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
+                <span style={{ fontSize: 13, color: '#4B5563' }}>
+                  Trajet {from} → {to}
+                </span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: '#1A1A1A', whiteSpace: 'nowrap' }}>
+                  CHF {slotPrice.toFixed(2)}
+                </span>
+              </div>
+
+              {selectedSeat ? (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
+                  <span style={{ fontSize: 13, color: '#4B5563' }}>
+                    Siège N°{selectedSeat}
+                    <span style={{ display: 'block', fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>{seatRowLabel}</span>
+                  </span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: '#1A1A1A', whiteSpace: 'nowrap' }}>
+                    {seatSurcharge > 0 ? `+CHF ${seatSurcharge.toFixed(2)}` : 'Gratuit'}
+                  </span>
+                </div>
+              ) : (
+                <div style={{ fontSize: 12, color: '#9CA3AF', fontStyle: 'italic' }}>
+                  Aucun siège sélectionné
+                </div>
+              )}
+            </div>
+
+            <div style={{ borderTop: '1px solid #F1F0EB', marginTop: 16, paddingTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+              <span style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>TOTAL</span>
+              <span style={{ fontSize: 22, fontWeight: 900, color: '#1A1A1A' }}>CHF {cartTotal.toFixed(2)}</span>
+            </div>
+
+            <button
+              onClick={() => setStep('extras')}
+              disabled={!selectedSeat}
+              style={{
+                width: '100%',
+                marginTop: 16,
+                height: 48,
+                background: selectedSeat ? GOLD : '#E5E7EB',
+                color: selectedSeat ? '#0A0A0A' : '#9CA3AF',
+                border: 'none',
+                borderRadius: 10,
+                fontFamily: 'inherit',
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: selectedSeat ? 'pointer' : 'not-allowed',
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => { if (selectedSeat) (e.currentTarget as HTMLButtonElement).style.background = '#E8C96A'; }}
+              onMouseLeave={e => { if (selectedSeat) (e.currentTarget as HTMLButtonElement).style.background = GOLD; }}
+            >
+              Continuer →
+            </button>
+
+            {/* Garanties */}
+            <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#4B5563' }}>
+                <Check style={{ width: 14, height: 14, color: '#16A34A', flexShrink: 0 }} />
+                Annulation gratuite 24h avant
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#4B5563' }}>
+                <Shield style={{ width: 14, height: 14, color: '#16A34A', flexShrink: 0 }} />
+                Assurance trajet disponible
+              </div>
+            </div>
+          </aside>
         </div>
+
+        {/* ═══ RESPONSIVE ═══ */}
+        <style>{`
+          @media (max-width: 900px) {
+            .caby-seat-grid { grid-template-columns: 1fr !important; }
+            .caby-seat-grid > aside { position: static !important; }
+          }
+        `}</style>
       </div>
     );
   }
