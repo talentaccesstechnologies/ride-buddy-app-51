@@ -8,12 +8,12 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-import zermattImg from '@/assets/zermatt.jpg';
-import zurichImg from '@/assets/zurich.jpg';
-import verbierImg from '@/assets/verbier.jpg';
-import lausanneImg from '@/assets/lausanne.jpg';
-import annecyImg from '@/assets/annecy.jpg';
-import lyonImg from '@/assets/lyon.jpg';
+import zermattImg from '@/assets/zermatt.webp';
+import zurichImg from '@/assets/zurich.webp';
+import verbierImg from '@/assets/verbier.webp';
+import lausanneImg from '@/assets/lausanne.webp';
+import annecyImg from '@/assets/annecy.webp';
+import lyonImg from '@/assets/lyon.webp';
 const vehicleImages = {
   van_shared: 'https://images.unsplash.com/photo-1612838320302-4b3b3b3b3b3b?w=600&q=80&fit=crop&crop=center',
   berline_standard: 'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=600&q=80',
