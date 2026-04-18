@@ -192,15 +192,35 @@
 }
 
 @layer utilities {
-  /* Lisibilité globale (style easyJet) :
-     les utilitaires Tailwind text-gray-300/400/500 sont remappés vers
-     gray-800 pour un contraste suffisant sur fonds clairs.
-     Les écrans dark de Caby utilisent les tokens sémantiques HSL
-     (text-foreground / text-muted-foreground), donc ne sont pas affectés. */
-  .text-gray-300,
-  .text-gray-400,
-  .text-gray-500 {
-    color: rgb(31 41 55) !important; /* gray-800 */
+  /* ──────────────────────────────────────────────────────────────
+     LISIBILITÉ MODE CLAIR (Van, Cross-Border, pages B2B…)
+     Le thème global Caby est sombre → --foreground est blanc.
+     Sur les pages light (bg-white / bg-gray-50 / bg-gray-100) le
+     texte sans classe explicite hérite donc de blanc → invisible.
+     On force une couleur de texte foncée par défaut sur ces
+     conteneurs, et on remonte les gris trop clairs (300/400/500)
+     vers du gris foncé pour un contraste type easyJet. */
+  .bg-white,
+  .bg-gray-50,
+  .bg-gray-100,
+  .bg-slate-50,
+  .bg-slate-100 {
+    color: rgb(17 24 39); /* gray-900 */
+  }
+
+  .bg-white .text-gray-300,
+  .bg-white .text-gray-400,
+  .bg-white .text-gray-500,
+  .bg-gray-50 .text-gray-300,
+  .bg-gray-50 .text-gray-400,
+  .bg-gray-50 .text-gray-500,
+  .bg-gray-100 .text-gray-300,
+  .bg-gray-100 .text-gray-400,
+  .bg-gray-100 .text-gray-500,
+  .bg-slate-50 .text-gray-300,
+  .bg-slate-50 .text-gray-400,
+  .bg-slate-50 .text-gray-500 {
+    color: rgb(55 65 81); /* gray-700 */
   }
 
   .safe-area-bottom {
