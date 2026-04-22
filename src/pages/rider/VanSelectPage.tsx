@@ -73,30 +73,86 @@ function formatDateLabel(d: Date) {
   return `${DAYS_FR_SHORT[d.getDay()]}. ${d.getDate()} ${MONTHS_FR[d.getMonth()]}`;
 }
 
-// ── DAY NAVIGATOR ──
+// ── DAY NAVIGATOR (EasyJet-style columns) ──
 const DayNavigator: React.FC<{
   baseDate: Date;
   offset: number;
   onChangeOffset: (o: number) => void;
-}> = ({ baseDate, offset, onChangeOffset }) => {
+  route: VanRoute;
+}> = ({ baseDate, offset, onChangeOffset, route }) => {
+  // Show 3 days: previous, current, next (current is selected)
   const days = [-1, 0, 1].map(i => {
     const d = new Date(baseDate);
     d.setDate(d.getDate() + offset + i);
     return d;
   });
 
+  // Compute min price per day for display
+  const dayPrices = useMemo(
+    () => days.map(d => {
+      const slots = generateDaySlots(route, d);
+      const available = slots.filter(s => s.seatsLeft > 0);
+      return available.length > 0 ? Math.min(...available.map(s => s.price)) : null;
+    }),
+    [days.map(d => d.toISOString().slice(0, 10)).join('|'), route.id]
+  );
+
   return (
-    <div className="flex items-center justify-between bg-gray-50 rounded-xl p-1 mb-4">
-      <button onClick={() => onChangeOffset(offset - 1)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors">
+    <div className="flex items-stretch mb-4 rounded-xl overflow-hidden border border-gray-200 bg-white">
+      {/* Left arrow */}
+      <button
+        onClick={() => onChangeOffset(offset - 1)}
+        className="px-2 flex items-center justify-center hover:bg-gray-50 transition-colors border-r border-gray-200"
+        aria-label="Jour précédent"
+      >
         <ChevronLeft className="w-4 h-4 text-gray-600" />
       </button>
-      {days.map((d, i) => (
-        <button key={d.toISOString()} onClick={() => onChangeOffset(offset + i - 1)}
-          className={`flex-1 py-2 rounded-lg text-center text-xs font-bold transition-colors ${i === 1 ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:bg-white/50'}`}>
-          {formatDateLabel(d)}
-        </button>
-      ))}
-      <button onClick={() => onChangeOffset(offset + 1)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors">
+
+      {/* 3 day columns */}
+      {days.map((d, i) => {
+        const isCurrent = i === 1;
+        const minP = dayPrices[i];
+        const isSoldOut = minP === null;
+        return (
+          <button
+            key={d.toISOString()}
+            onClick={() => onChangeOffset(offset + i - 1)}
+            className={`flex-1 py-2.5 px-1 flex flex-col items-center justify-center gap-0.5 transition-colors border-r last:border-r-0 border-gray-200 ${
+              isCurrent ? 'bg-amber-50' : 'bg-white hover:bg-gray-50'
+            }`}
+          >
+            <span className={`text-[11px] font-medium uppercase ${isCurrent ? 'text-gray-900' : 'text-gray-500'}`}>
+              {DAYS_FR_SHORT[d.getDay()].toLowerCase()}
+            </span>
+            <span className={`text-sm font-bold leading-tight ${isCurrent ? 'text-gray-900' : 'text-gray-700'}`}>
+              {d.getDate()} {MONTHS_FR[d.getMonth()]}
+            </span>
+            {isSoldOut ? (
+              <span className="text-[10px] font-bold text-gray-400 mt-0.5">Complet</span>
+            ) : (
+              <span
+                className={`text-[11px] font-bold mt-0.5 ${isCurrent ? '' : 'text-gray-500'}`}
+                style={isCurrent ? { color: GOLD } : undefined}
+              >
+                dès CHF {minP}
+              </span>
+            )}
+            {isCurrent && (
+              <span
+                className="block w-8 h-0.5 rounded-full mt-1"
+                style={{ backgroundColor: GOLD }}
+              />
+            )}
+          </button>
+        );
+      })}
+
+      {/* Right arrow */}
+      <button
+        onClick={() => onChangeOffset(offset + 1)}
+        className="px-2 flex items-center justify-center hover:bg-gray-50 transition-colors border-l border-gray-200"
+        aria-label="Jour suivant"
+      >
         <ChevronRight className="w-4 h-4 text-gray-600" />
       </button>
     </div>
