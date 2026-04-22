@@ -883,12 +883,12 @@ const CabyVanPage: React.FC = () => {
                     Lausanne, Montreux, Évian — le Lac Léman est simple à vivre, proche, accueillant. Les choses ne sont pas artificielles. On les ressent.
                   </div>
                   <button
-                    onClick={() => { setTo('Lausanne'); setStep('search'); }}
+                    onClick={() => navigate('/caby/van/leman')}
                     style={{ alignSelf: 'flex-start', background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, padding: '12px 24px', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, cursor: 'pointer', transition: 'background 0.15s' }}
                     onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = '#E8C96A')}
                     onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = GOLD)}
                   >
-                    Partez sur le Léman
+                    Découvrir le Lac Léman
                   </button>
                 </div>
                 <img
