@@ -356,11 +356,12 @@ const VanSelectPage: React.FC = () => {
                             key={slot.id}
                             slot={slot}
                             minPrice={dd.minPrice}
-                            isSelected={selected?.id === slot.id && isCurrent}
+                            isSelected={selected?.id === slot.id}
                             onSelect={() => {
                               if (slot.seatsLeft === 0) return;
-                              if (!isCurrent) setOffset(offset + dayIdx - 1);
+                              // Sélectionne d'abord, puis recentre la vue (même date que le slot cliqué)
                               onSelect(slot);
+                              if (!isCurrent) setOffset(offset + dayIdx - 1);
                             }}
                           />
                         );
