@@ -41,6 +41,9 @@ import VanDocumentsPage from "./pages/rider/van/VanDocumentsPage";
 import VanBagagesPage from "./pages/rider/van/VanBagagesPage";
 import VanFlexPassPage from "./pages/rider/van/VanFlexPassPage";
 import VanAssistancePage from "./pages/rider/van/VanAssistancePage";
+import VanPassPage from "./pages/rider/van/VanPassPage";
+import VanCrossBorderPage from "./pages/rider/van/VanCrossBorderPage";
+import VanSkiPage from "./pages/rider/van/VanSkiPage";
 import CabyNightPage from "./pages/rider/CabyNightPage";
 import CabyPassPage from "./pages/rider/CabyPassPage";
 import CabyBusinessPage from "./pages/rider/CabyBusinessPage";
@@ -127,6 +130,9 @@ const App = () => (
               <Route path="/caby/van/bagages" element={<VanBagagesPage />} />
               <Route path="/caby/van/flex-pass" element={<VanFlexPassPage />} />
               <Route path="/caby/van/assistance" element={<VanAssistancePage />} />
+              <Route path="/caby/van/pass" element={<VanPassPage />} />
+              <Route path="/caby/van/crossborder" element={<VanCrossBorderPage />} />
+              <Route path="/caby/van/ski" element={<VanSkiPage />} />
               <Route path="/caby/crossborder" element={<CabyCrossBorderPage />} />
               <Route path="/caby/night" element={<CabyNightPage />} />
               <Route path="/caby/pass" element={<CabyPassPage />} />
