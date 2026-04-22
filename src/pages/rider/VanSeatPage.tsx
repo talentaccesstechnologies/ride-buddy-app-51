@@ -375,7 +375,7 @@ export default function VanSeatPage() {
               returnTime={params.get('returnTime') || undefined}
               returnArrivalTime={params.get('returnArrivalTime') || undefined}
               items={items}
-              onContinue={forward}
+              onContinue={trySkip}
             />
           </div>
         </div>
