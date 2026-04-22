@@ -118,12 +118,13 @@ const LastMinuteBadge: React.FC<{ discount: number; urgencyColor: 'green' | 'ora
   const bg = urgencyColor === 'red' ? '#EF4444' : urgencyColor === 'orange' ? '#F97316' : GOLD;
   return (
     <div style={{
-      position: 'absolute', top: -8, right: -8, zIndex: 10,
+      position: 'absolute', top: 4, right: 4, zIndex: 10,
       background: bg, color: '#fff',
       fontSize: 9, fontWeight: 800,
       padding: '2px 6px', borderRadius: 10,
-      boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+      boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
       lineHeight: 1.4,
+      whiteSpace: 'nowrap',
     }}>
       -{discount}%
     </div>
