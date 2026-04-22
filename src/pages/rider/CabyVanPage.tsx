@@ -660,15 +660,159 @@ const CabyVanPage: React.FC = () => {
               )}
             </div>
 
-            {['Destinations', 'Caby Pass', 'Cross-Border', 'Ski'].map(label => (
+            {/* ═══ DESTINATIONS — MEGA-MENU ═══ */}
+            <div
+              style={{ position: 'relative' }}
+              onMouseEnter={openDestMenu}
+              onMouseLeave={closeDestMenuDelayed}
+            >
               <a
-                key={label}
                 href="#"
+                onClick={(e) => e.preventDefault()}
+                style={{
+                  fontSize: 13, fontWeight: 500, color: 'rgba(0,0,0,0.75)',
+                  padding: '6px 14px', borderRadius: 6, textDecoration: 'none',
+                  display: 'inline-flex', alignItems: 'center', gap: 4,
+                  background: destMenuOpen ? 'rgba(0,0,0,0.1)' : 'transparent',
+                }}
+              >
+                Destinations
+                <ChevronDown size={14} style={{ transform: destMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+              </a>
+
+              {destMenuOpen && (
+                <div
+                  onMouseEnter={openDestMenu}
+                  onMouseLeave={closeDestMenuDelayed}
+                  style={{
+                    position: 'fixed', top: 56, left: 0, right: 0,
+                    background: '#fff', boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                    borderTop: '1px solid #E0DDD5', zIndex: 199,
+                  }}
+                >
+                  <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '280px 1fr 1fr 1fr', gap: 32, padding: '32px 5%' }}>
+                    {/* Col 1 — Intro */}
+                    <div style={{ background: '#F8F7F2', borderRadius: 8, padding: 20, borderLeft: `3px solid ${GOLD}` }}>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: '#0A0A0A', marginBottom: 6 }}>
+                        Toutes les destinations Caby
+                      </div>
+                      <p style={{ fontSize: 12, color: '#888780', lineHeight: 1.5, margin: '0 0 12px' }}>
+                        De Genève vers la Suisse, la France et au-delà. Choisissez par catégorie.
+                      </p>
+                      <button
+                        onClick={() => { setDestMenuOpen(false); navigate('/caby/van/inspire'); }}
+                        style={{ background: '#0A0A0A', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+                      >
+                        Voir toutes les destinations →
+                      </button>
+                    </div>
+
+                    {/* Col 2 — Frontalier */}
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: GOLD, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 14 }}>
+                        Frontalier · Quotidien
+                      </div>
+                      {[
+                        { icon: '🇫🇷', label: 'Annemasse', desc: '25 min · dès 8 CHF', city: 'Annemasse' },
+                        { icon: '🇫🇷', label: 'Annecy', desc: '50 min · dès 14 CHF', city: 'Annecy' },
+                        { icon: '🇫🇷', label: 'Saint-Julien', desc: '20 min · dès 7 CHF', city: 'Saint-Julien' },
+                        { icon: '🇫🇷', label: 'Thonon · Évian', desc: '40 min · dès 12 CHF', city: 'Thonon-les-Bains' },
+                        { icon: '🇫🇷', label: 'Pays de Gex', desc: '30 min · dès 9 CHF', city: 'Gex' },
+                      ].map(item => (
+                        <a
+                          key={item.label}
+                          href="#"
+                          onClick={(e) => { e.preventDefault(); setDestMenuOpen(false); navigate(`/caby/van?destination=${encodeURIComponent(item.city)}`); }}
+                          style={{ display: 'flex', gap: 12, padding: '10px 8px', borderRadius: 6, textDecoration: 'none', alignItems: 'flex-start' }}
+                          onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.background = '#F8F7F2')}
+                          onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.background = 'transparent')}
+                        >
+                          <span style={{ fontSize: 18, lineHeight: 1, marginTop: 2 }}>{item.icon}</span>
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: '#0A0A0A', marginBottom: 2 }}>{item.label}</div>
+                            <div style={{ fontSize: 11, color: '#888780', lineHeight: 1.4 }}>{item.desc}</div>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+
+                    {/* Col 3 — Suisse */}
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: GOLD, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 14 }}>
+                        Villes suisses
+                      </div>
+                      {[
+                        { icon: '🏙️', label: 'Lausanne', desc: '40 min · Riviera lémanique', city: 'Lausanne' },
+                        { icon: '🏙️', label: 'Zurich', desc: '2h45 · Centre + Aéroport', city: 'Zurich' },
+                        { icon: '🏛️', label: 'Berne', desc: '2h00 · Capitale fédérale', city: 'Berne' },
+                        { icon: '🌉', label: 'Bâle', desc: '2h30 · Trifrontière', city: 'Bâle' },
+                        { icon: '🍇', label: 'Sion · Martigny', desc: '1h30 · Valais central', city: 'Sion' },
+                      ].map(item => (
+                        <a
+                          key={item.label}
+                          href="#"
+                          onClick={(e) => { e.preventDefault(); setDestMenuOpen(false); navigate(`/caby/van?destination=${encodeURIComponent(item.city)}`); }}
+                          style={{ display: 'flex', gap: 12, padding: '10px 8px', borderRadius: 6, textDecoration: 'none', alignItems: 'flex-start' }}
+                          onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.background = '#F8F7F2')}
+                          onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.background = 'transparent')}
+                        >
+                          <span style={{ fontSize: 18, lineHeight: 1, marginTop: 2 }}>{item.icon}</span>
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: '#0A0A0A', marginBottom: 2 }}>{item.label}</div>
+                            <div style={{ fontSize: 11, color: '#888780', lineHeight: 1.4 }}>{item.desc}</div>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+
+                    {/* Col 4 — Ski & Premium */}
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: GOLD, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 14 }}>
+                        Ski & Évasion
+                      </div>
+                      {[
+                        { icon: '🎿', label: 'Verbier', desc: '2h · Premium · dès 65 CHF', city: 'Verbier' },
+                        { icon: '⛷️', label: 'Chamonix', desc: '1h15 · dès 45 CHF', city: 'Chamonix' },
+                        { icon: '🏂', label: 'Megève', desc: '1h30 · dès 55 CHF', city: 'Megève' },
+                        { icon: '❄️', label: 'Zermatt', desc: '3h30 · Premium · dès 95 CHF', city: 'Zermatt' },
+                        { icon: '✈️', label: 'GVA Aéroport', desc: '15 min · navettes 24/7', city: 'Genève Aéroport (GVA)' },
+                      ].map(item => (
+                        <a
+                          key={item.label}
+                          href="#"
+                          onClick={(e) => { e.preventDefault(); setDestMenuOpen(false); navigate(`/caby/van?destination=${encodeURIComponent(item.city)}`); }}
+                          style={{ display: 'flex', gap: 12, padding: '10px 8px', borderRadius: 6, textDecoration: 'none', alignItems: 'flex-start' }}
+                          onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.background = '#F8F7F2')}
+                          onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.background = 'transparent')}
+                        >
+                          <span style={{ fontSize: 18, lineHeight: 1, marginTop: 2 }}>{item.icon}</span>
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: '#0A0A0A', marginBottom: 2 }}>{item.label}</div>
+                            <div style={{ fontSize: 11, color: '#888780', lineHeight: 1.4 }}>{item.desc}</div>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Liens directs Pass / Cross-Border / Ski */}
+            {[
+              { label: 'Caby Pass', to: '/caby/van/pass' },
+              { label: 'Cross-Border', to: '/caby/van/crossborder' },
+              { label: 'Ski', to: '/caby/van/ski' },
+            ].map(link => (
+              <a
+                key={link.label}
+                href="#"
+                onClick={(e) => { e.preventDefault(); navigate(link.to); }}
                 style={{ fontSize: 13, fontWeight: 500, color: 'rgba(0,0,0,0.75)', padding: '6px 14px', borderRadius: 6, textDecoration: 'none' }}
                 onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.background = 'rgba(0,0,0,0.1)')}
                 onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.background = 'transparent')}
               >
-                {label}
+                {link.label}
               </a>
             ))}
           </nav>
