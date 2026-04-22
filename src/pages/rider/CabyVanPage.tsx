@@ -579,15 +579,22 @@ const CabyVanPage: React.FC = () => {
               {/* Champs — grille pixel-perfect */}
               <div style={{ display: 'grid', gridTemplateColumns: '224px 228px 228px 228px 208px', gap: 10, alignItems: 'center' }}>
                 {/* De */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
-                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>De</div>
-                  <div style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{from}</div>
-                </div>
+                <CityPickerPopover
+                  fieldLabel="De"
+                  placeholder="Choisir une ville"
+                  value={from}
+                  cities={serviceCities[activeService]}
+                  onSelect={(city) => { setFrom(city); setTo(''); setPickupLabel(''); setPickupAddress(''); setPickupCustom(''); }}
+                />
                 {/* À */}
-                <div onClick={() => setStep('search')} style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
-                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>À</div>
-                  <div style={{ fontSize: 14, color: to ? '#1A1A1A' : '#B8B5AD', fontWeight: to ? 500 : 400, lineHeight: 1 }}>{to || (activeService === 'ski' ? 'Verbier, Zermatt...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Pays, ville, gare...')}</div>
-                </div>
+                <CityPickerPopover
+                  fieldLabel="À"
+                  placeholder={activeService === 'ski' ? 'Verbier, Zermatt...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Pays, ville, gare...'}
+                  value={to}
+                  cities={serviceCities[activeService].filter(c => c !== from)}
+                  onSelect={(city) => { setTo(city); setDropoffLabel(''); setDropoffAddress(''); setDropoffCustom(''); }}
+                />
+
                 {/* Dates */}
                 <div ref={calendarRef} style={{ position: 'relative' as const }}>
                   <button onClick={() => setCalendarOpen(!calendarOpen)} style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, cursor: 'pointer', justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const, width: '100%', textAlign: 'left', fontFamily: 'inherit' }}>
