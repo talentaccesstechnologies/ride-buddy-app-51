@@ -336,12 +336,11 @@ const VanSelectPage: React.FC = () => {
                       <div className={`text-sm font-bold leading-tight ${isCurrent ? 'text-gray-900' : 'text-gray-700'}`}>
                         {dd.date.getDate()} {MONTHS_FR[dd.date.getMonth()]}
                       </div>
-                      {isCurrent && (
-                        <div
-                          className="mx-auto mt-1 w-6 h-0.5 rounded-full"
-                          style={{ backgroundColor: GOLD }}
-                        />
-                      )}
+                      <div
+                        className="mx-auto mt-1 w-6 h-0.5 rounded-full"
+                        style={{ backgroundColor: isCurrent ? GOLD : 'transparent' }}
+                        aria-hidden
+                      />
                     </button>
 
                     {/* Slots stacked for this day */}
