@@ -578,6 +578,76 @@ const VanSelectPage: React.FC = () => {
         )}
       </div>
 
+      {/* CONDITIONS & INFOS — bas de page (style EasyJet) */}
+      <div className="max-w-6xl mx-auto px-4 pb-32 md:pb-12">
+        <div className="mt-6 space-y-6 text-[13px] leading-relaxed text-gray-600">
+          <section>
+            <h3 className="text-sm font-bold text-gray-900 mb-2">Documents d'identité et conseils de voyage</h3>
+            <p>
+              Il est de votre responsabilité de vérifier la validité de votre pièce d'identité (carte d'identité ou passeport) avant tout trajet transfrontalier. Pour les liaisons France ↔ Suisse, un document d'identité en cours de validité est exigé.
+            </p>
+            <p className="mt-2">
+              Si vous voyagez avec un passeport non européen, consultez les conditions d'entrée applicables à l'Espace Schengen avant votre départ.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-sm font-bold text-gray-900 mb-2">Renseignements sur nos tarifs</h3>
+            <p>
+              Les réservations annulées dans les 24 heures suivant l'achat sont remboursables, après déduction des frais d'annulation. Au-delà de 24 heures, les réservations ne sont pas remboursables, mais peuvent être modifiées sous réserve des frais applicables (voir l'option <strong>Annulation Flex</strong>).
+            </p>
+            <p className="mt-2">
+              Toutes les heures de départ et d'arrivée correspondent à l'heure locale du point d'embarquement sélectionné. Sauf indication contraire, les trajets affichés sont opérés par <strong>Talent Access Technologies SA</strong> ou par l'un de ses partenaires agréés VTC à Genève.
+            </p>
+            <p className="mt-2">
+              Le tarif barré correspond au prix de référence du siège sans promotion. Ce tarif est sujet à modifications et proposé sous réserve de disponibilité. Le tarif promotionnel indiqué est valable dans la limite des places disponibles.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-sm font-bold text-gray-900 mb-2">Suppléments et frais</h3>
+            <p>
+              Les paiements sont traités en CHF. Les détenteurs de cartes bancaires non suisses peuvent se voir appliquer des frais de change ou de paiement à l'étranger par leur banque émettrice. <strong>Twint</strong>, <strong>Apple Pay</strong> et <strong>Google Pay</strong> sont acceptés sans frais supplémentaires.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-sm font-bold text-gray-900 mb-2">Informations sur les tarifs standard</h3>
+            <p>
+              Tous les prix sont indiqués pour <strong>un adulte et un trajet simple</strong>, taxes et frais inclus. Un petit bagage cabine est compris dans le tarif. Les grandes valises, skis et équipements volumineux peuvent être ajoutés moyennant un supplément lors de l'étape suivante.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-sm font-bold text-gray-900 mb-2">Flex Pass</h3>
+            <p>
+              Avec l'option <strong>Annulation Flexible</strong> (+CHF 9), vous pouvez modifier la date, l'heure ou le point de départ de votre trajet sans frais de changement jusqu'à <strong>2 heures avant le départ</strong>, sous réserve de disponibilité.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-sm font-bold text-gray-900 mb-2">Bagages et suppléments</h3>
+            <p>
+              Quel que soit le tarif choisi, vous pouvez emporter un petit bagage cabine (max. 45 × 36 × 20 cm) qui doit pouvoir être placé sous le siège devant vous. Les grandes valises (max. 75 × 50 × 30 cm) doivent être ajoutées à la réservation moyennant un supplément.
+            </p>
+            <p className="mt-2">
+              Les bagages supplémentaires sont moins chers s'ils sont réservés en ligne à l'avance ; pensez à les ajouter avant votre trajet.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-sm font-bold text-gray-900 mb-2">Conseils pour les trajets transfrontaliers</h3>
+            <p>
+              Pour les trajets entre la Suisse et la France, prévoyez du temps supplémentaire en cas de contrôle douanier. Caby vous recommande de vérifier l'état du trafic frontalier avant votre départ via notre application.
+            </p>
+          </section>
+
+          <p className="text-[11px] text-gray-400 pt-4 border-t border-gray-200">
+            Caby est une marque exploitée par Talent Access Technologies SA, Genève. Service VTC conforme à la LSE/LTVTC genevoise. © {new Date().getFullYear()} — Tous droits réservés.
+          </p>
+        </div>
+      </div>
+
       {/* MOBILE STICKY FOOTER */}
       <div className="md:hidden fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 shadow-lg z-30">
         <div className="flex items-center justify-between">
