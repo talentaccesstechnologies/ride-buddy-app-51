@@ -209,6 +209,15 @@ const CabyVanPage: React.FC = () => {
   const calendarRef = useRef<HTMLDivElement>(null);
   const calendarSearchRef = useRef<HTMLDivElement>(null);
   const [infoMenuOpen, setInfoMenuOpen] = useState(false);
+  const infoMenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openInfoMenu = () => {
+    if (infoMenuTimerRef.current) clearTimeout(infoMenuTimerRef.current);
+    setInfoMenuOpen(true);
+  };
+  const closeInfoMenuDelayed = () => {
+    if (infoMenuTimerRef.current) clearTimeout(infoMenuTimerRef.current);
+    infoMenuTimerRef.current = setTimeout(() => setInfoMenuOpen(false), 250);
+  };
 
   const [activeService, setActiveService] = useState<'trajets' | 'ski' | 'crossborder'>('trajets');
   const [from, setFrom] = useState('Genève');
