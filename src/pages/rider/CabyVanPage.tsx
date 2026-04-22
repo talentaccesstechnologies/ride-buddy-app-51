@@ -1066,7 +1066,7 @@ const CabyVanPage: React.FC = () => {
                 <Users className="w-4 h-4 text-gray-400 ml-1" />
               </div>
             </div>
-            <Button onClick={handleSearch} disabled={!selectedRoute} className="w-full mt-4 text-white font-bold rounded-xl h-12 disabled:opacity-40 shadow-lg" style={{ backgroundColor: GOLD }}>
+            <Button onClick={handleSearch} disabled={!from || !to || from === to} className="w-full mt-4 text-white font-bold rounded-xl h-12 disabled:opacity-40 shadow-lg" style={{ backgroundColor: GOLD }}>
               <Search className="w-4 h-4 mr-2" />Rechercher
             </Button>
             {filter === 'grand_geneve' && (<button onClick={() => setStep('abonnement')} className="w-full mt-2 rounded-xl border-2 border-dashed border-orange-300 bg-orange-50 p-3 text-center"><p className="text-xs font-bold text-orange-700">💳 Abonnement Frontalier dès CHF 299/mois</p><p className="text-[10px] text-orange-500">Trajets illimités · Réservation prioritaire</p></button>)}
