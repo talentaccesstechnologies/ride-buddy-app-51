@@ -167,8 +167,21 @@ const VanSelectPage: React.FC = () => {
   const passengers = parseInt(searchParams.get('passengers') || '1');
   const isRoundTrip = !!returnDateStr;
 
-  const route = useMemo(() => findRoute(from, to), [from, to]);
-  const returnRoute = useMemo(() => isRoundTrip ? findRoute(to, from) : null, [from, to, isRoundTrip]);
+  // Fallback synthétique si la paire n'existe pas dans la base prédéfinie
+  const buildSyntheticRoute = (f: string, t: string): VanRoute => ({
+    id: 0,
+    from: f,
+    to: t,
+    duration: 90,
+    basePrice: 49,
+    segment: 'business',
+    flag: '🇨🇭',
+  });
+  const route = useMemo(() => findRoute(from, to) ?? buildSyntheticRoute(from, to), [from, to]);
+  const returnRoute = useMemo(
+    () => isRoundTrip ? (findRoute(to, from) ?? buildSyntheticRoute(to, from)) : null,
+    [from, to, isRoundTrip]
+  );
 
   const baseDate = useMemo(() => dateStr ? new Date(dateStr) : new Date(), [dateStr]);
   const returnBaseDate = useMemo(() => returnDateStr ? new Date(returnDateStr) : new Date(), [returnDateStr]);
@@ -222,13 +235,8 @@ const VanSelectPage: React.FC = () => {
 
   const canContinue = isRoundTrip ? !!(selectedOutbound && selectedReturn) : !!selectedOutbound;
 
-  if (!route) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-gray-500">Route non trouvée</p>
-      </div>
-    );
-  }
+  // (Plus de garde "Route non trouvée" : on génère toujours une route synthétique de fallback)
+
 
   // ── COLUMN CONTENT ──
   const renderColumn = (
