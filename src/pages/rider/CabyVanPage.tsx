@@ -213,10 +213,23 @@ const CabyVanPage: React.FC = () => {
   const openInfoMenu = () => {
     if (infoMenuTimerRef.current) clearTimeout(infoMenuTimerRef.current);
     setInfoMenuOpen(true);
+    setDestMenuOpen(false);
   };
   const closeInfoMenuDelayed = () => {
     if (infoMenuTimerRef.current) clearTimeout(infoMenuTimerRef.current);
     infoMenuTimerRef.current = setTimeout(() => setInfoMenuOpen(false), 250);
+  };
+
+  const [destMenuOpen, setDestMenuOpen] = useState(false);
+  const destMenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openDestMenu = () => {
+    if (destMenuTimerRef.current) clearTimeout(destMenuTimerRef.current);
+    setDestMenuOpen(true);
+    setInfoMenuOpen(false);
+  };
+  const closeDestMenuDelayed = () => {
+    if (destMenuTimerRef.current) clearTimeout(destMenuTimerRef.current);
+    destMenuTimerRef.current = setTimeout(() => setDestMenuOpen(false), 250);
   };
 
   const [activeService, setActiveService] = useState<'trajets' | 'ski' | 'crossborder'>('trajets');
