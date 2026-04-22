@@ -797,7 +797,7 @@ const CabyVanPage: React.FC = () => {
                     tag: 'Cross-Border',
                     title: 'Séjour Annecy — le lac de Haute-Savoie',
                     desc: 'Ses canaux, son lac turquoise, ses ruelles médiévales. Annecy, à 45 minutes de Genève.',
-                    img: 'https://images.unsplash.com/photo-1533395427226-788cee25cc7b?w=600&q=80&fit=crop',
+                    img: annecyImg,
                     cta: 'Voir les destinations France',
                     action: () => navigate('/caby/van/inspire?region=france'),
                   },
