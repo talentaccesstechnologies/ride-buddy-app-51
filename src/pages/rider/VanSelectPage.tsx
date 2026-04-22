@@ -492,8 +492,7 @@ const VanSelectPage: React.FC = () => {
             />
           </div>
         )}
-        <div className="hidden">
-        </div>
+
 
         {/* Grille 3 jours */}
         <div className="bg-white border-x border-b border-gray-200 rounded-b-xl overflow-hidden">
