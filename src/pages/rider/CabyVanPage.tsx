@@ -14,6 +14,7 @@ import verbierImg from '@/assets/verbier.webp';
 import lausanneImg from '@/assets/lausanne.webp';
 import annecyImg from '@/assets/annecy.webp';
 import lyonImg from '@/assets/lyon.webp';
+import milanImg from '@/assets/milan.webp';
 const vehicleImages = {
   van_shared: 'https://images.unsplash.com/photo-1612838320302-4b3b3b3b3b3b?w=600&q=80&fit=crop&crop=center',
   berline_standard: 'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=600&q=80',
@@ -918,7 +919,7 @@ const CabyVanPage: React.FC = () => {
                 <div style={{ width: 718.35, height: 431, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', columnGap: 18.35, rowGap: 38.55 }}>
                   <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80&fit=crop" alt="Paris" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
                   <img src="https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=400&q=80&fit=crop" alt="Lausanne" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
-                  <img src="https://images.unsplash.com/photo-1513581166391-887a96ddeafd?w=400&q=80&fit=crop" alt="Milan" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
+                  <img src={milanImg} alt="Milan" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
                   <div style={{ width: 350, height: 253.97, borderRadius: 8, overflow: 'hidden', position: 'relative' }}>
                     <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80&fit=crop" alt="Caby" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block' }} />
                     <div style={{ position: 'absolute', inset: 0, background: 'rgba(201,168,76,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
