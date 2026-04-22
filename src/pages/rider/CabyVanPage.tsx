@@ -44,6 +44,7 @@ import { Plane } from 'lucide-react';
 import PlacesAutocomplete from '@/components/shared/PlacesAutocomplete';
 import CityAutocomplete from '@/components/van/CityAutocomplete';
 import CityPickerPopover from '@/components/van/CityPickerPopover';
+import PassengerPickerPopover from '@/components/van/PassengerPickerPopover';
 import PriceCalendar from '@/components/van/PriceCalendar';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'extras' | 'passenger' | 'payment' | 'confirm' | 'abonnement';
@@ -227,6 +228,7 @@ const CabyVanPage: React.FC = () => {
   const [dateAller, setDateAller] = useState('');
   const [timeAller, setTimeAller] = useState('');
   const [passengers, setPassengers] = useState(1);
+  const [paxDetail, setPaxDetail] = useState<{ adults: number; children: number; babies: number }>({ adults: 1, children: 0, babies: 0 });
   const [roundTrip, setRoundTrip] = useState(false);
   const [dateRetour, setDateRetour] = useState('');
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -610,14 +612,13 @@ const CabyVanPage: React.FC = () => {
                   )}
                 </div>
                 {/* Qui */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, border: '1.5px solid #E0DDD5', borderRadius: 8, padding: '0 14px', height: 48, justifyContent: 'center', background: '#fff', boxSizing: 'border-box' as const }}>
-                  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' as const, color: '#888780', lineHeight: 1, marginBottom: 3 }}>Qui</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <button onClick={() => setPassengers(Math.max(1, passengers - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>−</button>
-                    <span style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A', lineHeight: 1 }}>{passengers} adulte{passengers > 1 ? 's' : ''}</span>
-                    <button onClick={() => setPassengers(Math.min(7, passengers + 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 700, color: '#888780', padding: 0, lineHeight: 1 }}>+</button>
-                  </div>
-                </div>
+                <PassengerPickerPopover
+                  fieldLabel="Qui"
+                  value={paxDetail}
+                  onChange={(v) => { setPaxDetail(v); setPassengers(Math.max(1, v.adults + v.children)); }}
+                  maxTotal={7}
+                />
+
                 {/* CTA Bouton */}
                 <button
                   onClick={() => { if (from && to) handleSearch(); else setStep('search'); }}
