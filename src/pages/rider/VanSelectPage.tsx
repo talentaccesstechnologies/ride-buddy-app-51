@@ -167,8 +167,21 @@ const VanSelectPage: React.FC = () => {
   const passengers = parseInt(searchParams.get('passengers') || '1');
   const isRoundTrip = !!returnDateStr;
 
-  const route = useMemo(() => findRoute(from, to), [from, to]);
-  const returnRoute = useMemo(() => isRoundTrip ? findRoute(to, from) : null, [from, to, isRoundTrip]);
+  // Fallback synthétique si la paire n'existe pas dans la base prédéfinie
+  const buildSyntheticRoute = (f: string, t: string): VanRoute => ({
+    id: 0,
+    from: f,
+    to: t,
+    duration: 90,
+    basePrice: 49,
+    segment: 'business',
+    flag: '🇨🇭',
+  });
+  const route = useMemo(() => findRoute(from, to) ?? buildSyntheticRoute(from, to), [from, to]);
+  const returnRoute = useMemo(
+    () => isRoundTrip ? (findRoute(to, from) ?? buildSyntheticRoute(to, from)) : null,
+    [from, to, isRoundTrip]
+  );
 
   const baseDate = useMemo(() => dateStr ? new Date(dateStr) : new Date(), [dateStr]);
   const returnBaseDate = useMemo(() => returnDateStr ? new Date(returnDateStr) : new Date(), [returnDateStr]);
