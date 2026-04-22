@@ -503,8 +503,8 @@ const CabyVanPage: React.FC = () => {
             {/* ═══ LIEN INFORMATIONS AVEC MEGA-MENU ═══ */}
             <div
               style={{ position: 'relative' }}
-              onMouseEnter={() => setInfoMenuOpen(true)}
-              onMouseLeave={() => setInfoMenuOpen(false)}
+              onMouseEnter={openInfoMenu}
+              onMouseLeave={closeInfoMenuDelayed}
             >
               <a
                 href="#"
