@@ -200,6 +200,9 @@ const App = () => (
               {/* Early Access */}
               <Route path="/early-access" element={<EarlyAccessPage />} />
 
+              {/* Admin Tests */}
+              <Route path="/caby/admin/tests" element={<CabyTestDashboard />} />
+
               {/* Device Preview */}
               <Route path="/preview" element={<DevicePreviewPage />} />
 
