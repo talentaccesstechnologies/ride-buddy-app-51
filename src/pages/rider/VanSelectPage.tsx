@@ -236,12 +236,12 @@ const VanSelectPage: React.FC = () => {
   // (Plus de garde "Route non trouvée" : on génère toujours une route synthétique de fallback)
 
 
-  // ── COLUMN CONTENT ──
+  // ── COLUMN CONTENT (EasyJet-style 3-day grid) ──
   const renderColumn = (
     direction: 'outbound' | 'return',
     routeData: VanRoute,
-    slots: TimeSlotData[],
-    minPrice: number,
+    _slots: TimeSlotData[],
+    _minPrice: number,
     selected: TimeSlotData | null,
     onSelect: (s: TimeSlotData) => void,
     date: Date,
@@ -249,41 +249,125 @@ const VanSelectPage: React.FC = () => {
     setOffset: (o: number) => void,
     fromCity: string,
     toCity: string,
-  ) => (
-    <div className="flex-1 min-w-0">
-      {/* Dark header */}
-      <div className="bg-slate-800 rounded-xl p-4 mb-4">
-        <div className="flex items-center gap-2 mb-1">
-          <Bus className="w-4 h-4 text-white/70" />
-          <p className="text-sm font-bold text-white">{fromCity} → {toCity}</p>
-        </div>
-        <p className="text-[11px] text-white/50 flex items-center gap-1">
-          👁 {viewingCount} personnes consultent ce trajet
-        </p>
-      </div>
+  ) => {
+    // Build 3 visible days (previous/current/next)
+    const visibleDays = [-1, 0, 1].map(i => {
+      const d = new Date(date);
+      d.setDate(d.getDate() + i);
+      return d;
+    });
 
-      {/* Day navigator */}
-      <DayNavigator baseDate={date} offset={offset} onChangeOffset={setOffset} route={routeData} />
+    // For each day, generate its slots and min price
+    const dayData = visibleDays.map(d => {
+      const slots = generateDaySlots(routeData, d);
+      const available = slots.filter(s => s.seatsLeft > 0);
+      const minPrice = available.length > 0 ? Math.min(...available.map(s => s.price)) : 0;
+      return { date: d, slots, minPrice };
+    });
 
-      {/* Slot cards */}
-      <div className="space-y-3">
-        {slots.map(slot => (
-          <SlotCard
-            key={slot.id}
-            slot={slot}
-            minPrice={minPrice}
-            isSelected={selected?.id === slot.id}
-            onSelect={() => slot.seatsLeft > 0 && onSelect(slot)}
-          />
-        ))}
-        {slots.length === 0 && (
-          <div className="text-center py-8 text-gray-400 text-sm">
-            Aucun créneau disponible pour cette date
+    // Max number of slots across the 3 days, to align rows
+    const maxRows = Math.max(...dayData.map(dd => dd.slots.length), 1);
+
+    return (
+      <div className="flex-1 min-w-0">
+        {/* Dark header (route + viewers) */}
+        <div className="bg-slate-800 rounded-t-xl px-4 py-3">
+          <div className="flex items-center gap-2 mb-0.5">
+            <Bus className="w-4 h-4 text-white/70" />
+            <p className="text-sm font-bold text-white">{fromCity} → {toCity}</p>
           </div>
-        )}
+          <p className="text-[11px] text-white/50">
+            👁 {viewingCount} personnes consultent ce trajet
+          </p>
+          <div className="mt-2 h-px bg-white/10" />
+        </div>
+
+        {/* Day-grid with arrows on the sides */}
+        <div className="bg-white border-x border-b border-gray-200 rounded-b-xl overflow-hidden">
+          <div className="flex items-stretch">
+            {/* Left arrow */}
+            <button
+              onClick={() => setOffset(offset - 1)}
+              className="px-1.5 flex items-center justify-center hover:bg-gray-50 transition-colors border-r border-gray-200"
+              aria-label="Jour précédent"
+              style={{ color: GOLD }}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            {/* 3 day columns */}
+            <div className="flex-1 grid grid-cols-3 divide-x divide-gray-200">
+              {dayData.map((dd, dayIdx) => {
+                const isCurrent = dayIdx === 1;
+                return (
+                  <div key={dd.date.toISOString()} className="flex flex-col">
+                    {/* Day header */}
+                    <button
+                      onClick={() => setOffset(offset + dayIdx - 1)}
+                      className={`py-2.5 px-1 text-center transition-colors ${
+                        isCurrent ? 'bg-amber-50' : 'bg-gray-50 hover:bg-gray-100'
+                      }`}
+                    >
+                      <div className={`text-xs font-medium ${isCurrent ? 'text-gray-900' : 'text-gray-500'}`}>
+                        {DAYS_FR_SHORT[dd.date.getDay()].toLowerCase()}
+                      </div>
+                      <div className={`text-sm font-bold leading-tight ${isCurrent ? 'text-gray-900' : 'text-gray-700'}`}>
+                        {dd.date.getDate()} {MONTHS_FR[dd.date.getMonth()]}
+                      </div>
+                      {isCurrent && (
+                        <div
+                          className="mx-auto mt-1 w-6 h-0.5 rounded-full"
+                          style={{ backgroundColor: GOLD }}
+                        />
+                      )}
+                    </button>
+
+                    {/* Slots stacked for this day */}
+                    <div className="p-2 space-y-2 flex-1 bg-white">
+                      {Array.from({ length: maxRows }).map((_, rowIdx) => {
+                        const slot = dd.slots[rowIdx];
+                        if (!slot) {
+                          return (
+                            <div
+                              key={`empty-${rowIdx}`}
+                              className="rounded-md border border-dashed border-gray-200 min-h-[150px]"
+                            />
+                          );
+                        }
+                        return (
+                          <SlotCard
+                            key={slot.id}
+                            slot={slot}
+                            minPrice={dd.minPrice}
+                            isSelected={selected?.id === slot.id && isCurrent}
+                            onSelect={() => {
+                              if (slot.seatsLeft === 0) return;
+                              if (!isCurrent) setOffset(offset + dayIdx - 1);
+                              onSelect(slot);
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right arrow */}
+            <button
+              onClick={() => setOffset(offset + 1)}
+              className="px-1.5 flex items-center justify-center hover:bg-gray-50 transition-colors border-l border-gray-200"
+              aria-label="Jour suivant"
+              style={{ color: GOLD }}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // ── SIDEBAR CART ──
   const renderCart = (sticky?: boolean) => (
