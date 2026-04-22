@@ -1,17 +1,17 @@
 import React from 'react';
 import { Check, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const GOLD = '#C9A84C';
 
 const STEPS = [
-  { icon: '🚐', label: 'Trajet' },
-  { icon: '📦', label: 'Pack' },
-  { icon: '👤', label: 'Passagers' },
-  { icon: '💺', label: 'Siège' },
-  { icon: '🧳', label: 'Bagages' },
-  { icon: '➕', label: 'Options' },
-  { icon: '💳', label: 'Paiement' },
+  { icon: '🚐', label: 'Trajet', path: '/caby/van/select' },
+  { icon: '📦', label: 'Pack', path: '/caby/van/pack' },
+  { icon: '👤', label: 'Passagers', path: '/caby/van/passengers' },
+  { icon: '💺', label: 'Siège', path: '/caby/van/seat' },
+  { icon: '🧳', label: 'Bagages', path: '/caby/van/luggage' },
+  { icon: '➕', label: 'Options', path: '/caby/van/options' },
+  { icon: '💳', label: 'Paiement', path: '/caby/van/payment' },
 ];
 
 interface BookingStepperProps {
@@ -20,6 +20,14 @@ interface BookingStepperProps {
 
 export default function BookingStepper({ currentStep }: BookingStepperProps) {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+
+  const goToStep = (i: number) => {
+    if (i > currentStep) return; // never jump forward via stepper
+    const target = STEPS[i].path;
+    const qs = params.toString();
+    navigate(qs ? `${target}?${qs}` : target);
+  };
 
   return (
     <div className="bg-white border-b sticky top-0 z-30">
@@ -27,7 +35,7 @@ export default function BookingStepper({ currentStep }: BookingStepperProps) {
         <div className="flex items-center gap-3">
           {currentStep > 0 && (
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => goToStep(currentStep - 1)}
               className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 transition-colors shrink-0"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -38,9 +46,15 @@ export default function BookingStepper({ currentStep }: BookingStepperProps) {
             {STEPS.map((step, i) => {
               const done = i < currentStep;
               const active = i === currentStep;
+              const clickable = i < currentStep;
               return (
                 <React.Fragment key={i}>
-                  <div className="flex flex-col items-center gap-1 min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => goToStep(i)}
+                    disabled={!clickable}
+                    className={`flex flex-col items-center gap-1 min-w-0 ${clickable ? 'cursor-pointer hover:opacity-80' : 'cursor-default'}`}
+                  >
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
                         done ? 'bg-green-500 text-white' : active ? 'text-white' : 'bg-gray-100 text-gray-400'
@@ -56,7 +70,7 @@ export default function BookingStepper({ currentStep }: BookingStepperProps) {
                     >
                       {step.label}
                     </span>
-                  </div>
+                  </button>
                   {i < STEPS.length - 1 && (
                     <div
                       className={`flex-1 h-0.5 mx-1 ${done ? 'bg-green-400' : 'bg-gray-200'}`}
