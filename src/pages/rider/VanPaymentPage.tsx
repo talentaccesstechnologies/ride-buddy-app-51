@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import BookingStepper from '@/components/van/BookingStepper';
 import BookingSidebar, { BookingItem } from '@/components/van/BookingSidebar';
-import { Check } from 'lucide-react';
+import { Check, Lock, Mail, User, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 
 const GOLD = '#C9A84C';
 
 export default function VanPaymentPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [params] = useSearchParams();
+  const { user, signIn, signUp, loading: authLoading } = useAuth();
 
   const from = params.get('from') || 'Genève';
   const to = params.get('to') || 'Zurich';
@@ -35,9 +38,51 @@ export default function VanPaymentPage() {
     Math.random().toString(36).substring(2, 8).toUpperCase()
   );
 
+  // Auth gate
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authName, setAuthName] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [authSubmitting, setAuthSubmitting] = useState(false);
+
   const handlePay = () => {
+    if (!user) {
+      // Should not reach here because the modal blocks it, but just in case
+      toast.error('Veuillez vous connecter pour finaliser le paiement');
+      return;
+    }
     toast.success('Paiement simulé avec succès');
     setConfirmed(true);
+  };
+
+  const handleAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError('');
+    if (!authEmail || !authPassword || (authMode === 'register' && !authName)) {
+      setAuthError('Veuillez remplir tous les champs');
+      return;
+    }
+    setAuthSubmitting(true);
+    try {
+      if (authMode === 'login') {
+        const { error } = await signIn(authEmail, authPassword);
+        if (error) {
+          setAuthError(error.message || 'Identifiants invalides');
+        } else {
+          toast.success('Connecté avec succès');
+        }
+      } else {
+        const { error } = await signUp(authEmail, authPassword, authName);
+        if (error) {
+          setAuthError(error.message || 'Erreur lors de la création du compte');
+        } else {
+          toast.success('Compte créé. Vérifiez votre email pour confirmer.');
+        }
+      }
+    } finally {
+      setAuthSubmitting(false);
+    }
   };
 
   if (confirmed) {
@@ -82,8 +127,10 @@ export default function VanPaymentPage() {
     );
   }
 
+  const showAuthGate = !authLoading && !user;
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative">
       <BookingStepper currentStep={6} />
       <div className="max-w-6xl mx-auto px-4 py-6">
         <h1 className="text-2xl font-bold mb-2 text-gray-900">Paiement</h1>
@@ -127,7 +174,8 @@ export default function VanPaymentPage() {
               </div>
               <button
                 onClick={handlePay}
-                className="w-full mt-4 py-3 rounded-lg text-white font-bold text-lg"
+                disabled={showAuthGate}
+                className="w-full mt-4 py-3 rounded-lg text-white font-bold text-lg disabled:opacity-60"
                 style={{ backgroundColor: GOLD }}
               >
                 Payer CHF {total.toFixed(2)}
@@ -152,6 +200,133 @@ export default function VanPaymentPage() {
           </div>
         </div>
       </div>
+
+      {/* Auth gate modal — required before paying */}
+      {showAuthGate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+            <div className="px-6 pt-6 pb-4 border-b border-gray-100">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    {authMode === 'login'
+                      ? 'Connectez-vous à votre compte'
+                      : 'Créez votre compte'}
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    pour finaliser votre réservation
+                  </p>
+                </div>
+                <button
+                  onClick={() => navigate(-1)}
+                  className="text-gray-400 hover:text-gray-600 -mr-2 -mt-1"
+                  aria-label="Fermer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <form onSubmit={handleAuthSubmit} className="px-6 py-5 space-y-4">
+              {authMode === 'register' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Nom complet
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      type="text"
+                      value={authName}
+                      onChange={(e) => setAuthName(e.target.value)}
+                      placeholder="Jean Dupont"
+                      className="w-full pl-10 pr-3 py-2.5 rounded-lg border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-0"
+                      style={{ outlineColor: GOLD }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Adresse e-mail
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="email"
+                    value={authEmail}
+                    onChange={(e) => setAuthEmail(e.target.value)}
+                    placeholder="vous@exemple.com"
+                    className="w-full pl-10 pr-3 py-2.5 rounded-lg border border-gray-300 text-gray-900 focus:outline-none focus:ring-2"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Mot de passe
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="password"
+                    value={authPassword}
+                    onChange={(e) => setAuthPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-10 pr-3 py-2.5 rounded-lg border border-gray-300 text-gray-900 focus:outline-none focus:ring-2"
+                  />
+                </div>
+              </div>
+
+              {authError && (
+                <p className="text-sm text-red-600 text-center">{authError}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={authSubmitting}
+                className="w-full py-3 rounded-lg text-white font-semibold disabled:opacity-60"
+                style={{ backgroundColor: GOLD }}
+              >
+                {authSubmitting
+                  ? 'Veuillez patienter…'
+                  : authMode === 'login'
+                  ? 'Se connecter'
+                  : 'Créer mon compte'}
+              </button>
+
+              <div className="flex items-center gap-3 my-2">
+                <div className="flex-1 h-px bg-gray-200" />
+                <span className="text-xs text-gray-400">
+                  {authMode === 'login'
+                    ? "Vous n'avez pas encore de compte ?"
+                    : 'Vous avez déjà un compte ?'}
+                </span>
+                <div className="flex-1 h-px bg-gray-200" />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthError('');
+                  setAuthMode(authMode === 'login' ? 'register' : 'login');
+                }}
+                className="w-full py-2.5 rounded-lg border-2 font-semibold"
+                style={{ borderColor: GOLD, color: GOLD }}
+              >
+                {authMode === 'login' ? 'Créer un compte' : 'Se connecter'}
+              </button>
+            </form>
+
+            <div className="px-6 pb-5 text-center">
+              <p className="text-xs text-gray-400">
+                Vos informations sont sécurisées et ne servent qu'à confirmer votre réservation.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
