@@ -1815,6 +1815,86 @@ export type Database = {
           },
         ]
       }
+      van_driver_incidents: {
+        Row: {
+          booking_id: string | null
+          category: string
+          commission_impact: number | null
+          created_at: string | null
+          description: string | null
+          driver_id: string
+          fine_amount: number | null
+          id: string
+          reported_by: string | null
+          reporter_role: string | null
+          resolved_at: string | null
+          slot_id: string | null
+          status: string | null
+          tier: number
+        }
+        Insert: {
+          booking_id?: string | null
+          category: string
+          commission_impact?: number | null
+          created_at?: string | null
+          description?: string | null
+          driver_id: string
+          fine_amount?: number | null
+          id?: string
+          reported_by?: string | null
+          reporter_role?: string | null
+          resolved_at?: string | null
+          slot_id?: string | null
+          status?: string | null
+          tier: number
+        }
+        Update: {
+          booking_id?: string | null
+          category?: string
+          commission_impact?: number | null
+          created_at?: string | null
+          description?: string | null
+          driver_id?: string
+          fine_amount?: number | null
+          id?: string
+          reported_by?: string | null
+          reporter_role?: string | null
+          resolved_at?: string | null
+          slot_id?: string | null
+          status?: string | null
+          tier?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "van_driver_incidents_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "van_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "van_driver_incidents_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "van_driver_incidents_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "van_driver_incidents_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "van_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       van_driver_missions: {
         Row: {
           base_price: number
@@ -1902,6 +1982,83 @@ export type Database = {
           },
         ]
       }
+      van_driver_scores: {
+        Row: {
+          avg_rating: number | null
+          base_commission_rate: number | null
+          bonus_amount: number | null
+          check_rate: number | null
+          checks_done: number | null
+          checks_total: number | null
+          commission_penalty: number | null
+          composite_score: number | null
+          created_at: string | null
+          driver_id: string
+          effective_commission_rate: number | null
+          id: string
+          level: string | null
+          month: string
+          punctuality_rate: number | null
+          tier1_count: number | null
+          tier2_count: number | null
+          tier3_count: number | null
+          total_ratings: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          avg_rating?: number | null
+          base_commission_rate?: number | null
+          bonus_amount?: number | null
+          check_rate?: number | null
+          checks_done?: number | null
+          checks_total?: number | null
+          commission_penalty?: number | null
+          composite_score?: number | null
+          created_at?: string | null
+          driver_id: string
+          effective_commission_rate?: number | null
+          id?: string
+          level?: string | null
+          month: string
+          punctuality_rate?: number | null
+          tier1_count?: number | null
+          tier2_count?: number | null
+          tier3_count?: number | null
+          total_ratings?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          avg_rating?: number | null
+          base_commission_rate?: number | null
+          bonus_amount?: number | null
+          check_rate?: number | null
+          checks_done?: number | null
+          checks_total?: number | null
+          commission_penalty?: number | null
+          composite_score?: number | null
+          created_at?: string | null
+          driver_id?: string
+          effective_commission_rate?: number | null
+          id?: string
+          level?: string | null
+          month?: string
+          punctuality_rate?: number | null
+          tier1_count?: number | null
+          tier2_count?: number | null
+          tier3_count?: number | null
+          total_ratings?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "van_driver_scores_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       van_no_show_log: {
         Row: {
           action_taken: string | null
@@ -1981,6 +2138,84 @@ export type Database = {
           },
           {
             foreignKeyName: "van_no_show_log_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "van_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      van_predeparture_checks: {
+        Row: {
+          ac_working: boolean | null
+          all_passed: boolean | null
+          chargers_lightning: boolean | null
+          chargers_usb_c: boolean | null
+          checked_at: string | null
+          created_at: string | null
+          dress_code_ok: boolean | null
+          driver_id: string
+          failed_items: string[] | null
+          fuel_full: boolean | null
+          id: string
+          no_personal_items: boolean | null
+          no_warning_lights: boolean | null
+          slot_id: string
+          tires_ok: boolean | null
+          vehicle_clean_ext: boolean | null
+          vehicle_clean_int: boolean | null
+          water_bottles: boolean | null
+        }
+        Insert: {
+          ac_working?: boolean | null
+          all_passed?: boolean | null
+          chargers_lightning?: boolean | null
+          chargers_usb_c?: boolean | null
+          checked_at?: string | null
+          created_at?: string | null
+          dress_code_ok?: boolean | null
+          driver_id: string
+          failed_items?: string[] | null
+          fuel_full?: boolean | null
+          id?: string
+          no_personal_items?: boolean | null
+          no_warning_lights?: boolean | null
+          slot_id: string
+          tires_ok?: boolean | null
+          vehicle_clean_ext?: boolean | null
+          vehicle_clean_int?: boolean | null
+          water_bottles?: boolean | null
+        }
+        Update: {
+          ac_working?: boolean | null
+          all_passed?: boolean | null
+          chargers_lightning?: boolean | null
+          chargers_usb_c?: boolean | null
+          checked_at?: string | null
+          created_at?: string | null
+          dress_code_ok?: boolean | null
+          driver_id?: string
+          failed_items?: string[] | null
+          fuel_full?: boolean | null
+          id?: string
+          no_personal_items?: boolean | null
+          no_warning_lights?: boolean | null
+          slot_id?: string
+          tires_ok?: boolean | null
+          vehicle_clean_ext?: boolean | null
+          vehicle_clean_int?: boolean | null
+          water_bottles?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "van_predeparture_checks_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "van_predeparture_checks_slot_id_fkey"
             columns: ["slot_id"]
             isOneToOne: false
             referencedRelation: "van_slots"
@@ -2109,6 +2344,10 @@ export type Database = {
       calculate_distance_km: {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number }
         Returns: number
+      }
+      compute_driver_score: {
+        Args: { p_driver_id: string; p_month?: string }
+        Returns: Json
       }
       declare_van_no_show: {
         Args: { p_booking_id: string; p_driver_id: string }
