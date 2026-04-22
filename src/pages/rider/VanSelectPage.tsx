@@ -73,139 +73,81 @@ function formatDateLabel(d: Date) {
   return `${DAYS_FR_SHORT[d.getDay()]}. ${d.getDate()} ${MONTHS_FR[d.getMonth()]}`;
 }
 
-// ── DAY NAVIGATOR (EasyJet-style columns) ──
-const DayNavigator: React.FC<{
-  baseDate: Date;
-  offset: number;
-  onChangeOffset: (o: number) => void;
-  route: VanRoute;
-}> = ({ baseDate, offset, onChangeOffset, route }) => {
-  // Show 3 days: previous, current, next (current is selected)
-  const days = [-1, 0, 1].map(i => {
-    const d = new Date(baseDate);
-    d.setDate(d.getDate() + offset + i);
-    return d;
-  });
+// (DayNavigator removed — day columns are now rendered inline in renderColumn)
 
-  // Compute min price per day for display
-  const dayPrices = useMemo(
-    () => days.map(d => {
-      const slots = generateDaySlots(route, d);
-      const available = slots.filter(s => s.seatsLeft > 0);
-      return available.length > 0 ? Math.min(...available.map(s => s.price)) : null;
-    }),
-    [days.map(d => d.toISOString().slice(0, 10)).join('|'), route.id]
-  );
-
-  return (
-    <div className="flex items-stretch mb-4 rounded-xl overflow-hidden border border-gray-200 bg-white">
-      {/* Left arrow */}
-      <button
-        onClick={() => onChangeOffset(offset - 1)}
-        className="px-2 flex items-center justify-center hover:bg-gray-50 transition-colors border-r border-gray-200"
-        aria-label="Jour précédent"
-      >
-        <ChevronLeft className="w-4 h-4 text-gray-600" />
-      </button>
-
-      {/* 3 day columns */}
-      {days.map((d, i) => {
-        const isCurrent = i === 1;
-        const minP = dayPrices[i];
-        const isSoldOut = minP === null;
-        return (
-          <button
-            key={d.toISOString()}
-            onClick={() => onChangeOffset(offset + i - 1)}
-            className={`flex-1 py-2.5 px-1 flex flex-col items-center justify-center gap-0.5 transition-colors border-r last:border-r-0 border-gray-200 ${
-              isCurrent ? 'bg-amber-50' : 'bg-white hover:bg-gray-50'
-            }`}
-          >
-            <span className={`text-[11px] font-medium uppercase ${isCurrent ? 'text-gray-900' : 'text-gray-500'}`}>
-              {DAYS_FR_SHORT[d.getDay()].toLowerCase()}
-            </span>
-            <span className={`text-sm font-bold leading-tight ${isCurrent ? 'text-gray-900' : 'text-gray-700'}`}>
-              {d.getDate()} {MONTHS_FR[d.getMonth()]}
-            </span>
-            {isSoldOut ? (
-              <span className="text-[10px] font-bold text-gray-400 mt-0.5">Complet</span>
-            ) : (
-              <span
-                className={`text-[11px] font-bold mt-0.5 ${isCurrent ? '' : 'text-gray-500'}`}
-                style={isCurrent ? { color: GOLD } : undefined}
-              >
-                dès CHF {minP}
-              </span>
-            )}
-            {isCurrent && (
-              <span
-                className="block w-8 h-0.5 rounded-full mt-1"
-                style={{ backgroundColor: GOLD }}
-              />
-            )}
-          </button>
-        );
-      })}
-
-      {/* Right arrow */}
-      <button
-        onClick={() => onChangeOffset(offset + 1)}
-        className="px-2 flex items-center justify-center hover:bg-gray-50 transition-colors border-l border-gray-200"
-        aria-label="Jour suivant"
-      >
-        <ChevronRight className="w-4 h-4 text-gray-600" />
-      </button>
-    </div>
-  );
-};
-
-// ── SLOT CARD ──
+// ── SLOT CARD (EasyJet-style, compact) ──
 const SlotCard: React.FC<{
   slot: TimeSlotData;
   minPrice: number;
   isSelected: boolean;
   onSelect: () => void;
 }> = ({ slot, minPrice, isSelected, onSelect }) => {
-  const badge = getBadge(slot.price, minPrice, slot.seatsLeft);
   const isSoldOut = slot.seatsLeft === 0;
+  const isLowest = !isSoldOut && slot.price === minPrice;
 
   return (
-    <div className={`rounded-xl border-2 overflow-hidden transition-all ${
-      isSelected ? 'border-amber-400 shadow-md' : isSoldOut ? 'border-gray-200 opacity-60' : 'border-gray-200 hover:border-gray-300'
-    }`}>
-      <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
-        <div>
-          <p className="text-xs text-gray-500">Départ</p>
-          <p className="text-lg font-black text-gray-900">{slot.departure}</p>
+    <div
+      className={`rounded-md overflow-hidden border transition-all bg-white ${
+        isSelected
+          ? 'border-amber-400 ring-2 ring-amber-200 shadow-md'
+          : isSoldOut
+          ? 'border-gray-200 opacity-70'
+          : 'border-gray-200 hover:border-gray-300'
+      }`}
+    >
+      {/* Dark header: Départ / Arrivée */}
+      <div className="bg-slate-800 text-white px-3 py-2 text-[11px] leading-tight">
+        <div className="flex items-center justify-between">
+          <span className="opacity-80">Départ</span>
+          <span className="font-bold">{slot.departure}</span>
         </div>
-        <div className="text-right">
-          <p className="text-xs text-gray-500">Arrivée</p>
-          <p className="text-lg font-black text-gray-900">{slot.arrival}</p>
+        <div className="flex items-center justify-between">
+          <span className="opacity-80">Arrivée</span>
+          <span className="font-bold">{slot.arrival}</span>
         </div>
       </div>
-      <div className="px-4 py-3">
-        {badge && (
-          <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${badge.color} inline-block mb-2`}>
-            {badge.label}
-          </span>
-        )}
+
+      {/* Lowest price ribbon */}
+      {isLowest && (
+        <div
+          className="text-white text-[10px] font-bold text-center py-1 tracking-wider"
+          style={{ backgroundColor: GOLD }}
+        >
+          PRIX LE PLUS BAS
+        </div>
+      )}
+
+      {/* Body */}
+      <div className="px-3 py-3 min-h-[80px] flex flex-col items-center justify-center text-center">
         {isSoldOut ? (
-          <p className="text-sm font-bold text-gray-400 text-center py-2">COMPLET</p>
+          <p className="text-sm font-bold text-gray-500 py-3">Complet</p>
         ) : (
-          <div className="flex items-center justify-between">
-            <p className="text-xl font-black text-gray-900">CHF {slot.price}.00</p>
-            <button onClick={onSelect}
-              className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-lg transition-all ${isSelected ? 'bg-emerald-500' : ''}`}
-              style={!isSelected ? { backgroundColor: GOLD } : {}}>
-              {isSelected ? <Check className="w-5 h-5" /> : '+'}
-            </button>
-          </div>
+          <button
+            onClick={onSelect}
+            className="w-full flex items-center justify-center gap-2"
+          >
+            <span className="text-base font-black text-gray-900">
+              CHF {slot.price}.00
+            </span>
+            <span
+              className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-base font-bold transition-all ${
+                isSelected ? 'bg-emerald-500' : ''
+              }`}
+              style={!isSelected ? { backgroundColor: GOLD } : {}}
+            >
+              {isSelected ? <Check className="w-3.5 h-3.5" /> : '+'}
+            </span>
+          </button>
         )}
-        {!isSoldOut && slot.seatsLeft <= 4 && (
-          <p className="text-[10px] text-amber-600 font-medium mt-1 flex items-center gap-1">
-            <AlertTriangle className="w-3 h-3" /> {slot.seatsLeft} siège{slot.seatsLeft > 1 ? 's' : ''} disponible{slot.seatsLeft > 1 ? 's' : ''}
-          </p>
-        )}
+      </div>
+
+      {/* Footer: seats availability */}
+      <div className="bg-gray-100 px-3 py-1.5 text-center">
+        <span className="text-[10px] font-medium text-gray-600">
+          {isSoldOut
+            ? '—'
+            : `${slot.seatsLeft} siège${slot.seatsLeft > 1 ? 's' : ''} disponible${slot.seatsLeft > 1 ? 's' : ''}`}
+        </span>
       </div>
     </div>
   );
@@ -294,12 +236,12 @@ const VanSelectPage: React.FC = () => {
   // (Plus de garde "Route non trouvée" : on génère toujours une route synthétique de fallback)
 
 
-  // ── COLUMN CONTENT ──
+  // ── COLUMN CONTENT (EasyJet-style 3-day grid) ──
   const renderColumn = (
     direction: 'outbound' | 'return',
     routeData: VanRoute,
-    slots: TimeSlotData[],
-    minPrice: number,
+    _slots: TimeSlotData[],
+    _minPrice: number,
     selected: TimeSlotData | null,
     onSelect: (s: TimeSlotData) => void,
     date: Date,
@@ -307,41 +249,125 @@ const VanSelectPage: React.FC = () => {
     setOffset: (o: number) => void,
     fromCity: string,
     toCity: string,
-  ) => (
-    <div className="flex-1 min-w-0">
-      {/* Dark header */}
-      <div className="bg-slate-800 rounded-xl p-4 mb-4">
-        <div className="flex items-center gap-2 mb-1">
-          <Bus className="w-4 h-4 text-white/70" />
-          <p className="text-sm font-bold text-white">{fromCity} → {toCity}</p>
-        </div>
-        <p className="text-[11px] text-white/50 flex items-center gap-1">
-          👁 {viewingCount} personnes consultent ce trajet
-        </p>
-      </div>
+  ) => {
+    // Build 3 visible days (previous/current/next)
+    const visibleDays = [-1, 0, 1].map(i => {
+      const d = new Date(date);
+      d.setDate(d.getDate() + i);
+      return d;
+    });
 
-      {/* Day navigator */}
-      <DayNavigator baseDate={date} offset={offset} onChangeOffset={setOffset} route={routeData} />
+    // For each day, generate its slots and min price
+    const dayData = visibleDays.map(d => {
+      const slots = generateDaySlots(routeData, d);
+      const available = slots.filter(s => s.seatsLeft > 0);
+      const minPrice = available.length > 0 ? Math.min(...available.map(s => s.price)) : 0;
+      return { date: d, slots, minPrice };
+    });
 
-      {/* Slot cards */}
-      <div className="space-y-3">
-        {slots.map(slot => (
-          <SlotCard
-            key={slot.id}
-            slot={slot}
-            minPrice={minPrice}
-            isSelected={selected?.id === slot.id}
-            onSelect={() => slot.seatsLeft > 0 && onSelect(slot)}
-          />
-        ))}
-        {slots.length === 0 && (
-          <div className="text-center py-8 text-gray-400 text-sm">
-            Aucun créneau disponible pour cette date
+    // Max number of slots across the 3 days, to align rows
+    const maxRows = Math.max(...dayData.map(dd => dd.slots.length), 1);
+
+    return (
+      <div className="flex-1 min-w-0">
+        {/* Dark header (route + viewers) */}
+        <div className="bg-slate-800 rounded-t-xl px-4 py-3">
+          <div className="flex items-center gap-2 mb-0.5">
+            <Bus className="w-4 h-4 text-white/70" />
+            <p className="text-sm font-bold text-white">{fromCity} → {toCity}</p>
           </div>
-        )}
+          <p className="text-[11px] text-white/50">
+            👁 {viewingCount} personnes consultent ce trajet
+          </p>
+          <div className="mt-2 h-px bg-white/10" />
+        </div>
+
+        {/* Day-grid with arrows on the sides */}
+        <div className="bg-white border-x border-b border-gray-200 rounded-b-xl overflow-hidden">
+          <div className="flex items-stretch">
+            {/* Left arrow */}
+            <button
+              onClick={() => setOffset(offset - 1)}
+              className="px-1.5 flex items-center justify-center hover:bg-gray-50 transition-colors border-r border-gray-200"
+              aria-label="Jour précédent"
+              style={{ color: GOLD }}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            {/* 3 day columns */}
+            <div className="flex-1 grid grid-cols-3 divide-x divide-gray-200">
+              {dayData.map((dd, dayIdx) => {
+                const isCurrent = dayIdx === 1;
+                return (
+                  <div key={dd.date.toISOString()} className="flex flex-col">
+                    {/* Day header */}
+                    <button
+                      onClick={() => setOffset(offset + dayIdx - 1)}
+                      className={`py-2.5 px-1 text-center transition-colors ${
+                        isCurrent ? 'bg-amber-50' : 'bg-gray-50 hover:bg-gray-100'
+                      }`}
+                    >
+                      <div className={`text-xs font-medium ${isCurrent ? 'text-gray-900' : 'text-gray-500'}`}>
+                        {DAYS_FR_SHORT[dd.date.getDay()].toLowerCase()}
+                      </div>
+                      <div className={`text-sm font-bold leading-tight ${isCurrent ? 'text-gray-900' : 'text-gray-700'}`}>
+                        {dd.date.getDate()} {MONTHS_FR[dd.date.getMonth()]}
+                      </div>
+                      {isCurrent && (
+                        <div
+                          className="mx-auto mt-1 w-6 h-0.5 rounded-full"
+                          style={{ backgroundColor: GOLD }}
+                        />
+                      )}
+                    </button>
+
+                    {/* Slots stacked for this day */}
+                    <div className="p-2 space-y-2 flex-1 bg-white">
+                      {Array.from({ length: maxRows }).map((_, rowIdx) => {
+                        const slot = dd.slots[rowIdx];
+                        if (!slot) {
+                          return (
+                            <div
+                              key={`empty-${rowIdx}`}
+                              className="rounded-md border border-dashed border-gray-200 min-h-[150px]"
+                            />
+                          );
+                        }
+                        return (
+                          <SlotCard
+                            key={slot.id}
+                            slot={slot}
+                            minPrice={dd.minPrice}
+                            isSelected={selected?.id === slot.id && isCurrent}
+                            onSelect={() => {
+                              if (slot.seatsLeft === 0) return;
+                              if (!isCurrent) setOffset(offset + dayIdx - 1);
+                              onSelect(slot);
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right arrow */}
+            <button
+              onClick={() => setOffset(offset + 1)}
+              className="px-1.5 flex items-center justify-center hover:bg-gray-50 transition-colors border-l border-gray-200"
+              aria-label="Jour suivant"
+              style={{ color: GOLD }}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // ── SIDEBAR CART ──
   const renderCart = (sticky?: boolean) => (
