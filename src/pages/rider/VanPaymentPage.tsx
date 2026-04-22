@@ -5,6 +5,11 @@ import BookingSidebar, { BookingItem } from '@/components/van/BookingSidebar';
 import { Check, Lock, Mail, User, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import visaLogo from '@/assets/payment/visa.svg';
+import mastercardLogo from '@/assets/payment/mastercard.svg';
+import twintLogo from '@/assets/payment/twint.svg';
+import revolutLogo from '@/assets/payment/revolut.svg';
+import applepayLogo from '@/assets/payment/applepay.svg';
 
 const GOLD = '#C9A84C';
 
@@ -32,7 +37,7 @@ export default function VanPaymentPage() {
 
   const total = items.reduce((s, i) => s + i.amount, 0);
 
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'twint' | 'apple'>('card');
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'twint' | 'revolut' | 'apple'>('card');
   const [confirmed, setConfirmed] = useState(false);
   const [bookingRef] = useState(() =>
     Math.random().toString(36).substring(2, 8).toUpperCase()
@@ -157,20 +162,72 @@ export default function VanPaymentPage() {
             <div className="bg-white rounded-xl border p-5">
               <h2 className="font-semibold mb-3 text-gray-900">Mode de paiement</h2>
               <div className="space-y-2">
-                {(['card', 'twint', 'apple'] as const).map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => setPaymentMethod(m)}
-                    className={`w-full p-3 rounded-lg border text-left ${
-                      paymentMethod === m ? 'border-2' : 'border-gray-200'
-                    }`}
-                    style={paymentMethod === m ? { borderColor: GOLD } : {}}
-                  >
-                    {m === 'card' && '💳 Carte bancaire'}
-                    {m === 'twint' && '📱 Twint'}
-                    {m === 'apple' && '🍎 Apple Pay'}
-                  </button>
-                ))}
+                {([
+                  {
+                    id: 'card' as const,
+                    label: 'Carte bancaire',
+                    sub: 'Visa, Mastercard',
+                    logos: [visaLogo, mastercardLogo],
+                  },
+                  {
+                    id: 'twint' as const,
+                    label: 'TWINT',
+                    sub: 'Paiement instantané suisse',
+                    logos: [twintLogo],
+                  },
+                  {
+                    id: 'revolut' as const,
+                    label: 'Revolut Pay',
+                    sub: 'Payez avec votre compte Revolut',
+                    logos: [revolutLogo],
+                  },
+                  {
+                    id: 'apple' as const,
+                    label: 'Apple Pay',
+                    sub: 'Touch ID ou Face ID',
+                    logos: [applepayLogo],
+                  },
+                ]).map((m) => {
+                  const active = paymentMethod === m.id;
+                  return (
+                    <button
+                      key={m.id}
+                      onClick={() => setPaymentMethod(m.id)}
+                      className={`w-full p-3 rounded-lg border text-left flex items-center gap-3 transition ${
+                        active ? 'border-2' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      style={active ? { borderColor: GOLD, backgroundColor: '#FFFBF0' } : {}}
+                    >
+                      <span
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                          active ? '' : 'border-gray-300'
+                        }`}
+                        style={active ? { borderColor: GOLD } : {}}
+                      >
+                        {active && (
+                          <span
+                            className="w-2 h-2 rounded-full"
+                            style={{ backgroundColor: GOLD }}
+                          />
+                        )}
+                      </span>
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">{m.label}</div>
+                        <div className="text-xs text-gray-500">{m.sub}</div>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {m.logos.map((src, idx) => (
+                          <img
+                            key={idx}
+                            src={src}
+                            alt=""
+                            className="h-7 w-auto object-contain"
+                          />
+                        ))}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
               <button
                 onClick={handlePay}
