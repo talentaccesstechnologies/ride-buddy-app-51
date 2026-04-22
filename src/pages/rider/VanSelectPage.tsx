@@ -235,13 +235,8 @@ const VanSelectPage: React.FC = () => {
 
   const canContinue = isRoundTrip ? !!(selectedOutbound && selectedReturn) : !!selectedOutbound;
 
-  if (!route) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-gray-500">Route non trouvée</p>
-      </div>
-    );
-  }
+  // (Plus de garde "Route non trouvée" : on génère toujours une route synthétique de fallback)
+
 
   // ── COLUMN CONTENT ──
   const renderColumn = (
