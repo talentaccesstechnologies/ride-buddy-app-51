@@ -74,7 +74,7 @@ interface SeatIconProps {
   onClick?: () => void;
 }
 
-function SeatIcon({ status, number, onClick }: SeatIconProps) {
+const SeatIcon = React.forwardRef<HTMLButtonElement, SeatIconProps>(function SeatIcon({ status, number, onClick }, ref) {
   const isSelected = status === 'selected';
   const isTaken = status === 'taken';
 
@@ -84,6 +84,7 @@ function SeatIcon({ status, number, onClick }: SeatIconProps) {
 
   return (
     <button
+      ref={ref}
       onClick={isTaken ? undefined : onClick}
       disabled={isTaken}
       className={`relative ${cursor} group`}
@@ -106,7 +107,7 @@ function SeatIcon({ status, number, onClick }: SeatIconProps) {
       </svg>
     </button>
   );
-}
+});
 
 function CategoryHeader({ category }: { category: Category }) {
   return (
@@ -374,7 +375,7 @@ export default function VanSeatPage() {
               returnTime={params.get('returnTime') || undefined}
               returnArrivalTime={params.get('returnArrivalTime') || undefined}
               items={items}
-              onContinue={forward}
+              onContinue={trySkip}
             />
           </div>
         </div>
