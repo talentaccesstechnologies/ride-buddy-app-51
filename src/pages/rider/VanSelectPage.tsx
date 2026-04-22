@@ -321,7 +321,7 @@ const VanSelectPage: React.FC = () => {
       </div>
 
       {/* Day navigator */}
-      <DayNavigator baseDate={date} offset={offset} onChangeOffset={setOffset} />
+      <DayNavigator baseDate={date} offset={offset} onChangeOffset={setOffset} route={routeData} />
 
       {/* Slot cards */}
       <div className="space-y-3">
