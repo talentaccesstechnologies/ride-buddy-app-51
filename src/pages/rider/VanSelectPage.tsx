@@ -428,7 +428,7 @@ const VanSelectPage: React.FC = () => {
                 <div className="flex items-center gap-1.5 mb-1">
                   <Check className="w-3.5 h-3.5 text-emerald-600" />
                   <p className="text-xs font-bold text-emerald-800">
-                    {formatDateLabel(returnDate)} · {selectedReturn.departure}→{selectedReturn.arrival}
+                    {formatDateLabel(new Date(selectedReturn.date))} · {selectedReturn.departure}→{selectedReturn.arrival}
                   </p>
                 </div>
                 <p className="text-sm font-black text-gray-900">CHF {selectedReturn.price}.00</p>
