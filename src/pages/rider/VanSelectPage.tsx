@@ -111,15 +111,17 @@ const SlotCard: React.FC<{
         </div>
       </div>
 
-      {/* Lowest price ribbon (hidden when selected to keep the gold body clean) */}
-      {isLowest && !isSelected && (
-        <div
-          className="text-white text-[10px] font-bold text-center py-1 tracking-wider"
-          style={{ backgroundColor: GOLD }}
-        >
-          PRIX LE PLUS BAS
-        </div>
-      )}
+      {/* Lowest price ribbon — espace réservé en permanence pour éviter les sauts de hauteur */}
+      <div
+        className="text-white text-[10px] font-bold text-center py-1 tracking-wider"
+        style={{
+          backgroundColor: isLowest && !isSelected ? GOLD : 'transparent',
+          visibility: isLowest && !isSelected ? 'visible' : 'hidden',
+        }}
+        aria-hidden={!(isLowest && !isSelected)}
+      >
+        PRIX LE PLUS BAS
+      </div>
 
       {/* Body — turns GOLD when selected (EasyJet style) */}
       <div
