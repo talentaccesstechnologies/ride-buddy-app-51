@@ -538,6 +538,8 @@ const CabyVanPage: React.FC = () => {
               {/* Mega-menu panel */}
               {infoMenuOpen && (
                 <div
+                  onMouseEnter={openInfoMenu}
+                  onMouseLeave={closeInfoMenuDelayed}
                   style={{
                     position: 'fixed',
                     top: 56,
