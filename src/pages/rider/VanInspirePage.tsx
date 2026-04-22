@@ -17,11 +17,13 @@ const VanInspirePage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialCategory = (searchParams.get('category') as CategoryFilter) || 'all';
+  const initialBudget = (searchParams.get('budget') as BudgetFilter) || 'all';
+  const initialRegion = (searchParams.get('region') as RegionFilter) || 'all';
 
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [origin] = useState('Genève');
-  const [budget, setBudget] = useState<BudgetFilter>('all');
-  const [region, setRegion] = useState<RegionFilter>('all');
+  const [budget, setBudget] = useState<BudgetFilter>(initialBudget);
+  const [region, setRegion] = useState<RegionFilter>(initialRegion);
   const [category, setCategory] = useState<CategoryFilter>(initialCategory);
   const [sortMode, setSortMode] = useState<SortMode>('price');
   const [wishlist, setWishlist] = useState<string[]>(() => {
