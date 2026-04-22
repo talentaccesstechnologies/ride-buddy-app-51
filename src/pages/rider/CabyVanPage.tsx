@@ -354,12 +354,15 @@ const CabyVanPage: React.FC = () => {
   const totalPrice = slotPrice + ancillaryTotal;
 
   const handleSearch = () => {
-    if (from && to && from !== to && selectedRoute) {
-      const params = new URLSearchParams({ from, to, passengers: String(passengers) });
-      if (dateAller) params.set('date', dateAller);
-      if (roundTrip && dateRetour) params.set('returnDate', dateRetour);
-      navigate(`/caby/van/select?${params.toString()}`);
+    if (!from || !to || from === to) {
+      // Pas assez d'info → bascule vers le formulaire détaillé
+      setStep('search');
+      return;
     }
+    const params = new URLSearchParams({ from, to, passengers: String(passengers) });
+    if (dateAller) params.set('date', dateAller);
+    if (roundTrip && dateRetour) params.set('returnDate', dateRetour);
+    navigate(`/caby/van/select?${params.toString()}`);
   };
 
   const formatDateForInput = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
