@@ -213,11 +213,13 @@ export function calculateFullPrice(
   let finalPrice = tierPrice;
   finalPrice *= getBookingWindowMultiplier(daysUntilDeparture);
   finalPrice *= getRushMultiplier(departureTime);
-  finalPrice *= getSeasonalMultiplier(departureTime);
+  const seasonalMult = getSeasonalMultiplier(departureTime);
+  finalPrice *= seasonalMult;
   if (isLastMinute) finalPrice = finalPrice * (1 - lastMinuteDiscount / 100);
 
-  const minPrice = basePrice * 0.60;
-  const maxPrice = basePrice * 1.40;
+  // Clamps ajustés à la saisonnalité pour préserver l'effet saisonnier
+  const minPrice = basePrice * 0.60 * seasonalMult;
+  const maxPrice = basePrice * 1.40 * seasonalMult;
   finalPrice = Math.max(minPrice, Math.min(finalPrice, maxPrice));
   finalPrice = Math.round(finalPrice);
 
