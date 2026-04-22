@@ -86,6 +86,7 @@ import PartnerDashboardPage from "./pages/partner/PartnerDashboardPage";
 import { PartnerProvider } from "@/contexts/PartnerContext";
 import HowItWorksPage from "./pages/HowItWorksPage";
 import CGUModal from "@/components/shared/CGUModal";
+import CabyTestDashboard from "@/pages/admin/CabyTestDashboard";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -198,6 +199,9 @@ const App = () => (
 
               {/* Early Access */}
               <Route path="/early-access" element={<EarlyAccessPage />} />
+
+              {/* Admin Tests */}
+              <Route path="/caby/admin/tests" element={<CabyTestDashboard />} />
 
               {/* Device Preview */}
               <Route path="/preview" element={<DevicePreviewPage />} />
