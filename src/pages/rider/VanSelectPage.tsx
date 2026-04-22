@@ -25,6 +25,7 @@ interface TimeSlotData {
   seatsLeft: number;
   seatsTotal: number;
   isLowest: boolean;
+  date: string; // ISO date (YYYY-MM-DD) — source de vérité pour le panier
 }
 
 function generateDaySlots(route: VanRoute, date: Date): TimeSlotData[] {
@@ -34,6 +35,7 @@ function generateDaySlots(route: VanRoute, date: Date): TimeSlotData[] {
 
   // Vary seats/prices by day for realism
   const seed = date.getDate() + dayOfWeek * 7;
+  const isoDate = date.toISOString().slice(0, 10);
   const slots: TimeSlotData[] = baseSlots.map((slot, i) => {
     const seatVariation = ((seed + i) % 4);
     const seatsLeft = Math.max(0, 7 - slot.seatsTaken - seatVariation + 2);
@@ -41,13 +43,14 @@ function generateDaySlots(route: VanRoute, date: Date): TimeSlotData[] {
     const earlyBird = daysUntil >= 14 ? 0.85 : 1;
     const price = Math.round(slot.basePrice * priceMultiplier * earlyBird);
     return {
-      id: `${slot.id}-${date.toISOString().slice(0, 10)}`,
+      id: `${slot.id}-${isoDate}`,
       departure: slot.departure,
       arrival: slot.arrivalEstimate,
       price,
       seatsLeft: Math.min(7, Math.max(0, seatsLeft)),
       seatsTotal: 7,
       isLowest: false,
+      date: isoDate,
     };
   });
 
@@ -356,11 +359,12 @@ const VanSelectPage: React.FC = () => {
                             key={slot.id}
                             slot={slot}
                             minPrice={dd.minPrice}
-                            isSelected={selected?.id === slot.id && isCurrent}
+                            isSelected={selected?.id === slot.id}
                             onSelect={() => {
                               if (slot.seatsLeft === 0) return;
-                              if (!isCurrent) setOffset(offset + dayIdx - 1);
+                              // Sélectionne d'abord, puis recentre la vue (même date que le slot cliqué)
                               onSelect(slot);
+                              if (!isCurrent) setOffset(offset + dayIdx - 1);
                             }}
                           />
                         );
@@ -405,7 +409,7 @@ const VanSelectPage: React.FC = () => {
               <div className="flex items-center gap-1.5 mb-1">
                 <Check className="w-3.5 h-3.5 text-emerald-600" />
                 <p className="text-xs font-bold text-emerald-800">
-                  {formatDateLabel(outboundDate)} · {selectedOutbound.departure}→{selectedOutbound.arrival}
+                  {formatDateLabel(new Date(selectedOutbound.date))} · {selectedOutbound.departure}→{selectedOutbound.arrival}
                 </p>
               </div>
               <p className="text-sm font-black text-gray-900">CHF {selectedOutbound.price}.00</p>
@@ -424,7 +428,7 @@ const VanSelectPage: React.FC = () => {
                 <div className="flex items-center gap-1.5 mb-1">
                   <Check className="w-3.5 h-3.5 text-emerald-600" />
                   <p className="text-xs font-bold text-emerald-800">
-                    {formatDateLabel(returnDate)} · {selectedReturn.departure}→{selectedReturn.arrival}
+                    {formatDateLabel(new Date(selectedReturn.date))} · {selectedReturn.departure}→{selectedReturn.arrival}
                   </p>
                 </div>
                 <p className="text-sm font-black text-gray-900">CHF {selectedReturn.price}.00</p>
