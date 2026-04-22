@@ -251,7 +251,7 @@ export function useDriverConduct(): UseDriverConductReturn {
           p_driver_id: driverId,
           p_month: m,
         });
-        if (computed) setScore(computed as DriverScore);
+        if (computed) setScore(computed as unknown as DriverScore);
       }
     } finally {
       setIsLoading(false);
@@ -264,7 +264,7 @@ export function useDriverConduct(): UseDriverConductReturn {
       p_driver_id: driverId,
       p_month: m,
     });
-    if (data) setScore(data as DriverScore);
+    if (data) setScore(data as unknown as DriverScore);
   }, []);
 
   return {
