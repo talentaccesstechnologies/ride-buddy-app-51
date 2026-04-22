@@ -5,11 +5,10 @@ import BookingSidebar, { BookingItem } from '@/components/van/BookingSidebar';
 import { Check, Lock, Mail, User, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import visaLogo from '@/assets/payment/visa.svg';
-import mastercardLogo from '@/assets/payment/mastercard.svg';
-import twintLogo from '@/assets/payment/twint.svg';
-import revolutLogo from '@/assets/payment/revolut.svg';
-import applepayLogo from '@/assets/payment/applepay.svg';
+import visaMastercardLogo from '@/assets/payment/visa-mastercard.png';
+import twintLogo from '@/assets/payment/twint.png';
+import revolutLogo from '@/assets/payment/revolut.png';
+import applepayLogo from '@/assets/payment/applepay.png';
 
 const GOLD = '#C9A84C';
 
@@ -167,7 +166,7 @@ export default function VanPaymentPage() {
                     id: 'card' as const,
                     label: 'Carte bancaire',
                     sub: 'Visa, Mastercard',
-                    logos: [visaLogo, mastercardLogo],
+                    logos: [visaMastercardLogo],
                   },
                   {
                     id: 'twint' as const,
