@@ -74,7 +74,7 @@ interface SeatIconProps {
   onClick?: () => void;
 }
 
-function SeatIcon({ status, number, onClick }: SeatIconProps) {
+const SeatIcon = React.forwardRef<HTMLButtonElement, SeatIconProps>(function SeatIcon({ status, number, onClick }, ref) {
   const isSelected = status === 'selected';
   const isTaken = status === 'taken';
 
