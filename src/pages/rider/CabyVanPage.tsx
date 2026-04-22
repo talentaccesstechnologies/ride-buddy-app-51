@@ -597,10 +597,10 @@ const CabyVanPage: React.FC = () => {
                         Préparer son voyage
                       </div>
                       {[
-                        { icon: '🛂', label: 'Documents requis', desc: 'CNI / Passeport CH ↔ UE', to: '/caby/account/help' },
-                        { icon: '🧳', label: 'Bagages & options', desc: 'Cabine, soute, skis, vélos', to: '/caby/account/help' },
-                        { icon: '🔄', label: 'Annulation flexible', desc: 'Modifiez jusqu\'à 2h avant', to: '/caby/account/help' },
-                        { icon: '♿', label: 'Assistance spéciale', desc: 'PMR, mineurs, animaux', to: '/caby/account/safety' },
+                        { icon: '🛂', label: 'Documents requis', desc: 'CNI / Passeport CH ↔ UE', to: '/caby/van/documents' },
+                        { icon: '🧳', label: 'Bagages & options', desc: 'Cabine, soute, skis, vélos', to: '/caby/van/bagages' },
+                        { icon: '🔄', label: 'Annulation flexible', desc: 'Modifiez jusqu\'à 2h avant', to: '/caby/van/flex-pass' },
+                        { icon: '♿', label: 'Assistance spéciale', desc: 'PMR, mineurs, animaux', to: '/caby/van/assistance' },
                         { icon: '🆘', label: 'Aide & contact', desc: 'Centre d\'aide Caby 24/7', to: '/caby/account/help' },
                       ].map(item => (
                         <a
