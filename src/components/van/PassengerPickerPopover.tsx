@@ -133,7 +133,7 @@ const PassengerPickerPopover: React.FC<PassengerPickerPopoverProps> = ({ fieldLa
             Sélectionnez la ou les personnes qui voyagent
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', divider: undefined as unknown as string }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Row
               icon="👤"
               title="Adultes"
