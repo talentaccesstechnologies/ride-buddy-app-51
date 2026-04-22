@@ -57,10 +57,10 @@ function isBetween(d: Date, start: Date, end: Date) {
   return d.getTime() > start.getTime() && d.getTime() < end.getTime();
 }
 
-const CW = 76;
-const CH = 88;
-const CW_M = 52;
-const CH_M = 64;
+const CW = 60;
+const CH = 64;
+const CW_M = 44;
+const CH_M = 56;
 
 const MonthGrid: React.FC<{
   year: number; month: number; basePrice: number;
