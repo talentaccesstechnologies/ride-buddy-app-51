@@ -235,11 +235,13 @@ const CabyTestDashboard: React.FC = () => {
     t('p6');
     await new Promise(r => setTimeout(r, 50));
     try {
-      const creuxTime = new Date(d(3)); creuxTime.setHours(12, 0, 0, 0);
+      const testDate = d(3);
+      const rushTime = new Date(testDate); rushTime.setHours(8, 0, 0, 0);
+      const creuxTime = new Date(testDate); creuxTime.setHours(12, 0, 0, 0);
+      const rRush = calculateFullPrice(77, 3, 7, rushTime);
       const rCreux = calculateFullPrice(77, 3, 7, creuxTime);
-      const baseStd = Math.round(77 * 0.90);
-      if (rCreux.currentPrice < baseStd * 1.05) pass('p6', `price < ${baseStd * 1.05}`, `price=${rCreux.currentPrice} CHF (multiplicateur creux 0.95)`);
-      else warn('p6', `price réduit vs base`, `price=${rCreux.currentPrice} CHF`, 'Vérifier multiplicateur creux 0.95');
+      if (rCreux.currentPrice < rRush.currentPrice) pass('p6', `creux(${rCreux.currentPrice}) < rush(${rRush.currentPrice})`, `creux=${rCreux.currentPrice} CHF < rush=${rRush.currentPrice} CHF ✓`);
+      else fail('p6', 'creux < rush', `creux=${rCreux.currentPrice} CHF, rush=${rRush.currentPrice} CHF`);
     } catch(e: any) { fail('p6', 'prix creux', `ERROR: ${e.message}`); }
 
     // P7 — Early bird
