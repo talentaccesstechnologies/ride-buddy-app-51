@@ -918,7 +918,7 @@ const CabyVanPage: React.FC = () => {
               <div className="caby-pgridp" style={{ display: 'grid', gridTemplateColumns: '718.35px 394.64px', gap: 18.35, alignItems: 'start', marginTop: 28, justifyContent: 'center' }}>
                 <div style={{ width: 718.35, height: 431, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', columnGap: 18.35, rowGap: 38.55 }}>
                   <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80&fit=crop" alt="Paris" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
-                  <img src="https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=400&q=80&fit=crop" alt="Lausanne" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
+                  <img src={lausanneImg} alt="Lausanne" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
                   <img src={milanImg} alt="Milan" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block', borderRadius: 8 }} />
                   <div style={{ width: 350, height: 253.97, borderRadius: 8, overflow: 'hidden', position: 'relative' }}>
                     <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80&fit=crop" alt="Caby" style={{ width: 350, height: 253.97, objectFit: 'cover', display: 'block' }} />
