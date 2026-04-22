@@ -159,53 +159,79 @@ const DayNavigator: React.FC<{
   );
 };
 
-// ── SLOT CARD ──
+// ── SLOT CARD (EasyJet-style, compact) ──
 const SlotCard: React.FC<{
   slot: TimeSlotData;
   minPrice: number;
   isSelected: boolean;
   onSelect: () => void;
 }> = ({ slot, minPrice, isSelected, onSelect }) => {
-  const badge = getBadge(slot.price, minPrice, slot.seatsLeft);
   const isSoldOut = slot.seatsLeft === 0;
+  const isLowest = !isSoldOut && slot.price === minPrice;
 
   return (
-    <div className={`rounded-xl border-2 overflow-hidden transition-all ${
-      isSelected ? 'border-amber-400 shadow-md' : isSoldOut ? 'border-gray-200 opacity-60' : 'border-gray-200 hover:border-gray-300'
-    }`}>
-      <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
-        <div>
-          <p className="text-xs text-gray-500">Départ</p>
-          <p className="text-lg font-black text-gray-900">{slot.departure}</p>
+    <div
+      className={`rounded-md overflow-hidden border transition-all bg-white ${
+        isSelected
+          ? 'border-amber-400 ring-2 ring-amber-200 shadow-md'
+          : isSoldOut
+          ? 'border-gray-200 opacity-70'
+          : 'border-gray-200 hover:border-gray-300'
+      }`}
+    >
+      {/* Dark header: Départ / Arrivée */}
+      <div className="bg-slate-800 text-white px-3 py-2 text-[11px] leading-tight">
+        <div className="flex items-center justify-between">
+          <span className="opacity-80">Départ</span>
+          <span className="font-bold">{slot.departure}</span>
         </div>
-        <div className="text-right">
-          <p className="text-xs text-gray-500">Arrivée</p>
-          <p className="text-lg font-black text-gray-900">{slot.arrival}</p>
+        <div className="flex items-center justify-between">
+          <span className="opacity-80">Arrivée</span>
+          <span className="font-bold">{slot.arrival}</span>
         </div>
       </div>
-      <div className="px-4 py-3">
-        {badge && (
-          <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${badge.color} inline-block mb-2`}>
-            {badge.label}
-          </span>
-        )}
+
+      {/* Lowest price ribbon */}
+      {isLowest && (
+        <div
+          className="text-white text-[10px] font-bold text-center py-1 tracking-wider"
+          style={{ backgroundColor: GOLD }}
+        >
+          PRIX LE PLUS BAS
+        </div>
+      )}
+
+      {/* Body */}
+      <div className="px-3 py-3 min-h-[80px] flex flex-col items-center justify-center text-center">
         {isSoldOut ? (
-          <p className="text-sm font-bold text-gray-400 text-center py-2">COMPLET</p>
+          <p className="text-sm font-bold text-gray-500 py-3">Complet</p>
         ) : (
-          <div className="flex items-center justify-between">
-            <p className="text-xl font-black text-gray-900">CHF {slot.price}.00</p>
-            <button onClick={onSelect}
-              className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-lg transition-all ${isSelected ? 'bg-emerald-500' : ''}`}
-              style={!isSelected ? { backgroundColor: GOLD } : {}}>
-              {isSelected ? <Check className="w-5 h-5" /> : '+'}
-            </button>
-          </div>
+          <button
+            onClick={onSelect}
+            className="w-full flex items-center justify-center gap-2"
+          >
+            <span className="text-base font-black text-gray-900">
+              CHF {slot.price}.00
+            </span>
+            <span
+              className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-base font-bold transition-all ${
+                isSelected ? 'bg-emerald-500' : ''
+              }`}
+              style={!isSelected ? { backgroundColor: GOLD } : {}}
+            >
+              {isSelected ? <Check className="w-3.5 h-3.5" /> : '+'}
+            </span>
+          </button>
         )}
-        {!isSoldOut && slot.seatsLeft <= 4 && (
-          <p className="text-[10px] text-amber-600 font-medium mt-1 flex items-center gap-1">
-            <AlertTriangle className="w-3 h-3" /> {slot.seatsLeft} siège{slot.seatsLeft > 1 ? 's' : ''} disponible{slot.seatsLeft > 1 ? 's' : ''}
-          </p>
-        )}
+      </div>
+
+      {/* Footer: seats availability */}
+      <div className="bg-gray-100 px-3 py-1.5 text-center">
+        <span className="text-[10px] font-medium text-gray-600">
+          {isSoldOut
+            ? '—'
+            : `${slot.seatsLeft} siège${slot.seatsLeft > 1 ? 's' : ''} disponible${slot.seatsLeft > 1 ? 's' : ''}`}
+        </span>
       </div>
     </div>
   );
