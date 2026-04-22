@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Check, Info, ChevronLeft, Users } from 'lucide-react';
+import { Check, Info, ChevronLeft, Users, X } from 'lucide-react';
 import BookingStepper from '@/components/van/BookingStepper';
 import BookingSidebar, { BookingItem } from '@/components/van/BookingSidebar';
 
@@ -380,27 +380,65 @@ export default function VanSeatPage() {
         </div>
       </div>
 
-      {/* Skip modal */}
+      {/* Skip modal — style easyJet */}
       {showSkipModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl p-6 max-w-sm w-full">
-            <h3 className="font-bold text-lg mb-2">Vous n'avez pas choisi de siège</h3>
-            <p className="text-sm text-gray-500 mb-5">
-              Un siège vous sera attribué automatiquement et gratuitement au moment de la confirmation.
-            </p>
-            <div className="flex gap-3">
+        <div
+          className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowSkipModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-4">
+              <h3 className="font-bold text-xl text-gray-900 leading-snug">
+                Vous n'avez pas choisi de siège. Vous confirmez ?
+              </h3>
               <button
                 onClick={() => setShowSkipModal(false)}
-                className="flex-1 py-2 rounded-lg text-sm font-semibold text-white"
+                className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
+                style={{ color: GOLD }}
+                aria-label="Fermer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Body — bloc gris pédagogique */}
+            <div className="mx-6 mb-5 rounded-lg bg-gray-50 border border-gray-100 p-5 space-y-4 text-sm text-gray-700 leading-relaxed">
+              <p>
+                Si vous souhaitez choisir où vous asseoir, vous pouvez sélectionner un siège dès maintenant :
+              </p>
+              <p>
+                En sélectionnant un <strong>siège standard (Rang 3)</strong>, vous pourrez choisir de vous asseoir près de la fenêtre, au milieu ou côté couloir — <strong>gratuitement</strong>.
+              </p>
+              <p>
+                En sélectionnant un <strong>siège Confort (Rang 2)</strong> ou <strong>Premium Avant</strong>, vous bénéficierez de plus d'espace pour les jambes, d'une meilleure vue panoramique et embarquerez parmi les premiers.
+              </p>
+            </div>
+
+            {/* CTA principal */}
+            <div className="px-6 pb-3">
+              <button
+                onClick={() => setShowSkipModal(false)}
+                className="w-full py-3.5 rounded-lg text-base font-bold text-white transition-opacity hover:opacity-90"
                 style={{ backgroundColor: GOLD }}
               >
-                Choisir un siège
+                Choisir des sièges
               </button>
+            </div>
+
+            {/* Lien secondaire */}
+            <div className="px-6 pb-6 text-center">
               <button
                 onClick={() => { setShowSkipModal(false); forward(); }}
-                className="flex-1 py-2 rounded-lg text-sm font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200"
+                className="text-sm font-semibold hover:underline py-2"
+                style={{ color: GOLD }}
               >
-                Continuer sans
+                Ne pas choisir de siège
               </button>
             </div>
           </div>
