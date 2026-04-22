@@ -151,7 +151,6 @@ const SlotCard: React.FC<{
         if (isSoldOut) return;
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(); }
       }}
-      style={{ position: 'relative' }}
       className={`rounded-md overflow-hidden border transition-all ${
         isSoldOut ? 'cursor-not-allowed' : 'cursor-pointer'
       } ${
