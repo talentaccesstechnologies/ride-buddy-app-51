@@ -1,11 +1,11 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, TrendingUp, Wallet, User } from 'lucide-react';
+import { LayoutDashboard, Users, ClipboardCheck, Wallet, User } from 'lucide-react';
 
 const navItems = [
   { to: '/caby/driver/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/caby/driver/club', icon: Users, label: 'Club' },
-  { to: '/caby/driver/van-missions', icon: TrendingUp, label: 'Van' },
+  { to: '/caby/driver/van-checklist', icon: ClipboardCheck, label: 'Check' },
   { to: '/caby/driver/earnings', icon: Wallet, label: 'Gains' },
   { to: '/caby/driver/profile', icon: User, label: 'Profil' },
 ];

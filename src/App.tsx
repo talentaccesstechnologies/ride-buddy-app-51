@@ -76,6 +76,7 @@ import DriverEarningsPage from "./pages/cabyDriver/DriverEarningsPage";
 import DriverCrossBorderPage from "./pages/cabyDriver/DriverCrossBorderPage";
 import DriverFiscalPage from "./pages/cabyDriver/DriverFiscalPage";
 import VanNotificationsPage from "@/pages/driver/VanNotificationsPage";
+import VanPreDeparturePage from "@/pages/driver/VanPreDeparturePage";
 import CabyCrossBorderPage from "./pages/rider/CabyCrossBorderPage";
 import WalletPage from "./pages/rider/WalletPage";
 import MyReservationsPage from "./pages/rider/MyReservationsPage";
@@ -180,6 +181,7 @@ const App = () => (
                 <Route path="crossborder" element={<DriverCrossBorderPage />} />
                 <Route path="fiscal" element={<DriverFiscalPage />} />
                 <Route path="van-missions" element={<VanNotificationsPage />} />
+                <Route path="van-checklist" element={<VanPreDeparturePage />} />
               </Route>
 
               {/* Invite */}
