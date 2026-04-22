@@ -1238,8 +1238,12 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          is_suspended: boolean | null
+          no_show_count: number | null
+          no_show_warned_at: string | null
           phone: string | null
           role: Database["public"]["Enums"]["user_role"] | null
+          suspended_until: string | null
           updated_at: string | null
         }
         Insert: {
@@ -1248,8 +1252,12 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          is_suspended?: boolean | null
+          no_show_count?: number | null
+          no_show_warned_at?: string | null
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
+          suspended_until?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -1258,8 +1266,12 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          is_suspended?: boolean | null
+          no_show_count?: number | null
+          no_show_warned_at?: string | null
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
+          suspended_until?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -1681,6 +1693,10 @@ export type Database = {
           id: string
           insurance_fee: number | null
           is_last_minute: boolean | null
+          no_show_compensation: number | null
+          no_show_declared_at: string | null
+          no_show_declared_by: string | null
+          no_show_grace_expires: string | null
           original_price: number
           passenger_email: string | null
           passenger_flight_no: string | null
@@ -1714,6 +1730,10 @@ export type Database = {
           id?: string
           insurance_fee?: number | null
           is_last_minute?: boolean | null
+          no_show_compensation?: number | null
+          no_show_declared_at?: string | null
+          no_show_declared_by?: string | null
+          no_show_grace_expires?: string | null
           original_price: number
           passenger_email?: string | null
           passenger_flight_no?: string | null
@@ -1747,6 +1767,10 @@ export type Database = {
           id?: string
           insurance_fee?: number | null
           is_last_minute?: boolean | null
+          no_show_compensation?: number | null
+          no_show_declared_at?: string | null
+          no_show_declared_by?: string | null
+          no_show_grace_expires?: string | null
           original_price?: number
           passenger_email?: string | null
           passenger_flight_no?: string | null
@@ -1768,6 +1792,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "van_bookings_no_show_declared_by_fkey"
+            columns: ["no_show_declared_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "van_bookings_rider_id_fkey"
             columns: ["rider_id"]
@@ -1864,6 +1895,92 @@ export type Database = {
           },
           {
             foreignKeyName: "van_driver_missions_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "van_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      van_no_show_log: {
+        Row: {
+          action_taken: string | null
+          booking_id: string
+          compensation_amt: number
+          compensation_pct: number
+          created_at: string | null
+          declared_at: string
+          driver_id: string | null
+          grace_expired_at: string
+          id: string
+          resold_price: number | null
+          rider_id: string
+          rider_warning_nb: number
+          seat_price: number
+          seat_relisted: boolean | null
+          seat_resold: boolean | null
+          slot_id: string
+        }
+        Insert: {
+          action_taken?: string | null
+          booking_id: string
+          compensation_amt: number
+          compensation_pct?: number
+          created_at?: string | null
+          declared_at?: string
+          driver_id?: string | null
+          grace_expired_at: string
+          id?: string
+          resold_price?: number | null
+          rider_id: string
+          rider_warning_nb?: number
+          seat_price: number
+          seat_relisted?: boolean | null
+          seat_resold?: boolean | null
+          slot_id: string
+        }
+        Update: {
+          action_taken?: string | null
+          booking_id?: string
+          compensation_amt?: number
+          compensation_pct?: number
+          created_at?: string | null
+          declared_at?: string
+          driver_id?: string | null
+          grace_expired_at?: string
+          id?: string
+          resold_price?: number | null
+          rider_id?: string
+          rider_warning_nb?: number
+          seat_price?: number
+          seat_relisted?: boolean | null
+          seat_resold?: boolean | null
+          slot_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "van_no_show_log_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "van_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "van_no_show_log_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "van_no_show_log_rider_id_fkey"
+            columns: ["rider_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "van_no_show_log_slot_id_fkey"
             columns: ["slot_id"]
             isOneToOne: false
             referencedRelation: "van_slots"
@@ -1992,6 +2109,10 @@ export type Database = {
       calculate_distance_km: {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number }
         Returns: number
+      }
+      declare_van_no_show: {
+        Args: { p_booking_id: string; p_driver_id: string }
+        Returns: Json
       }
       earth: { Args: never; Returns: number }
       find_nearest_drivers: {
