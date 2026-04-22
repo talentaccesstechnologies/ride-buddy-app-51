@@ -35,7 +35,7 @@ export default function BookingStepper({ currentStep }: BookingStepperProps) {
         <div className="flex items-center gap-3">
           {currentStep > 0 && (
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => goToStep(currentStep - 1)}
               className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 transition-colors shrink-0"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -46,9 +46,15 @@ export default function BookingStepper({ currentStep }: BookingStepperProps) {
             {STEPS.map((step, i) => {
               const done = i < currentStep;
               const active = i === currentStep;
+              const clickable = i < currentStep;
               return (
                 <React.Fragment key={i}>
-                  <div className="flex flex-col items-center gap-1 min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => goToStep(i)}
+                    disabled={!clickable}
+                    className={`flex flex-col items-center gap-1 min-w-0 ${clickable ? 'cursor-pointer hover:opacity-80' : 'cursor-default'}`}
+                  >
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
                         done ? 'bg-green-500 text-white' : active ? 'text-white' : 'bg-gray-100 text-gray-400'
@@ -64,7 +70,7 @@ export default function BookingStepper({ currentStep }: BookingStepperProps) {
                     >
                       {step.label}
                     </span>
-                  </div>
+                  </button>
                   {i < STEPS.length - 1 && (
                     <div
                       className={`flex-1 h-0.5 mx-1 ${done ? 'bg-green-400' : 'bg-gray-200'}`}
