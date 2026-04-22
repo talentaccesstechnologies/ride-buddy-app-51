@@ -44,6 +44,7 @@ import { Plane } from 'lucide-react';
 import PlacesAutocomplete from '@/components/shared/PlacesAutocomplete';
 import CityAutocomplete from '@/components/van/CityAutocomplete';
 import CityPickerPopover from '@/components/van/CityPickerPopover';
+import PassengerPickerPopover from '@/components/van/PassengerPickerPopover';
 import PriceCalendar from '@/components/van/PriceCalendar';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'extras' | 'passenger' | 'payment' | 'confirm' | 'abonnement';
