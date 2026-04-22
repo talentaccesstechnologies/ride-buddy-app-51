@@ -90,7 +90,19 @@ const SlotCard: React.FC<{
 
   return (
     <div
+      role={isSoldOut ? undefined : 'button'}
+      tabIndex={isSoldOut ? -1 : 0}
+      onClick={() => { if (!isSoldOut) onSelect(); }}
+      onKeyDown={(e) => {
+        if (isSoldOut) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
       className={`rounded-md overflow-hidden border transition-all ${
+        isSoldOut ? 'cursor-not-allowed' : 'cursor-pointer'
+      } ${
         isSelected
           ? 'border-transparent shadow-lg'
           : isSoldOut
@@ -131,10 +143,7 @@ const SlotCard: React.FC<{
         {isSoldOut ? (
           <p className="text-sm font-bold text-gray-500 py-3">Complet</p>
         ) : (
-          <button
-            onClick={onSelect}
-            className="w-full flex items-center justify-center gap-2"
-          >
+          <div className="w-full flex items-center justify-center gap-2 pointer-events-none">
             <span
               className={`text-base font-black ${
                 isSelected ? 'text-white' : 'text-gray-900'
@@ -143,10 +152,7 @@ const SlotCard: React.FC<{
               CHF {slot.price}.00
             </span>
             {isSelected ? (
-              <Check
-                className="w-5 h-5 text-white"
-                strokeWidth={3}
-              />
+              <Check className="w-5 h-5 text-white" strokeWidth={3} />
             ) : (
               <span
                 className="w-6 h-6 rounded-full flex items-center justify-center text-white text-base font-bold"
@@ -155,7 +161,7 @@ const SlotCard: React.FC<{
                 +
               </span>
             )}
-          </button>
+          </div>
         )}
       </div>
 
