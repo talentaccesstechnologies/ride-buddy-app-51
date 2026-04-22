@@ -586,11 +586,11 @@ const CabyVanPage: React.FC = () => {
                         Préparer son voyage
                       </div>
                       {[
-                        { icon: '🛂', label: 'Documents requis', desc: 'CNI / Passeport CH ↔ UE', to: '/help' },
-                        { icon: '🧳', label: 'Bagages & options', desc: 'Cabine, soute, skis, vélos', to: '/help' },
-                        { icon: '🔄', label: 'Annulation flexible', desc: 'Modifiez jusqu\'à 2h avant', to: '/help' },
-                        { icon: '♿', label: 'Assistance spéciale', desc: 'PMR, mineurs, animaux', to: '/safety' },
-                        { icon: '🆘', label: 'Aide & contact', desc: 'Centre d\'aide Caby 24/7', to: '/help' },
+                        { icon: '🛂', label: 'Documents requis', desc: 'CNI / Passeport CH ↔ UE', to: '/caby/account/help' },
+                        { icon: '🧳', label: 'Bagages & options', desc: 'Cabine, soute, skis, vélos', to: '/caby/account/help' },
+                        { icon: '🔄', label: 'Annulation flexible', desc: 'Modifiez jusqu\'à 2h avant', to: '/caby/account/help' },
+                        { icon: '♿', label: 'Assistance spéciale', desc: 'PMR, mineurs, animaux', to: '/caby/account/safety' },
+                        { icon: '🆘', label: 'Aide & contact', desc: 'Centre d\'aide Caby 24/7', to: '/caby/account/help' },
                       ].map(item => (
                         <a
                           key={item.label}
@@ -625,7 +625,7 @@ const CabyVanPage: React.FC = () => {
                         style={{ width: '100%', boxSizing: 'border-box', padding: '10px 12px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6, color: '#fff', fontSize: 12, marginBottom: 10, fontFamily: 'inherit' }}
                       />
                       <button
-                        onClick={() => { setInfoMenuOpen(false); navigate('/activity'); }}
+                        onClick={() => { setInfoMenuOpen(false); navigate('/caby/activity'); }}
                         style={{ width: '100%', padding: '10px', background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
                       >
                         Consulter le statut
