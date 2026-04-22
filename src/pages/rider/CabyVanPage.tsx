@@ -648,10 +648,10 @@ const CabyVanPage: React.FC = () => {
                   <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 10, lineHeight: 1.3, textTransform: 'uppercase' as const, letterSpacing: '-0.2px' }}>Des sièges à moins de CHF 19*</h2>
                   <p style={{ fontSize: 13, color: '#888780', lineHeight: 1.6, margin: 0 }}>Genève–Annecy, Genève–Lausanne, Genève–Zurich... Et la ligne Genève–Lyon à partir de CHF 42 ! Réservez tôt et économisez jusqu'à 30%.</p>
                 </div>
-                <button onClick={() => setStep('search')} style={{ display: 'block', width: 215, height: 48, background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, padding: '11px 16px', boxSizing: 'border-box' as const, fontFamily: 'inherit', fontSize: 13, fontWeight: 700, cursor: 'pointer', textAlign: 'center', margin: '0 auto', transition: 'background 0.15s' }}
+                <button onClick={() => navigate('/caby/van/inspire?budget=under30')} style={{ display: 'block', width: 215, height: 48, background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 8, padding: '11px 16px', boxSizing: 'border-box' as const, fontFamily: 'inherit', fontSize: 13, fontWeight: 700, cursor: 'pointer', textAlign: 'center', margin: '0 auto', transition: 'background 0.15s' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#E8C96A'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = GOLD; }}
-                >Je réserve mon trajet</button>
+                >Voir les destinations</button>
               </div>
 
               <div style={{ background: 'rgba(255,255,255,0.96)', borderRadius: 12, width: 440, height: 248, padding: 15, margin: '0 14px 28px 14px', boxSizing: 'border-box' as const, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
