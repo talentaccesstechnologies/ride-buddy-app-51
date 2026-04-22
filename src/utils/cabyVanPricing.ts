@@ -117,7 +117,7 @@ function getSeatTierPrice(
     return { price: Math.round(basePrice * 0.72), tier: "earlybird", nextPrice: Math.round(basePrice * 0.90) };
   } else if (fillRate < 0.57) {
     return { price: Math.round(basePrice * 0.90), tier: "standard", nextPrice: Math.round(basePrice * 1.05) };
-  } else if (fillRate < 0.86) {
+  } else if (seatsSold < totalSeats - 1) {
     return { price: Math.round(basePrice * 1.05), tier: "peak", nextPrice: Math.round(basePrice * 1.23) };
   } else {
     return { price: Math.round(basePrice * 1.23), tier: "lastseat", nextPrice: Math.round(basePrice * 1.23) };
