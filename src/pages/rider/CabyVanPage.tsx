@@ -208,6 +208,7 @@ const CabyVanPage: React.FC = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
   const calendarSearchRef = useRef<HTMLDivElement>(null);
+  const [infoMenuOpen, setInfoMenuOpen] = useState(false);
 
   const [activeService, setActiveService] = useState<'trajets' | 'ski' | 'crossborder'>('trajets');
   const [from, setFrom] = useState('Genève');
