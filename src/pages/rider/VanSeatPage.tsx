@@ -266,22 +266,39 @@ export default function VanSeatPage() {
                 {/* === RANG 1 (Premium Avant) === */}
                 <CategoryHeader category={CATEGORIES[0]} />
                 <div className="grid grid-cols-3 gap-3 items-center">
-                  {/* Chauffeur (placeholder gauche) */}
-                  <div className="flex flex-col items-center opacity-40">
-                    <svg width="32" height="34" viewBox="0 0 32 34">
-                      <rect x="4" y="2" width="24" height="8" rx="2" fill="#1F2937" stroke="#4B5563" />
-                      <rect x="2" y="11" width="28" height="18" rx="3" fill="#1F2937" stroke="#4B5563" />
-                      <text x="16" y="23" textAnchor="middle" fill="#9CA3AF" fontSize="10">🧑‍✈️</text>
-                    </svg>
-                    <span className="text-[9px] text-gray-500 mt-1 uppercase">Chauffeur</span>
+                  {/* Chauffeur — siège distinct avec volant */}
+                  <div className="flex flex-col items-center">
+                    <div
+                      className="relative flex items-center justify-center rounded-lg border-2"
+                      style={{
+                        width: 40,
+                        height: 40,
+                        background: 'rgba(201, 168, 76, 0.12)',
+                        borderColor: GOLD,
+                      }}
+                      aria-label="Place du chauffeur"
+                    >
+                      {/* Icône volant */}
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="9" />
+                        <circle cx="12" cy="12" r="2" />
+                        <line x1="12" y1="3" x2="12" y2="10" />
+                        <line x1="3.5" y1="16" x2="10.2" y2="13" />
+                        <line x1="20.5" y1="16" x2="13.8" y2="13" />
+                      </svg>
+                    </div>
+                    <span className="text-[9px] font-bold mt-1 uppercase tracking-wider" style={{ color: GOLD }}>
+                      Chauffeur
+                    </span>
                   </div>
                   <div className="text-center text-xs text-gray-500 font-semibold">1</div>
-                  <div className="flex justify-center">
+                  <div className="flex flex-col items-center">
                     <SeatIcon
                       status={seatStatus(seatById(1))}
                       number={1}
                       onClick={() => toggle(seatById(1))}
                     />
+                    <span className="text-[9px] text-gray-500 mt-1 uppercase">Passager</span>
                   </div>
                 </div>
 
