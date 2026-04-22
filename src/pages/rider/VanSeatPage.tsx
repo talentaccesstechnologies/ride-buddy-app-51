@@ -84,6 +84,7 @@ const SeatIcon = React.forwardRef<HTMLButtonElement, SeatIconProps>(function Sea
 
   return (
     <button
+      ref={ref}
       onClick={isTaken ? undefined : onClick}
       disabled={isTaken}
       className={`relative ${cursor} group`}
@@ -106,7 +107,7 @@ const SeatIcon = React.forwardRef<HTMLButtonElement, SeatIconProps>(function Sea
       </svg>
     </button>
   );
-}
+});
 
 function CategoryHeader({ category }: { category: Category }) {
   return (
