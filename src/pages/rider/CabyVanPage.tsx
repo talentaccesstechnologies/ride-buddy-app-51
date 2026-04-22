@@ -208,6 +208,7 @@ const CabyVanPage: React.FC = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
   const calendarSearchRef = useRef<HTMLDivElement>(null);
+  const [infoMenuOpen, setInfoMenuOpen] = useState(false);
 
   const [activeService, setActiveService] = useState<'trajets' | 'ski' | 'crossborder'>('trajets');
   const [from, setFrom] = useState('Genève');
@@ -498,8 +499,144 @@ const CabyVanPage: React.FC = () => {
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 900, color: '#0A0A0A', letterSpacing: '-1px' }}>
             caby
           </div>
-          <nav style={{ display: 'flex', gap: 2 }}>
-            {['Informations', 'Destinations', 'Caby Pass', 'Cross-Border', 'Ski'].map(label => (
+          <nav style={{ display: 'flex', gap: 2, position: 'relative' }}>
+            {/* ═══ LIEN INFORMATIONS AVEC MEGA-MENU ═══ */}
+            <div
+              style={{ position: 'relative' }}
+              onMouseEnter={() => setInfoMenuOpen(true)}
+              onMouseLeave={() => setInfoMenuOpen(false)}
+            >
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                style={{
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: 'rgba(0,0,0,0.75)',
+                  padding: '6px 14px',
+                  borderRadius: 6,
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  background: infoMenuOpen ? 'rgba(0,0,0,0.1)' : 'transparent',
+                }}
+              >
+                Informations
+                <ChevronDown size={14} style={{ transform: infoMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+              </a>
+
+              {/* Mega-menu panel */}
+              {infoMenuOpen && (
+                <div
+                  style={{
+                    position: 'fixed',
+                    top: 56,
+                    left: 0,
+                    right: 0,
+                    background: '#fff',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                    borderTop: '1px solid #E0DDD5',
+                    zIndex: 199,
+                  }}
+                >
+                  <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '280px 1fr 1fr 320px', gap: 32, padding: '32px 5%' }}>
+                    {/* Col 1 — Catégories */}
+                    <div style={{ background: '#F8F7F2', borderRadius: 8, padding: 20, borderLeft: `3px solid ${GOLD}` }}>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: '#0A0A0A', marginBottom: 6 }}>
+                        Réservez votre prochain trajet
+                      </div>
+                      <p style={{ fontSize: 12, color: '#888780', lineHeight: 1.5, margin: 0 }}>
+                        Inspirations, tarifs et services Caby pour tous vos déplacements en Suisse et au-delà.
+                      </p>
+                    </div>
+
+                    {/* Col 2 — Mobilité Caby */}
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: GOLD, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 14 }}>
+                        Mobilité Caby
+                      </div>
+                      {[
+                        { icon: '🚐', label: 'Réserver un trajet', desc: 'Caby Van, Ride, Cross-Border', to: '/caby/van' },
+                        { icon: '💰', label: 'Trajets pas chers', desc: 'Dès CHF 18 en réservant tôt', to: '/caby/van/inspire?budget=under30' },
+                        { icon: '📅', label: 'Calendrier des trajets', desc: 'Tous les départs disponibles', to: '/caby/van/inspire' },
+                        { icon: '🌍', label: 'Où puis-je voyager ?', desc: 'Découvrez nos destinations', to: '/caby/van/inspire' },
+                        { icon: '✨', label: 'Inspirez-moi', desc: 'Trouvez votre prochaine escapade', to: '/caby/van/inspire' },
+                      ].map(item => (
+                        <a
+                          key={item.label}
+                          href="#"
+                          onClick={(e) => { e.preventDefault(); setInfoMenuOpen(false); navigate(item.to); }}
+                          style={{ display: 'flex', gap: 12, padding: '10px 8px', borderRadius: 6, textDecoration: 'none', alignItems: 'flex-start' }}
+                          onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.background = '#F8F7F2')}
+                          onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.background = 'transparent')}
+                        >
+                          <span style={{ fontSize: 18, lineHeight: 1, marginTop: 2 }}>{item.icon}</span>
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: '#0A0A0A', marginBottom: 2 }}>{item.label}</div>
+                            <div style={{ fontSize: 11, color: '#888780', lineHeight: 1.4 }}>{item.desc}</div>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+
+                    {/* Col 3 — Préparation & Assistance */}
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: GOLD, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: 14 }}>
+                        Préparer son voyage
+                      </div>
+                      {[
+                        { icon: '🛂', label: 'Documents requis', desc: 'CNI / Passeport CH ↔ UE', to: '/help' },
+                        { icon: '🧳', label: 'Bagages & options', desc: 'Cabine, soute, skis, vélos', to: '/help' },
+                        { icon: '🔄', label: 'Annulation flexible', desc: 'Modifiez jusqu\'à 2h avant', to: '/help' },
+                        { icon: '♿', label: 'Assistance spéciale', desc: 'PMR, mineurs, animaux', to: '/safety' },
+                        { icon: '🆘', label: 'Aide & contact', desc: 'Centre d\'aide Caby 24/7', to: '/help' },
+                      ].map(item => (
+                        <a
+                          key={item.label}
+                          href="#"
+                          onClick={(e) => { e.preventDefault(); setInfoMenuOpen(false); navigate(item.to); }}
+                          style={{ display: 'flex', gap: 12, padding: '10px 8px', borderRadius: 6, textDecoration: 'none', alignItems: 'flex-start' }}
+                          onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.background = '#F8F7F2')}
+                          onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.background = 'transparent')}
+                        >
+                          <span style={{ fontSize: 18, lineHeight: 1, marginTop: 2 }}>{item.icon}</span>
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: '#0A0A0A', marginBottom: 2 }}>{item.label}</div>
+                            <div style={{ fontSize: 11, color: '#888780', lineHeight: 1.4 }}>{item.desc}</div>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+
+                    {/* Col 4 — Tracking trajet */}
+                    <div style={{ background: '#0A0A0A', borderRadius: 8, padding: 20, color: '#fff' }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>Trajet Tracker</div>
+                      <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', margin: '0 0 14px', lineHeight: 1.5 }}>
+                        Suivez le statut de votre trajet en temps réel
+                      </p>
+                      <div style={{ display: 'flex', background: 'rgba(255,255,255,0.08)', borderRadius: 6, padding: 3, marginBottom: 12 }}>
+                        <div style={{ flex: 1, padding: '7px', textAlign: 'center', background: '#fff', color: '#0A0A0A', borderRadius: 4, fontSize: 12, fontWeight: 700 }}>Trajet</div>
+                        <div style={{ flex: 1, padding: '7px', textAlign: 'center', fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Itinéraire</div>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="N° de réservation"
+                        style={{ width: '100%', boxSizing: 'border-box', padding: '10px 12px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6, color: '#fff', fontSize: 12, marginBottom: 10, fontFamily: 'inherit' }}
+                      />
+                      <button
+                        onClick={() => { setInfoMenuOpen(false); navigate('/activity'); }}
+                        style={{ width: '100%', padding: '10px', background: GOLD, color: '#0A0A0A', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}
+                      >
+                        Consulter le statut
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {['Destinations', 'Caby Pass', 'Cross-Border', 'Ski'].map(label => (
               <a
                 key={label}
                 href="#"
