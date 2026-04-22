@@ -33,13 +33,27 @@ export default function BookingStepper({ currentStep }: BookingStepperProps) {
     <div className="bg-white border-b sticky top-0 z-30">
       <div className="max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/caby/van')}
+            className="flex items-center shrink-0 hover:opacity-80 transition-opacity"
+            aria-label="Retour à Caby Van"
+          >
+            <span className="font-display font-extrabold text-2xl tracking-tight">
+              <span style={{ color: GOLD }}>C</span>
+              <span className="text-gray-900">ABY</span>
+            </span>
+            <span className="ml-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 hidden sm:inline">
+              Van
+            </span>
+          </button>
+          <div className="h-8 w-px bg-gray-200 hidden sm:block" />
           {currentStep > 0 && (
             <button
               onClick={() => goToStep(currentStep - 1)}
               className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 transition-colors shrink-0"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Retour</span>
+              <span className="hidden md:inline">Retour</span>
             </button>
           )}
           <div className="flex items-center justify-between flex-1">
