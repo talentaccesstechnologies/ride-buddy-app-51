@@ -91,7 +91,7 @@ export function useNoShow(): UseNoShowReturn {
         return null;
       }
 
-      const result = data as NoShowResult;
+      const result = data as unknown as NoShowResult;
 
       if (!result.success) {
         toast.error(result.error || 'Impossible de déclarer le no-show');
