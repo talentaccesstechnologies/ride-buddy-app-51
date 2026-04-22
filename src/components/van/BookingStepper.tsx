@@ -1,17 +1,17 @@
 import React from 'react';
 import { Check, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const GOLD = '#C9A84C';
 
 const STEPS = [
-  { icon: '🚐', label: 'Trajet' },
-  { icon: '📦', label: 'Pack' },
-  { icon: '👤', label: 'Passagers' },
-  { icon: '💺', label: 'Siège' },
-  { icon: '🧳', label: 'Bagages' },
-  { icon: '➕', label: 'Options' },
-  { icon: '💳', label: 'Paiement' },
+  { icon: '🚐', label: 'Trajet', path: '/caby/van/select' },
+  { icon: '📦', label: 'Pack', path: '/caby/van/pack' },
+  { icon: '👤', label: 'Passagers', path: '/caby/van/passengers' },
+  { icon: '💺', label: 'Siège', path: '/caby/van/seat' },
+  { icon: '🧳', label: 'Bagages', path: '/caby/van/luggage' },
+  { icon: '➕', label: 'Options', path: '/caby/van/options' },
+  { icon: '💳', label: 'Paiement', path: '/caby/van/payment' },
 ];
 
 interface BookingStepperProps {
@@ -20,6 +20,14 @@ interface BookingStepperProps {
 
 export default function BookingStepper({ currentStep }: BookingStepperProps) {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+
+  const goToStep = (i: number) => {
+    if (i > currentStep) return; // never jump forward via stepper
+    const target = STEPS[i].path;
+    const qs = params.toString();
+    navigate(qs ? `${target}?${qs}` : target);
+  };
 
   return (
     <div className="bg-white border-b sticky top-0 z-30">
