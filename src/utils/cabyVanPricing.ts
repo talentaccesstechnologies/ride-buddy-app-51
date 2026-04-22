@@ -224,7 +224,7 @@ export function calculateFullPrice(
   finalPrice = Math.round(finalPrice);
 
   const nextPrice = Math.min(
-    Math.round(tierNextPrice * getRushMultiplier(departureTime) * getSeasonalMultiplier(departureTime)),
+    Math.round(tierNextPrice * getRushMultiplier(departureTime) * seasonalMult),
     Math.round(maxPrice)
   );
 
