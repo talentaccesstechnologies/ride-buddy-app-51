@@ -87,15 +87,16 @@ const SlotCard: React.FC<{
 
   return (
     <div
-      className={`rounded-md overflow-hidden border transition-all bg-white ${
+      className={`rounded-md overflow-hidden border transition-all ${
         isSelected
-          ? 'border-amber-400 ring-2 ring-amber-200 shadow-md'
+          ? 'border-transparent shadow-lg'
           : isSoldOut
-          ? 'border-gray-200 opacity-70'
-          : 'border-gray-200 hover:border-gray-300'
+          ? 'border-gray-200 opacity-70 bg-white'
+          : 'border-gray-200 hover:border-gray-300 bg-white'
       }`}
+      style={isSelected ? { boxShadow: `0 0 0 2px ${GOLD}` } : {}}
     >
-      {/* Dark header: Départ / Arrivée */}
+      {/* Dark header: Départ / Arrivée (always dark, even when selected — like EasyJet) */}
       <div className="bg-slate-800 text-white px-3 py-2 text-[11px] leading-tight">
         <div className="flex items-center justify-between">
           <span className="opacity-80">Départ</span>
@@ -107,8 +108,8 @@ const SlotCard: React.FC<{
         </div>
       </div>
 
-      {/* Lowest price ribbon */}
-      {isLowest && (
+      {/* Lowest price ribbon (hidden when selected to keep the gold body clean) */}
+      {isLowest && !isSelected && (
         <div
           className="text-white text-[10px] font-bold text-center py-1 tracking-wider"
           style={{ backgroundColor: GOLD }}
@@ -117,8 +118,11 @@ const SlotCard: React.FC<{
         </div>
       )}
 
-      {/* Body */}
-      <div className="px-3 py-3 min-h-[80px] flex flex-col items-center justify-center text-center">
+      {/* Body — turns GOLD when selected (EasyJet style) */}
+      <div
+        className="px-3 py-3 min-h-[80px] flex flex-col items-center justify-center text-center transition-colors"
+        style={isSelected ? { backgroundColor: GOLD } : {}}
+      >
         {isSoldOut ? (
           <p className="text-sm font-bold text-gray-500 py-3">Complet</p>
         ) : (
@@ -126,23 +130,36 @@ const SlotCard: React.FC<{
             onClick={onSelect}
             className="w-full flex items-center justify-center gap-2"
           >
-            <span className="text-base font-black text-gray-900">
+            <span
+              className={`text-base font-black ${
+                isSelected ? 'text-white' : 'text-gray-900'
+              }`}
+            >
               CHF {slot.price}.00
             </span>
-            <span
-              className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-base font-bold transition-all ${
-                isSelected ? 'bg-emerald-500' : ''
-              }`}
-              style={!isSelected ? { backgroundColor: GOLD } : {}}
-            >
-              {isSelected ? <Check className="w-3.5 h-3.5" /> : '+'}
-            </span>
+            {isSelected ? (
+              <Check
+                className="w-5 h-5 text-white"
+                strokeWidth={3}
+              />
+            ) : (
+              <span
+                className="w-6 h-6 rounded-full flex items-center justify-center text-white text-base font-bold"
+                style={{ backgroundColor: GOLD }}
+              >
+                +
+              </span>
+            )}
           </button>
         )}
       </div>
 
       {/* Footer: seats availability */}
-      <div className="bg-gray-100 px-3 py-1.5 text-center">
+      <div
+        className={`px-3 py-1.5 text-center ${
+          isSelected ? 'bg-gray-200' : 'bg-gray-100'
+        }`}
+      >
         <span className="text-[10px] font-medium text-gray-600">
           {isSoldOut
             ? '—'
