@@ -150,3 +150,7 @@ export function useNoShow(): UseNoShowReturn {
     riderNoShowCount, isSuspended, suspendedUntil, loadRiderStatus,
   };
 }
+
+// Ré-export du composant bouton no-show (défini dans VanPaymentPage)
+// pour pouvoir l'importer depuis @/hooks/useNoShow
+export { NoShowDriverButton } from '@/pages/rider/VanPaymentPage';
