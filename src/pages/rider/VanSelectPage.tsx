@@ -25,6 +25,7 @@ interface TimeSlotData {
   seatsLeft: number;
   seatsTotal: number;
   isLowest: boolean;
+  date: string; // ISO date (YYYY-MM-DD) — source de vérité pour le panier
 }
 
 function generateDaySlots(route: VanRoute, date: Date): TimeSlotData[] {
@@ -34,6 +35,7 @@ function generateDaySlots(route: VanRoute, date: Date): TimeSlotData[] {
 
   // Vary seats/prices by day for realism
   const seed = date.getDate() + dayOfWeek * 7;
+  const isoDate = date.toISOString().slice(0, 10);
   const slots: TimeSlotData[] = baseSlots.map((slot, i) => {
     const seatVariation = ((seed + i) % 4);
     const seatsLeft = Math.max(0, 7 - slot.seatsTaken - seatVariation + 2);
@@ -41,13 +43,14 @@ function generateDaySlots(route: VanRoute, date: Date): TimeSlotData[] {
     const earlyBird = daysUntil >= 14 ? 0.85 : 1;
     const price = Math.round(slot.basePrice * priceMultiplier * earlyBird);
     return {
-      id: `${slot.id}-${date.toISOString().slice(0, 10)}`,
+      id: `${slot.id}-${isoDate}`,
       departure: slot.departure,
       arrival: slot.arrivalEstimate,
       price,
       seatsLeft: Math.min(7, Math.max(0, seatsLeft)),
       seatsTotal: 7,
       isLowest: false,
+      date: isoDate,
     };
   });
 
