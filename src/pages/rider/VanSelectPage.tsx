@@ -180,7 +180,6 @@ const SlotCard: React.FC<{
       tabIndex={isSoldOut ? -1 : 0}
       onClick={() => { if (!isSoldOut) onSelect(); }}
       onKeyDown={e => { if (!isSoldOut && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onSelect(); } }}
-      style={{ position: 'relative' }}
       className={`rounded-md overflow-hidden border transition-all ${
         isSoldOut ? 'cursor-not-allowed' : 'cursor-pointer'
       } ${
