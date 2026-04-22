@@ -19,6 +19,12 @@ import {
 } from '@/lib/vanSupabase';
 import BookingStepper from '@/components/van/BookingStepper';
 import BottomNav from '@/components/rider/BottomNav';
+import { useAbandonedCart } from '@/hooks/useAbandonedCart';
+import {
+  AbandonedCartBanner,
+  PriceGuaranteeBanner,
+  UrgencyMessage,
+} from '@/components/van/AbandonedCartBanner';
 
 const GOLD = '#C9A84C';
 const DAYS_FR_SHORT = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
@@ -349,6 +355,52 @@ const VanSelectPage: React.FC = () => {
   const [viewingCount, setViewingCount] = useState(14);
   const [mobileTab, setMobileTab] = useState<'outbound' | 'return'>('outbound');
 
+  const {
+    cart, hasAbandonedCart, saveToCart, restoreCart, dismissCart,
+    priceGuarantee, startPriceGuarantee, cancelPriceGuarantee,
+    searchCount, trackSearch, showUrgencyMessage,
+  } = useAbandonedCart();
+
+  // Tracker la recherche au montage
+  useEffect(() => {
+    const r = `${from}→${to}`;
+    trackSearch(r);
+  }, [from, to]);
+
+  // Démarrer la garantie quand un créneau est sélectionné
+  useEffect(() => {
+    if (selectedOutbound && !priceGuarantee.isActive) {
+      startPriceGuarantee(selectedOutbound.price);
+    }
+  }, [selectedOutbound?.id]);
+
+  // Sauvegarder dans le panier abandonné quand une sélection est faite
+  useEffect(() => {
+    if (!selectedOutbound) return;
+    saveToCart(
+      {
+        slotDbId: selectedOutbound.slotDbId || '',
+        from, to,
+        departure: selectedOutbound.departure,
+        arrival: selectedOutbound.arrival,
+        date: selectedOutbound.date,
+        price: selectedOutbound.price,
+        seatsLeft: selectedOutbound.seatsLeft,
+        segment: route?.segment || 'business',
+      },
+      selectedReturn ? {
+        slotDbId: selectedReturn.slotDbId || '',
+        from: to, to: from,
+        departure: selectedReturn.departure,
+        arrival: selectedReturn.arrival,
+        date: selectedReturn.date,
+        price: selectedReturn.price,
+        seatsLeft: selectedReturn.seatsLeft,
+        segment: returnRoute?.segment || 'business',
+      } : undefined
+    );
+  }, [selectedOutbound?.id, selectedReturn?.id]);
+
   const outboundDate = useMemo(() => {
     const d = new Date(baseDate); d.setDate(d.getDate() + outboundOffset); return d;
   }, [baseDate, outboundOffset]);
@@ -431,6 +483,16 @@ const VanSelectPage: React.FC = () => {
           <p className="text-[11px] text-white/50">👁 {viewingCount} personnes consultent ce trajet</p>
           <div className="mt-2 h-px bg-white/10" />
         </div>
+        {showUrgencyMessage && (
+          <div className="px-1 pt-2">
+            <UrgencyMessage
+              searchCount={searchCount}
+              route={`${fromCity} → ${toCity}`}
+              seatsLeft={Math.min(...currentSlots.filter(s => s.seatsLeft > 0).map(s => s.seatsLeft).concat([99]))}
+            />
+          </div>
+        )}
+
 
         {/* Grille 3 jours */}
         <div className="bg-white border-x border-b border-gray-200 rounded-b-xl overflow-hidden">
@@ -582,9 +644,15 @@ const VanSelectPage: React.FC = () => {
           </div>
         </div>
 
+        {selectedOutbound && (
+          <PriceGuaranteeBanner guarantee={priceGuarantee} onDismiss={cancelPriceGuarantee} />
+        )}
+
         <Button
           disabled={!canContinue}
           onClick={() => {
+            cancelPriceGuarantee();
+            dismissCart();
             const p = new URLSearchParams(searchParams);
             if (selectedOutbound) {
               p.set('price', String(selectedOutbound.price));
@@ -643,6 +711,25 @@ const VanSelectPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <BookingStepper currentStep={0} />
 
+      {hasAbandonedCart && cart && (
+        <div className="max-w-6xl mx-auto px-4 pt-4">
+          <AbandonedCartBanner
+            cart={cart}
+            onRestore={() => {
+              const saved = restoreCart();
+              if (!saved?.outbound) return;
+              const p = new URLSearchParams(searchParams);
+              p.set('from', saved.outbound.from);
+              p.set('to', saved.outbound.to);
+              p.set('date', saved.outbound.date);
+              navigate(`/caby/van/select?${p}`);
+              dismissCart();
+            }}
+            onDismiss={dismissCart}
+          />
+        </div>
+      )}
+
       <div className="max-w-6xl mx-auto px-4 pt-4 flex justify-end">
         <button onClick={() => navigate('/caby/van')} className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors">
           <Edit2 className="w-3 h-3" /> Modifier la recherche
@@ -699,6 +786,8 @@ const VanSelectPage: React.FC = () => {
           </div>
           <Button disabled={!canContinue}
             onClick={() => {
+              cancelPriceGuarantee();
+              dismissCart();
               const p = new URLSearchParams(searchParams);
               if (selectedOutbound) { p.set('price', String(selectedOutbound.price)); p.set('time', selectedOutbound.departure); p.set('arrivalTime', selectedOutbound.arrival); if (selectedOutbound.slotDbId) p.set('slotId', selectedOutbound.slotDbId); }
               if (selectedReturn) { p.set('returnTime', selectedReturn.departure); p.set('returnArrivalTime', selectedReturn.arrival); if (selectedReturn.slotDbId) p.set('returnSlotId', selectedReturn.slotDbId); }
