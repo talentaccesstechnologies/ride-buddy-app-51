@@ -110,6 +110,8 @@ const VanLiveTest: React.FC = () => {
   });
   const channelRef = useRef<any>(null);
   const slotIdsRef = useRef<string[]>([]);
+  const eventsRef = useRef<PriceEvent[]>([]);
+  const [realtimeStatus, setRealtimeStatus] = useState<'idle' | 'subscribing' | 'subscribed' | 'error'>('idle');
 
   // ── Charger les slots disponibles ───────────────────────────
   const loadSlots = useCallback(async () => {
@@ -163,12 +165,21 @@ const VanLiveTest: React.FC = () => {
     });
   }, [events]);
 
+  useEffect(() => {
+    eventsRef.current = events;
+  }, [events]);
+
   // ── Écouter les changements Supabase Realtime ────────────────
   const startListening = useCallback(async () => {
     const snapshots = await loadSlots();
     if (!snapshots || snapshots.length === 0) return;
 
-    setIsListening(true);
+    if (channelRef.current) {
+      supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
+    }
+
+    setRealtimeStatus('subscribing');
 
     // Snapshot des prix avant
     const pricesBefore: Record<string, SlotSnapshot> = {};
@@ -202,7 +213,11 @@ const VanLiveTest: React.FC = () => {
             tier_after: pricingAfter.seatTier,
           };
 
-          setEvents(prev => [event, ...prev].slice(0, 50));
+          setEvents(prev => {
+            const next = [event, ...prev].slice(0, 50);
+            eventsRef.current = next;
+            return next;
+          });
 
           // Mettre à jour le snapshot
           pricesBefore[updated.id] = {
@@ -217,15 +232,33 @@ const VanLiveTest: React.FC = () => {
           loadSlots();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          setRealtimeStatus('subscribed');
+          setIsListening(true);
+          return;
+        }
+
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          setRealtimeStatus('error');
+          setIsListening(false);
+          return;
+        }
+
+        if (status === 'CLOSED') {
+          setRealtimeStatus('idle');
+          setIsListening(false);
+        }
+      });
   }, [loadSlots]);
 
   const stopListening = useCallback(() => {
     if (channelRef.current) {
-      channelRef.current.unsubscribe();
+      supabase.removeChannel(channelRef.current);
       channelRef.current = null;
     }
     setIsListening(false);
+    setRealtimeStatus('idle');
   }, []);
 
   // ── Mise à jour d'un slot unique ─────────────────────────────
@@ -237,6 +270,7 @@ const VanLiveTest: React.FC = () => {
   const runRobustnessTest = useCallback(async () => {
     setIsRunning(true);
     setEvents([]);
+    eventsRef.current = [];
 
     const testSteps: TestStep[] = [
       { id: 't1', label: 'Connexion Supabase', status: 'pending', detail: '' },
@@ -398,8 +432,11 @@ const VanLiveTest: React.FC = () => {
     updateStep('t11', 'running', '');
     await delay(500);
     // On vérifie que les events ont été reçus si on écoutait
-    if (isListening && events.length > 0) {
-      updateStep('t11', 'pass', `${events.length} événements Realtime reçus ✓`);
+    const receivedEvents = eventsRef.current.length;
+    if (isListening && realtimeStatus !== 'subscribed') {
+      updateStep('t11', 'fail', `Realtime non prêt (${realtimeStatus})`);
+    } else if (isListening && receivedEvents > 0) {
+      updateStep('t11', 'pass', `${receivedEvents} événements Realtime reçus ✓`);
     } else if (isListening) {
       updateStep('t11', 'fail', 'Realtime actif mais 0 événements reçus');
     } else {
@@ -436,7 +473,7 @@ const VanLiveTest: React.FC = () => {
 
     await loadSlots();
     setIsRunning(false);
-  }, [isListening, events.length, loadSlots]);
+  }, [isListening, loadSlots, realtimeStatus]);
 
   // Chargement initial
   useEffect(() => { loadSlots(); }, [loadSlots]);
