@@ -503,22 +503,25 @@ const VanSelectPage: React.FC = () => {
       </div>
 
       {/* DESKTOP LAYOUT */}
-      <div className="hidden md:block max-w-6xl mx-auto px-4 py-4">
-        <div className="flex gap-6">
-          {/* Left column — Outbound */}
-          <div className="flex-1">
+      <div className="hidden md:block max-w-7xl mx-auto px-4 py-4">
+        <div className="flex gap-4">
+          {/* Outbound block */}
+          <div className="flex-1 min-w-0">
+            <h2 className="text-base font-bold text-gray-900 mb-2 px-1">Aller</h2>
             {renderColumn('outbound', route, outboundSlots, outboundMinPrice, selectedOutbound, setSelectedOutbound, baseDate, outboundOffset, setOutboundOffset, from, to)}
           </div>
 
-          {/* Right column — Return (if round trip) */}
+          {/* Return block (if round trip) */}
           {isRoundTrip && returnRoute && (
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
+              <h2 className="text-base font-bold text-gray-900 mb-2 px-1">Retour</h2>
               {renderColumn('return', returnRoute, returnSlots, returnMinPrice, selectedReturn, setSelectedReturn, returnBaseDate, returnOffset, setReturnOffset, to, from)}
             </div>
           )}
 
           {/* Sidebar — Cart */}
           <div className="w-[280px] flex-shrink-0">
+            <div className="h-7 mb-2" />
             {renderCart(true)}
           </div>
         </div>
