@@ -14,6 +14,62 @@ export type Database = {
   }
   public: {
     Tables: {
+      caby_pass_subscriptions: {
+        Row: {
+          created_at: string | null
+          ends_at: string
+          id: string
+          plan: string
+          price_chf: number
+          renewal_date: string | null
+          rider_id: string
+          route_restriction: string | null
+          starts_at: string
+          status: string | null
+          stripe_sub_id: string | null
+          trips_used: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          ends_at: string
+          id?: string
+          plan: string
+          price_chf: number
+          renewal_date?: string | null
+          rider_id: string
+          route_restriction?: string | null
+          starts_at?: string
+          status?: string | null
+          stripe_sub_id?: string | null
+          trips_used?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          ends_at?: string
+          id?: string
+          plan?: string
+          price_chf?: number
+          renewal_date?: string | null
+          rider_id?: string
+          route_restriction?: string | null
+          starts_at?: string
+          status?: string | null
+          stripe_sub_id?: string | null
+          trips_used?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "caby_pass_subscriptions_rider_id_fkey"
+            columns: ["rider_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_driver_affiliations: {
         Row: {
           client_id: string
@@ -1605,6 +1661,323 @@ export type Database = {
           {
             foreignKeyName: "user_warnings_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      van_bookings: {
+        Row: {
+          ancillaries: Json | null
+          ancillary_total: number | null
+          bag_count: number | null
+          cancel_reason: string | null
+          cancelled_at: string | null
+          created_at: string | null
+          discount_pct: number | null
+          dropoff_address: string | null
+          dropoff_label: string | null
+          id: string
+          insurance_fee: number | null
+          is_last_minute: boolean | null
+          original_price: number
+          passenger_email: string | null
+          passenger_flight_no: string | null
+          passenger_name: string | null
+          passenger_phone: string | null
+          payment_method: string | null
+          payment_status: string | null
+          pickup_address: string | null
+          pickup_label: string | null
+          price_paid: number
+          qr_code: string | null
+          refund_amount: number | null
+          rider_id: string
+          seat_number: number | null
+          seat_tier: string | null
+          slot_id: string
+          status: string | null
+          stripe_payment_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          ancillaries?: Json | null
+          ancillary_total?: number | null
+          bag_count?: number | null
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string | null
+          discount_pct?: number | null
+          dropoff_address?: string | null
+          dropoff_label?: string | null
+          id?: string
+          insurance_fee?: number | null
+          is_last_minute?: boolean | null
+          original_price: number
+          passenger_email?: string | null
+          passenger_flight_no?: string | null
+          passenger_name?: string | null
+          passenger_phone?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          pickup_address?: string | null
+          pickup_label?: string | null
+          price_paid: number
+          qr_code?: string | null
+          refund_amount?: number | null
+          rider_id: string
+          seat_number?: number | null
+          seat_tier?: string | null
+          slot_id: string
+          status?: string | null
+          stripe_payment_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          ancillaries?: Json | null
+          ancillary_total?: number | null
+          bag_count?: number | null
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string | null
+          discount_pct?: number | null
+          dropoff_address?: string | null
+          dropoff_label?: string | null
+          id?: string
+          insurance_fee?: number | null
+          is_last_minute?: boolean | null
+          original_price?: number
+          passenger_email?: string | null
+          passenger_flight_no?: string | null
+          passenger_name?: string | null
+          passenger_phone?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          pickup_address?: string | null
+          pickup_label?: string | null
+          price_paid?: number
+          qr_code?: string | null
+          refund_amount?: number | null
+          rider_id?: string
+          seat_number?: number | null
+          seat_tier?: string | null
+          slot_id?: string
+          status?: string | null
+          stripe_payment_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "van_bookings_rider_id_fkey"
+            columns: ["rider_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "van_bookings_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "van_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      van_driver_missions: {
+        Row: {
+          base_price: number
+          caby_commission: number | null
+          caby_subsidy: number | null
+          completed_at: string | null
+          created_at: string | null
+          departure_time: string
+          driver_guarantee: number | null
+          driver_id: string
+          driver_net: number | null
+          final_payout: number | null
+          gross_revenue: number | null
+          id: string
+          is_punctual: boolean | null
+          punctuality_bonus: number | null
+          seats_sold: number | null
+          seats_total: number | null
+          segment: string
+          slot_id: string
+          started_at: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          base_price: number
+          caby_commission?: number | null
+          caby_subsidy?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          departure_time: string
+          driver_guarantee?: number | null
+          driver_id: string
+          driver_net?: number | null
+          final_payout?: number | null
+          gross_revenue?: number | null
+          id?: string
+          is_punctual?: boolean | null
+          punctuality_bonus?: number | null
+          seats_sold?: number | null
+          seats_total?: number | null
+          segment?: string
+          slot_id: string
+          started_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          base_price?: number
+          caby_commission?: number | null
+          caby_subsidy?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          departure_time?: string
+          driver_guarantee?: number | null
+          driver_id?: string
+          driver_net?: number | null
+          final_payout?: number | null
+          gross_revenue?: number | null
+          id?: string
+          is_punctual?: boolean | null
+          punctuality_bonus?: number | null
+          seats_sold?: number | null
+          seats_total?: number | null
+          segment?: string
+          slot_id?: string
+          started_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "van_driver_missions_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "van_driver_missions_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "van_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      van_push_notifications: {
+        Row: {
+          body: string
+          created_at: string | null
+          data: Json | null
+          driver_id: string
+          id: string
+          read_at: string | null
+          sent_at: string | null
+          slot_id: string | null
+          title: string
+          type: string
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          data?: Json | null
+          driver_id: string
+          id?: string
+          read_at?: string | null
+          sent_at?: string | null
+          slot_id?: string | null
+          title: string
+          type: string
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          data?: Json | null
+          driver_id?: string
+          id?: string
+          read_at?: string | null
+          sent_at?: string | null
+          slot_id?: string | null
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "van_push_notifications_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "van_push_notifications_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "van_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      van_slots: {
+        Row: {
+          arrival_time: string
+          base_price: number
+          created_at: string | null
+          departure_time: string
+          driver_id: string | null
+          from_city: string
+          id: string
+          route_id: number
+          seats_sold: number
+          seats_total: number
+          segment: string
+          status: string
+          to_city: string
+          updated_at: string | null
+        }
+        Insert: {
+          arrival_time: string
+          base_price: number
+          created_at?: string | null
+          departure_time: string
+          driver_id?: string | null
+          from_city: string
+          id?: string
+          route_id: number
+          seats_sold?: number
+          seats_total?: number
+          segment?: string
+          status?: string
+          to_city: string
+          updated_at?: string | null
+        }
+        Update: {
+          arrival_time?: string
+          base_price?: number
+          created_at?: string | null
+          departure_time?: string
+          driver_id?: string | null
+          from_city?: string
+          id?: string
+          route_id?: number
+          seats_sold?: number
+          seats_total?: number
+          segment?: string
+          status?: string
+          to_city?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "van_slots_driver_id_fkey"
+            columns: ["driver_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
