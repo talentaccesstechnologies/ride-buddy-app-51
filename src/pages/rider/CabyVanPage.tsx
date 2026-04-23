@@ -27,7 +27,7 @@ import {
   formatDuration, SEGMENT_META,
   type VanSlot, type VanRoute, type SegmentFilter,
 } from '@/lib/cabyVanPricing';
-import { Home as HomeIcon, LayoutGrid, Clock as ClockIcon, Tag, User as UserIcon, Menu as MenuIcon } from 'lucide-react';
+import { Home as HomeIcon, LayoutGrid, Clock as ClockIcon, Tag, User as UserIcon, Menu as MenuIcon, HelpCircle, Search as SearchIcon } from 'lucide-react';
 import heroImg from '@/assets/van-hero-alps.webp';
 import {
   calculateLastMinuteDiscount, applyLastMinutePrice, formatCountdown,
@@ -210,6 +210,8 @@ const CabyVanPage: React.FC = () => {
   const calendarSearchRef = useRef<HTMLDivElement>(null);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [bookingModalTab, setBookingModalTab] = useState<'find' | 'login'>('login');
+  const [helpModalOpen, setHelpModalOpen] = useState(false);
+  const [helpQuery, setHelpQuery] = useState('');
   const [bmEmail, setBmEmail] = useState('');
   const [bmPassword, setBmPassword] = useState('');
   const [bmLastName, setBmLastName] = useState('');
@@ -539,7 +541,7 @@ const CabyVanPage: React.FC = () => {
               { icon: HomeIcon, label: 'Accueil', to: '/caby' },
               // { icon: LayoutGrid, label: 'Services', to: '/caby/services' },
               { icon: ClockIcon, label: 'Gérer vos réservations', action: 'bookingModal' as const },
-              { icon: Tag, label: 'Offres', to: '/caby/offers' },
+              { icon: HelpCircle, label: 'Aide', action: 'helpModal' as const },
               { icon: UserIcon, label: 'Compte', to: '/caby/account' },
             ].map(item => {
               const Icon = item.icon;
@@ -547,6 +549,8 @@ const CabyVanPage: React.FC = () => {
                 if ('action' in item && item.action === 'bookingModal') {
                   setBookingModalTab('login');
                   setBookingModalOpen(true);
+                } else if ('action' in item && item.action === 'helpModal') {
+                  setHelpModalOpen(true);
                 } else if ('to' in item && item.to) {
                   navigate(item.to);
                 }
@@ -1076,6 +1080,105 @@ const CabyVanPage: React.FC = () => {
           </div>
         )}
 
+
+        {/* ═══ MODALE CENTRE D'AIDE (style easyJet) ═══ */}
+        {helpModalOpen && (
+          <div
+            onClick={() => setHelpModalOpen(false)}
+            style={{
+              position: 'fixed', inset: 0, background: 'rgba(10,10,10,0.55)',
+              zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: 20,
+            }}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{
+                background: '#fff', borderRadius: 12, width: '100%', maxWidth: 560,
+                maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column',
+                fontFamily: 'inherit', boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+              }}
+            >
+              <div style={{ padding: '28px 32px 8px', flex: 1, overflow: 'auto' }}>
+                <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: 1.5, color: '#0A0A0A', marginBottom: 18 }}>
+                  CENTRE D'AIDE
+                </div>
+                <div style={{ fontSize: 17, fontWeight: 700, color: '#0A0A0A', marginBottom: 18 }}>
+                  Bonjour ! Comment pouvons-nous vous aider ?
+                </div>
+
+                <div style={{ position: 'relative', marginBottom: 24 }}>
+                  <SearchIcon size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: GOLD }} />
+                  <input
+                    autoFocus
+                    value={helpQuery}
+                    onChange={e => setHelpQuery(e.target.value)}
+                    placeholder="Rechercher..."
+                    style={{
+                      width: '100%', padding: '13px 14px 13px 44px',
+                      border: '1px solid #D0D0D0', borderRadius: 6,
+                      fontSize: 14, fontFamily: 'inherit', outline: 'none',
+                    }}
+                  />
+                </div>
+
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#0A0A0A', marginBottom: 12 }}>
+                  Principales recherches
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+                  {[
+                    'Bagages à main et bagage en soute',
+                    'Contactez-nous',
+                    'Retards et annulations',
+                    'Suivi de course',
+                    "Page d'accueil de l'aide",
+                    'État du trafic actuel',
+                    'Gestion de vos réservations',
+                    'Caby Pass',
+                  ].map(tag => (
+                    <button
+                      key={tag}
+                      onClick={() => setHelpQuery(tag)}
+                      style={{
+                        padding: '7px 13px', border: `1px solid ${GOLD}`, borderRadius: 999,
+                        background: '#fff', color: GOLD, fontSize: 12.5, fontWeight: 500,
+                        cursor: 'pointer', fontFamily: 'inherit',
+                      }}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{
+                borderTop: '1px solid #E5E5E5', padding: '16px 24px',
+                display: 'flex', justifyContent: 'flex-end', gap: 10,
+              }}>
+                <button
+                  onClick={() => setHelpModalOpen(false)}
+                  style={{
+                    padding: '10px 22px', background: '#fff', color: '#0A0A0A',
+                    border: '1px solid #C0C0C0', borderRadius: 6,
+                    fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+                  }}
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={() => { setHelpModalOpen(false); navigate('/caby/help'); }}
+                  style={{
+                    padding: '10px 22px', background: GOLD, color: '#fff',
+                    border: 'none', borderRadius: 6,
+                    fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                  }}
+                >
+                  Rechercher
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ═══ BANDEAU PROMO CABY PASS ═══ */}
         <div
