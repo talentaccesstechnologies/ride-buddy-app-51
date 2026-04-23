@@ -36,10 +36,10 @@ const CabyLogo: React.FC<CabyLogoProps> = ({
         alignItems: 'center',
         lineHeight: 1,
         fontFamily: "'Playfair Display', serif",
-        fontWeight: 700,
+        fontWeight: 900,
         fontSize: size,
         color: '#0A0A0A',
-        letterSpacing: '-0.5px',
+        letterSpacing: '-1px',
         ...style,
       }}
     >
