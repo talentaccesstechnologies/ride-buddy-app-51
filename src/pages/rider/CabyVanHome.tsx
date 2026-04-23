@@ -674,55 +674,88 @@ const TabTrips: React.FC = () => (
   </div>
 );
 
-// ── ONGLET PASS ──────────────────────────────────────────────
+// ── ONGLET PASS (style easyJet "Boarding Passes") ────────────
 const TabPass: React.FC<{ onSubscribe: (plan: string) => void }> = ({ onSubscribe }) => (
-  <div style={{ padding: 16 }}>
-    <SectionTitle>Caby Pass</SectionTitle>
+  <div style={{ padding: '24px 18px 16px', background: '#F4F4F2', minHeight: '100%' }}>
+    {/* Hero rond style boarding passes */}
+    <div style={{ textAlign: 'center', padding: '12px 0 20px' }}>
+      <div style={{
+        width: 180, height: 180, borderRadius: '50%',
+        background: `linear-gradient(180deg, #FFE8B8 0%, ${GOLD} 60%, #B89540 100%)`,
+        margin: '0 auto 20px',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        position: 'relative', overflow: 'hidden',
+      }}>
+        {/* Soleil */}
+        <div style={{ position: 'absolute', top: 28, left: 32, width: 28, height: 28, borderRadius: '50%', background: '#FFF4D6', boxShadow: '0 0 24px #FFF4D6' }} />
+        {/* Mer */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'linear-gradient(180deg, #DAB970 0%, #8B6F2A 100%)' }} />
+        {/* Carte d'embarquement */}
+        <svg width="120" height="80" viewBox="0 0 120 80" style={{ position: 'relative', zIndex: 2 }}>
+          <rect x="6" y="14" width="108" height="56" rx="6" fill="#fff" stroke={DARK} strokeWidth="1"/>
+          <line x1="74" y1="14" x2="74" y2="70" stroke={DARK} strokeWidth="1" strokeDasharray="2 2"/>
+          <rect x="14" y="22" width="34" height="4" rx="1" fill={GOLD}/>
+          <rect x="14" y="32" width="50" height="3" rx="1" fill="#D1D5DB"/>
+          <rect x="14" y="40" width="40" height="3" rx="1" fill="#D1D5DB"/>
+          <text x="80" y="38" fontSize="9" fontWeight="700" fill={DARK}>VAN</text>
+          <text x="80" y="52" fontSize="14" fontWeight="900" fill={DARK}>3B</text>
+        </svg>
+      </div>
+      <div style={{ fontSize: 24, fontWeight: 800, color: '#1A1A1A', marginBottom: 10, letterSpacing: '-0.3px' }}>
+        Vos abonnements
+      </div>
+      <div style={{ fontSize: 14, color: '#6B7280', marginBottom: 0, lineHeight: 1.5, padding: '0 12px' }}>
+        Voyagez plus, payez moins. Choisissez la formule qui vous correspond.
+      </div>
+    </div>
 
-    {/* Abonnement actif */}
-    <div style={{ background: '#FFFBEB', border: '0.5px solid #FDE68A', borderRadius: 14, padding: '14px 16px', marginBottom: 14 }}>
-      <div style={{ fontSize: 10, color: '#854F0B', marginBottom: 4 }}>ABONNEMENT ACTIF</div>
-      <div style={{ fontSize: 17, fontWeight: 700, color: '#633806', marginBottom: 2 }}>Pass Flex</div>
-      <div style={{ fontSize: 12, color: '#854F0B', marginBottom: 12 }}>Toutes routes Grand Genève · CHF 449/mois</div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-        <div style={{ background: 'rgba(201,168,76,0.12)', borderRadius: 8, padding: '8px', textAlign: 'center' }}>
-          <div style={{ fontSize: 10, color: '#854F0B' }}>Trajets ce mois</div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: '#633806' }}>12</div>
+    {/* Abonnement actif (carte gold premium) */}
+    <div style={{ background: `linear-gradient(135deg, ${GOLD} 0%, #B89540 100%)`, borderRadius: 14, padding: '18px 18px', marginBottom: 24, color: '#fff', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: -20, right: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
+      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.85)', marginBottom: 4, fontWeight: 700, letterSpacing: 1 }}>ABONNEMENT ACTIF</div>
+      <div style={{ fontSize: 22, fontWeight: 900, marginBottom: 2 }}>Pass Flex</div>
+      <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.9)', marginBottom: 14 }}>Toutes routes Grand Genève · CHF 449/mois</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, position: 'relative' }}>
+        <div style={{ background: 'rgba(255,255,255,0.18)', borderRadius: 10, padding: '10px', textAlign: 'center' }}>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.85)' }}>Trajets ce mois</div>
+          <div style={{ fontSize: 22, fontWeight: 900, color: '#fff' }}>12</div>
         </div>
-        <div style={{ background: 'rgba(201,168,76,0.12)', borderRadius: 8, padding: '8px', textAlign: 'center' }}>
-          <div style={{ fontSize: 10, color: '#854F0B' }}>Renouvellement</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#633806' }}>27 mai</div>
+        <div style={{ background: 'rgba(255,255,255,0.18)', borderRadius: 10, padding: '10px', textAlign: 'center' }}>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.85)' }}>Renouvellement</div>
+          <div style={{ fontSize: 15, fontWeight: 800, color: '#fff', marginTop: 4 }}>27 mai</div>
         </div>
       </div>
     </div>
 
-    <div style={{ fontSize: 12, fontWeight: 600, color: '#888780', marginBottom: 8 }}>Changer de formule</div>
+    <div style={{ fontSize: 13, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 12 }}>Changer de formule</div>
 
     {[
       { id: 'essentiel', name: 'Essentiel', sub: '1 route fixe', price: 299, active: false },
       { id: 'flex', name: 'Flex', sub: 'Toutes routes Grand Genève', price: 449, active: true },
       { id: 'premium', name: 'Premium', sub: 'Ski + international', price: 599, active: false },
     ].map(plan => (
-      <div
+      <button
         key={plan.id}
+        onClick={() => onSubscribe(plan.id)}
         style={{
+          width: '100%', textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit',
           background: '#fff',
-          border: plan.active ? `1.5px solid ${GOLD}` : '0.5px solid #E5E7EB',
-          borderRadius: 12, padding: '12px 14px', marginBottom: 8,
+          border: plan.active ? `2px solid ${GOLD}` : '0.5px solid #E5E7EB',
+          borderRadius: 12, padding: '14px 16px', marginBottom: 10,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         }}
       >
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: plan.active ? '#633806' : '#1A1A1A' }}>{plan.name}</div>
-          <div style={{ fontSize: 11, color: plan.active ? '#854F0B' : '#888780' }}>{plan.sub}</div>
+          <div style={{ fontSize: 15, fontWeight: 800, color: '#1A1A1A' }}>{plan.name}</div>
+          <div style={{ fontSize: 12, color: '#6B7280', marginTop: 2 }}>{plan.sub}</div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: plan.active ? '#633806' : '#1A1A1A' }}>CHF {plan.price}/mois</div>
+          <div style={{ fontSize: 15, fontWeight: 800, color: '#1A1A1A' }}>CHF {plan.price}<span style={{ fontSize: 11, color: '#6B7280', fontWeight: 500 }}>/mois</span></div>
           {plan.active && (
-            <div style={{ fontSize: 10, background: GOLD, color: '#fff', padding: '1px 7px', borderRadius: 6, display: 'inline-block', marginTop: 2 }}>Actif</div>
+            <div style={{ fontSize: 10, background: GOLD, color: '#fff', padding: '2px 8px', borderRadius: 8, display: 'inline-block', marginTop: 4, fontWeight: 700 }}>ACTIF</div>
           )}
         </div>
-      </div>
+      </button>
     ))}
   </div>
 );
