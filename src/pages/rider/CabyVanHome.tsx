@@ -188,13 +188,13 @@ function useCountdown(expiresAt: Date | null) {
   return { secs, label: `${mm}:${ss}` };
 }
 
-// ── TAB ICONS ────────────────────────────────────────────────
+// ── TAB ICONS (style easyJet : trait épais, contour) ────────
 const icons: Record<Tab, JSX.Element> = {
-  home: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5"><path d="M3 9l7-7 7 7v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9z" stroke="currentColor"/></svg>,
-  book: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5"><circle cx="10" cy="10" r="7" stroke="currentColor"/><path d="M10 7v3l2 2" stroke="currentColor" strokeLinecap="round"/></svg>,
-  trips: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5"><rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor"/><path d="M7 4V2M13 4V2M3 9h14" stroke="currentColor" strokeLinecap="round"/></svg>,
-  pass: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5"><rect x="2" y="6" width="16" height="10" rx="2" stroke="currentColor"/><path d="M6 6V4a4 4 0 018 0v2" stroke="currentColor"/></svg>,
-  tracker: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5"><circle cx="10" cy="10" r="3" stroke="currentColor"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2" stroke="currentColor" strokeLinecap="round"/></svg>,
+  home: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="2"><path d="M3 11l9-8 9 8v10a1 1 0 01-1 1h-5v-7h-6v7H4a1 1 0 01-1-1V11z" stroke="currentColor" strokeLinejoin="round"/></svg>,
+  book: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="2"><path d="M2 13l3-1 6-7 2 1-3 6 5-1 2-3 1.5 0.5-2 4 4 1c1 0.3 1 1.5-1 2L4 17c-1 0.2-1.5-0.3-2-1.5L2 13z" stroke="currentColor" strokeLinejoin="round" fill="currentColor" fillOpacity="0.001"/></svg>,
+  trips: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="2"><rect x="4" y="7" width="16" height="13" rx="2" stroke="currentColor"/><path d="M9 7V4h6v3" stroke="currentColor" strokeLinecap="round"/><path d="M4 12h16" stroke="currentColor"/></svg>,
+  pass: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="2"><path d="M3 8a2 2 0 012-2h14a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2a2 2 0 000-4V8z" stroke="currentColor" strokeLinejoin="round"/><path d="M15 6v12" stroke="currentColor" strokeDasharray="2 2"/></svg>,
+  tracker: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="2"><path d="M2 13l3-1 6-7 2 1-3 6 5-1 2-3 1.5 0.5-2 4 4 1c1 0.3 1 1.5-1 2L4 17c-1 0.2-1.5-0.3-2-1.5L2 13z" stroke="currentColor" strokeLinejoin="round"/><circle cx="19" cy="19" r="3.5" stroke="currentColor" fill="#fff"/><path d="M19 17.5V19l1 1" stroke="currentColor" strokeLinecap="round"/></svg>,
 };
 
 // ── COMPOSANTS PARTAGÉS ──────────────────────────────────────
