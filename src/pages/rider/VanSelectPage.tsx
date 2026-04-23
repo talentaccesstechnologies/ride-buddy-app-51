@@ -18,7 +18,7 @@ import {
   type VanSlotDB,
 } from '@/lib/vanSupabase';
 import BookingStepper from '@/components/van/BookingStepper';
-import BottomNav from '@/components/rider/BottomNav';
+
 import { useAbandonedCart } from '@/hooks/useAbandonedCart';
 import {
   AbandonedCartBanner,
@@ -800,7 +800,6 @@ const VanSelectPage: React.FC = () => {
         </div>
       </div>
 
-      <BottomNav />
     </div>
   );
 };
