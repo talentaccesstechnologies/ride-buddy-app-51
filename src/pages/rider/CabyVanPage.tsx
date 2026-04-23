@@ -619,7 +619,7 @@ const CabyVanPage: React.FC = () => {
                 if (!l) return null;
                 return (
                   <>
-                    <img src={flagSrc(l.cc)} alt="" width={18} height={12} style={{ display: 'block', objectFit: 'cover', borderRadius: 2 }} />
+                    <img src={flagSrc(l)} alt="" width={18} height={12} style={{ display: 'block', objectFit: 'cover', borderRadius: 2 }} />
                     <span style={{ fontWeight: 500 }}>{l.label}</span>
                   </>
                 );
