@@ -1,9 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import logoUrl from '@/assets/caby-logo.png';
 
 interface CabyLogoProps {
-  size?: number;        // Hauteur en px (largeur auto)
+  size?: number;        // Taille de police en px
   to?: string;          // Destination, défaut /caby
   className?: string;
   style?: React.CSSProperties;
@@ -11,11 +10,11 @@ interface CabyLogoProps {
 }
 
 /**
- * Logo officiel Caby — toujours cliquable, renvoie à l'accueil par défaut.
- * Utilise l'image PNG fournie par le client (src/assets/caby-logo.png).
+ * Logo officiel Caby — wordmark "Caby" en Playfair Display.
+ * Toujours cliquable, renvoie à l'accueil par défaut.
  */
 const CabyLogo: React.FC<CabyLogoProps> = ({
-  size = 32,
+  size = 28,
   to = '/caby',
   className,
   style,
@@ -26,7 +25,7 @@ const CabyLogo: React.FC<CabyLogoProps> = ({
     <button
       type="button"
       onClick={() => navigate(to)}
-      aria-label="Retour à l'accueil Caby"
+      aria-label={`${alt} — retour à l'accueil`}
       className={className}
       style={{
         background: 'transparent',
@@ -35,15 +34,16 @@ const CabyLogo: React.FC<CabyLogoProps> = ({
         cursor: 'pointer',
         display: 'inline-flex',
         alignItems: 'center',
-        lineHeight: 0,
+        lineHeight: 1,
+        fontFamily: "'Playfair Display', serif",
+        fontWeight: 700,
+        fontSize: size,
+        color: '#0A0A0A',
+        letterSpacing: '-0.5px',
         ...style,
       }}
     >
-      <img
-        src={logoUrl}
-        alt={alt}
-        style={{ height: size, width: 'auto', display: 'block' }}
-      />
+      Caby
     </button>
   );
 };
