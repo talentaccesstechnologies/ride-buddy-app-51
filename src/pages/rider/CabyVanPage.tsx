@@ -569,13 +569,11 @@ const CabyVanPage: React.FC = () => {
             ].map(item => {
               const Icon = item.icon;
               const handleClick = () => {
-                if ('action' in item && item.action === 'bookingModal') {
+                if (item.action === 'bookingModal') {
                   setBookingModalTab('login');
                   setBookingModalOpen(true);
-                } else if ('action' in item && item.action === 'helpModal') {
+                } else if (item.action === 'helpModal') {
                   setHelpModalOpen(true);
-                } else if ('to' in item && item.to) {
-                  navigate(item.to);
                 }
               };
               return (
