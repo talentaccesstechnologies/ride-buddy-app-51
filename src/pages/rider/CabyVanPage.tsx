@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, ArrowRight, Leaf, Users, Clock, MapPin, Luggage, Bike, QrCode, Check, X,
   CreditCard, Star, ChevronLeft, ChevronRight, Search, Percent, Zap, Shield, Car, SlidersHorizontal, Timer,
-  Info, ChevronDown, ChevronUp, Edit2, Bus, Snowflake, Globe2
+  Info, ChevronDown, ChevronUp, Edit2, Bus, Snowflake, Globe2, Mountain
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -271,17 +271,18 @@ const CabyVanPage: React.FC = () => {
     destMenuTimerRef.current = setTimeout(() => setDestMenuOpen(false), 250);
   };
 
-  const [activeService, setActiveService] = useState<'trajets' | 'ski' | 'crossborder'>('trajets');
+  const [activeService, setActiveService] = useState<'trajets' | 'ski' | 'randonnee' | 'crossborder'>('trajets');
   const [from, setFrom] = useState('Genève');
   const [to, setTo] = useState(destinationParam);
 
   const serviceCities: Record<string, string[]> = {
     trajets: ['Genève', 'Genève Aéroport (GVA)', 'Lausanne', 'Zurich', 'Zurich Aéroport (ZRH)', 'Berne', 'Bâle', 'Sion', 'Martigny', 'Montreux', 'Vevey', 'Neuchâtel', 'Fribourg', 'Nyon', 'Yverdon-les-Bains', 'La Chaux-de-Fonds', 'Brigue', 'Lugano'],
     ski: ['Genève', 'Lausanne', 'Verbier', 'Zermatt', 'Davos', 'Gstaad', 'Engelberg', 'Arosa', 'Chamonix', 'Morzine', 'Courchevel', "Val d'Isère", 'Sion', 'Martigny'],
+    randonnee: ['Genève', 'Lausanne', 'Chamonix', 'Zermatt', 'Grindelwald', 'Interlaken', 'Saas-Fee', 'Verbier', 'Gstaad', 'Engelberg', 'Arolla', 'Champéry', 'Leysin', 'Les Diablerets', 'Adelboden', 'Kandersteg'],
     crossborder: ['Genève', 'Annecy', 'Lyon', 'Lyon Aéroport (LYS)', 'Annemasse', 'Ferney-Voltaire', 'Gex', 'Chambéry', 'Grenoble', 'Thonon-les-Bains', 'Évian-les-Bains', 'Milan', 'Munich', 'Paris', 'Strasbourg'],
   };
 
-  const handleServiceChange = (service: 'trajets' | 'ski' | 'crossborder') => {
+  const handleServiceChange = (service: 'trajets' | 'ski' | 'randonnee' | 'crossborder') => {
     setActiveService(service);
     setTo('');
     setDepartureDateObj(null);
@@ -1356,10 +1357,11 @@ const CabyVanPage: React.FC = () => {
 
               {/* Onglets + toggle */}
               <div style={{ display: 'flex', alignItems: 'center', borderBottom: '2px solid #E0DDD5', marginBottom: 18 }}>
-                {(['trajets', 'ski', 'crossborder'] as const).map(tab => {
+                {(['trajets', 'ski', 'randonnee', 'crossborder'] as const).map(tab => {
                   const labels = {
                     trajets: { label: 'Trajets', Icon: Bus },
                     ski: { label: 'Ski', Icon: Snowflake },
+                    randonnee: { label: 'Randonnée', Icon: Mountain },
                     crossborder: { label: 'Cross-Border', Icon: Globe2 },
                   };
                   const TabIcon = labels[tab].Icon;
@@ -1394,7 +1396,7 @@ const CabyVanPage: React.FC = () => {
                 {/* À */}
                 <CityPickerPopover
                   fieldLabel="À"
-                  placeholder={activeService === 'ski' ? 'Verbier, Zermatt...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Pays, ville, gare...'}
+                  placeholder={activeService === 'ski' ? 'Verbier, Zermatt...' : activeService === 'randonnee' ? 'Chamonix, Grindelwald...' : activeService === 'crossborder' ? 'Annecy, Lyon, Milan...' : 'Pays, ville, gare...'}
                   value={to}
                   cities={serviceCities[activeService].filter(c => c !== from)}
                   onSelect={(city) => { setTo(city); setDropoffLabel(''); setDropoffAddress(''); setDropoffCustom(''); }}
