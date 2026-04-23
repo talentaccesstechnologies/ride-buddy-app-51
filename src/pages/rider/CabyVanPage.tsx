@@ -47,6 +47,7 @@ import CityAutocomplete from '@/components/van/CityAutocomplete';
 import CityPickerPopover from '@/components/van/CityPickerPopover';
 import PassengerPickerPopover from '@/components/van/PassengerPickerPopover';
 import PriceCalendar from '@/components/van/PriceCalendar';
+import CabyLogo from '@/components/shared/CabyLogo';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'extras' | 'passenger' | 'payment' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
