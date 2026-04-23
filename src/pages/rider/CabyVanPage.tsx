@@ -200,25 +200,27 @@ const SeatButton: React.FC<{ seat: number; taken: boolean; selected: boolean; on
 );
 
 // Liste des langues disponibles (style easyJet)
-const LANGUAGES: { code: string; flag: string; label: string }[] = [
-  { code: 'fr', flag: '🇫🇷', label: 'Français' },
-  { code: 'fr-ch', flag: '🇨🇭', label: 'Français (Suisse)' },
-  { code: 'de', flag: '🇩🇪', label: 'Deutsch' },
-  { code: 'de-ch', flag: '🇨🇭', label: 'Deutsch (Schweiz)' },
-  { code: 'it', flag: '🇮🇹', label: 'Italiano' },
-  { code: 'en', flag: '🇬🇧', label: 'English' },
-  { code: 'es', flag: '🇪🇸', label: 'Castellano' },
-  { code: 'ca', flag: '🇪🇸', label: 'Català' },
-  { code: 'pt', flag: '🇵🇹', label: 'Português' },
-  { code: 'nl', flag: '🇳🇱', label: 'Nederlands' },
-  { code: 'da', flag: '🇩🇰', label: 'Dansk' },
-  { code: 'cs', flag: '🇨🇿', label: 'Česky' },
-  { code: 'pl', flag: '🇵🇱', label: 'Polski' },
-  { code: 'hu', flag: '🇭🇺', label: 'Magyarul' },
-  { code: 'el', flag: '🇬🇷', label: 'Ελληνικά' },
-  { code: 'tr', flag: '🇹🇷', label: 'Türkçe' },
-  { code: 'he', flag: '🇮🇱', label: 'עברית' },
+// `cc` = code pays ISO 3166 (minuscules) utilisé par flagcdn.com pour rendre un SVG fiable cross-OS
+const LANGUAGES: { code: string; cc: string; label: string }[] = [
+  { code: 'fr', cc: 'fr', label: 'Français' },
+  { code: 'fr-ch', cc: 'ch', label: 'Français (Suisse)' },
+  { code: 'de', cc: 'de', label: 'Deutsch' },
+  { code: 'de-ch', cc: 'ch', label: 'Deutsch (Schweiz)' },
+  { code: 'it', cc: 'it', label: 'Italiano' },
+  { code: 'en', cc: 'gb', label: 'English' },
+  { code: 'es', cc: 'es', label: 'Castellano' },
+  { code: 'ca', cc: 'es-ct', label: 'Català' },
+  { code: 'pt', cc: 'pt', label: 'Português' },
+  { code: 'nl', cc: 'nl', label: 'Nederlands' },
+  { code: 'da', cc: 'dk', label: 'Dansk' },
+  { code: 'cs', cc: 'cz', label: 'Česky' },
+  { code: 'pl', cc: 'pl', label: 'Polski' },
+  { code: 'hu', cc: 'hu', label: 'Magyarul' },
+  { code: 'el', cc: 'gr', label: 'Ελληνικά' },
+  { code: 'tr', cc: 'tr', label: 'Türkçe' },
+  { code: 'he', cc: 'il', label: 'עברית' },
 ];
+const flagSrc = (cc: string) => `https://flagcdn.com/w40/${cc}.png`;
 
 const CabyVanPage: React.FC = () => {
   const navigate = useNavigate();
