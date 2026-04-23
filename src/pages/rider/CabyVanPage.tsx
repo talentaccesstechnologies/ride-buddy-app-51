@@ -1127,25 +1127,25 @@ const CabyVanPage: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
                   {[
-                    'Bagages à main et grande valise',
-                    'Contactez-nous',
-                    'Retards et annulations',
-                    'Suivi de course',
-                    "Page d'accueil de l'aide",
-                    'État du trafic actuel',
-                    'Gestion de vos réservations',
-                    'Caby Pass',
+                    { label: 'Bagages à main et grande valise', to: '/caby/van/bagages' },
+                    { label: 'Contactez-nous', to: '/caby/help/contact' },
+                    { label: 'Retards et annulations', to: '/caby/help?topic=retards' },
+                    { label: 'Suivi de course', to: '/caby/trip' },
+                    { label: "Page d'accueil de l'aide", to: '/caby/help' },
+                    { label: 'État du trafic actuel', to: '/caby/driver/map' },
+                    { label: 'Gestion de vos réservations', to: '/caby/account/reservations' },
+                    { label: 'Caby Pass', to: '/caby/pass' },
                   ].map(tag => (
                     <button
-                      key={tag}
-                      onClick={() => setHelpQuery(tag)}
+                      key={tag.label}
+                      onClick={() => { setHelpModalOpen(false); navigate(tag.to); }}
                       style={{
                         padding: '7px 13px', border: `1px solid ${GOLD}`, borderRadius: 999,
                         background: '#fff', color: GOLD, fontSize: 12.5, fontWeight: 500,
                         cursor: 'pointer', fontFamily: 'inherit',
                       }}
                     >
-                      {tag}
+                      {tag.label}
                     </button>
                   ))}
                 </div>
