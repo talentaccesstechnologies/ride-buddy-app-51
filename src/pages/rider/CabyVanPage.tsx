@@ -817,6 +817,7 @@ const CabyVanPage: React.FC = () => {
             ))}
           </nav>
           <button
+            onClick={() => navigate('/auth/login')}
             style={{ fontSize: 13, fontWeight: 600, color: '#0A0A0A', background: 'rgba(0,0,0,0.12)', border: 'none', borderRadius: 6, padding: '7px 16px', cursor: 'pointer', fontFamily: 'inherit' }}
           >
             Se connecter
