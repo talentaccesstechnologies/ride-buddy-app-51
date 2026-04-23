@@ -199,6 +199,27 @@ const SeatButton: React.FC<{ seat: number; taken: boolean; selected: boolean; on
   </button>
 );
 
+// Liste des langues disponibles (style easyJet)
+const LANGUAGES: { code: string; flag: string; label: string }[] = [
+  { code: 'fr', flag: '🇫🇷', label: 'Français' },
+  { code: 'fr-ch', flag: '🇨🇭', label: 'Français (Suisse)' },
+  { code: 'de', flag: '🇩🇪', label: 'Deutsch' },
+  { code: 'de-ch', flag: '🇨🇭', label: 'Deutsch (Schweiz)' },
+  { code: 'it', flag: '🇮🇹', label: 'Italiano' },
+  { code: 'en', flag: '🇬🇧', label: 'English' },
+  { code: 'es', flag: '🇪🇸', label: 'Castellano' },
+  { code: 'ca', flag: '🇪🇸', label: 'Català' },
+  { code: 'pt', flag: '🇵🇹', label: 'Português' },
+  { code: 'nl', flag: '🇳🇱', label: 'Nederlands' },
+  { code: 'da', flag: '🇩🇰', label: 'Dansk' },
+  { code: 'cs', flag: '🇨🇿', label: 'Česky' },
+  { code: 'pl', flag: '🇵🇱', label: 'Polski' },
+  { code: 'hu', flag: '🇭🇺', label: 'Magyarul' },
+  { code: 'el', flag: '🇬🇷', label: 'Ελληνικά' },
+  { code: 'tr', flag: '🇹🇷', label: 'Türkçe' },
+  { code: 'he', flag: '🇮🇱', label: 'עברית' },
+];
+
 const CabyVanPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -212,6 +233,9 @@ const CabyVanPage: React.FC = () => {
   const [bookingModalTab, setBookingModalTab] = useState<'find' | 'login'>('login');
   const [helpModalOpen, setHelpModalOpen] = useState(false);
   const [helpQuery, setHelpQuery] = useState('');
+  const [langModalOpen, setLangModalOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState<string>('fr');
+  const [pendingLang, setPendingLang] = useState<string>('fr');
   const [bmEmail, setBmEmail] = useState('');
   const [bmPassword, setBmPassword] = useState('');
   const [bmLastName, setBmLastName] = useState('');
@@ -574,6 +598,23 @@ const CabyVanPage: React.FC = () => {
                 </button>
               );
             })}
+            {/* Sélecteur de langue */}
+            <button
+              onClick={() => { setPendingLang(currentLang); setLangModalOpen(true); }}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                height: 24, padding: '0 10px', borderRadius: 4, border: 'none',
+                background: 'transparent', color: '#0A0A0A',
+                fontSize: 12, fontWeight: 500, fontFamily: 'inherit', cursor: 'pointer',
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.1)')}
+              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = 'transparent')}
+              aria-label="Changer la langue"
+            >
+              <span style={{ fontSize: 14, lineHeight: 1 }}>{LANGUAGES.find(l => l.code === currentLang)?.flag}</span>
+              <span style={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: 0.3 }}>{currentLang}</span>
+            </button>
           </div>
 
           {/* Barre principale (logo + nav + Se connecter) */}
@@ -1076,6 +1117,87 @@ const CabyVanPage: React.FC = () => {
                   </button>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* ═══ MODALE SÉLECTEUR DE LANGUE (style easyJet) ═══ */}
+        {langModalOpen && (
+          <div
+            onClick={() => setLangModalOpen(false)}
+            style={{
+              position: 'fixed', inset: 0, background: 'rgba(10,10,10,0.55)',
+              zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: 20,
+            }}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{
+                background: '#fff', borderRadius: 12, width: '100%', maxWidth: 520,
+                maxHeight: '85vh', display: 'flex', flexDirection: 'column',
+                fontFamily: 'inherit', boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+                overflow: 'hidden',
+              }}
+            >
+              <div style={{ padding: '24px 28px 16px', borderBottom: '1px solid #F0EBE0' }}>
+                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 900, letterSpacing: '-0.5px', color: '#0A0A0A', textTransform: 'uppercase' }}>
+                  Sélectionner la langue
+                </div>
+              </div>
+              <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
+                {LANGUAGES.map(lang => {
+                  const selected = pendingLang === lang.code;
+                  return (
+                    <button
+                      key={lang.code}
+                      onClick={() => setPendingLang(lang.code)}
+                      style={{
+                        width: '100%', display: 'flex', alignItems: 'center', gap: 14,
+                        padding: '14px 28px', background: 'transparent', border: 'none',
+                        borderBottom: '1px solid #F5F2EC', cursor: 'pointer',
+                        fontFamily: 'inherit', textAlign: 'left',
+                      }}
+                    >
+                      <span style={{
+                        width: 18, height: 18, borderRadius: '50%',
+                        border: `2px solid ${selected ? GOLD : '#C0C0C0'}`,
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0,
+                      }}>
+                        {selected && <span style={{ width: 9, height: 9, borderRadius: '50%', background: GOLD }} />}
+                      </span>
+                      <span style={{ fontSize: 22, lineHeight: 1 }}>{lang.flag}</span>
+                      <span style={{ fontSize: 15, fontWeight: selected ? 700 : 500, color: '#0A0A0A' }}>{lang.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div style={{
+                borderTop: '1px solid #E5E5E5', padding: '16px 24px',
+                display: 'flex', justifyContent: 'flex-end', gap: 10,
+              }}>
+                <button
+                  onClick={() => setLangModalOpen(false)}
+                  style={{
+                    padding: '10px 22px', background: '#fff', color: '#0A0A0A',
+                    border: '1px solid #C0C0C0', borderRadius: 6,
+                    fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+                  }}
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={() => { setCurrentLang(pendingLang); setLangModalOpen(false); }}
+                  style={{
+                    padding: '10px 22px', background: GOLD, color: '#fff',
+                    border: 'none', borderRadius: 6,
+                    fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                  }}
+                >
+                  Appliquer
+                </button>
+              </div>
             </div>
           </div>
         )}
