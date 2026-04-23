@@ -209,7 +209,7 @@ const LANGUAGES: { code: string; cc: string; label: string }[] = [
   { code: 'it', cc: 'it', label: 'Italiano' },
   { code: 'en', cc: 'gb', label: 'English' },
   { code: 'es', cc: 'es', label: 'Castellano' },
-  { code: 'ca', cc: 'es-ct', label: 'Català' },
+  { code: 'ca', cc: 'es-ct', label: 'Català', flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Catalonia.svg/40px-Flag_of_Catalonia.svg.png' } as any,
   { code: 'pt', cc: 'pt', label: 'Português' },
   { code: 'nl', cc: 'nl', label: 'Nederlands' },
   { code: 'da', cc: 'dk', label: 'Dansk' },
