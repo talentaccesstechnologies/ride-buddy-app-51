@@ -69,7 +69,7 @@ const LoginPage: React.FC = () => {
       toast.error('Code invalide', { description: 'Veuillez réessayer.' });
     } else {
       toast.success('Connexion réussie !');
-      navigate(role === 'driver' ? '/caby/driver/dashboard' : '/caby');
+      navigate(role === 'driver' ? '/caby/driver/dashboard' : '/caby/van');
     }
   };
 
@@ -82,7 +82,7 @@ const LoginPage: React.FC = () => {
       toast.error('Échec de la connexion', { description: 'Email ou mot de passe incorrect' });
     } else {
       toast.success('Connexion réussie !');
-      navigate(role === 'driver' ? '/caby/driver/dashboard' : '/caby');
+      navigate(role === 'driver' ? '/caby/driver/dashboard' : '/caby/van');
     }
   };
 
