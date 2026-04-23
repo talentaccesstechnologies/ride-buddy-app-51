@@ -27,7 +27,7 @@ import {
   formatDuration, SEGMENT_META,
   type VanSlot, type VanRoute, type SegmentFilter,
 } from '@/lib/cabyVanPricing';
-import BottomNav from '@/components/rider/BottomNav';
+import { Home as HomeIcon, LayoutGrid, Clock as ClockIcon, Tag, User as UserIcon, Menu as MenuIcon } from 'lucide-react';
 import heroImg from '@/assets/van-hero-alps.webp';
 import {
   calculateLastMinuteDiscount, applyLastMinutePrice, formatCountdown,
@@ -494,7 +494,6 @@ const CabyVanPage: React.FC = () => {
             ))}
           </div>
         </div>
-        <BottomNav />
       </div>
     );
   }
@@ -1288,8 +1287,6 @@ const CabyVanPage: React.FC = () => {
 
           <div className="h-24" />
         </div>
-
-        <BottomNav />
       </div>
     );
   }
@@ -1379,7 +1376,6 @@ const CabyVanPage: React.FC = () => {
             {filter === 'grand_geneve' && (<button onClick={() => setStep('abonnement')} className="w-full mt-2 rounded-xl border-2 border-dashed border-orange-300 bg-orange-50 p-3 text-center"><p className="text-xs font-bold text-orange-700">💳 Abonnement Frontalier dès CHF 299/mois</p><p className="text-[10px] text-orange-500">Trajets illimités · Réservation prioritaire</p></button>)}
           </div>
         </div>
-        <BottomNav />
       </div>
     );
   }
@@ -1943,7 +1939,6 @@ const CabyVanPage: React.FC = () => {
           <div className="mt-4 flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-3"><Leaf className="w-5 h-5 text-emerald-600 flex-shrink-0" /><p className="text-xs text-emerald-700 text-left">🌿 Trajet partagé — vous économisez <span className="font-bold">{Math.round(selectedRoute.duration * 0.12)} kg de CO₂</span> vs voiture solo</p></div>
           <Button onClick={() => navigate('/caby/services')} variant="outline" className="w-full mt-4 rounded-xl h-12 border-gray-300 text-gray-700">Retour aux services</Button>
         </div>
-        <BottomNav />
       </div>
     );
   }
