@@ -607,40 +607,66 @@ const TabBook: React.FC<{ onSearch: (from: string, to: string, date: string) => 
   );
 };
 
-// ── ONGLET TRIPS ─────────────────────────────────────────────
+// ── ONGLET TRIPS (style easyJet "My Trips") ──────────────────
 const TabTrips: React.FC = () => (
-  <div style={{ padding: 16 }}>
-    <SectionTitle>Mes réservations</SectionTitle>
+  <div style={{ padding: '24px 18px 16px', background: '#F4F4F2', minHeight: '100%' }}>
+    {/* Illustration ronde + titre + CTA */}
+    <div style={{ textAlign: 'center', padding: '20px 0 24px' }}>
+      <div style={{
+        width: 180, height: 180, borderRadius: '50%',
+        background: `linear-gradient(135deg, ${GOLD} 0%, #B89540 100%)`,
+        margin: '0 auto 24px',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        position: 'relative', overflow: 'hidden',
+      }}>
+        <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+          <path d="M20 80 Q60 30, 100 80" stroke="#fff" strokeWidth="2.5" fill="none" opacity="0.3" strokeDasharray="3 3"/>
+          <rect x="32" y="50" width="56" height="28" rx="6" fill="#fff"/>
+          <rect x="38" y="56" width="18" height="14" rx="2" fill={GOLD}/>
+          <rect x="62" y="56" width="20" height="14" rx="2" fill={GOLD}/>
+          <circle cx="42" cy="80" r="6" fill="#1A1A1A"/>
+          <circle cx="78" cy="80" r="6" fill="#1A1A1A"/>
+          <circle cx="42" cy="80" r="2" fill="#fff"/>
+          <circle cx="78" cy="80" r="2" fill="#fff"/>
+        </svg>
+      </div>
+      <div style={{ fontSize: 24, fontWeight: 800, color: '#1A1A1A', marginBottom: 10, letterSpacing: '-0.3px' }}>
+        Trajet en cours
+      </div>
+      <div style={{ fontSize: 14, color: '#6B7280', marginBottom: 24, lineHeight: 1.5, padding: '0 12px' }}>
+        Suivez votre van en temps réel ou consultez votre historique ci-dessous.
+      </div>
+    </div>
 
-    {/* Trajet actif */}
-    <div style={{ background: DARK, borderRadius: 14, padding: '14px 16px', marginBottom: 14 }}>
-      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>TRAJET EN COURS</div>
-      <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 2 }}>{MOCK_ACTIVE.route}</div>
-      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginBottom: 12 }}>
+    {/* Trajet actif compact */}
+    <div style={{ background: DARK, borderRadius: 14, padding: '16px 18px', marginBottom: 20 }}>
+      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginBottom: 4, fontWeight: 700, letterSpacing: 1 }}>TRAJET EN COURS</div>
+      <div style={{ fontSize: 16, fontWeight: 800, color: '#fff', marginBottom: 2 }}>{MOCK_ACTIVE.route}</div>
+      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginBottom: 14 }}>
         {MOCK_ACTIVE.date} · {MOCK_ACTIVE.time} · CHF 66
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
         {[{ label: 'Siège', value: MOCK_ACTIVE.seat, color: '#fff' }, { label: 'Statut', value: 'Confirmé', color: '#22C55E' }, { label: 'Réf.', value: MOCK_ACTIVE.ref, color: GOLD }].map(i => (
-          <div key={i.label} style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 7, padding: '7px 0', textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', marginBottom: 2 }}>{i.label}</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: i.color }}>{i.value}</div>
+          <div key={i.label} style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 0', textAlign: 'center' }}>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginBottom: 3 }}>{i.label}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: i.color }}>{i.value}</div>
           </div>
         ))}
       </div>
     </div>
 
     {/* Historique */}
-    <div style={{ fontSize: 11, fontWeight: 700, color: '#888780', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>Historique</div>
+    <div style={{ fontSize: 13, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 10 }}>Historique</div>
     {MOCK_HISTORY.map(h => (
-      <div key={h.id} style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 11, padding: '10px 12px', marginBottom: 6, opacity: 0.7 }}>
+      <div key={h.id} style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '12px 14px', marginBottom: 8 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A' }}>{h.route}</div>
-            <div style={{ fontSize: 10, color: '#888780' }}>{h.date}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>{h.route}</div>
+            <div style={{ fontSize: 11, color: '#888780' }}>{h.date}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 13, color: '#1A1A1A' }}>CHF {h.price}</div>
-            <div style={{ fontSize: 10, color: '#22C55E' }}>Complété</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>CHF {h.price}</div>
+            <div style={{ fontSize: 11, color: '#22C55E', fontWeight: 600 }}>Complété</div>
           </div>
         </div>
       </div>
