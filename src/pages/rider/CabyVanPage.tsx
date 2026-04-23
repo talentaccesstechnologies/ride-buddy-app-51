@@ -27,7 +27,7 @@ import {
   formatDuration, SEGMENT_META,
   type VanSlot, type VanRoute, type SegmentFilter,
 } from '@/lib/cabyVanPricing';
-import { Home as HomeIcon, LayoutGrid, Clock as ClockIcon, Tag, User as UserIcon, Menu as MenuIcon } from 'lucide-react';
+import { Home as HomeIcon, LayoutGrid, Clock as ClockIcon, Tag, User as UserIcon, Menu as MenuIcon, HelpCircle, Search as SearchIcon } from 'lucide-react';
 import heroImg from '@/assets/van-hero-alps.webp';
 import {
   calculateLastMinuteDiscount, applyLastMinutePrice, formatCountdown,
@@ -210,6 +210,8 @@ const CabyVanPage: React.FC = () => {
   const calendarSearchRef = useRef<HTMLDivElement>(null);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [bookingModalTab, setBookingModalTab] = useState<'find' | 'login'>('login');
+  const [helpModalOpen, setHelpModalOpen] = useState(false);
+  const [helpQuery, setHelpQuery] = useState('');
   const [bmEmail, setBmEmail] = useState('');
   const [bmPassword, setBmPassword] = useState('');
   const [bmLastName, setBmLastName] = useState('');
@@ -539,7 +541,7 @@ const CabyVanPage: React.FC = () => {
               { icon: HomeIcon, label: 'Accueil', to: '/caby' },
               // { icon: LayoutGrid, label: 'Services', to: '/caby/services' },
               { icon: ClockIcon, label: 'Gérer vos réservations', action: 'bookingModal' as const },
-              { icon: Tag, label: 'Offres', to: '/caby/offers' },
+              { icon: HelpCircle, label: 'Aide', action: 'helpModal' as const },
               { icon: UserIcon, label: 'Compte', to: '/caby/account' },
             ].map(item => {
               const Icon = item.icon;
@@ -547,6 +549,8 @@ const CabyVanPage: React.FC = () => {
                 if ('action' in item && item.action === 'bookingModal') {
                   setBookingModalTab('login');
                   setBookingModalOpen(true);
+                } else if ('action' in item && item.action === 'helpModal') {
+                  setHelpModalOpen(true);
                 } else if ('to' in item && item.to) {
                   navigate(item.to);
                 }
