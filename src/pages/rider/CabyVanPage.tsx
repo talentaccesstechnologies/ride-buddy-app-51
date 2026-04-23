@@ -220,7 +220,7 @@ const LANGUAGES: { code: string; cc: string; label: string }[] = [
   { code: 'tr', cc: 'tr', label: 'Türkçe' },
   { code: 'he', cc: 'il', label: 'עברית' },
 ];
-const flagSrc = (cc: string) => `https://flagcdn.com/w40/${cc}.png`;
+const flagSrc = (l: { cc: string; flagUrl?: string }) => l.flagUrl || `https://flagcdn.com/w40/${l.cc}.png`;
 
 const CabyVanPage: React.FC = () => {
   const navigate = useNavigate();
