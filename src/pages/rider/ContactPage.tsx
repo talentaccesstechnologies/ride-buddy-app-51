@@ -1,3 +1,4 @@
+import CabyLogo from '@/components/shared/CabyLogo';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Phone, Mail, MessageCircle, Clock, MapPin, ChevronRight, HelpCircle } from 'lucide-react';
