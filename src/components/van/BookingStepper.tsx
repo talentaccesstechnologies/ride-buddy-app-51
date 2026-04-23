@@ -1,6 +1,7 @@
 import React from 'react';
 import { Check, ArrowLeft, Menu } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import CabyLogo from '@/components/shared/CabyLogo';
 
 const GOLD = '#C9A84C';
 
@@ -121,11 +122,9 @@ export default function BookingStepper({ currentStep, basketAmount }: BookingSte
               onClick={() => navigate('/caby/van')}
               className="flex items-center shrink-0 hover:opacity-80 transition-opacity"
               aria-label="Retour à Caby Van"
+              style={{ background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}
             >
-              <span className="font-display font-extrabold text-2xl tracking-tight">
-                <span style={{ color: GOLD }}>C</span>
-                <span className="text-gray-900">ABY</span>
-              </span>
+              <CabyLogo size={28} />
               <span className="ml-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 hidden sm:inline">
                 Van
               </span>
