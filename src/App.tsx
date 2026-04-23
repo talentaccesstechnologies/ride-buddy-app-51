@@ -90,6 +90,7 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 import CGUModal from "@/components/shared/CGUModal";
 import CabyTestDashboard from "@/pages/admin/CabyTestDashboard";
 import VanLiveTest from "@/pages/admin/VanLiveTest";
+import CabyRoot from "@/pages/CabyRoot";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -112,7 +113,7 @@ const App = () => (
               <Route path="/auth/register" element={<RegisterPage />} />
 
               {/* Caby - Rider Interface */}
-              <Route path="/caby" element={<CabyVanHome />} />
+              <Route path="/caby" element={<CabyRoot />} />
               <Route path="/caby/legacy" element={<RiderHome />} />
               <Route path="/caby/search" element={<RiderSearch />} />
               <Route path="/caby/confirm" element={<ConfirmRide />} />
