@@ -263,69 +263,145 @@ const FlashDealCard: React.FC<{ deal: FlashDeal; onBook: () => void }> = ({ deal
   );
 };
 
-// ── ONGLET HOME ──────────────────────────────────────────────
+// ── ONGLET HOME (hero gold pleine largeur style easyJet) ─────
 const TabHome: React.FC<{ deals: FlashDeal[]; onNavigate: (tab: Tab) => void; onBookDeal: (deal: FlashDeal) => void }> = ({ deals, onNavigate, onBookDeal }) => (
-  <div style={{ padding: 16 }}>
-    {/* Hero */}
-    <div style={{ background: DARK, borderRadius: 14, padding: '18px 16px', marginBottom: 12, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: '100%', background: `linear-gradient(135deg, transparent 40%, rgba(201,168,76,0.1))` }} />
-      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 3 }}>Genève · Suisse & Europe</div>
-      <div style={{ fontSize: 20, fontWeight: 900, color: '#fff', marginBottom: 5 }}>Van partagé premium</div>
-      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginBottom: 14 }}>Votre siège. Votre trajet. Votre prix.</div>
+  <div>
+    {/* HERO gold pleine largeur avec illustration */}
+    <div style={{
+      background: `linear-gradient(180deg, ${GOLD} 0%, #B89540 100%)`,
+      padding: '24px 18px 90px',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Décor : silhouette van + montagnes */}
+      <svg width="100%" height="140" viewBox="0 0 360 140" style={{ position: 'absolute', bottom: 60, left: 0, opacity: 0.18 }}>
+        <path d="M0 120 L60 70 L100 95 L160 50 L220 80 L280 40 L360 90 L360 140 L0 140 Z" fill="#fff"/>
+        <path d="M0 130 L80 100 L140 115 L200 90 L260 110 L360 85 L360 140 L0 140 Z" fill="#fff" opacity="0.5"/>
+      </svg>
+      <div style={{ position: 'relative' }}>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', marginBottom: 4, fontWeight: 600 }}>Genève · Suisse & Europe</div>
+        <div style={{ fontSize: 28, fontWeight: 900, color: '#fff', lineHeight: 1.1, marginBottom: 6, letterSpacing: '-0.5px' }}>
+          Van partagé<br/>premium
+        </div>
+        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.9)', marginBottom: 0 }}>
+          Votre siège. Votre trajet. Votre prix.
+        </div>
+      </div>
+    </div>
+
+    {/* CTA blancs encadrés flottants (style "BOOK FLIGHTS / BOOK HOLIDAYS") */}
+    <div style={{ padding: '0 18px', marginTop: -64, position: 'relative', zIndex: 2 }}>
       <button
         onClick={() => onNavigate('book')}
-        style={{ background: GOLD, border: 'none', borderRadius: 9, padding: '10px 18px', cursor: 'pointer', fontSize: 13, fontWeight: 700, color: '#fff', fontFamily: 'inherit' }}
+        style={{
+          width: '100%', background: '#fff', border: `2px solid ${GOLD}`,
+          borderRadius: 8, padding: '18px 20px', marginBottom: 12,
+          cursor: 'pointer', fontFamily: 'inherit',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+        }}
       >
-        Réserver un siège →
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M2 14l3-1 6-7 2 1-3 6 5-1 2-3 1.5 0.5-2 4 4 1c1 0.3 1 1.5-1 2L4 18c-1 0.2-1.5-0.3-2-1.5L2 14z" fill={GOLD}/>
+        </svg>
+        <span style={{ fontSize: 16, fontWeight: 800, color: '#4A4A4A', letterSpacing: 1 }}>RÉSERVER UN VAN</span>
+      </button>
+      <button
+        onClick={() => onNavigate('pass')}
+        style={{
+          width: '100%', background: '#fff', border: `2px solid ${GOLD}`,
+          borderRadius: 8, padding: '18px 20px',
+          cursor: 'pointer', fontFamily: 'inherit',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+        }}
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M3 8a2 2 0 012-2h14a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2a2 2 0 000-4V8z" fill={GOLD}/>
+        </svg>
+        <span style={{ fontSize: 16, fontWeight: 800, color: '#4A4A4A', letterSpacing: 1 }}>CABY PASS</span>
+      </button>
+    </div>
+
+    {/* Bannière promo grande "GROS POURCENTAGE" style easyJet */}
+    <div style={{ padding: '20px 18px 0' }}>
+      <button
+        onClick={() => onNavigate('book')}
+        style={{
+          width: '100%', background: GOLD, border: 'none', borderRadius: 12,
+          padding: '28px 24px', cursor: 'pointer', fontFamily: 'inherit',
+          textAlign: 'left', position: 'relative', overflow: 'hidden',
+        }}
+      >
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.12, fontSize: 50, lineHeight: 1, letterSpacing: 8, color: '#fff', userSelect: 'none', padding: 8 }}>
+          ✈ ✈ ✈ ✈<br/>✈ ✈ ✈ ✈
+        </div>
+        <div style={{ position: 'relative' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: 1, marginBottom: 4 }}>JUSQU'À</div>
+          <div style={{ fontSize: 64, fontWeight: 900, color: '#fff', lineHeight: 0.9, letterSpacing: '-2px' }}>30%</div>
+          <div style={{ fontSize: 16, fontWeight: 800, color: '#fff', marginTop: 4 }}>SUR LE LAST-MINUTE</div>
+        </div>
       </button>
     </div>
 
     {/* Flash deal */}
-    {deals.map(deal => (
-      <FlashDealCard key={deal.id} deal={deal} onBook={() => onBookDeal(deal)} />
-    ))}
+    {deals.length > 0 && (
+      <div style={{ padding: '16px 18px 0' }}>
+        {deals.map(deal => (
+          <FlashDealCard key={deal.id} deal={deal} onBook={() => onBookDeal(deal)} />
+        ))}
+      </div>
+    )}
 
     {/* Pourquoi Caby Van */}
-    <SectionTitle>Pourquoi Caby Van ?</SectionTitle>
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
-      {[
-        { bg: GOLD, label: 'Prix garanti', sub: 'Transparent et juste', icon: 'clock' },
-        { bg: DARK, label: 'Van premium', sub: 'Chauffeur certifié Caby', icon: 'lock' },
-        { bg: '#22C55E', label: 'Ponctuel', sub: 'Départ à l\'heure, toujours', icon: 'check' },
-        { bg: '#3B82F6', label: 'Code de conduite', sub: 'Standard premium certifié', icon: 'star' },
-      ].map(item => (
-        <div key={item.label} style={{ background: '#F9F8F5', borderRadius: 12, padding: '12px 10px' }}>
-          <div style={{ width: 26, height: 26, background: item.bg, borderRadius: 7, marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {item.icon === 'clock' && <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="#fff" strokeWidth="1.4"/><path d="M6.5 4.5v2l1.5 1" stroke="#fff" strokeWidth="1.2" strokeLinecap="round"/></svg>}
-            {item.icon === 'lock' && <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="2" y="6" width="9" height="6" rx="1.5" stroke="#fff" strokeWidth="1.4"/><path d="M4.5 6V4.5a2 2 0 014 0V6" stroke="#fff" strokeWidth="1.4"/></svg>}
-            {item.icon === 'check' && <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5l3 3 5-5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-            {item.icon === 'star' && <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5l1.5 3h3L8.5 6.5l1 3-3-2-3 2 1-3L2 4.5h3z" stroke="#fff" strokeWidth="1.2" strokeLinejoin="round"/></svg>}
+    <div style={{ padding: '16px 18px 0' }}>
+      <div style={{ fontSize: 18, fontWeight: 800, color: '#1A1A1A', marginBottom: 12 }}>Pourquoi Caby Van ?</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 8 }}>
+        {[
+          { bg: GOLD, label: 'Prix garanti', sub: 'Transparent et juste', icon: 'clock' },
+          { bg: DARK, label: 'Van premium', sub: 'Chauffeur certifié Caby', icon: 'lock' },
+          { bg: '#22C55E', label: 'Ponctuel', sub: 'Toujours à l\'heure', icon: 'check' },
+          { bg: '#3B82F6', label: 'Code conduite', sub: 'Standard premium', icon: 'star' },
+        ].map(item => (
+          <div key={item.label} style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '14px 12px' }}>
+            <div style={{ width: 32, height: 32, background: item.bg, borderRadius: 8, marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {item.icon === 'clock' && <svg width="16" height="16" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="#fff" strokeWidth="1.4"/><path d="M6.5 4.5v2l1.5 1" stroke="#fff" strokeWidth="1.2" strokeLinecap="round"/></svg>}
+              {item.icon === 'lock' && <svg width="16" height="16" viewBox="0 0 13 13" fill="none"><rect x="2" y="6" width="9" height="6" rx="1.5" stroke="#fff" strokeWidth="1.4"/><path d="M4.5 6V4.5a2 2 0 014 0V6" stroke="#fff" strokeWidth="1.4"/></svg>}
+              {item.icon === 'check' && <svg width="16" height="16" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5l3 3 5-5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              {item.icon === 'star' && <svg width="16" height="16" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5l1.5 3h3L8.5 6.5l1 3-3-2-3 2 1-3L2 4.5h3z" stroke="#fff" strokeWidth="1.2" strokeLinejoin="round"/></svg>}
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', marginBottom: 2 }}>{item.label}</div>
+            <div style={{ fontSize: 11, color: '#888780' }}>{item.sub}</div>
           </div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1A1A', marginBottom: 2 }}>{item.label}</div>
-          <div style={{ fontSize: 10, color: '#888780' }}>{item.sub}</div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
 
     {/* Routes populaires */}
-    <SectionTitle action="Voir tout" onAction={() => onNavigate('book')}>Routes populaires</SectionTitle>
-    <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
-      {POPULAR_ROUTES.map((r, i) => (
-        <button
-          key={r.city}
-          onClick={() => onNavigate('book')}
-          style={{
-            background: i === 0 ? DARK : '#F9F8F5',
-            border: 'none', borderRadius: 12, padding: '10px 14px',
-            flexShrink: 0, textAlign: 'center', cursor: 'pointer',
-            minWidth: 86, fontFamily: 'inherit',
-          }}
-        >
-          <div style={{ fontSize: 10, color: i === 0 ? 'rgba(255,255,255,0.4)' : '#888780', marginBottom: 2 }}>dès</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: i === 0 ? '#fff' : '#1A1A1A' }}>CHF {r.price}</div>
-          <div style={{ fontSize: 10, color: GOLD, fontWeight: 600 }}>→ {r.city}</div>
-        </button>
-      ))}
+    <div style={{ padding: '16px 18px 0' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <div style={{ fontSize: 18, fontWeight: 800, color: '#1A1A1A' }}>Routes populaires</div>
+        <button onClick={() => onNavigate('book')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: GOLD, fontWeight: 700 }}>Tout voir →</button>
+      </div>
+      <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 4 }} className="caby-tab-scroll">
+        {POPULAR_ROUTES.map((r, i) => (
+          <button
+            key={r.city}
+            onClick={() => onNavigate('book')}
+            style={{
+              background: i === 0 ? GOLD : '#fff',
+              border: i === 0 ? 'none' : '0.5px solid #E5E7EB',
+              borderRadius: 12, padding: '14px 18px',
+              flexShrink: 0, textAlign: 'left', cursor: 'pointer',
+              minWidth: 110, fontFamily: 'inherit',
+            }}
+          >
+            <div style={{ fontSize: 11, color: i === 0 ? 'rgba(255,255,255,0.85)' : '#888780', marginBottom: 4, fontWeight: 600 }}>dès</div>
+            <div style={{ fontSize: 18, fontWeight: 900, color: i === 0 ? '#fff' : '#1A1A1A', marginBottom: 4 }}>CHF {r.price}</div>
+            <div style={{ fontSize: 12, color: i === 0 ? 'rgba(255,255,255,0.95)' : GOLD, fontWeight: 700 }}>→ {r.city}</div>
+          </button>
+        ))}
+      </div>
     </div>
   </div>
 );
