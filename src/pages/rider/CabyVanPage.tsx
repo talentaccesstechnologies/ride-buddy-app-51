@@ -1127,7 +1127,7 @@ const CabyVanPage: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
                   {[
-                    'Bagages à main et bagage en soute',
+                    'Bagages à main et grande valise',
                     'Contactez-nous',
                     'Retards et annulations',
                     'Suivi de course',
