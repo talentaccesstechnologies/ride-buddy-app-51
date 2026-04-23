@@ -208,6 +208,15 @@ const CabyVanPage: React.FC = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
   const calendarSearchRef = useRef<HTMLDivElement>(null);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [bookingModalTab, setBookingModalTab] = useState<'find' | 'login'>('login');
+  const [bmEmail, setBmEmail] = useState('');
+  const [bmPassword, setBmPassword] = useState('');
+  const [bmLastName, setBmLastName] = useState('');
+  const [bmBookingRef, setBmBookingRef] = useState('');
+  const [bmKeepLoggedIn, setBmKeepLoggedIn] = useState(false);
+  const [bmAuthorized, setBmAuthorized] = useState(false);
+
   const [infoMenuOpen, setInfoMenuOpen] = useState(false);
   const infoMenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openInfoMenu = () => {
@@ -529,15 +538,23 @@ const CabyVanPage: React.FC = () => {
             {[
               { icon: HomeIcon, label: 'Accueil', to: '/caby' },
               // { icon: LayoutGrid, label: 'Services', to: '/caby/services' },
-              { icon: ClockIcon, label: 'Activité', to: '/caby/activity' },
+              { icon: ClockIcon, label: 'Gérer vos réservations', action: 'bookingModal' as const },
               { icon: Tag, label: 'Offres', to: '/caby/offers' },
               { icon: UserIcon, label: 'Compte', to: '/caby/account' },
             ].map(item => {
               const Icon = item.icon;
+              const handleClick = () => {
+                if ('action' in item && item.action === 'bookingModal') {
+                  setBookingModalTab('login');
+                  setBookingModalOpen(true);
+                } else if ('to' in item && item.to) {
+                  navigate(item.to);
+                }
+              };
               return (
                 <button
-                  key={item.to}
-                  onClick={() => navigate(item.to)}
+                  key={item.label}
+                  onClick={handleClick}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 5,
                     height: 24, padding: '0 10px', borderRadius: 4, border: 'none',
