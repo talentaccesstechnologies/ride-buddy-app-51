@@ -31,6 +31,7 @@ import VanInspirePage from "./pages/rider/VanInspirePage";
 import VanDestinationPage from "./pages/rider/VanDestinationPage";
 import VanLemanPage from "./pages/rider/VanLemanPage";
 import VanSelectPage from "./pages/rider/VanSelectPage";
+import VanRdvPage from "./pages/rider/VanRdvPage";
 import VanPackPage from "./pages/rider/VanPackPage";
 import VanPassengersPage from "./pages/rider/VanPassengersPage";
 import VanTermsPage from "./pages/rider/VanTermsPage";
@@ -131,6 +132,7 @@ const App = () => (
               <Route path="/caby/van/leman" element={<VanLemanPage />} />
               <Route path="/caby/van/destination/:city" element={<VanDestinationPage />} />
               <Route path="/caby/van/select" element={<VanSelectPage />} />
+              <Route path="/caby/van/rdv" element={<VanRdvPage />} />
               <Route path="/caby/van/pack" element={<VanPackPage />} />
               <Route path="/caby/van/passengers" element={<VanPassengersPage />} />
               <Route path="/caby/van/terms" element={<VanTermsPage />} />

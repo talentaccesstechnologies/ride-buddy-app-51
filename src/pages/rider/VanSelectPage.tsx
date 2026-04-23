@@ -665,7 +665,7 @@ const VanSelectPage: React.FC = () => {
               p.set('returnArrivalTime', selectedReturn.arrival);
               if (selectedReturn.slotDbId) p.set('returnSlotId', selectedReturn.slotDbId);
             }
-            navigate(`/caby/van/pack?${p}`);
+            navigate(`/caby/van/rdv?${p}`);
           }}
           className="w-full h-11 rounded-xl text-white font-bold text-sm disabled:opacity-40 shadow-lg"
           style={{ backgroundColor: canContinue ? GOLD : undefined }}>
@@ -791,7 +791,7 @@ const VanSelectPage: React.FC = () => {
               const p = new URLSearchParams(searchParams);
               if (selectedOutbound) { p.set('price', String(selectedOutbound.price)); p.set('time', selectedOutbound.departure); p.set('arrivalTime', selectedOutbound.arrival); if (selectedOutbound.slotDbId) p.set('slotId', selectedOutbound.slotDbId); }
               if (selectedReturn) { p.set('returnTime', selectedReturn.departure); p.set('returnArrivalTime', selectedReturn.arrival); if (selectedReturn.slotDbId) p.set('returnSlotId', selectedReturn.slotDbId); }
-              navigate(`/caby/van/pack?${p}`);
+              navigate(`/caby/van/rdv?${p}`);
             }}
             className="h-10 px-6 rounded-xl text-white font-bold text-sm disabled:opacity-40"
             style={{ backgroundColor: canContinue ? GOLD : undefined }}>
