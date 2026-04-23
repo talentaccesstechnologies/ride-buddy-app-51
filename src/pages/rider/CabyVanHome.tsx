@@ -188,13 +188,13 @@ function useCountdown(expiresAt: Date | null) {
   return { secs, label: `${mm}:${ss}` };
 }
 
-// ── TAB ICONS ────────────────────────────────────────────────
+// ── TAB ICONS (style easyJet : trait épais, contour) ────────
 const icons: Record<Tab, JSX.Element> = {
-  home: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5"><path d="M3 9l7-7 7 7v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9z" stroke="currentColor"/></svg>,
-  book: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5"><circle cx="10" cy="10" r="7" stroke="currentColor"/><path d="M10 7v3l2 2" stroke="currentColor" strokeLinecap="round"/></svg>,
-  trips: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5"><rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor"/><path d="M7 4V2M13 4V2M3 9h14" stroke="currentColor" strokeLinecap="round"/></svg>,
-  pass: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5"><rect x="2" y="6" width="16" height="10" rx="2" stroke="currentColor"/><path d="M6 6V4a4 4 0 018 0v2" stroke="currentColor"/></svg>,
-  tracker: <svg width="20" height="20" viewBox="0 0 20 20" fill="none" strokeWidth="1.5"><circle cx="10" cy="10" r="3" stroke="currentColor"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2" stroke="currentColor" strokeLinecap="round"/></svg>,
+  home: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="2"><path d="M3 11l9-8 9 8v10a1 1 0 01-1 1h-5v-7h-6v7H4a1 1 0 01-1-1V11z" stroke="currentColor" strokeLinejoin="round"/></svg>,
+  book: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="2"><path d="M2 13l3-1 6-7 2 1-3 6 5-1 2-3 1.5 0.5-2 4 4 1c1 0.3 1 1.5-1 2L4 17c-1 0.2-1.5-0.3-2-1.5L2 13z" stroke="currentColor" strokeLinejoin="round" fill="currentColor" fillOpacity="0.001"/></svg>,
+  trips: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="2"><rect x="4" y="7" width="16" height="13" rx="2" stroke="currentColor"/><path d="M9 7V4h6v3" stroke="currentColor" strokeLinecap="round"/><path d="M4 12h16" stroke="currentColor"/></svg>,
+  pass: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="2"><path d="M3 8a2 2 0 012-2h14a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2a2 2 0 000-4V8z" stroke="currentColor" strokeLinejoin="round"/><path d="M15 6v12" stroke="currentColor" strokeDasharray="2 2"/></svg>,
+  tracker: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="2"><path d="M2 13l3-1 6-7 2 1-3 6 5-1 2-3 1.5 0.5-2 4 4 1c1 0.3 1 1.5-1 2L4 17c-1 0.2-1.5-0.3-2-1.5L2 13z" stroke="currentColor" strokeLinejoin="round"/><circle cx="19" cy="19" r="3.5" stroke="currentColor" fill="#fff"/><path d="M19 17.5V19l1 1" stroke="currentColor" strokeLinecap="round"/></svg>,
 };
 
 // ── COMPOSANTS PARTAGÉS ──────────────────────────────────────
@@ -263,69 +263,145 @@ const FlashDealCard: React.FC<{ deal: FlashDeal; onBook: () => void }> = ({ deal
   );
 };
 
-// ── ONGLET HOME ──────────────────────────────────────────────
+// ── ONGLET HOME (hero gold pleine largeur style easyJet) ─────
 const TabHome: React.FC<{ deals: FlashDeal[]; onNavigate: (tab: Tab) => void; onBookDeal: (deal: FlashDeal) => void }> = ({ deals, onNavigate, onBookDeal }) => (
-  <div style={{ padding: 16 }}>
-    {/* Hero */}
-    <div style={{ background: DARK, borderRadius: 14, padding: '18px 16px', marginBottom: 12, position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: '100%', background: `linear-gradient(135deg, transparent 40%, rgba(201,168,76,0.1))` }} />
-      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 3 }}>Genève · Suisse & Europe</div>
-      <div style={{ fontSize: 20, fontWeight: 900, color: '#fff', marginBottom: 5 }}>Van partagé premium</div>
-      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginBottom: 14 }}>Votre siège. Votre trajet. Votre prix.</div>
+  <div>
+    {/* HERO gold pleine largeur avec illustration */}
+    <div style={{
+      background: `linear-gradient(180deg, ${GOLD} 0%, #B89540 100%)`,
+      padding: '24px 18px 90px',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Décor : silhouette van + montagnes */}
+      <svg width="100%" height="140" viewBox="0 0 360 140" style={{ position: 'absolute', bottom: 60, left: 0, opacity: 0.18 }}>
+        <path d="M0 120 L60 70 L100 95 L160 50 L220 80 L280 40 L360 90 L360 140 L0 140 Z" fill="#fff"/>
+        <path d="M0 130 L80 100 L140 115 L200 90 L260 110 L360 85 L360 140 L0 140 Z" fill="#fff" opacity="0.5"/>
+      </svg>
+      <div style={{ position: 'relative' }}>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', marginBottom: 4, fontWeight: 600 }}>Genève · Suisse & Europe</div>
+        <div style={{ fontSize: 28, fontWeight: 900, color: '#fff', lineHeight: 1.1, marginBottom: 6, letterSpacing: '-0.5px' }}>
+          Van partagé<br/>premium
+        </div>
+        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.9)', marginBottom: 0 }}>
+          Votre siège. Votre trajet. Votre prix.
+        </div>
+      </div>
+    </div>
+
+    {/* CTA blancs encadrés flottants (style "BOOK FLIGHTS / BOOK HOLIDAYS") */}
+    <div style={{ padding: '0 18px', marginTop: -64, position: 'relative', zIndex: 2 }}>
       <button
         onClick={() => onNavigate('book')}
-        style={{ background: GOLD, border: 'none', borderRadius: 9, padding: '10px 18px', cursor: 'pointer', fontSize: 13, fontWeight: 700, color: '#fff', fontFamily: 'inherit' }}
+        style={{
+          width: '100%', background: '#fff', border: `2px solid ${GOLD}`,
+          borderRadius: 8, padding: '18px 20px', marginBottom: 12,
+          cursor: 'pointer', fontFamily: 'inherit',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+        }}
       >
-        Réserver un siège →
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M2 14l3-1 6-7 2 1-3 6 5-1 2-3 1.5 0.5-2 4 4 1c1 0.3 1 1.5-1 2L4 18c-1 0.2-1.5-0.3-2-1.5L2 14z" fill={GOLD}/>
+        </svg>
+        <span style={{ fontSize: 16, fontWeight: 800, color: '#4A4A4A', letterSpacing: 1 }}>RÉSERVER UN VAN</span>
+      </button>
+      <button
+        onClick={() => onNavigate('pass')}
+        style={{
+          width: '100%', background: '#fff', border: `2px solid ${GOLD}`,
+          borderRadius: 8, padding: '18px 20px',
+          cursor: 'pointer', fontFamily: 'inherit',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+        }}
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M3 8a2 2 0 012-2h14a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2a2 2 0 000-4V8z" fill={GOLD}/>
+        </svg>
+        <span style={{ fontSize: 16, fontWeight: 800, color: '#4A4A4A', letterSpacing: 1 }}>CABY PASS</span>
+      </button>
+    </div>
+
+    {/* Bannière promo grande "GROS POURCENTAGE" style easyJet */}
+    <div style={{ padding: '20px 18px 0' }}>
+      <button
+        onClick={() => onNavigate('book')}
+        style={{
+          width: '100%', background: GOLD, border: 'none', borderRadius: 12,
+          padding: '28px 24px', cursor: 'pointer', fontFamily: 'inherit',
+          textAlign: 'left', position: 'relative', overflow: 'hidden',
+        }}
+      >
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.12, fontSize: 50, lineHeight: 1, letterSpacing: 8, color: '#fff', userSelect: 'none', padding: 8 }}>
+          ✈ ✈ ✈ ✈<br/>✈ ✈ ✈ ✈
+        </div>
+        <div style={{ position: 'relative' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: 1, marginBottom: 4 }}>JUSQU'À</div>
+          <div style={{ fontSize: 64, fontWeight: 900, color: '#fff', lineHeight: 0.9, letterSpacing: '-2px' }}>30%</div>
+          <div style={{ fontSize: 16, fontWeight: 800, color: '#fff', marginTop: 4 }}>SUR LE LAST-MINUTE</div>
+        </div>
       </button>
     </div>
 
     {/* Flash deal */}
-    {deals.map(deal => (
-      <FlashDealCard key={deal.id} deal={deal} onBook={() => onBookDeal(deal)} />
-    ))}
+    {deals.length > 0 && (
+      <div style={{ padding: '16px 18px 0' }}>
+        {deals.map(deal => (
+          <FlashDealCard key={deal.id} deal={deal} onBook={() => onBookDeal(deal)} />
+        ))}
+      </div>
+    )}
 
     {/* Pourquoi Caby Van */}
-    <SectionTitle>Pourquoi Caby Van ?</SectionTitle>
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
-      {[
-        { bg: GOLD, label: 'Prix garanti', sub: 'Transparent et juste', icon: 'clock' },
-        { bg: DARK, label: 'Van premium', sub: 'Chauffeur certifié Caby', icon: 'lock' },
-        { bg: '#22C55E', label: 'Ponctuel', sub: 'Départ à l\'heure, toujours', icon: 'check' },
-        { bg: '#3B82F6', label: 'Code de conduite', sub: 'Standard premium certifié', icon: 'star' },
-      ].map(item => (
-        <div key={item.label} style={{ background: '#F9F8F5', borderRadius: 12, padding: '12px 10px' }}>
-          <div style={{ width: 26, height: 26, background: item.bg, borderRadius: 7, marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {item.icon === 'clock' && <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="#fff" strokeWidth="1.4"/><path d="M6.5 4.5v2l1.5 1" stroke="#fff" strokeWidth="1.2" strokeLinecap="round"/></svg>}
-            {item.icon === 'lock' && <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="2" y="6" width="9" height="6" rx="1.5" stroke="#fff" strokeWidth="1.4"/><path d="M4.5 6V4.5a2 2 0 014 0V6" stroke="#fff" strokeWidth="1.4"/></svg>}
-            {item.icon === 'check' && <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5l3 3 5-5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-            {item.icon === 'star' && <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5l1.5 3h3L8.5 6.5l1 3-3-2-3 2 1-3L2 4.5h3z" stroke="#fff" strokeWidth="1.2" strokeLinejoin="round"/></svg>}
+    <div style={{ padding: '16px 18px 0' }}>
+      <div style={{ fontSize: 18, fontWeight: 800, color: '#1A1A1A', marginBottom: 12 }}>Pourquoi Caby Van ?</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 8 }}>
+        {[
+          { bg: GOLD, label: 'Prix garanti', sub: 'Transparent et juste', icon: 'clock' },
+          { bg: DARK, label: 'Van premium', sub: 'Chauffeur certifié Caby', icon: 'lock' },
+          { bg: '#22C55E', label: 'Ponctuel', sub: 'Toujours à l\'heure', icon: 'check' },
+          { bg: '#3B82F6', label: 'Code conduite', sub: 'Standard premium', icon: 'star' },
+        ].map(item => (
+          <div key={item.label} style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '14px 12px' }}>
+            <div style={{ width: 32, height: 32, background: item.bg, borderRadius: 8, marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {item.icon === 'clock' && <svg width="16" height="16" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="#fff" strokeWidth="1.4"/><path d="M6.5 4.5v2l1.5 1" stroke="#fff" strokeWidth="1.2" strokeLinecap="round"/></svg>}
+              {item.icon === 'lock' && <svg width="16" height="16" viewBox="0 0 13 13" fill="none"><rect x="2" y="6" width="9" height="6" rx="1.5" stroke="#fff" strokeWidth="1.4"/><path d="M4.5 6V4.5a2 2 0 014 0V6" stroke="#fff" strokeWidth="1.4"/></svg>}
+              {item.icon === 'check' && <svg width="16" height="16" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5l3 3 5-5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              {item.icon === 'star' && <svg width="16" height="16" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5l1.5 3h3L8.5 6.5l1 3-3-2-3 2 1-3L2 4.5h3z" stroke="#fff" strokeWidth="1.2" strokeLinejoin="round"/></svg>}
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', marginBottom: 2 }}>{item.label}</div>
+            <div style={{ fontSize: 11, color: '#888780' }}>{item.sub}</div>
           </div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1A1A', marginBottom: 2 }}>{item.label}</div>
-          <div style={{ fontSize: 10, color: '#888780' }}>{item.sub}</div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
 
     {/* Routes populaires */}
-    <SectionTitle action="Voir tout" onAction={() => onNavigate('book')}>Routes populaires</SectionTitle>
-    <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
-      {POPULAR_ROUTES.map((r, i) => (
-        <button
-          key={r.city}
-          onClick={() => onNavigate('book')}
-          style={{
-            background: i === 0 ? DARK : '#F9F8F5',
-            border: 'none', borderRadius: 12, padding: '10px 14px',
-            flexShrink: 0, textAlign: 'center', cursor: 'pointer',
-            minWidth: 86, fontFamily: 'inherit',
-          }}
-        >
-          <div style={{ fontSize: 10, color: i === 0 ? 'rgba(255,255,255,0.4)' : '#888780', marginBottom: 2 }}>dès</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: i === 0 ? '#fff' : '#1A1A1A' }}>CHF {r.price}</div>
-          <div style={{ fontSize: 10, color: GOLD, fontWeight: 600 }}>→ {r.city}</div>
-        </button>
-      ))}
+    <div style={{ padding: '16px 18px 0' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <div style={{ fontSize: 18, fontWeight: 800, color: '#1A1A1A' }}>Routes populaires</div>
+        <button onClick={() => onNavigate('book')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: GOLD, fontWeight: 700 }}>Tout voir →</button>
+      </div>
+      <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 4 }} className="caby-tab-scroll">
+        {POPULAR_ROUTES.map((r, i) => (
+          <button
+            key={r.city}
+            onClick={() => onNavigate('book')}
+            style={{
+              background: i === 0 ? GOLD : '#fff',
+              border: i === 0 ? 'none' : '0.5px solid #E5E7EB',
+              borderRadius: 12, padding: '14px 18px',
+              flexShrink: 0, textAlign: 'left', cursor: 'pointer',
+              minWidth: 110, fontFamily: 'inherit',
+            }}
+          >
+            <div style={{ fontSize: 11, color: i === 0 ? 'rgba(255,255,255,0.85)' : '#888780', marginBottom: 4, fontWeight: 600 }}>dès</div>
+            <div style={{ fontSize: 18, fontWeight: 900, color: i === 0 ? '#fff' : '#1A1A1A', marginBottom: 4 }}>CHF {r.price}</div>
+            <div style={{ fontSize: 12, color: i === 0 ? 'rgba(255,255,255,0.95)' : GOLD, fontWeight: 700 }}>→ {r.city}</div>
+          </button>
+        ))}
+      </div>
     </div>
   </div>
 );
@@ -338,93 +414,191 @@ const TabBook: React.FC<{ onSearch: (from: string, to: string, date: string) => 
   const [date, setDate] = useState(today);
 
   return (
-    <div>
-      {/* Header moteur */}
-      <div style={{ background: DARK, padding: '16px 16px 24px' }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 14 }}>Réserver un siège</div>
-        <div style={{ background: '#fff', borderRadius: 14, padding: 13 }}>
-          {/* From */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 10, borderBottom: '0.5px solid #E5E7EB', marginBottom: 10 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#22C55E', flexShrink: 0 }} />
-            <input
-              value={from} onChange={e => setFrom(e.target.value)}
-              placeholder="Ville de départ"
-              style={{ border: 'none', outline: 'none', fontSize: 13, flex: 1, background: 'transparent', color: '#1A1A1A', fontFamily: 'inherit' }}
-            />
-          </div>
-          {/* To */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-            <div style={{ width: 8, height: 8, borderRadius: 2, background: GOLD, flexShrink: 0 }} />
-            <input
-              value={to} onChange={e => setTo(e.target.value)}
-              placeholder="Destination"
-              style={{ border: 'none', outline: 'none', fontSize: 13, fontWeight: 600, flex: 1, background: 'transparent', color: '#1A1A1A', fontFamily: 'inherit' }}
-            />
-          </div>
-          {/* Date + passagers */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
-            <div style={{ background: '#F9F8F5', borderRadius: 8, padding: '8px 10px' }}>
-              <div style={{ fontSize: 10, color: '#888780', marginBottom: 2 }}>Date</div>
-              <input
-                type="date" value={date} onChange={e => setDate(e.target.value)}
-                style={{ border: 'none', outline: 'none', fontSize: 12, fontWeight: 600, background: 'transparent', color: '#1A1A1A', fontFamily: 'inherit', width: '100%' }}
-              />
-            </div>
-            <div style={{ background: '#F9F8F5', borderRadius: 8, padding: '8px 10px' }}>
-              <div style={{ fontSize: 10, color: '#888780', marginBottom: 2 }}>Passagers</div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1A1A' }}>1 adulte</div>
-            </div>
-          </div>
-          <button
-            onClick={() => onSearch(from, to, date)}
-            style={{ width: '100%', background: GOLD, border: 'none', borderRadius: 10, padding: '12px 0', cursor: 'pointer', fontSize: 14, fontWeight: 700, color: '#fff', fontFamily: 'inherit' }}
+    <div style={{ background: '#fff', minHeight: '100%' }}>
+      {/* Formulaire easyJet-like : labels flottants gold sur cadres outlined */}
+      <div style={{ padding: '20px 18px 8px' }}>
+        {[
+          { label: 'From', value: from, onChange: setFrom, placeholder: 'Ville de départ', icon: 'plane', clearable: true },
+          { label: 'To', value: to, onChange: setTo, placeholder: 'Ville, gare, aéroport', icon: 'pin', clearable: false },
+        ].map((field) => (
+          <div
+            key={field.label}
+            style={{
+              position: 'relative',
+              border: `1.5px solid ${GOLD}`,
+              borderRadius: 8,
+              padding: '18px 14px 12px',
+              marginBottom: 12,
+              background: '#fff',
+              minHeight: 60,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+            }}
           >
-            Voir les trajets disponibles
-          </button>
+            <span style={{
+              position: 'absolute', top: -8, left: 14,
+              background: '#fff', padding: '0 6px',
+              fontSize: 13, fontWeight: 600, color: GOLD,
+            }}>
+              {field.label}
+            </span>
+            {field.icon === 'plane' ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M2 14l3-1 6-7 2 1-3 6 5-1 2-3 1.5 0.5-2 4 4 1c1 0.3 1 1.5-1 2L4 18c-1 0.2-1.5-0.3-2-1.5L2 14z" fill={GOLD}/>
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M12 2a7 7 0 017 7c0 5-7 13-7 13S5 14 5 9a7 7 0 017-7z" fill={GOLD}/>
+                <circle cx="12" cy="9" r="2.5" fill="#fff"/>
+              </svg>
+            )}
+            <input
+              value={field.value}
+              onChange={e => field.onChange(e.target.value)}
+              placeholder={field.placeholder}
+              style={{
+                border: 'none', outline: 'none',
+                fontSize: 17, fontWeight: 600,
+                flex: 1, background: 'transparent',
+                color: field.value ? '#1A1A1A' : '#9CA3AF',
+                fontFamily: 'inherit', minWidth: 0,
+              }}
+            />
+            {field.clearable && field.value && (
+              <button
+                onClick={() => field.onChange('')}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: GOLD, flexShrink: 0 }}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            )}
+          </div>
+        ))}
+
+        {/* When */}
+        <div style={{
+          position: 'relative',
+          border: `1.5px solid ${GOLD}`,
+          borderRadius: 8,
+          padding: '18px 14px 12px',
+          marginBottom: 12,
+          background: '#fff',
+          minHeight: 60,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+        }}>
+          <span style={{ position: 'absolute', top: -8, left: 14, background: '#fff', padding: '0 6px', fontSize: 13, fontWeight: 600, color: GOLD }}>
+            When
+          </span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+            <rect x="3" y="5" width="18" height="16" rx="2" stroke={GOLD} strokeWidth="2"/>
+            <path d="M3 10h18M8 3v4M16 3v4" stroke={GOLD} strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+          <input
+            type="date" value={date} onChange={e => setDate(e.target.value)}
+            style={{
+              border: 'none', outline: 'none',
+              fontSize: 17, fontWeight: 600, flex: 1,
+              background: 'transparent', color: '#1A1A1A',
+              fontFamily: 'inherit', minWidth: 0,
+            }}
+          />
+        </div>
+
+        {/* Who */}
+        <div style={{
+          position: 'relative',
+          border: `1.5px solid ${GOLD}`,
+          borderRadius: 8,
+          padding: '18px 14px 12px',
+          marginBottom: 18,
+          background: '#fff',
+          minHeight: 60,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+        }}>
+          <span style={{ position: 'absolute', top: -8, left: 14, background: '#fff', padding: '0 6px', fontSize: 13, fontWeight: 600, color: GOLD }}>
+            Who
+          </span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+            <circle cx="12" cy="8" r="4" fill={GOLD}/>
+            <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill={GOLD}/>
+          </svg>
+          <span style={{ fontSize: 17, fontWeight: 600, color: '#1A1A1A', flex: 1 }}>1 adulte</span>
+        </div>
+
+        {/* CTA pleine largeur style easyJet */}
+        <button
+          onClick={() => onSearch(from, to, date)}
+          style={{
+            width: '100%', background: GOLD, border: 'none',
+            borderRadius: 8, padding: '18px 0',
+            cursor: 'pointer', fontSize: 17, fontWeight: 700,
+            color: '#fff', fontFamily: 'inherit',
+            boxShadow: '0 2px 8px rgba(201,168,76,0.3)',
+          }}
+        >
+          Voir les trajets
+        </button>
+      </div>
+
+      {/* Bannière promo style "Big Orange Sale" */}
+      <div style={{ margin: '20px 18px', background: GOLD, borderRadius: 12, padding: '24px 20px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.15, fontSize: 60, lineHeight: 1, letterSpacing: 8, color: '#fff', userSelect: 'none' }}>
+          ✈ ✈ ✈<br/>✈ ✈ ✈<br/>✈ ✈ ✈
+        </div>
+        <div style={{ position: 'relative' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: 1, marginBottom: 6 }}>JUSQU'À</div>
+          <div style={{ fontSize: 56, fontWeight: 900, color: '#fff', lineHeight: 0.9, marginBottom: 4 }}>30%</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: '#fff', marginBottom: 10 }}>DE RÉDUCTION</div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)', lineHeight: 1.4 }}>
+            Sur les trajets last-minute. Réservez maintenant.
+          </div>
         </div>
       </div>
 
       {/* Prochains départs */}
-      <div style={{ padding: 16 }}>
-        <SectionTitle>Prochains départs</SectionTitle>
+      <div style={{ padding: '4px 18px 16px' }}>
+        <div style={{ fontSize: 18, fontWeight: 800, color: '#1A1A1A', marginBottom: 12 }}>Prochains départs</div>
 
-        {/* Ancre 1 */}
-        <div style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '10px 12px', marginBottom: 8 }}>
+        <div style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '12px 14px', marginBottom: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>Genève → Zurich</div>
-              <div style={{ fontSize: 11, color: '#888780' }}>07:00 · 4 sièges</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>Genève → Zurich</div>
+              <div style={{ fontSize: 12, color: '#888780' }}>07:00 · 4 sièges</div>
             </div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>CHF 66</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>CHF 66</div>
           </div>
           <FillBar pct={43} />
         </div>
 
-        {/* Flash intégré en position 2 */}
         {deals.map(deal => (
           <FlashDealCard key={deal.id} deal={deal} onBook={() => onBookDeal(deal)} />
         ))}
 
-        {/* Ancre 2 */}
-        <div style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '10px 12px', marginBottom: 8 }}>
+        <div style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '12px 14px', marginBottom: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>Genève → Annecy</div>
-              <div style={{ fontSize: 11, color: '#888780' }}>07:30 · 2 sièges restants</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>Genève → Annecy</div>
+              <div style={{ fontSize: 12, color: '#888780' }}>07:30 · 2 sièges restants</div>
             </div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>CHF 25</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>CHF 25</div>
           </div>
           <FillBar pct={71} color="#EF4444" />
         </div>
 
-        {/* Ancre 3 */}
-        <div style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '10px 12px' }}>
+        <div style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '12px 14px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>Genève → Lyon</div>
-              <div style={{ fontSize: 11, color: '#888780' }}>09:00 · 5 sièges</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>Genève → Lyon</div>
+              <div style={{ fontSize: 12, color: '#888780' }}>09:00 · 5 sièges</div>
             </div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>CHF 49</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>CHF 49</div>
           </div>
           <FillBar pct={29} color="#22C55E" />
         </div>
@@ -433,40 +607,66 @@ const TabBook: React.FC<{ onSearch: (from: string, to: string, date: string) => 
   );
 };
 
-// ── ONGLET TRIPS ─────────────────────────────────────────────
+// ── ONGLET TRIPS (style easyJet "My Trips") ──────────────────
 const TabTrips: React.FC = () => (
-  <div style={{ padding: 16 }}>
-    <SectionTitle>Mes réservations</SectionTitle>
+  <div style={{ padding: '24px 18px 16px', background: '#F4F4F2', minHeight: '100%' }}>
+    {/* Illustration ronde + titre + CTA */}
+    <div style={{ textAlign: 'center', padding: '20px 0 24px' }}>
+      <div style={{
+        width: 180, height: 180, borderRadius: '50%',
+        background: `linear-gradient(135deg, ${GOLD} 0%, #B89540 100%)`,
+        margin: '0 auto 24px',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        position: 'relative', overflow: 'hidden',
+      }}>
+        <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+          <path d="M20 80 Q60 30, 100 80" stroke="#fff" strokeWidth="2.5" fill="none" opacity="0.3" strokeDasharray="3 3"/>
+          <rect x="32" y="50" width="56" height="28" rx="6" fill="#fff"/>
+          <rect x="38" y="56" width="18" height="14" rx="2" fill={GOLD}/>
+          <rect x="62" y="56" width="20" height="14" rx="2" fill={GOLD}/>
+          <circle cx="42" cy="80" r="6" fill="#1A1A1A"/>
+          <circle cx="78" cy="80" r="6" fill="#1A1A1A"/>
+          <circle cx="42" cy="80" r="2" fill="#fff"/>
+          <circle cx="78" cy="80" r="2" fill="#fff"/>
+        </svg>
+      </div>
+      <div style={{ fontSize: 24, fontWeight: 800, color: '#1A1A1A', marginBottom: 10, letterSpacing: '-0.3px' }}>
+        Trajet en cours
+      </div>
+      <div style={{ fontSize: 14, color: '#6B7280', marginBottom: 24, lineHeight: 1.5, padding: '0 12px' }}>
+        Suivez votre van en temps réel ou consultez votre historique ci-dessous.
+      </div>
+    </div>
 
-    {/* Trajet actif */}
-    <div style={{ background: DARK, borderRadius: 14, padding: '14px 16px', marginBottom: 14 }}>
-      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 4 }}>TRAJET EN COURS</div>
-      <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 2 }}>{MOCK_ACTIVE.route}</div>
-      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginBottom: 12 }}>
+    {/* Trajet actif compact */}
+    <div style={{ background: DARK, borderRadius: 14, padding: '16px 18px', marginBottom: 20 }}>
+      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginBottom: 4, fontWeight: 700, letterSpacing: 1 }}>TRAJET EN COURS</div>
+      <div style={{ fontSize: 16, fontWeight: 800, color: '#fff', marginBottom: 2 }}>{MOCK_ACTIVE.route}</div>
+      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginBottom: 14 }}>
         {MOCK_ACTIVE.date} · {MOCK_ACTIVE.time} · CHF 66
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
         {[{ label: 'Siège', value: MOCK_ACTIVE.seat, color: '#fff' }, { label: 'Statut', value: 'Confirmé', color: '#22C55E' }, { label: 'Réf.', value: MOCK_ACTIVE.ref, color: GOLD }].map(i => (
-          <div key={i.label} style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 7, padding: '7px 0', textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', marginBottom: 2 }}>{i.label}</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: i.color }}>{i.value}</div>
+          <div key={i.label} style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 0', textAlign: 'center' }}>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginBottom: 3 }}>{i.label}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: i.color }}>{i.value}</div>
           </div>
         ))}
       </div>
     </div>
 
     {/* Historique */}
-    <div style={{ fontSize: 11, fontWeight: 700, color: '#888780', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>Historique</div>
+    <div style={{ fontSize: 13, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 10 }}>Historique</div>
     {MOCK_HISTORY.map(h => (
-      <div key={h.id} style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 11, padding: '10px 12px', marginBottom: 6, opacity: 0.7 }}>
+      <div key={h.id} style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '12px 14px', marginBottom: 8 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A' }}>{h.route}</div>
-            <div style={{ fontSize: 10, color: '#888780' }}>{h.date}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>{h.route}</div>
+            <div style={{ fontSize: 11, color: '#888780' }}>{h.date}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 13, color: '#1A1A1A' }}>CHF {h.price}</div>
-            <div style={{ fontSize: 10, color: '#22C55E' }}>Complété</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>CHF {h.price}</div>
+            <div style={{ fontSize: 11, color: '#22C55E', fontWeight: 600 }}>Complété</div>
           </div>
         </div>
       </div>
@@ -474,55 +674,88 @@ const TabTrips: React.FC = () => (
   </div>
 );
 
-// ── ONGLET PASS ──────────────────────────────────────────────
+// ── ONGLET PASS (style easyJet "Boarding Passes") ────────────
 const TabPass: React.FC<{ onSubscribe: (plan: string) => void }> = ({ onSubscribe }) => (
-  <div style={{ padding: 16 }}>
-    <SectionTitle>Caby Pass</SectionTitle>
+  <div style={{ padding: '24px 18px 16px', background: '#F4F4F2', minHeight: '100%' }}>
+    {/* Hero rond style boarding passes */}
+    <div style={{ textAlign: 'center', padding: '12px 0 20px' }}>
+      <div style={{
+        width: 180, height: 180, borderRadius: '50%',
+        background: `linear-gradient(180deg, #FFE8B8 0%, ${GOLD} 60%, #B89540 100%)`,
+        margin: '0 auto 20px',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        position: 'relative', overflow: 'hidden',
+      }}>
+        {/* Soleil */}
+        <div style={{ position: 'absolute', top: 28, left: 32, width: 28, height: 28, borderRadius: '50%', background: '#FFF4D6', boxShadow: '0 0 24px #FFF4D6' }} />
+        {/* Mer */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'linear-gradient(180deg, #DAB970 0%, #8B6F2A 100%)' }} />
+        {/* Carte d'embarquement */}
+        <svg width="120" height="80" viewBox="0 0 120 80" style={{ position: 'relative', zIndex: 2 }}>
+          <rect x="6" y="14" width="108" height="56" rx="6" fill="#fff" stroke={DARK} strokeWidth="1"/>
+          <line x1="74" y1="14" x2="74" y2="70" stroke={DARK} strokeWidth="1" strokeDasharray="2 2"/>
+          <rect x="14" y="22" width="34" height="4" rx="1" fill={GOLD}/>
+          <rect x="14" y="32" width="50" height="3" rx="1" fill="#D1D5DB"/>
+          <rect x="14" y="40" width="40" height="3" rx="1" fill="#D1D5DB"/>
+          <text x="80" y="38" fontSize="9" fontWeight="700" fill={DARK}>VAN</text>
+          <text x="80" y="52" fontSize="14" fontWeight="900" fill={DARK}>3B</text>
+        </svg>
+      </div>
+      <div style={{ fontSize: 24, fontWeight: 800, color: '#1A1A1A', marginBottom: 10, letterSpacing: '-0.3px' }}>
+        Vos abonnements
+      </div>
+      <div style={{ fontSize: 14, color: '#6B7280', marginBottom: 0, lineHeight: 1.5, padding: '0 12px' }}>
+        Voyagez plus, payez moins. Choisissez la formule qui vous correspond.
+      </div>
+    </div>
 
-    {/* Abonnement actif */}
-    <div style={{ background: '#FFFBEB', border: '0.5px solid #FDE68A', borderRadius: 14, padding: '14px 16px', marginBottom: 14 }}>
-      <div style={{ fontSize: 10, color: '#854F0B', marginBottom: 4 }}>ABONNEMENT ACTIF</div>
-      <div style={{ fontSize: 17, fontWeight: 700, color: '#633806', marginBottom: 2 }}>Pass Flex</div>
-      <div style={{ fontSize: 12, color: '#854F0B', marginBottom: 12 }}>Toutes routes Grand Genève · CHF 449/mois</div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-        <div style={{ background: 'rgba(201,168,76,0.12)', borderRadius: 8, padding: '8px', textAlign: 'center' }}>
-          <div style={{ fontSize: 10, color: '#854F0B' }}>Trajets ce mois</div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: '#633806' }}>12</div>
+    {/* Abonnement actif (carte gold premium) */}
+    <div style={{ background: `linear-gradient(135deg, ${GOLD} 0%, #B89540 100%)`, borderRadius: 14, padding: '18px 18px', marginBottom: 24, color: '#fff', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: -20, right: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
+      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.85)', marginBottom: 4, fontWeight: 700, letterSpacing: 1 }}>ABONNEMENT ACTIF</div>
+      <div style={{ fontSize: 22, fontWeight: 900, marginBottom: 2 }}>Pass Flex</div>
+      <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.9)', marginBottom: 14 }}>Toutes routes Grand Genève · CHF 449/mois</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, position: 'relative' }}>
+        <div style={{ background: 'rgba(255,255,255,0.18)', borderRadius: 10, padding: '10px', textAlign: 'center' }}>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.85)' }}>Trajets ce mois</div>
+          <div style={{ fontSize: 22, fontWeight: 900, color: '#fff' }}>12</div>
         </div>
-        <div style={{ background: 'rgba(201,168,76,0.12)', borderRadius: 8, padding: '8px', textAlign: 'center' }}>
-          <div style={{ fontSize: 10, color: '#854F0B' }}>Renouvellement</div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#633806' }}>27 mai</div>
+        <div style={{ background: 'rgba(255,255,255,0.18)', borderRadius: 10, padding: '10px', textAlign: 'center' }}>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.85)' }}>Renouvellement</div>
+          <div style={{ fontSize: 15, fontWeight: 800, color: '#fff', marginTop: 4 }}>27 mai</div>
         </div>
       </div>
     </div>
 
-    <div style={{ fontSize: 12, fontWeight: 600, color: '#888780', marginBottom: 8 }}>Changer de formule</div>
+    <div style={{ fontSize: 13, fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 12 }}>Changer de formule</div>
 
     {[
       { id: 'essentiel', name: 'Essentiel', sub: '1 route fixe', price: 299, active: false },
       { id: 'flex', name: 'Flex', sub: 'Toutes routes Grand Genève', price: 449, active: true },
       { id: 'premium', name: 'Premium', sub: 'Ski + international', price: 599, active: false },
     ].map(plan => (
-      <div
+      <button
         key={plan.id}
+        onClick={() => onSubscribe(plan.id)}
         style={{
+          width: '100%', textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit',
           background: '#fff',
-          border: plan.active ? `1.5px solid ${GOLD}` : '0.5px solid #E5E7EB',
-          borderRadius: 12, padding: '12px 14px', marginBottom: 8,
+          border: plan.active ? `2px solid ${GOLD}` : '0.5px solid #E5E7EB',
+          borderRadius: 12, padding: '14px 16px', marginBottom: 10,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         }}
       >
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: plan.active ? '#633806' : '#1A1A1A' }}>{plan.name}</div>
-          <div style={{ fontSize: 11, color: plan.active ? '#854F0B' : '#888780' }}>{plan.sub}</div>
+          <div style={{ fontSize: 15, fontWeight: 800, color: '#1A1A1A' }}>{plan.name}</div>
+          <div style={{ fontSize: 12, color: '#6B7280', marginTop: 2 }}>{plan.sub}</div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: plan.active ? '#633806' : '#1A1A1A' }}>CHF {plan.price}/mois</div>
+          <div style={{ fontSize: 15, fontWeight: 800, color: '#1A1A1A' }}>CHF {plan.price}<span style={{ fontSize: 11, color: '#6B7280', fontWeight: 500 }}>/mois</span></div>
           {plan.active && (
-            <div style={{ fontSize: 10, background: GOLD, color: '#fff', padding: '1px 7px', borderRadius: 6, display: 'inline-block', marginTop: 2 }}>Actif</div>
+            <div style={{ fontSize: 10, background: GOLD, color: '#fff', padding: '2px 8px', borderRadius: 8, display: 'inline-block', marginTop: 4, fontWeight: 700 }}>ACTIF</div>
           )}
         </div>
-      </div>
+      </button>
     ))}
   </div>
 );
@@ -754,22 +987,32 @@ const CabyVanHome: React.FC = () => {
         .caby-tab-scroll::-webkit-scrollbar { display: none; }
       `}</style>
 
-      <div style={{ minHeight: '100vh', background: '#F8F7F2', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ minHeight: '100vh', background: '#F4F4F2', display: 'flex', flexDirection: 'column' }}>
 
-        {/* TOPBAR */}
-        <div style={{ background: DARK, padding: '46px 16px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
-          <div>
-            {activeTab === 'home' && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 1 }}>Genève, CH</div>}
-            <div style={{ fontSize: 16, fontWeight: 700, color: '#fff', letterSpacing: '-0.2px' }}>CABY VAN</div>
+        {/* TOPBAR pleine couleur gold style easyJet */}
+        <div style={{
+          background: GOLD,
+          padding: '46px 18px 18px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexShrink: 0,
+        }}>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#fff', letterSpacing: '-0.3px' }}>
+            {activeTab === 'home' && 'Caby Van'}
+            {activeTab === 'book' && 'Réserver'}
+            {activeTab === 'trips' && 'Mes trajets'}
+            {activeTab === 'pass' && 'Caby Pass'}
+            {activeTab === 'tracker' && 'Tracker'}
           </div>
           <button
             onClick={() => setDrawerOpen(true)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', flexDirection: 'column', gap: 3.5 }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, display: 'flex', flexDirection: 'column', gap: 4 }}
             aria-label="Menu"
           >
-            <div style={{ width: 18, height: 2, background: '#fff', borderRadius: 1 }} />
-            <div style={{ width: 18, height: 2, background: '#fff', borderRadius: 1 }} />
-            <div style={{ width: 18, height: 2, background: '#fff', borderRadius: 1 }} />
+            <div style={{ width: 22, height: 2.5, background: '#fff', borderRadius: 2 }} />
+            <div style={{ width: 22, height: 2.5, background: '#fff', borderRadius: 2 }} />
+            <div style={{ width: 22, height: 2.5, background: '#fff', borderRadius: 2 }} />
           </button>
         </div>
 
@@ -782,12 +1025,11 @@ const CabyVanHome: React.FC = () => {
           {activeTab === 'tracker' && <TabTracker />}
         </div>
 
-        {/* BOTTOM NAV */}
+        {/* BOTTOM NAV style easyJet : icône active colorée + label */}
         <div style={{
           position: 'fixed', bottom: 0, left: 0, right: 0,
-          background: 'rgba(255,255,255,0.97)',
-          backdropFilter: 'blur(12px)',
-          borderTop: '0.5px solid #E5E7EB',
+          background: '#fff',
+          borderTop: '1px solid #E5E7EB',
           display: 'flex',
           paddingBottom: 'env(safe-area-inset-bottom)',
           zIndex: 50,
@@ -801,16 +1043,16 @@ const CabyVanHome: React.FC = () => {
                 style={{
                   flex: 1, display: 'flex', flexDirection: 'column',
                   alignItems: 'center', justifyContent: 'center',
-                  gap: 3, padding: '10px 0 8px',
+                  gap: 4, padding: '10px 0 8px',
                   background: 'none', border: 'none', cursor: 'pointer',
-                  color: isActive ? GOLD : '#888780',
+                  color: isActive ? GOLD : '#9CA3AF',
                   fontFamily: 'inherit', transition: 'color 0.15s',
                 }}
               >
                 <span style={{ display: 'flex', color: 'currentColor' }}>
                   {icons[tab.id]}
                 </span>
-                <span style={{ fontSize: 10, fontWeight: isActive ? 700 : 400 }}>
+                <span style={{ fontSize: 11, fontWeight: isActive ? 700 : 500, color: isActive ? '#1A1A1A' : '#6B7280' }}>
                   {tab.label}
                 </span>
               </button>
