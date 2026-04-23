@@ -48,6 +48,7 @@ import CityPickerPopover from '@/components/van/CityPickerPopover';
 import PassengerPickerPopover from '@/components/van/PassengerPickerPopover';
 import PriceCalendar from '@/components/van/PriceCalendar';
 import CabyLogo from '@/components/shared/CabyLogo';
+import { toast } from 'sonner';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'extras' | 'passenger' | 'payment' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
@@ -419,6 +420,12 @@ const CabyVanPage: React.FC = () => {
     if (!from || !to || from === to) {
       // Pas assez d'info → bascule vers le formulaire détaillé
       setStep('search');
+      return;
+    }
+    // Aller-retour activé mais date de retour manquante → ouvre le calendrier
+    if (roundTrip && !dateRetour) {
+      toast.info('Sélectionnez une date de retour pour continuer');
+      setCalendarOpen(true);
       return;
     }
     const params = new URLSearchParams({ from, to, passengers: String(passengers) });
