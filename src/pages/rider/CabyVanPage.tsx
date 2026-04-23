@@ -916,6 +916,7 @@ const CabyVanPage: React.FC = () => {
             {[
               { label: 'Caby Pass', to: '/caby/van/pass' },
               { label: 'Cross-Border', to: '/caby/van/crossborder' },
+              { label: 'Randonnée', to: '/caby/van/randonnee' },
               { label: 'Ski', to: '/caby/van/ski' },
             ].map(link => (
               <a
