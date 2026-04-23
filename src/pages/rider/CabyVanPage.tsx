@@ -1422,7 +1422,7 @@ const CabyVanPage: React.FC = () => {
 
             {/* ══ TAGLINE ══ */}
             <div style={{ textAlign: 'center', padding: '32px 0 48px', color: '#fff', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 4.5vw, 52px)', fontWeight: 900, lineHeight: 1.05, textShadow: '0 2px 16px rgba(0,0,0,0.5)', margin: 0, letterSpacing: '-0.5px' }}>
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 4.5vw, 52px)', fontWeight: 900, lineHeight: 1.05, textShadow: '0 4px 12px rgba(0,0,0,0.55), 0 2px 4px rgba(0,0,0,0.4)', margin: 0, letterSpacing: '-0.5px' }}>
                 Voyagez malin.<br />Genève ↔ Suisse &amp; Europe.
               </h1>
               <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', textShadow: '0 1px 8px rgba(0,0,0,0.4)', margin: 0 }}>
