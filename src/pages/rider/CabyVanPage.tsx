@@ -637,14 +637,13 @@ const CabyVanPage: React.FC = () => {
           </div>
           <nav style={{ display: 'flex', gap: 2, position: 'relative' }}>
             {/* ═══ LIEN INFORMATIONS AVEC MEGA-MENU ═══ */}
-            <div
-              style={{ position: 'relative' }}
-              onMouseEnter={openInfoMenu}
-              onMouseLeave={closeInfoMenuDelayed}
-            >
+            <div style={{ position: 'relative' }}>
               <a
                 href="#"
-                onClick={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (infoMenuOpen) { setInfoMenuOpen(false); } else { openInfoMenu(); }
+                }}
                 style={{
                   fontSize: 13,
                   fontWeight: 500,
@@ -665,8 +664,6 @@ const CabyVanPage: React.FC = () => {
               {/* Mega-menu panel */}
               {infoMenuOpen && (
                 <div
-                  onMouseEnter={openInfoMenu}
-                  onMouseLeave={closeInfoMenuDelayed}
                   style={{
                     position: 'fixed',
                     top: 56,
@@ -775,14 +772,13 @@ const CabyVanPage: React.FC = () => {
             </div>
 
             {/* ═══ DESTINATIONS — MEGA-MENU ═══ */}
-            <div
-              style={{ position: 'relative' }}
-              onMouseEnter={openDestMenu}
-              onMouseLeave={closeDestMenuDelayed}
-            >
+            <div style={{ position: 'relative' }}>
               <a
                 href="#"
-                onClick={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (destMenuOpen) { setDestMenuOpen(false); } else { openDestMenu(); }
+                }}
                 style={{
                   fontSize: 13, fontWeight: 500, color: 'rgba(0,0,0,0.75)',
                   padding: '6px 14px', borderRadius: 6, textDecoration: 'none',
@@ -796,8 +792,6 @@ const CabyVanPage: React.FC = () => {
 
               {destMenuOpen && (
                 <div
-                  onMouseEnter={openDestMenu}
-                  onMouseLeave={closeDestMenuDelayed}
                   style={{
                     position: 'fixed', top: 56, left: 0, right: 0,
                     background: '#fff', boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
