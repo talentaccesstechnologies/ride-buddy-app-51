@@ -852,22 +852,32 @@ const CabyVanHome: React.FC = () => {
         .caby-tab-scroll::-webkit-scrollbar { display: none; }
       `}</style>
 
-      <div style={{ minHeight: '100vh', background: '#F8F7F2', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ minHeight: '100vh', background: '#F4F4F2', display: 'flex', flexDirection: 'column' }}>
 
-        {/* TOPBAR */}
-        <div style={{ background: DARK, padding: '46px 16px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
-          <div>
-            {activeTab === 'home' && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 1 }}>Genève, CH</div>}
-            <div style={{ fontSize: 16, fontWeight: 700, color: '#fff', letterSpacing: '-0.2px' }}>CABY VAN</div>
+        {/* TOPBAR pleine couleur gold style easyJet */}
+        <div style={{
+          background: GOLD,
+          padding: '46px 18px 18px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexShrink: 0,
+        }}>
+          <div style={{ fontSize: 22, fontWeight: 800, color: '#fff', letterSpacing: '-0.3px' }}>
+            {activeTab === 'home' && 'Caby Van'}
+            {activeTab === 'book' && 'Réserver'}
+            {activeTab === 'trips' && 'Mes trajets'}
+            {activeTab === 'pass' && 'Caby Pass'}
+            {activeTab === 'tracker' && 'Tracker'}
           </div>
           <button
             onClick={() => setDrawerOpen(true)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', flexDirection: 'column', gap: 3.5 }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, display: 'flex', flexDirection: 'column', gap: 4 }}
             aria-label="Menu"
           >
-            <div style={{ width: 18, height: 2, background: '#fff', borderRadius: 1 }} />
-            <div style={{ width: 18, height: 2, background: '#fff', borderRadius: 1 }} />
-            <div style={{ width: 18, height: 2, background: '#fff', borderRadius: 1 }} />
+            <div style={{ width: 22, height: 2.5, background: '#fff', borderRadius: 2 }} />
+            <div style={{ width: 22, height: 2.5, background: '#fff', borderRadius: 2 }} />
+            <div style={{ width: 22, height: 2.5, background: '#fff', borderRadius: 2 }} />
           </button>
         </div>
 
@@ -880,12 +890,11 @@ const CabyVanHome: React.FC = () => {
           {activeTab === 'tracker' && <TabTracker />}
         </div>
 
-        {/* BOTTOM NAV */}
+        {/* BOTTOM NAV style easyJet : icône active colorée + label */}
         <div style={{
           position: 'fixed', bottom: 0, left: 0, right: 0,
-          background: 'rgba(255,255,255,0.97)',
-          backdropFilter: 'blur(12px)',
-          borderTop: '0.5px solid #E5E7EB',
+          background: '#fff',
+          borderTop: '1px solid #E5E7EB',
           display: 'flex',
           paddingBottom: 'env(safe-area-inset-bottom)',
           zIndex: 50,
@@ -899,16 +908,16 @@ const CabyVanHome: React.FC = () => {
                 style={{
                   flex: 1, display: 'flex', flexDirection: 'column',
                   alignItems: 'center', justifyContent: 'center',
-                  gap: 3, padding: '10px 0 8px',
+                  gap: 4, padding: '10px 0 8px',
                   background: 'none', border: 'none', cursor: 'pointer',
-                  color: isActive ? GOLD : '#888780',
+                  color: isActive ? GOLD : '#9CA3AF',
                   fontFamily: 'inherit', transition: 'color 0.15s',
                 }}
               >
                 <span style={{ display: 'flex', color: 'currentColor' }}>
                   {icons[tab.id]}
                 </span>
-                <span style={{ fontSize: 10, fontWeight: isActive ? 700 : 400 }}>
+                <span style={{ fontSize: 11, fontWeight: isActive ? 700 : 500, color: isActive ? '#1A1A1A' : '#6B7280' }}>
                   {tab.label}
                 </span>
               </button>
