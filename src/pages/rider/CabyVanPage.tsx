@@ -577,6 +577,23 @@ const CabyVanPage: React.FC = () => {
                 </button>
               );
             })}
+            {/* Sélecteur de langue */}
+            <button
+              onClick={() => { setPendingLang(currentLang); setLangModalOpen(true); }}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                height: 24, padding: '0 10px', borderRadius: 4, border: 'none',
+                background: 'transparent', color: '#0A0A0A',
+                fontSize: 12, fontWeight: 500, fontFamily: 'inherit', cursor: 'pointer',
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.1)')}
+              onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = 'transparent')}
+              aria-label="Changer la langue"
+            >
+              <span style={{ fontSize: 14, lineHeight: 1 }}>{LANGUAGES.find(l => l.code === currentLang)?.flag}</span>
+              <span style={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: 0.3 }}>{currentLang}</span>
+            </button>
           </div>
 
           {/* Barre principale (logo + nav + Se connecter) */}
