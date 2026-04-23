@@ -5,15 +5,19 @@ import CabyVanHome from '@/pages/rider/CabyVanHome';
 import Index from '@/pages/Index';
 
 const CabyRoot: React.FC = () => {
+  const { user, loading } = useAuth();
   const isMobile = useIsMobile();
-  const { user } = useAuth();
 
-  // Utilisateur connecté → toujours le dashboard, peu importe le device
-  if (user) return <CabyVanHome />;
+  if (loading) return null;
 
-  // Non connecté : mobile voit le dashboard (lui-même gère les CTA), desktop voit la landing
+  // Non connecté → landing visiteur (desktop ET mobile)
+  if (!user) return <Index />;
+
+  // Connecté mobile → app 5 onglets
   if (isMobile) return <CabyVanHome />;
-  return <Index />;
+
+  // Connecté desktop → app web (à développer)
+  return <CabyVanHome />;
 };
 
 export default CabyRoot;
