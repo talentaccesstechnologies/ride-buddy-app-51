@@ -71,7 +71,7 @@ const ContactPage: React.FC = () => {
         >
           <ArrowLeft size={20} />
         </button>
-        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 900, letterSpacing: '-0.5px' }}>caby</div>
+        <CabyLogo size={28} />
         <div style={{ marginLeft: 'auto', fontSize: 13, color: '#666' }}>Centre d'aide › Contactez-nous</div>
       </header>
 
