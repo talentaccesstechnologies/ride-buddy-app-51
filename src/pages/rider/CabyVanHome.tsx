@@ -333,8 +333,14 @@ const TabHome: React.FC<{ deals: FlashDeal[]; onNavigate: (tab: Tab) => void; on
           textAlign: 'left', position: 'relative', overflow: 'hidden',
         }}
       >
-        <div style={{ position: 'absolute', inset: 0, opacity: 0.12, fontSize: 50, lineHeight: 1, letterSpacing: 8, color: '#fff', userSelect: 'none', padding: 8 }}>
-          ✈ ✈ ✈ ✈<br/>✈ ✈ ✈ ✈
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.18, userSelect: 'none', padding: 10, display: 'flex', flexWrap: 'wrap', gap: 14, alignContent: 'flex-start' }}>
+          {Array.from({ length: 10 }).map((_, i) => (
+            <svg key={i} width="46" height="26" viewBox="0 0 46 26" fill="none">
+              <path d="M2 18V9c0-1.5 1-2.5 2.5-2.5h22l8 4h7c1.5 0 2.5 1 2.5 2.5v5c0 1-0.5 1.5-1.5 1.5H40a4 4 0 00-8 0H14a4 4 0 00-8 0H3.5C2.5 19.5 2 19 2 18z" fill="#fff"/>
+              <circle cx="10" cy="20" r="2.5" fill="#fff"/>
+              <circle cx="36" cy="20" r="2.5" fill="#fff"/>
+            </svg>
+          ))}
         </div>
         <div style={{ position: 'relative' }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: 1, marginBottom: 4 }}>JUSQU'À</div>
@@ -444,8 +450,10 @@ const TabBook: React.FC<{ onSearch: (from: string, to: string, date: string) => 
               {field.label}
             </span>
             {field.icon === 'plane' ? (
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-                <path d="M2 14l3-1 6-7 2 1-3 6 5-1 2-3 1.5 0.5-2 4 4 1c1 0.3 1 1.5-1 2L4 18c-1 0.2-1.5-0.3-2-1.5L2 14z" fill={GOLD}/>
+              <svg width="26" height="20" viewBox="0 0 46 26" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M2 18V9c0-1.5 1-2.5 2.5-2.5h22l8 4h7c1.5 0 2.5 1 2.5 2.5v5c0 1-0.5 1.5-1.5 1.5H40a4 4 0 00-8 0H14a4 4 0 00-8 0H3.5C2.5 19.5 2 19 2 18z" fill={GOLD}/>
+                <circle cx="10" cy="20" r="2.5" fill="#1A1A1A"/>
+                <circle cx="36" cy="20" r="2.5" fill="#1A1A1A"/>
               </svg>
             ) : (
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
@@ -549,8 +557,14 @@ const TabBook: React.FC<{ onSearch: (from: string, to: string, date: string) => 
 
       {/* Bannière promo style "Big Orange Sale" */}
       <div style={{ margin: '20px 18px', background: GOLD, borderRadius: 12, padding: '24px 20px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, opacity: 0.15, fontSize: 60, lineHeight: 1, letterSpacing: 8, color: '#fff', userSelect: 'none' }}>
-          ✈ ✈ ✈<br/>✈ ✈ ✈<br/>✈ ✈ ✈
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.18, userSelect: 'none', padding: 10, display: 'flex', flexWrap: 'wrap', gap: 16, alignContent: 'flex-start' }}>
+          {Array.from({ length: 12 }).map((_, i) => (
+            <svg key={i} width="50" height="28" viewBox="0 0 46 26" fill="none">
+              <path d="M2 18V9c0-1.5 1-2.5 2.5-2.5h22l8 4h7c1.5 0 2.5 1 2.5 2.5v5c0 1-0.5 1.5-1.5 1.5H40a4 4 0 00-8 0H14a4 4 0 00-8 0H3.5C2.5 19.5 2 19 2 18z" fill="#fff"/>
+              <circle cx="10" cy="20" r="2.5" fill="#fff"/>
+              <circle cx="36" cy="20" r="2.5" fill="#fff"/>
+            </svg>
+          ))}
         </div>
         <div style={{ position: 'relative' }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: 1, marginBottom: 6 }}>JUSQU'À</div>
