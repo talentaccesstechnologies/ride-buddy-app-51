@@ -1,3 +1,4 @@
+import CabyLogo from '@/components/shared/CabyLogo';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Phone, Mail, MessageCircle, Clock, MapPin, ChevronRight, HelpCircle } from 'lucide-react';
@@ -71,7 +72,7 @@ const ContactPage: React.FC = () => {
         >
           <ArrowLeft size={20} />
         </button>
-        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 900, letterSpacing: '-0.5px' }}>caby</div>
+        <CabyLogo size={28} />
         <div style={{ marginLeft: 'auto', fontSize: 13, color: '#666' }}>Centre d'aide › Contactez-nous</div>
       </header>
 

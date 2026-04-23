@@ -1,3 +1,4 @@
+import CabyLogo from '@/components/shared/CabyLogo';
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, BookmarkCheck, Luggage, Car, Tag, ShieldAlert, ChevronRight, Mail, Phone } from 'lucide-react';
@@ -37,7 +38,7 @@ const HelpCenterPage: React.FC = () => {
         <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 6, display: 'flex', alignItems: 'center' }} aria-label="Retour">
           <ArrowLeft size={20} />
         </button>
-        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 900, letterSpacing: '-0.5px' }}>caby</div>
+        <CabyLogo size={28} />
         <nav style={{ marginLeft: 'auto', display: 'flex', gap: 24, fontSize: 13, fontWeight: 600 }}>
           <button onClick={() => navigate('/caby/account/reservations')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#0A0A0A', fontFamily: 'inherit', fontWeight: 600, fontSize: 13 }}>Vos réservations</button>
           <button onClick={() => navigate('/caby/help/contact')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: GOLD, fontFamily: 'inherit', fontWeight: 700, fontSize: 13 }}>Aide</button>

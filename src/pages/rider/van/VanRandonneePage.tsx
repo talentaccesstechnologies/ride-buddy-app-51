@@ -1,3 +1,4 @@
+import CabyLogo from '@/components/shared/CabyLogo';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Mountain, Clock, Package, Check } from 'lucide-react';
@@ -27,7 +28,7 @@ const VanRandonneePage: React.FC = () => {
         <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#0A0A0A', padding: 4 }}>
           <ArrowLeft size={22} />
         </button>
-        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 900, color: '#0A0A0A', letterSpacing: '-1px' }}>caby</div>
+        <CabyLogo size={28} />
         <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.7)', marginLeft: 8 }}>Caby Randonnée</span>
       </header>
 

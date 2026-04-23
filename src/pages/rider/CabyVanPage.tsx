@@ -47,6 +47,7 @@ import CityAutocomplete from '@/components/van/CityAutocomplete';
 import CityPickerPopover from '@/components/van/CityPickerPopover';
 import PassengerPickerPopover from '@/components/van/PassengerPickerPopover';
 import PriceCalendar from '@/components/van/PriceCalendar';
+import CabyLogo from '@/components/shared/CabyLogo';
 
 type Step = 'hero' | 'search' | 'results' | 'seat' | 'extras' | 'passenger' | 'payment' | 'confirm' | 'abonnement';
 type SortMode = 'price' | 'urgent' | 'earlybird';
@@ -632,9 +633,7 @@ const CabyVanPage: React.FC = () => {
               justifyContent: 'space-between',
             }}
           >
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 900, color: '#0A0A0A', letterSpacing: '-1px' }}>
-            caby
-          </div>
+          <CabyLogo size={32} />
           <nav style={{ display: 'flex', gap: 2, position: 'relative' }}>
             {/* ═══ LIEN INFORMATIONS AVEC MEGA-MENU ═══ */}
             <div style={{ position: 'relative' }}>
