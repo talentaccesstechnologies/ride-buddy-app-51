@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, ArrowRight, Leaf, Users, Clock, MapPin, Luggage, Bike, QrCode, Check, X,
   CreditCard, Star, ChevronLeft, ChevronRight, Search, Percent, Zap, Shield, Car, SlidersHorizontal, Timer,
-  Info, ChevronDown, ChevronUp, Edit2
+  Info, ChevronDown, ChevronUp, Edit2, Bus, Snowflake, Globe2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
