@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import BookingStepper from '@/components/van/BookingStepper';
 import BookingSidebar, { BookingItem } from '@/components/van/BookingSidebar';
-import { ShieldCheck, Clock, CalendarCheck, Coins } from 'lucide-react';
+import { ShieldCheck, Clock, CalendarCheck, Coins, PiggyBank } from 'lucide-react';
+import {
+  MobileInstructionBar,
+  MobileSectionHeader,
+  MobilePrimaryButton,
+} from '@/components/van/EasyJetMobileUI';
 
 const GOLD = '#C9A84C';
 
@@ -23,9 +28,7 @@ export default function VanOptionsPage() {
   const flexTotal = cabyFlex ? 9 * passengers : 0;
   const insuranceTotal = insurance ? 4.90 : 0;
 
-  const items: BookingItem[] = [
-    { label: `Trajet ${from} → ${to}`, amount: price },
-  ];
+  const items: BookingItem[] = [{ label: `Trajet ${from} → ${to}`, amount: price }];
   if (packPrice > 0) items.push({ label: 'Formule choisie', amount: packPrice });
   if (seatPrice > 0) items.push({ label: 'Siège choisi', amount: seatPrice });
   if (luggagePrice > 0) items.push({ label: 'Bagages', amount: luggagePrice });
@@ -41,108 +44,204 @@ export default function VanOptionsPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
       <BookingStepper currentStep={5} />
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Options supplémentaires</h1>
-          <button onClick={forward} className="text-sm hover:underline" style={{ color: GOLD }}>
-            Passer les options →
-          </button>
+
+      {/* ── MOBILE (easyJet-style) ────────────────────────────── */}
+      <MobileSectionHeader title="Extras for your trip" onBack={() => navigate(-1)} />
+      <MobileInstructionBar
+        text="Add Flex Pass and Travel Insurance"
+        ctaLabel="Skip add-ons >"
+        onCta={forward}
+      />
+
+      <div className="md:hidden bg-white px-4 py-5">
+        <p className="text-[15px] font-bold text-gray-900 mb-4">
+          Adapt your travel plans with ease and save money
+        </p>
+
+        {/* Caby Flex card */}
+        <div className="mb-5">
+          <div className="bg-[#1A1A1A] text-white px-4 py-2.5 rounded-t-md">
+            <span className="text-[15px] font-bold">Flex Pass ⓘ</span>
+          </div>
+          <div className="bg-gray-100 px-4 py-4 rounded-b-md">
+            <div className="space-y-4 mb-4">
+              <div className="flex items-start gap-3">
+                <Clock className="w-5 h-5 shrink-0 mt-0.5" style={{ color: GOLD }} />
+                <div>
+                  <p className="text-[14px] font-bold text-gray-900">Last minute</p>
+                  <p className="text-[12px] text-gray-700 leading-snug">
+                    Modify your trip up to 2 hours before departure
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <CalendarCheck className="w-5 h-5 shrink-0 mt-0.5" style={{ color: GOLD }} />
+                <div>
+                  <p className="text-[14px] font-bold text-gray-900">Flexibility</p>
+                  <p className="text-[12px] text-gray-700 leading-snug">
+                    Change date and time as well as pickup and dropoff points. (Passengers cannot be changed.)
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <PiggyBank className="w-5 h-5 shrink-0 mt-0.5" style={{ color: GOLD }} />
+                <div>
+                  <p className="text-[14px] font-bold text-gray-900">Save money</p>
+                  <p className="text-[12px] text-gray-700 leading-snug">
+                    No change fees (up to CHF 25 per passenger). You only pay the fare difference, if any.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-center text-[14px] font-bold text-gray-900 mb-3">
+              Flex Pass costs CHF 9.00 per person
+            </p>
+
+            <MobilePrimaryButton onClick={() => setCabyFlex(!cabyFlex)}>
+              {cabyFlex ? '✓ Flex Pass added' : 'Add Flex Pass'}
+            </MobilePrimaryButton>
+          </div>
+          <p className="text-[11px] text-gray-600 mt-2 leading-relaxed">
+            With Flex Pass, you'll be able to change each of your trips once without incurring a change fee.{' '}
+            <a className="underline" style={{ color: GOLD }} href="#">See Flex Pass Terms and Conditions</a>
+          </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-1 space-y-6">
-            {/* Caby Flex */}
-            <div
-              className="bg-white rounded-xl border-2 p-6 transition-all"
-              style={{ borderColor: cabyFlex ? GOLD : '#e5e7eb' }}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h2 className="font-bold text-lg text-gray-900">CABY FLEX</h2>
-                  <p className="text-sm text-gray-600">Flexibilité maximale sur votre trajet</p>
-                </div>
-                <span className="font-bold" style={{ color: GOLD }}>CHF 9.00 <span className="text-xs font-normal text-gray-400">/pers.</span></span>
-              </div>
+        {/* Travel insurance card */}
+        <div className="mb-5">
+          <div className="bg-[#1A1A1A] text-white px-4 py-2.5 rounded-t-md flex items-center gap-2">
+            <span className="text-[15px] font-bold">Travel insurance</span>
+            <span className="text-[10px] bg-green-500 px-1.5 py-0.5 rounded font-bold">Popular</span>
+          </div>
+          <div className="bg-gray-100 px-4 py-4 rounded-b-md">
+            <p className="text-[12px] text-gray-700 mb-3">
+              Provided by 🛡️ Wakam Insurance
+            </p>
 
-              <div className="grid grid-cols-3 gap-4 mb-5">
-                <div className="text-center">
-                  <Clock className="w-6 h-6 mx-auto mb-1 text-gray-600" />
-                  <p className="text-xs font-medium text-gray-900">Dernière minute</p>
-                  <p className="text-[10px] text-gray-500">Modifiez jusqu'à 2h avant</p>
-                </div>
-                <div className="text-center">
-                  <CalendarCheck className="w-6 h-6 mx-auto mb-1 text-gray-600" />
-                  <p className="text-xs font-medium text-gray-900">Flexibilité</p>
-                  <p className="text-[10px] text-gray-500">Changez heure ou créneau</p>
-                </div>
-                <div className="text-center">
-                  <Coins className="w-6 h-6 mx-auto mb-1 text-gray-600" />
-                  <p className="text-xs font-medium text-gray-900">Économies</p>
-                  <p className="text-[10px] text-gray-500">Pas de frais de modification</p>
-                </div>
+            <div className="bg-white border border-gray-200 rounded p-3 mb-4">
+              <div className="flex justify-between items-start mb-2">
+                <span className="text-[13px] font-bold text-gray-900">Cancellation & Baggage</span>
+                <span className="text-[14px] font-bold" style={{ color: GOLD }}>CHF 4.90</span>
               </div>
-
-              <button
-                onClick={() => setCabyFlex(!cabyFlex)}
-                className={`w-full py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-                  cabyFlex ? 'text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-                style={cabyFlex ? { backgroundColor: GOLD } : undefined}
-              >
-                {cabyFlex ? 'Ajouté ✓' : 'Ajouter Caby Flex'}
-              </button>
+              <ul className="space-y-1.5">
+                <li className="flex items-center gap-2 text-[12px] text-gray-700">
+                  <ShieldCheck className="w-3.5 h-3.5 text-green-500 shrink-0" /> Cancellation: up to CHF 500
+                </li>
+                <li className="flex items-center gap-2 text-[12px] text-gray-700">
+                  <ShieldCheck className="w-3.5 h-3.5 text-green-500 shrink-0" /> Lost baggage: up to CHF 300
+                </li>
+                <li className="flex items-center gap-2 text-[12px] text-gray-700">
+                  <ShieldCheck className="w-3.5 h-3.5 text-green-500 shrink-0" /> Delay assistance: up to CHF 100
+                </li>
+              </ul>
             </div>
 
-            {/* Insurance */}
-            <div
-              className="bg-white rounded-xl border-2 p-6 transition-all"
-              style={{ borderColor: insurance ? GOLD : '#e5e7eb' }}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <h2 className="font-bold text-lg text-gray-900">ASSURER MON TRAJET</h2>
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Choix populaire</span>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">Proposé par 🛡️ Wakam Assurance</p>
+            <MobilePrimaryButton onClick={() => setInsurance(!insurance)}>
+              {insurance ? '✓ Insurance added' : 'Add this insurance'}
+            </MobilePrimaryButton>
+          </div>
+        </div>
 
-              <div
-                className="border rounded-lg p-4 mb-4"
-                style={{ borderColor: insurance ? GOLD : '#e5e7eb' }}
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <h3 className="font-semibold text-sm text-gray-900">Annulation & Bagages</h3>
-                  <span className="font-bold" style={{ color: GOLD }}>CHF 4.90</span>
-                </div>
-                <ul className="space-y-1.5 text-sm text-gray-700">
-                  <li className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Annulation : jusqu'à CHF 500</li>
-                  <li className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Bagages perdus : jusqu'à CHF 300</li>
-                  <li className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Assistance retard : jusqu'à CHF 100</li>
-                </ul>
-              </div>
+        <BookingSidebar
+          from={from} to={to}
+          departureDate={params.get('date') || undefined}
+          departureTime={params.get('time') || '07:00'}
+          arrivalTime={params.get('arrivalTime') || '10:00'}
+          returnDate={params.get('returnDate') || undefined}
+          returnTime={params.get('returnTime') || undefined}
+          returnArrivalTime={params.get('returnArrivalTime') || undefined}
+          items={items}
+          onContinue={forward}
+        />
+      </div>
 
-              <button
-                onClick={() => setInsurance(!insurance)}
-                className={`w-full py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-                  insurance ? 'text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-                style={insurance ? { backgroundColor: GOLD } : undefined}
-              >
-                {insurance ? 'Ajouté ✓' : 'Ajouter cette assurance'}
-              </button>
-            </div>
+      {/* ── DESKTOP (inchangé) ─────────────────────────────────── */}
+      <div className="hidden md:block">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900">Options supplémentaires</h1>
+            <button onClick={forward} className="text-sm hover:underline" style={{ color: GOLD }}>
+              Passer les options →
+            </button>
           </div>
 
-          <div className="w-full lg:w-72">
-            <BookingSidebar
-              from={from} to={to}
-              departureDate={params.get('date') || undefined}
-              departureTime={params.get('time') || '07:00'}
-              arrivalTime={params.get('arrivalTime') || '10:00'}
-              returnDate={params.get('returnDate') || undefined}
-              returnTime={params.get('returnTime') || undefined}
-              returnArrivalTime={params.get('returnArrivalTime') || undefined}
-              items={items}
-              onContinue={forward}
-            />
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex-1 space-y-6">
+              <div className="bg-white rounded-xl border-2 p-6 transition-all" style={{ borderColor: cabyFlex ? GOLD : '#e5e7eb' }}>
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h2 className="font-bold text-lg text-gray-900">CABY FLEX</h2>
+                    <p className="text-sm text-gray-600">Flexibilité maximale sur votre trajet</p>
+                  </div>
+                  <span className="font-bold" style={{ color: GOLD }}>CHF 9.00 <span className="text-xs font-normal text-gray-400">/pers.</span></span>
+                </div>
+                <div className="grid grid-cols-3 gap-4 mb-5">
+                  <div className="text-center">
+                    <Clock className="w-6 h-6 mx-auto mb-1 text-gray-600" />
+                    <p className="text-xs font-medium text-gray-900">Dernière minute</p>
+                    <p className="text-[10px] text-gray-500">Modifiez jusqu'à 2h avant</p>
+                  </div>
+                  <div className="text-center">
+                    <CalendarCheck className="w-6 h-6 mx-auto mb-1 text-gray-600" />
+                    <p className="text-xs font-medium text-gray-900">Flexibilité</p>
+                    <p className="text-[10px] text-gray-500">Changez heure ou créneau</p>
+                  </div>
+                  <div className="text-center">
+                    <Coins className="w-6 h-6 mx-auto mb-1 text-gray-600" />
+                    <p className="text-xs font-medium text-gray-900">Économies</p>
+                    <p className="text-[10px] text-gray-500">Pas de frais de modification</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setCabyFlex(!cabyFlex)}
+                  className={`w-full py-2.5 rounded-lg text-sm font-semibold ${cabyFlex ? 'text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                  style={cabyFlex ? { backgroundColor: GOLD } : undefined}
+                >
+                  {cabyFlex ? 'Ajouté ✓' : 'Ajouter Caby Flex'}
+                </button>
+              </div>
+
+              <div className="bg-white rounded-xl border-2 p-6 transition-all" style={{ borderColor: insurance ? GOLD : '#e5e7eb' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <h2 className="font-bold text-lg text-gray-900">ASSURER MON TRAJET</h2>
+                  <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Choix populaire</span>
+                </div>
+                <p className="text-sm text-gray-600 mb-4">Proposé par 🛡️ Wakam Assurance</p>
+                <div className="border rounded-lg p-4 mb-4" style={{ borderColor: insurance ? GOLD : '#e5e7eb' }}>
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="font-semibold text-sm text-gray-900">Annulation & Bagages</h3>
+                    <span className="font-bold" style={{ color: GOLD }}>CHF 4.90</span>
+                  </div>
+                  <ul className="space-y-1.5 text-sm text-gray-700">
+                    <li className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Annulation : jusqu'à CHF 500</li>
+                    <li className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Bagages perdus : jusqu'à CHF 300</li>
+                    <li className="flex items-center gap-2"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Assistance retard : jusqu'à CHF 100</li>
+                  </ul>
+                </div>
+                <button
+                  onClick={() => setInsurance(!insurance)}
+                  className={`w-full py-2.5 rounded-lg text-sm font-semibold ${insurance ? 'text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                  style={insurance ? { backgroundColor: GOLD } : undefined}
+                >
+                  {insurance ? 'Ajouté ✓' : 'Ajouter cette assurance'}
+                </button>
+              </div>
+            </div>
+
+            <div className="w-full lg:w-72">
+              <BookingSidebar
+                from={from} to={to}
+                departureDate={params.get('date') || undefined}
+                departureTime={params.get('time') || '07:00'}
+                arrivalTime={params.get('arrivalTime') || '10:00'}
+                returnDate={params.get('returnDate') || undefined}
+                returnTime={params.get('returnTime') || undefined}
+                returnArrivalTime={params.get('returnArrivalTime') || undefined}
+                items={items}
+                onContinue={forward}
+              />
+            </div>
           </div>
         </div>
       </div>
