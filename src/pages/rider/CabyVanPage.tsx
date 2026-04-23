@@ -1127,14 +1127,14 @@ const CabyVanPage: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
                   {[
-                    { label: 'Bagages à main et grande valise', to: '/caby/van/bagages' },
+                    { label: 'Bagages à main et grande valise', to: '/caby/help/article/grande-valise' },
                     { label: 'Contactez-nous', to: '/caby/help/contact' },
-                    { label: 'Retards et annulations', to: '/caby/help?topic=retards' },
+                    { label: "Centre d'aide", to: '/caby/help' },
+                    { label: 'Retards et annulations', to: '/caby/help/article/retards-annulations' },
                     { label: 'Suivi de course', to: '/caby/trip' },
-                    { label: "Page d'accueil de l'aide", to: '/caby/help' },
-                    { label: 'État du trafic actuel', to: '/caby/driver/map' },
-                    { label: 'Gestion de vos réservations', to: '/caby/account/reservations' },
-                    { label: 'Caby Pass', to: '/caby/pass' },
+                    { label: 'État du trafic actuel', to: '/caby/help/trafic' },
+                    { label: 'Gestion de vos réservations', to: '/caby/help/article/gerer-reservation' },
+                    { label: 'Caby Pass', to: '/caby/help/article/caby-pass' },
                   ].map(tag => (
                     <button
                       key={tag.label}
