@@ -55,6 +55,9 @@ import AccountPage from "./pages/rider/AccountPage";
 import AccountSettingsPage from "./pages/rider/AccountSettingsPage";
 import HelpPage from "./pages/rider/HelpPage";
 import ContactPage from "./pages/rider/ContactPage";
+import HelpCenterPage from "./pages/rider/help/HelpCenterPage";
+import HelpArticlePage from "./pages/rider/help/HelpArticlePage";
+import TrafficStatusPage from "./pages/rider/help/TrafficStatusPage";
 import SafetyPage from "./pages/rider/SafetyPage";
 import SafetyPreferencesPage from "./pages/rider/safety/SafetyPreferencesPage";
 import TrustedContactsPage from "./pages/rider/safety/TrustedContactsPage";
@@ -149,8 +152,10 @@ const App = () => (
               <Route path="/caby/account" element={<AccountPage />} />
               <Route path="/caby/account/settings" element={<AccountSettingsPage />} />
               <Route path="/caby/account/help" element={<HelpPage />} />
-              <Route path="/caby/help" element={<HelpPage />} />
+              <Route path="/caby/help" element={<HelpCenterPage />} />
               <Route path="/caby/help/contact" element={<ContactPage />} />
+              <Route path="/caby/help/trafic" element={<TrafficStatusPage />} />
+              <Route path="/caby/help/article/:slug" element={<HelpArticlePage />} />
               <Route path="/caby/account/wallet" element={<WalletPage />} />
               <Route path="/caby/account/reservations" element={<MyReservationsPage />} />
               <Route path="/caby/account/safety" element={<SafetyPage />} />
