@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, ArrowRight, Leaf, Users, Clock, MapPin, Luggage, Bike, QrCode, Check, X,
   CreditCard, Star, ChevronLeft, ChevronRight, Search, Percent, Zap, Shield, Car, SlidersHorizontal, Timer,
-  Info, ChevronDown, ChevronUp, Edit2
+  Info, ChevronDown, ChevronUp, Edit2, Bus, Snowflake, Globe2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -1350,11 +1350,18 @@ const CabyVanPage: React.FC = () => {
               {/* Onglets + toggle */}
               <div style={{ display: 'flex', alignItems: 'center', borderBottom: '2px solid #E0DDD5', marginBottom: 18 }}>
                 {(['trajets', 'ski', 'crossborder'] as const).map(tab => {
-                  const labels = { trajets: { label: 'Trajets', icon: '🚐' }, ski: { label: 'Ski', icon: '🎿' }, crossborder: { label: 'Cross-Border', icon: '🌍' } };
+                  const labels = {
+                    trajets: { label: 'Trajets', Icon: Bus },
+                    ski: { label: 'Ski', Icon: Snowflake },
+                    crossborder: { label: 'Cross-Border', Icon: Globe2 },
+                  };
+                  const TabIcon = labels[tab].Icon;
+                  const isActive = activeService === tab;
                   return (
                     <button key={tab} onClick={() => handleServiceChange(tab)}
-                      style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '9px 16px', marginBottom: -2, borderBottom: `3px solid ${activeService === tab ? GOLD : 'transparent'}`, color: activeService === tab ? '#A07830' : '#888780', background: 'none', border: 'none', borderBottomWidth: 3, borderBottomStyle: 'solid' as const, borderBottomColor: activeService === tab ? GOLD : 'transparent', cursor: 'pointer', fontSize: 13, fontWeight: 500, fontFamily: 'inherit' }}>
-                      <span style={{ fontSize: 14 }}>{labels[tab].icon}</span>{labels[tab].label}
+                      style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px', marginBottom: -2, color: isActive ? '#1A1A1A' : '#6B6B6B', background: 'none', border: 'none', borderBottomWidth: 3, borderBottomStyle: 'solid' as const, borderBottomColor: isActive ? '#FF6600' : 'transparent', cursor: 'pointer', fontSize: 14, fontWeight: isActive ? 700 : 500, fontFamily: 'inherit' }}>
+                      <TabIcon size={18} strokeWidth={2.2} color="#FF6600" />
+                      {labels[tab].label}
                     </button>
                   );
                 })}
