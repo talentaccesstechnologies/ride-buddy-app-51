@@ -564,11 +564,8 @@ const CabyVanPage: React.FC = () => {
             }}
           >
             {[
-              { icon: HomeIcon, label: 'Accueil', to: '/caby' },
-              // { icon: LayoutGrid, label: 'Services', to: '/caby/services' },
               { icon: ClockIcon, label: 'Gérer vos réservations', action: 'bookingModal' as const },
               { icon: HelpCircle, label: 'Aide', action: 'helpModal' as const },
-              { icon: UserIcon, label: 'Compte', to: '/caby/account' },
             ].map(item => {
               const Icon = item.icon;
               const handleClick = () => {
