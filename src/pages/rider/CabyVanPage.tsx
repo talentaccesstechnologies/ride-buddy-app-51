@@ -528,7 +528,7 @@ const CabyVanPage: React.FC = () => {
           >
             {[
               { icon: HomeIcon, label: 'Accueil', to: '/caby' },
-              { icon: LayoutGrid, label: 'Services', to: '/caby/services' },
+              // { icon: LayoutGrid, label: 'Services', to: '/caby/services' },
               { icon: ClockIcon, label: 'Activité', to: '/caby/activity' },
               { icon: Tag, label: 'Offres', to: '/caby/offers' },
               { icon: UserIcon, label: 'Compte', to: '/caby/account' },
