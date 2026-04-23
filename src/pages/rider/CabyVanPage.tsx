@@ -612,8 +612,8 @@ const CabyVanPage: React.FC = () => {
               onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = 'transparent')}
               aria-label="Changer la langue"
             >
-              <span style={{ fontSize: 14, lineHeight: 1 }}>{LANGUAGES.find(l => l.code === currentLang)?.flag}</span>
-              <span style={{ textTransform: 'uppercase', fontWeight: 700, letterSpacing: 0.3 }}>{currentLang}</span>
+              <span style={{ fontSize: 16, lineHeight: 1 }}>{LANGUAGES.find(l => l.code === currentLang)?.flag}</span>
+              <span style={{ fontWeight: 500 }}>{LANGUAGES.find(l => l.code === currentLang)?.label}</span>
             </button>
           </div>
 
