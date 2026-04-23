@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import BookingStepper from '@/components/van/BookingStepper';
 import BookingSidebar, { BookingItem } from '@/components/van/BookingSidebar';
+import { MobileInstructionBar, MobileSectionHeader } from '@/components/van/EasyJetMobileUI';
 import { Check, Lock, Mail, User, X, AlertTriangle, Clock, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
