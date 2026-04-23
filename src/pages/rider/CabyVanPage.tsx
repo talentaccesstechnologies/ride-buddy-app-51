@@ -863,41 +863,12 @@ const CabyVanPage: React.FC = () => {
               </a>
             ))}
           </nav>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            {/* Menu compact icônes (desktop top-right) */}
-            {[
-              { icon: HomeIcon, label: 'Accueil', to: '/caby' },
-              { icon: LayoutGrid, label: 'Services', to: '/caby/services' },
-              { icon: ClockIcon, label: 'Activité', to: '/caby/activity' },
-              { icon: Tag, label: 'Offres', to: '/caby/offers' },
-              { icon: UserIcon, label: 'Compte', to: '/caby/account' },
-            ].map(item => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.to}
-                  onClick={() => navigate(item.to)}
-                  title={item.label}
-                  aria-label={item.label}
-                  style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    width: 36, height: 36, borderRadius: 8, border: 'none',
-                    background: 'transparent', color: '#0A0A0A', cursor: 'pointer',
-                    transition: 'background 0.15s',
-                  }}
-                  onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.12)')}
-                  onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = 'transparent')}
-                >
-                  <Icon size={18} strokeWidth={2} />
-                </button>
-              );
-            })}
-            <button
-              onClick={() => navigate('/auth/login')}
-              style={{ marginLeft: 4, fontSize: 13, fontWeight: 600, color: '#0A0A0A', background: 'rgba(0,0,0,0.12)', border: 'none', borderRadius: 6, padding: '7px 16px', cursor: 'pointer', fontFamily: 'inherit' }}
-            >
-              Se connecter
-            </button>
+          <button
+            onClick={() => navigate('/auth/login')}
+            style={{ fontSize: 13, fontWeight: 600, color: '#0A0A0A', background: 'rgba(0,0,0,0.12)', border: 'none', borderRadius: 6, padding: '7px 16px', cursor: 'pointer', fontFamily: 'inherit' }}
+          >
+            Se connecter
+          </button>
           </div>
         </header>
 
