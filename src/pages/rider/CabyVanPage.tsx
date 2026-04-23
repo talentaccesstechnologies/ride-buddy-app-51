@@ -209,7 +209,7 @@ const LANGUAGES: { code: string; cc: string; label: string }[] = [
   { code: 'it', cc: 'it', label: 'Italiano' },
   { code: 'en', cc: 'gb', label: 'English' },
   { code: 'es', cc: 'es', label: 'Castellano' },
-  { code: 'ca', cc: 'es-ct', label: 'Català' },
+  { code: 'ca', cc: 'es-ct', label: 'Català', flagUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Catalonia.svg/40px-Flag_of_Catalonia.svg.png' } as any,
   { code: 'pt', cc: 'pt', label: 'Português' },
   { code: 'nl', cc: 'nl', label: 'Nederlands' },
   { code: 'da', cc: 'dk', label: 'Dansk' },
@@ -220,7 +220,7 @@ const LANGUAGES: { code: string; cc: string; label: string }[] = [
   { code: 'tr', cc: 'tr', label: 'Türkçe' },
   { code: 'he', cc: 'il', label: 'עברית' },
 ];
-const flagSrc = (cc: string) => `https://flagcdn.com/w40/${cc}.png`;
+const flagSrc = (l: { cc: string; flagUrl?: string }) => l.flagUrl || `https://flagcdn.com/w40/${l.cc}.png`;
 
 const CabyVanPage: React.FC = () => {
   const navigate = useNavigate();
@@ -619,7 +619,7 @@ const CabyVanPage: React.FC = () => {
                 if (!l) return null;
                 return (
                   <>
-                    <img src={flagSrc(l.cc)} alt="" width={18} height={12} style={{ display: 'block', objectFit: 'cover', borderRadius: 2 }} />
+                    <img src={flagSrc(l)} alt="" width={18} height={12} style={{ display: 'block', objectFit: 'cover', borderRadius: 2 }} />
                     <span style={{ fontWeight: 500 }}>{l.label}</span>
                   </>
                 );
@@ -1177,7 +1177,7 @@ const CabyVanPage: React.FC = () => {
                       }}>
                         {selected && <span style={{ width: 9, height: 9, borderRadius: '50%', background: GOLD }} />}
                       </span>
-                      <img src={flagSrc(lang.cc)} alt="" width={28} height={20} style={{ display: 'block', objectFit: 'cover', borderRadius: 2, flexShrink: 0 }} />
+                      <img src={flagSrc(lang)} alt="" width={28} height={20} style={{ display: 'block', objectFit: 'cover', borderRadius: 2, flexShrink: 0 }} />
                       <span style={{ fontSize: 15, fontWeight: selected ? 700 : 500, color: '#0A0A0A' }}>{lang.label}</span>
                     </button>
                   );
