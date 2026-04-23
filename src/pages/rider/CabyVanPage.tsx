@@ -1177,7 +1177,7 @@ const CabyVanPage: React.FC = () => {
                       }}>
                         {selected && <span style={{ width: 9, height: 9, borderRadius: '50%', background: GOLD }} />}
                       </span>
-                      <span style={{ fontSize: 22, lineHeight: 1 }}>{lang.flag}</span>
+                      <img src={flagSrc(lang.cc)} alt="" width={28} height={20} style={{ display: 'block', objectFit: 'cover', borderRadius: 2, flexShrink: 0 }} />
                       <span style={{ fontSize: 15, fontWeight: selected ? 700 : 500, color: '#0A0A0A' }}>{lang.label}</span>
                     </button>
                   );
