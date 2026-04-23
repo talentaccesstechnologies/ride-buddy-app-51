@@ -199,6 +199,27 @@ const SeatButton: React.FC<{ seat: number; taken: boolean; selected: boolean; on
   </button>
 );
 
+// Liste des langues disponibles (style easyJet)
+const LANGUAGES: { code: string; flag: string; label: string }[] = [
+  { code: 'fr', flag: '🇫🇷', label: 'Français' },
+  { code: 'fr-ch', flag: '🇨🇭', label: 'Français (Suisse)' },
+  { code: 'de', flag: '🇩🇪', label: 'Deutsch' },
+  { code: 'de-ch', flag: '🇨🇭', label: 'Deutsch (Schweiz)' },
+  { code: 'it', flag: '🇮🇹', label: 'Italiano' },
+  { code: 'en', flag: '🇬🇧', label: 'English' },
+  { code: 'es', flag: '🇪🇸', label: 'Castellano' },
+  { code: 'ca', flag: '🇪🇸', label: 'Català' },
+  { code: 'pt', flag: '🇵🇹', label: 'Português' },
+  { code: 'nl', flag: '🇳🇱', label: 'Nederlands' },
+  { code: 'da', flag: '🇩🇰', label: 'Dansk' },
+  { code: 'cs', flag: '🇨🇿', label: 'Česky' },
+  { code: 'pl', flag: '🇵🇱', label: 'Polski' },
+  { code: 'hu', flag: '🇭🇺', label: 'Magyarul' },
+  { code: 'el', flag: '🇬🇷', label: 'Ελληνικά' },
+  { code: 'tr', flag: '🇹🇷', label: 'Türkçe' },
+  { code: 'he', flag: '🇮🇱', label: 'עברית' },
+];
+
 const CabyVanPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
