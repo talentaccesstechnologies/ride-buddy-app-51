@@ -632,9 +632,7 @@ const CabyVanPage: React.FC = () => {
               justifyContent: 'space-between',
             }}
           >
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 900, color: '#0A0A0A', letterSpacing: '-1px' }}>
-            caby
-          </div>
+          <CabyLogo size={32} />
           <nav style={{ display: 'flex', gap: 2, position: 'relative' }}>
             {/* ═══ LIEN INFORMATIONS AVEC MEGA-MENU ═══ */}
             <div style={{ position: 'relative' }}>
