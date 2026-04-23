@@ -1,22 +1,20 @@
 import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useAuth } from '@/contexts/AuthContext';
 import CabyVanHome from '@/pages/rider/CabyVanHome';
-import Index from '@/pages/Index';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const CabyRoot: React.FC = () => {
-  const { user, loading } = useAuth();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
-  if (loading) return null;
+  useEffect(() => {
+    if (!isMobile) {
+      navigate('/caby/van', { replace: true });
+    }
+  }, [isMobile, navigate]);
 
-  // Non connecté → landing visiteur (desktop ET mobile)
-  if (!user) return <Index />;
-
-  // Connecté mobile → app 5 onglets
-  if (isMobile) return <CabyVanHome />;
-
-  // Connecté desktop → app web (à développer)
+  if (!isMobile) return null;
   return <CabyVanHome />;
 };
 
