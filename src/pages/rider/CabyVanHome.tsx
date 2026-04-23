@@ -338,93 +338,191 @@ const TabBook: React.FC<{ onSearch: (from: string, to: string, date: string) => 
   const [date, setDate] = useState(today);
 
   return (
-    <div>
-      {/* Header moteur */}
-      <div style={{ background: DARK, padding: '16px 16px 24px' }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 14 }}>Réserver un siège</div>
-        <div style={{ background: '#fff', borderRadius: 14, padding: 13 }}>
-          {/* From */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 10, borderBottom: '0.5px solid #E5E7EB', marginBottom: 10 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#22C55E', flexShrink: 0 }} />
-            <input
-              value={from} onChange={e => setFrom(e.target.value)}
-              placeholder="Ville de départ"
-              style={{ border: 'none', outline: 'none', fontSize: 13, flex: 1, background: 'transparent', color: '#1A1A1A', fontFamily: 'inherit' }}
-            />
-          </div>
-          {/* To */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-            <div style={{ width: 8, height: 8, borderRadius: 2, background: GOLD, flexShrink: 0 }} />
-            <input
-              value={to} onChange={e => setTo(e.target.value)}
-              placeholder="Destination"
-              style={{ border: 'none', outline: 'none', fontSize: 13, fontWeight: 600, flex: 1, background: 'transparent', color: '#1A1A1A', fontFamily: 'inherit' }}
-            />
-          </div>
-          {/* Date + passagers */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
-            <div style={{ background: '#F9F8F5', borderRadius: 8, padding: '8px 10px' }}>
-              <div style={{ fontSize: 10, color: '#888780', marginBottom: 2 }}>Date</div>
-              <input
-                type="date" value={date} onChange={e => setDate(e.target.value)}
-                style={{ border: 'none', outline: 'none', fontSize: 12, fontWeight: 600, background: 'transparent', color: '#1A1A1A', fontFamily: 'inherit', width: '100%' }}
-              />
-            </div>
-            <div style={{ background: '#F9F8F5', borderRadius: 8, padding: '8px 10px' }}>
-              <div style={{ fontSize: 10, color: '#888780', marginBottom: 2 }}>Passagers</div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#1A1A1A' }}>1 adulte</div>
-            </div>
-          </div>
-          <button
-            onClick={() => onSearch(from, to, date)}
-            style={{ width: '100%', background: GOLD, border: 'none', borderRadius: 10, padding: '12px 0', cursor: 'pointer', fontSize: 14, fontWeight: 700, color: '#fff', fontFamily: 'inherit' }}
+    <div style={{ background: '#fff', minHeight: '100%' }}>
+      {/* Formulaire easyJet-like : labels flottants gold sur cadres outlined */}
+      <div style={{ padding: '20px 18px 8px' }}>
+        {[
+          { label: 'From', value: from, onChange: setFrom, placeholder: 'Ville de départ', icon: 'plane', clearable: true },
+          { label: 'To', value: to, onChange: setTo, placeholder: 'Ville, gare, aéroport', icon: 'pin', clearable: false },
+        ].map((field) => (
+          <div
+            key={field.label}
+            style={{
+              position: 'relative',
+              border: `1.5px solid ${GOLD}`,
+              borderRadius: 8,
+              padding: '18px 14px 12px',
+              marginBottom: 12,
+              background: '#fff',
+              minHeight: 60,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+            }}
           >
-            Voir les trajets disponibles
-          </button>
+            <span style={{
+              position: 'absolute', top: -8, left: 14,
+              background: '#fff', padding: '0 6px',
+              fontSize: 13, fontWeight: 600, color: GOLD,
+            }}>
+              {field.label}
+            </span>
+            {field.icon === 'plane' ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M2 14l3-1 6-7 2 1-3 6 5-1 2-3 1.5 0.5-2 4 4 1c1 0.3 1 1.5-1 2L4 18c-1 0.2-1.5-0.3-2-1.5L2 14z" fill={GOLD}/>
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M12 2a7 7 0 017 7c0 5-7 13-7 13S5 14 5 9a7 7 0 017-7z" fill={GOLD}/>
+                <circle cx="12" cy="9" r="2.5" fill="#fff"/>
+              </svg>
+            )}
+            <input
+              value={field.value}
+              onChange={e => field.onChange(e.target.value)}
+              placeholder={field.placeholder}
+              style={{
+                border: 'none', outline: 'none',
+                fontSize: 17, fontWeight: 600,
+                flex: 1, background: 'transparent',
+                color: field.value ? '#1A1A1A' : '#9CA3AF',
+                fontFamily: 'inherit', minWidth: 0,
+              }}
+            />
+            {field.clearable && field.value && (
+              <button
+                onClick={() => field.onChange('')}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: GOLD, flexShrink: 0 }}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            )}
+          </div>
+        ))}
+
+        {/* When */}
+        <div style={{
+          position: 'relative',
+          border: `1.5px solid ${GOLD}`,
+          borderRadius: 8,
+          padding: '18px 14px 12px',
+          marginBottom: 12,
+          background: '#fff',
+          minHeight: 60,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+        }}>
+          <span style={{ position: 'absolute', top: -8, left: 14, background: '#fff', padding: '0 6px', fontSize: 13, fontWeight: 600, color: GOLD }}>
+            When
+          </span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+            <rect x="3" y="5" width="18" height="16" rx="2" stroke={GOLD} strokeWidth="2"/>
+            <path d="M3 10h18M8 3v4M16 3v4" stroke={GOLD} strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+          <input
+            type="date" value={date} onChange={e => setDate(e.target.value)}
+            style={{
+              border: 'none', outline: 'none',
+              fontSize: 17, fontWeight: 600, flex: 1,
+              background: 'transparent', color: '#1A1A1A',
+              fontFamily: 'inherit', minWidth: 0,
+            }}
+          />
+        </div>
+
+        {/* Who */}
+        <div style={{
+          position: 'relative',
+          border: `1.5px solid ${GOLD}`,
+          borderRadius: 8,
+          padding: '18px 14px 12px',
+          marginBottom: 18,
+          background: '#fff',
+          minHeight: 60,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+        }}>
+          <span style={{ position: 'absolute', top: -8, left: 14, background: '#fff', padding: '0 6px', fontSize: 13, fontWeight: 600, color: GOLD }}>
+            Who
+          </span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+            <circle cx="12" cy="8" r="4" fill={GOLD}/>
+            <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill={GOLD}/>
+          </svg>
+          <span style={{ fontSize: 17, fontWeight: 600, color: '#1A1A1A', flex: 1 }}>1 adulte</span>
+        </div>
+
+        {/* CTA pleine largeur style easyJet */}
+        <button
+          onClick={() => onSearch(from, to, date)}
+          style={{
+            width: '100%', background: GOLD, border: 'none',
+            borderRadius: 8, padding: '18px 0',
+            cursor: 'pointer', fontSize: 17, fontWeight: 700,
+            color: '#fff', fontFamily: 'inherit',
+            boxShadow: '0 2px 8px rgba(201,168,76,0.3)',
+          }}
+        >
+          Voir les trajets
+        </button>
+      </div>
+
+      {/* Bannière promo style "Big Orange Sale" */}
+      <div style={{ margin: '20px 18px', background: GOLD, borderRadius: 12, padding: '24px 20px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.15, fontSize: 60, lineHeight: 1, letterSpacing: 8, color: '#fff', userSelect: 'none' }}>
+          ✈ ✈ ✈<br/>✈ ✈ ✈<br/>✈ ✈ ✈
+        </div>
+        <div style={{ position: 'relative' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: 1, marginBottom: 6 }}>JUSQU'À</div>
+          <div style={{ fontSize: 56, fontWeight: 900, color: '#fff', lineHeight: 0.9, marginBottom: 4 }}>30%</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: '#fff', marginBottom: 10 }}>DE RÉDUCTION</div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)', lineHeight: 1.4 }}>
+            Sur les trajets last-minute. Réservez maintenant.
+          </div>
         </div>
       </div>
 
       {/* Prochains départs */}
-      <div style={{ padding: 16 }}>
-        <SectionTitle>Prochains départs</SectionTitle>
+      <div style={{ padding: '4px 18px 16px' }}>
+        <div style={{ fontSize: 18, fontWeight: 800, color: '#1A1A1A', marginBottom: 12 }}>Prochains départs</div>
 
-        {/* Ancre 1 */}
-        <div style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '10px 12px', marginBottom: 8 }}>
+        <div style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '12px 14px', marginBottom: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>Genève → Zurich</div>
-              <div style={{ fontSize: 11, color: '#888780' }}>07:00 · 4 sièges</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>Genève → Zurich</div>
+              <div style={{ fontSize: 12, color: '#888780' }}>07:00 · 4 sièges</div>
             </div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>CHF 66</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>CHF 66</div>
           </div>
           <FillBar pct={43} />
         </div>
 
-        {/* Flash intégré en position 2 */}
         {deals.map(deal => (
           <FlashDealCard key={deal.id} deal={deal} onBook={() => onBookDeal(deal)} />
         ))}
 
-        {/* Ancre 2 */}
-        <div style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '10px 12px', marginBottom: 8 }}>
+        <div style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '12px 14px', marginBottom: 8 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>Genève → Annecy</div>
-              <div style={{ fontSize: 11, color: '#888780' }}>07:30 · 2 sièges restants</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>Genève → Annecy</div>
+              <div style={{ fontSize: 12, color: '#888780' }}>07:30 · 2 sièges restants</div>
             </div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>CHF 25</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>CHF 25</div>
           </div>
           <FillBar pct={71} color="#EF4444" />
         </div>
 
-        {/* Ancre 3 */}
-        <div style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '10px 12px' }}>
+        <div style={{ background: '#fff', border: '0.5px solid #E5E7EB', borderRadius: 12, padding: '12px 14px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>Genève → Lyon</div>
-              <div style={{ fontSize: 11, color: '#888780' }}>09:00 · 5 sièges</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>Genève → Lyon</div>
+              <div style={{ fontSize: 12, color: '#888780' }}>09:00 · 5 sièges</div>
             </div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>CHF 49</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>CHF 49</div>
           </div>
           <FillBar pct={29} color="#22C55E" />
         </div>
