@@ -507,16 +507,64 @@ const CabyVanPage: React.FC = () => {
         <header
           style={{
             background: GOLD,
-            padding: '0 5%',
-            height: 56,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
             position: 'sticky',
             top: 0,
             zIndex: 200,
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
+          {/* Barre utilitaire top (style easyJet : Vacances · Gérer · S'enregistrer · Aide · FR) */}
+          <div
+            style={{
+              padding: '0 5%',
+              height: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              gap: 4,
+              borderBottom: '1px solid rgba(0,0,0,0.08)',
+            }}
+          >
+            {[
+              { icon: HomeIcon, label: 'Accueil', to: '/caby' },
+              { icon: LayoutGrid, label: 'Services', to: '/caby/services' },
+              { icon: ClockIcon, label: 'Activité', to: '/caby/activity' },
+              { icon: Tag, label: 'Offres', to: '/caby/offers' },
+              { icon: UserIcon, label: 'Compte', to: '/caby/account' },
+            ].map(item => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.to}
+                  onClick={() => navigate(item.to)}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 5,
+                    height: 24, padding: '0 10px', borderRadius: 4, border: 'none',
+                    background: 'transparent', color: '#0A0A0A',
+                    fontSize: 12, fontWeight: 500, fontFamily: 'inherit', cursor: 'pointer',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.1)')}
+                  onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = 'transparent')}
+                >
+                  <Icon size={13} strokeWidth={2} />
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Barre principale (logo + nav + Se connecter) */}
+          <div
+            style={{
+              padding: '0 5%',
+              height: 56,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 900, color: '#0A0A0A', letterSpacing: '-1px' }}>
             caby
           </div>
