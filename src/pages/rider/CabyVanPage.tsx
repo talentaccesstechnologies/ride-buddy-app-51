@@ -1448,7 +1448,7 @@ const CabyVanPage: React.FC = () => {
 
             {/* ══ 2 CARDS PROMO — 440x248px ══ */}
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' as const }}>
-              <div style={{ background: 'rgba(255,255,255,0.96)', borderRadius: 12, width: 440, height: 248, padding: 15, margin: '0 14px 28px 14px', boxSizing: 'border-box' as const, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
+              <div style={{ background: 'rgba(255,255,255,0.96)', borderRadius: 12, width: 440, minHeight: 248, padding: '18px 18px 20px', margin: '0 14px 28px 14px', boxSizing: 'border-box' as const, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 16 }}>
                 <div>
                   <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 10, lineHeight: 1.3, textTransform: 'uppercase' as const, letterSpacing: '-0.2px' }}>Des sièges à moins de CHF 19*</h2>
                   <p style={{ fontSize: 13, color: '#888780', lineHeight: 1.6, margin: 0 }}>Genève–Annecy, Genève–Lausanne, Genève–Zurich... Et la ligne Genève–Lyon à partir de CHF 42 ! Réservez tôt et économisez jusqu'à 30%.</p>
@@ -1459,7 +1459,7 @@ const CabyVanPage: React.FC = () => {
                 >Voir les destinations</button>
               </div>
 
-              <div style={{ background: 'rgba(255,255,255,0.96)', borderRadius: 12, width: 440, height: 248, padding: 15, margin: '0 14px 28px 14px', boxSizing: 'border-box' as const, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
+              <div style={{ background: 'rgba(255,255,255,0.96)', borderRadius: 12, width: 440, minHeight: 248, padding: '18px 18px 20px', margin: '0 14px 28px 14px', boxSizing: 'border-box' as const, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 16 }}>
                 <div>
                   <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', marginBottom: 10, lineHeight: 1.3, textTransform: 'uppercase' as const, letterSpacing: '-0.2px' }}>Et pourquoi pas une station de ski ?</h2>
                   <p style={{ fontSize: 13, color: '#888780', lineHeight: 1.6, margin: 0 }}>Verbier, Zermatt, Chamonix, Davos — votre station favorite en van partagé. Chauffeur certifié, skis pris en charge dès CHF 35.</p>
