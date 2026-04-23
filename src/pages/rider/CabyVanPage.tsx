@@ -212,6 +212,9 @@ const CabyVanPage: React.FC = () => {
   const [bookingModalTab, setBookingModalTab] = useState<'find' | 'login'>('login');
   const [helpModalOpen, setHelpModalOpen] = useState(false);
   const [helpQuery, setHelpQuery] = useState('');
+  const [langModalOpen, setLangModalOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState<string>('fr');
+  const [pendingLang, setPendingLang] = useState<string>('fr');
   const [bmEmail, setBmEmail] = useState('');
   const [bmPassword, setBmPassword] = useState('');
   const [bmLastName, setBmLastName] = useState('');
