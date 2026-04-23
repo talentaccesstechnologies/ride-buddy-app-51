@@ -1,6 +1,7 @@
 import React from 'react';
 import { Check, ArrowLeft, Menu } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import CabyLogo from '@/components/shared/CabyLogo';
 
 const GOLD = '#C9A84C';
 
