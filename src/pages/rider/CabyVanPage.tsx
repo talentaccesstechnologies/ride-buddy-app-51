@@ -793,6 +793,7 @@ const CabyVanPage: React.FC = () => {
 
               {destMenuOpen && (
                 <div
+                  onMouseLeave={() => setDestMenuOpen(false)}
                   style={{
                     position: 'fixed', top: 56, left: 0, right: 0,
                     background: '#fff', boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
