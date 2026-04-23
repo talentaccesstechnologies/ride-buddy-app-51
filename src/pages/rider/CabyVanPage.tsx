@@ -889,6 +889,194 @@ const CabyVanPage: React.FC = () => {
           </div>
         </header>
 
+        {/* ═══ MODALE GÉRER VOS RÉSERVATIONS / SE CONNECTER ═══ */}
+        {bookingModalOpen && (
+          <div
+            onClick={() => setBookingModalOpen(false)}
+            style={{
+              position: 'fixed', inset: 0, background: 'rgba(10,10,10,0.55)',
+              zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: 20,
+            }}
+          >
+            <div
+              onClick={e => e.stopPropagation()}
+              style={{
+                background: '#fff', borderRadius: 12, width: '100%', maxWidth: 460,
+                padding: '28px 32px', position: 'relative',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.3)', fontFamily: 'inherit',
+              }}
+            >
+              {/* Bouton fermer */}
+              <button
+                onClick={() => setBookingModalOpen(false)}
+                aria-label="Fermer"
+                style={{
+                  position: 'absolute', top: 16, right: 16,
+                  width: 32, height: 32, borderRadius: '50%',
+                  border: `1.5px solid ${GOLD}`, background: '#fff',
+                  color: GOLD, fontSize: 18, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                ×
+              </button>
+
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0A0A0A', margin: '0 0 22px', paddingRight: 36, lineHeight: 1.3 }}>
+                Trouver la réservation ou Se connecter
+              </h2>
+
+              {/* Onglets */}
+              <div style={{ display: 'flex', borderBottom: '1px solid #E5E5E5', marginBottom: 20 }}>
+                {([
+                  { key: 'find' as const, label: 'Trouver la réservation' },
+                  { key: 'login' as const, label: 'Se connecter' },
+                ]).map(t => {
+                  const active = bookingModalTab === t.key;
+                  return (
+                    <button
+                      key={t.key}
+                      onClick={() => setBookingModalTab(t.key)}
+                      style={{
+                        flex: 1, padding: '10px 4px', background: 'none', border: 'none',
+                        fontSize: 14, fontWeight: active ? 700 : 500,
+                        color: active ? GOLD : '#6B7280',
+                        borderBottom: active ? `3px solid ${GOLD}` : '3px solid transparent',
+                        marginBottom: -1, cursor: 'pointer', fontFamily: 'inherit',
+                        transition: 'all 0.15s',
+                      }}
+                    >
+                      {t.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Contenu : Se connecter */}
+              {bookingModalTab === 'login' && (
+                <div>
+                  <p style={{ fontSize: 13, color: '#374151', margin: '0 0 16px', lineHeight: 1.5 }}>
+                    Identifiez-vous pour consulter et gérer votre compte et vos réservations
+                  </p>
+                  <input
+                    type="email"
+                    placeholder="Adresse électronique"
+                    value={bmEmail}
+                    onChange={e => setBmEmail(e.target.value)}
+                    style={{
+                      width: '100%', boxSizing: 'border-box', padding: '12px 14px',
+                      border: '1px solid #D1D5DB', borderRadius: 6, fontSize: 14,
+                      marginBottom: 12, fontFamily: 'inherit', outline: 'none',
+                    }}
+                  />
+                  <input
+                    type="password"
+                    placeholder="Mot de passe"
+                    value={bmPassword}
+                    onChange={e => setBmPassword(e.target.value)}
+                    style={{
+                      width: '100%', boxSizing: 'border-box', padding: '12px 14px',
+                      border: '1px solid #D1D5DB', borderRadius: 6, fontSize: 14,
+                      marginBottom: 12, fontFamily: 'inherit', outline: 'none',
+                    }}
+                  />
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#374151', marginBottom: 14, cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={bmKeepLoggedIn}
+                      onChange={e => setBmKeepLoggedIn(e.target.checked)}
+                      style={{ width: 16, height: 16, accentColor: GOLD }}
+                    />
+                    Rester connecté(e)
+                  </label>
+                  <a
+                    href="#"
+                    onClick={e => { e.preventDefault(); setBookingModalOpen(false); navigate('/auth/login'); }}
+                    style={{ display: 'block', fontSize: 13, color: GOLD, textDecoration: 'underline', marginBottom: 18 }}
+                  >
+                    Avez-vous oublié vos informations de connexion ?
+                  </a>
+                  <button
+                    onClick={() => { setBookingModalOpen(false); navigate('/auth/login'); }}
+                    style={{
+                      width: '100%', padding: '13px', background: GOLD, color: '#fff',
+                      border: 'none', borderRadius: 6, fontSize: 15, fontWeight: 700,
+                      cursor: 'pointer', fontFamily: 'inherit',
+                    }}
+                  >
+                    Se connecter
+                  </button>
+                  <p style={{ fontSize: 13, color: '#374151', margin: '14px 0 0' }}>
+                    Vous n'avez pas de compte ?{' '}
+                    <a
+                      href="#"
+                      onClick={e => { e.preventDefault(); setBookingModalOpen(false); navigate('/auth/register'); }}
+                      style={{ color: GOLD, textDecoration: 'underline', fontWeight: 600 }}
+                    >
+                      Créer le compte
+                    </a>
+                  </p>
+                </div>
+              )}
+
+              {/* Contenu : Trouver la réservation */}
+              {bookingModalTab === 'find' && (
+                <div>
+                  <p style={{ fontSize: 13, color: '#374151', margin: '0 0 16px', lineHeight: 1.5 }}>
+                    Si vous n'avez pas de compte, vous pouvez consulter votre réservation, ajouter des extras et vous enregistrer en saisissant votre nom de famille et votre numéro de réservation.
+                  </p>
+                  <input
+                    type="text"
+                    placeholder="Nom(s) de famille"
+                    value={bmLastName}
+                    onChange={e => setBmLastName(e.target.value)}
+                    style={{
+                      width: '100%', boxSizing: 'border-box', padding: '12px 14px',
+                      border: '1px solid #D1D5DB', borderRadius: 6, fontSize: 14,
+                      marginBottom: 12, fontFamily: 'inherit', outline: 'none',
+                    }}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Numéro de réservation"
+                    value={bmBookingRef}
+                    onChange={e => setBmBookingRef(e.target.value)}
+                    style={{
+                      width: '100%', boxSizing: 'border-box', padding: '12px 14px',
+                      border: '1px solid #D1D5DB', borderRadius: 6, fontSize: 14,
+                      marginBottom: 14, fontFamily: 'inherit', outline: 'none',
+                    }}
+                  />
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: '#374151', marginBottom: 18, cursor: 'pointer', lineHeight: 1.45 }}>
+                    <input
+                      type="checkbox"
+                      checked={bmAuthorized}
+                      onChange={e => setBmAuthorized(e.target.checked)}
+                      style={{ width: 16, height: 16, marginTop: 2, accentColor: GOLD, flexShrink: 0 }}
+                    />
+                    Cochez la case pour confirmer que vous êtes autorisé(e) à gérer cette réservation au nom du ou des passagers ou que vous êtes le seul passager
+                  </label>
+                  <button
+                    disabled={!bmLastName || !bmBookingRef || !bmAuthorized}
+                    onClick={() => { setBookingModalOpen(false); navigate('/caby/activity'); }}
+                    style={{
+                      width: '100%', padding: '13px',
+                      background: (!bmLastName || !bmBookingRef || !bmAuthorized) ? '#D1D5DB' : GOLD,
+                      color: '#fff', border: 'none', borderRadius: 6,
+                      fontSize: 15, fontWeight: 700,
+                      cursor: (!bmLastName || !bmBookingRef || !bmAuthorized) ? 'not-allowed' : 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    Trouver la réservation
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+
         {/* ═══ BANDEAU PROMO CABY PASS ═══ */}
         <div
           style={{
