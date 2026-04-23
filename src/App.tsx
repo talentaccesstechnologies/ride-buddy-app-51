@@ -19,6 +19,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 
 // Caby (Rider) pages
 import RiderHome from "./pages/rider/RiderHome";
+import CabyVanHome from "./pages/rider/CabyVanHome";
 import RiderSearch from "./pages/rider/RiderSearch";
 import ConfirmRide from "./pages/rider/ConfirmRide";
 import SearchingDriver from "./pages/rider/SearchingDriver";
@@ -111,7 +112,8 @@ const App = () => (
               <Route path="/auth/register" element={<RegisterPage />} />
 
               {/* Caby - Rider Interface */}
-              <Route path="/caby" element={<RiderHome />} />
+              <Route path="/caby" element={<CabyVanHome />} />
+              <Route path="/caby/legacy" element={<RiderHome />} />
               <Route path="/caby/search" element={<RiderSearch />} />
               <Route path="/caby/confirm" element={<ConfirmRide />} />
               <Route path="/caby/searching" element={<SearchingDriver />} />
