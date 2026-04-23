@@ -156,9 +156,6 @@ export default function BookingStepper({
               style={{ background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}
             >
               <CabyLogo size={28} />
-              <span className="ml-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 hidden sm:inline">
-                Van
-              </span>
             </button>
             <div className="h-8 w-px bg-gray-200 hidden sm:block" />
             {currentStep > 0 && (
