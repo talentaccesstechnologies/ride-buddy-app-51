@@ -1426,7 +1426,7 @@ const CabyVanPage: React.FC = () => {
                 Voyagez malin.<br />Genève ↔ Suisse &amp; Europe.
               </h1>
               <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', textShadow: '0 1px 8px rgba(0,0,0,0.4)', margin: 0 }}>
-                Siège partagé · Chauffeur certifié · Dès CHF 9
+                Siège partagé · Siège privé · Dès CHF 9
               </p>
             </div>
 
