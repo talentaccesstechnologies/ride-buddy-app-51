@@ -418,37 +418,64 @@ const TabBook: React.FC<{ onSearch: (from: string, to: string, date: string) => 
   const [to, setTo] = useState('Zurich');
   const today = new Date().toISOString().slice(0, 10);
   const [date, setDate] = useState(today);
+  const [tripType, setTripType] = useState<'oneway' | 'return'>('oneway');
+  const [returnDate, setReturnDate] = useState('');
+
+  // Style commun champ "outlined avec label flottant gold"
+  const fieldStyle: React.CSSProperties = {
+    position: 'relative',
+    border: `1.5px solid ${GOLD}`,
+    borderRadius: 8,
+    padding: '18px 14px 12px',
+    marginBottom: 12,
+    background: '#fff',
+    minHeight: 60,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+  };
+  const labelStyle: React.CSSProperties = {
+    position: 'absolute', top: -8, left: 14,
+    background: '#fff', padding: '0 6px',
+    fontSize: 13, fontWeight: 600, color: GOLD,
+  };
 
   return (
     <div style={{ background: '#fff', minHeight: '100%' }}>
+      {/* Toggle Return trip / One way (style easyJet) */}
+      <div style={{ padding: '16px 18px 4px', display: 'flex', alignItems: 'center', gap: 12 }}>
+        <span style={{ fontSize: 15, fontWeight: 700, color: tripType === 'return' ? '#1A1A1A' : '#9CA3AF' }}>
+          Aller-retour
+        </span>
+        <button
+          onClick={() => setTripType(t => t === 'oneway' ? 'return' : 'oneway')}
+          aria-label="Toggle trip type"
+          style={{
+            position: 'relative', width: 50, height: 28, borderRadius: 14,
+            background: tripType === 'return' ? GOLD : '#FCE7B6',
+            border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0,
+            transition: 'background 0.2s',
+          }}
+        >
+          <div style={{
+            position: 'absolute', top: 3, left: tripType === 'return' ? 25 : 3,
+            width: 22, height: 22, borderRadius: '50%', background: GOLD,
+            transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+          }} />
+        </button>
+        <span style={{ fontSize: 15, fontWeight: 700, color: tripType === 'oneway' ? '#1A1A1A' : '#9CA3AF' }}>
+          Aller simple
+        </span>
+      </div>
+
       {/* Formulaire easyJet-like : labels flottants gold sur cadres outlined */}
-      <div style={{ padding: '20px 18px 8px' }}>
+      <div style={{ padding: '14px 18px 8px' }}>
         {[
           { label: 'From', value: from, onChange: setFrom, placeholder: 'Ville de départ', icon: 'plane', clearable: true },
           { label: 'To', value: to, onChange: setTo, placeholder: 'Ville, gare, aéroport', icon: 'pin', clearable: false },
         ].map((field) => (
-          <div
-            key={field.label}
-            style={{
-              position: 'relative',
-              border: `1.5px solid ${GOLD}`,
-              borderRadius: 8,
-              padding: '18px 14px 12px',
-              marginBottom: 12,
-              background: '#fff',
-              minHeight: 60,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-            }}
-          >
-            <span style={{
-              position: 'absolute', top: -8, left: 14,
-              background: '#fff', padding: '0 6px',
-              fontSize: 13, fontWeight: 600, color: GOLD,
-            }}>
-              {field.label}
-            </span>
+          <div key={field.label} style={fieldStyle}>
+            <span style={labelStyle}>{field.label}</span>
             {field.icon === 'plane' ? (
               <svg width="26" height="20" viewBox="0 0 46 26" fill="none" style={{ flexShrink: 0 }}>
                 <path d="M2 18V9c0-1.5 1-2.5 2.5-2.5h22l8 4h7c1.5 0 2.5 1 2.5 2.5v5c0 1-0.5 1.5-1.5 1.5H40a4 4 0 00-8 0H14a4 4 0 00-8 0H3.5C2.5 19.5 2 19 2 18z" fill={GOLD}/>
@@ -486,22 +513,9 @@ const TabBook: React.FC<{ onSearch: (from: string, to: string, date: string) => 
           </div>
         ))}
 
-        {/* When */}
-        <div style={{
-          position: 'relative',
-          border: `1.5px solid ${GOLD}`,
-          borderRadius: 8,
-          padding: '18px 14px 12px',
-          marginBottom: 12,
-          background: '#fff',
-          minHeight: 60,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-        }}>
-          <span style={{ position: 'absolute', top: -8, left: 14, background: '#fff', padding: '0 6px', fontSize: 13, fontWeight: 600, color: GOLD }}>
-            When
-          </span>
+        {/* When (départ) */}
+        <div style={fieldStyle}>
+          <span style={labelStyle}>When</span>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
             <rect x="3" y="5" width="18" height="16" rx="2" stroke={GOLD} strokeWidth="2"/>
             <path d="M3 10h18M8 3v4M16 3v4" stroke={GOLD} strokeWidth="2" strokeLinecap="round"/>
@@ -517,22 +531,30 @@ const TabBook: React.FC<{ onSearch: (from: string, to: string, date: string) => 
           />
         </div>
 
+        {/* Return date (si aller-retour) */}
+        {tripType === 'return' && (
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Return</span>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+              <rect x="3" y="5" width="18" height="16" rx="2" stroke={GOLD} strokeWidth="2"/>
+              <path d="M3 10h18M8 3v4M16 3v4M9 16l3-3 3 3" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <input
+              type="date" value={returnDate} onChange={e => setReturnDate(e.target.value)}
+              placeholder="Date de retour"
+              style={{
+                border: 'none', outline: 'none',
+                fontSize: 17, fontWeight: 600, flex: 1,
+                background: 'transparent', color: returnDate ? '#1A1A1A' : '#9CA3AF',
+                fontFamily: 'inherit', minWidth: 0,
+              }}
+            />
+          </div>
+        )}
+
         {/* Who */}
-        <div style={{
-          position: 'relative',
-          border: `1.5px solid ${GOLD}`,
-          borderRadius: 8,
-          padding: '18px 14px 12px',
-          marginBottom: 18,
-          background: '#fff',
-          minHeight: 60,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-        }}>
-          <span style={{ position: 'absolute', top: -8, left: 14, background: '#fff', padding: '0 6px', fontSize: 13, fontWeight: 600, color: GOLD }}>
-            Who
-          </span>
+        <div style={{ ...fieldStyle, marginBottom: 18 }}>
+          <span style={labelStyle}>Who</span>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
             <circle cx="12" cy="8" r="4" fill={GOLD}/>
             <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill={GOLD}/>
