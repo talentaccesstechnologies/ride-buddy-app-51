@@ -614,8 +614,16 @@ const CabyVanPage: React.FC = () => {
               onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = 'transparent')}
               aria-label="Changer la langue"
             >
-              <span style={{ fontSize: 16, lineHeight: 1 }}>{LANGUAGES.find(l => l.code === currentLang)?.flag}</span>
-              <span style={{ fontWeight: 500 }}>{LANGUAGES.find(l => l.code === currentLang)?.label}</span>
+              {(() => {
+                const l = LANGUAGES.find(x => x.code === currentLang);
+                if (!l) return null;
+                return (
+                  <>
+                    <img src={flagSrc(l.cc)} alt="" width={18} height={12} style={{ display: 'block', objectFit: 'cover', borderRadius: 2 }} />
+                    <span style={{ fontWeight: 500 }}>{l.label}</span>
+                  </>
+                );
+              })()}
             </button>
           </div>
 
