@@ -45,6 +45,7 @@ import VanAssistancePage from "./pages/rider/van/VanAssistancePage";
 import VanPassPage from "./pages/rider/van/VanPassPage";
 import VanCrossBorderPage from "./pages/rider/van/VanCrossBorderPage";
 import VanSkiPage from "./pages/rider/van/VanSkiPage";
+import VanRandonneePage from "./pages/rider/van/VanRandonneePage";
 import CabyNightPage from "./pages/rider/CabyNightPage";
 import CabyPassPage from "./pages/rider/CabyPassPage";
 import CabyBusinessPage from "./pages/rider/CabyBusinessPage";
