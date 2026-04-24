@@ -230,7 +230,7 @@ export default function VanPaymentPage() {
   if (confirmed) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <BookingStepper currentStep={6} />
+        <BookingStepper currentStep={7} />
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#D1FAE5' }}>
             <Check className="w-10 h-10 text-green-600" />
@@ -272,7 +272,7 @@ export default function VanPaymentPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 relative">
-      <BookingStepper currentStep={6} />
+      <BookingStepper currentStep={7} />
       <div className="max-w-6xl mx-auto px-4 py-6">
         <h1 className="text-2xl font-bold mb-2 text-gray-900">Paiement</h1>
 

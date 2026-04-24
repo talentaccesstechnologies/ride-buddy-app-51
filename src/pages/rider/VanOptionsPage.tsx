@@ -43,7 +43,7 @@ export default function VanOptionsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
-      <BookingStepper currentStep={5} />
+      <BookingStepper currentStep={6} />
 
       {/* ── MOBILE (easyJet-style) ────────────────────────────── */}
       <MobileSectionHeader title="Extras for your trip" onBack={() => navigate(-1)} />

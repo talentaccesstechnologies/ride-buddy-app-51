@@ -93,7 +93,7 @@ export default function VanPackPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <BookingStepper currentStep={1} />
+      <BookingStepper currentStep={2} />
 
       <div className="max-w-6xl mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-2">

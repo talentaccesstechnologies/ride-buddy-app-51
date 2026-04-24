@@ -91,7 +91,7 @@ export default function VanLuggagePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
-      <BookingStepper currentStep={4} />
+      <BookingStepper currentStep={5} />
 
       {/* ── MOBILE (easyJet-style) ────────────────────────────── */}
       <MobileSectionHeader title="Hold Luggage & Sports Equipment" onBack={() => navigate(-1)} />
