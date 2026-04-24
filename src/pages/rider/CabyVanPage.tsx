@@ -454,14 +454,32 @@ const CabyVanPage: React.FC = () => {
     : '';
   const calendarBasePrice = selectedRoute?.basePrice || 65;
 
-  const handleSelectSlot = (slot: VanSlot) => { setSelectedSlot(slot); setSelectedSeat(null); setAncillaries({}); setStep('seat'); };
+  const navigateToRdv = (slot: VanSlot) => {
+    if (!from || !to) return;
+    const p = new URLSearchParams();
+    p.set('from', from);
+    p.set('to', to);
+    p.set('passengers', String(passengerCount || 1));
+    p.set('price', String(slot.basePrice));
+    p.set('time', slot.departure);
+    p.set('arrivalTime', slot.arrivalEstimate);
+    if (dateAller) p.set('date', dateAller);
+    navigate(`/caby/van/rdv?${p.toString()}`);
+  };
+
+  const handleSelectSlot = (slot: VanSlot) => {
+    setSelectedSlot(slot); setSelectedSeat(null); setAncillaries({});
+    navigateToRdv(slot);
+  };
   const handleVehicleContinue = () => {
-    if (!selectedSlot && selectedRoute) {
+    if (!selectedRoute) return;
+    let slot = selectedSlot;
+    if (!slot) {
       const effectiveTime = effectiveTimeAller || '08:00';
       const depDate = new Date();
       depDate.setHours(parseInt(effectiveTime.split(':')[0]), parseInt(effectiveTime.split(':')[1]), 0);
       if (depDate.getTime() < Date.now()) depDate.setDate(depDate.getDate() + 1);
-      const syntheticSlot: VanSlot = {
+      slot = {
         id: `syn-${Date.now()}`,
         departure: effectiveTime,
         arrivalEstimate: addMinutesToTime(effectiveTime, selectedRoute.duration),
@@ -471,9 +489,9 @@ const CabyVanPage: React.FC = () => {
         seatsTaken: 3,
         rushLevel: 'green',
       };
-      setSelectedSlot(syntheticSlot);
+      setSelectedSlot(slot);
     }
-    setStep('seat');
+    navigateToRdv(slot);
   };
 
   const [now, setNow] = useState(() => new Date());
