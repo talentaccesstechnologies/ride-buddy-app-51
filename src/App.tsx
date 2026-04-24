@@ -48,7 +48,6 @@ import VanCrossBorderPage from "./pages/rider/van/VanCrossBorderPage";
 import VanSkiPage from "./pages/rider/van/VanSkiPage";
 import VanRandonneePage from "./pages/rider/van/VanRandonneePage";
 import CabyNightPage from "./pages/rider/CabyNightPage";
-import CabyPassPage from "./pages/rider/CabyPassPage";
 import CabyBusinessPage from "./pages/rider/CabyBusinessPage";
 import ActivityPage from "./pages/rider/ActivityPage";
 import OffersPage from "./pages/rider/OffersPage";
@@ -84,7 +83,7 @@ import DriverCrossBorderPage from "./pages/cabyDriver/DriverCrossBorderPage";
 import DriverFiscalPage from "./pages/cabyDriver/DriverFiscalPage";
 import VanNotificationsPage from "@/pages/driver/VanNotificationsPage";
 import VanPreDeparturePage from "@/pages/driver/VanPreDeparturePage";
-import CabyCrossBorderPage from "./pages/rider/CabyCrossBorderPage";
+
 import WalletPage from "./pages/rider/WalletPage";
 import MyReservationsPage from "./pages/rider/MyReservationsPage";
 import InvitePage from "./pages/InvitePage";
@@ -148,9 +147,9 @@ const App = () => (
               <Route path="/caby/van/crossborder" element={<VanCrossBorderPage />} />
               <Route path="/caby/van/ski" element={<VanSkiPage />} />
               <Route path="/caby/van/randonnee" element={<VanRandonneePage />} />
-              <Route path="/caby/crossborder" element={<CabyCrossBorderPage />} />
+              <Route path="/caby/crossborder" element={<Navigate to="/caby/van/crossborder" replace />} />
               <Route path="/caby/night" element={<CabyNightPage />} />
-              <Route path="/caby/pass" element={<CabyPassPage />} />
+              <Route path="/caby/pass" element={<Navigate to="/caby/van/pass" replace />} />
               <Route path="/caby/activity" element={<ActivityPage />} />
               <Route path="/caby/offers" element={<OffersPage />} />
               <Route path="/caby/account" element={<AccountPage />} />

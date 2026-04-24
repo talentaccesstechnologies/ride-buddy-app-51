@@ -12,7 +12,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Clock, Star, ChevronRight, Info, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import BookingStepper from '@/components/van/BookingStepper';
-import BottomNav from '@/components/rider/BottomNav';
 import {
   getPickupPoints, getPremiumPickupFee, PREMIUM_PICKUP_FEE,
   type PickupPoint,
@@ -406,8 +405,6 @@ const VanRdvPage: React.FC = () => {
         </Button>
 
       </div>
-
-      <BottomNav />
     </div>
   );
 };

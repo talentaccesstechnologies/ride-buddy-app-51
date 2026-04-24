@@ -184,7 +184,7 @@ export default function VanSeatPage() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
-      <BookingStepper currentStep={3} />
+      <BookingStepper currentStep={4} />
 
       {/* Banner sombre style easyJet */}
       <div className="bg-gray-900 text-white">
