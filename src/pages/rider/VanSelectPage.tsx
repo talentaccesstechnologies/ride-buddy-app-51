@@ -544,20 +544,27 @@ const VanSelectPage: React.FC = () => {
                         <div className="rounded-md border border-dashed border-gray-200 min-h-[150px] flex items-center justify-center text-xs text-gray-400">
                           Aucun créneau
                         </div>
-                      ) : (
-                        daySlots.map(slot => (
-                          <SlotCard
-                            key={slot.id}
-                            slot={slot}
-                            minPrice={dayMinPrice}
-                            isSelected={selected?.id === slot.id}
-                            onSelect={() => {
-                              if (slot.seatsLeft === 0) return;
-                              onSelect(slot);
-                              if (!isCurrent) setOffset(offset + dayIdx - 1);
-                            }}
-                          />
-                        ))
+                    ) : (
+                        daySlots.map(slot => {
+                          // Comparaison stable basée sur date + heure de départ
+                          // (évite les faux positifs entre fallback et Supabase, et entre jours)
+                          const isThisSlotSelected = !!selected
+                            && selected.date === slot.date
+                            && selected.departure === slot.departure;
+                          return (
+                            <SlotCard
+                              key={slot.id}
+                              slot={slot}
+                              minPrice={dayMinPrice}
+                              isSelected={isThisSlotSelected}
+                              onSelect={() => {
+                                if (slot.seatsLeft === 0) return;
+                                onSelect(slot);
+                                if (!isCurrent) setOffset(offset + dayIdx - 1);
+                              }}
+                            />
+                          );
+                        })
                       )}
                     </div>
                   </div>
