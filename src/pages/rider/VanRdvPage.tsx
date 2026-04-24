@@ -405,8 +405,6 @@ const VanRdvPage: React.FC = () => {
         </Button>
 
       </div>
-
-      <BottomNav />
     </div>
   );
 };
