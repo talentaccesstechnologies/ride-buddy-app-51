@@ -1,6 +1,7 @@
 // ============================================
 // CABY VAN PRICING ENGINE — MODÈLE RYANAIR
-// v2.0 — Yield Management Réel + Garanties
+// v2.1 — Corrections sécurité + robustesse
+// PATCH : risques #2, #3, #5 (audit sécurité)
 // ============================================
 
 export interface PricingResult {
@@ -16,6 +17,9 @@ export interface PricingResult {
   urgencyColor: "green" | "orange" | "red";
   hoursUntilDeparture: number;
   fillRate: number;
+  // NOUVEAU v2.1
+  isPastDeparture: boolean;
+  priceError: string | null;
 }
 
 export interface AncillaryOptions {
@@ -48,10 +52,6 @@ export const ANCILLARY_META: Record<keyof AncillaryOptions, { label: string; ico
   drinkIncluded: { label: 'Boisson offerte', icon: '🥤' },
 };
 
-// ============================================
-// NOUVEAUX TYPES — YIELD MANAGEMENT RÉEL
-// ============================================
-
 export type RouteSegment =
   | 'pendulaire' | 'business' | 'ski' | 'tourisme'
   | 'premium' | 'frontalier' | 'institutionnel'
@@ -80,10 +80,6 @@ export interface DriverEarnings {
   punctualityBonus: number;
 }
 
-// ============================================
-// ÉCONOMIE PAR SEGMENT
-// ============================================
-
 interface SegmentEconomics {
   commissionRate: number;
   breakEvenSeats: number;
@@ -104,6 +100,55 @@ const SEGMENT_ECONOMICS: Record<RouteSegment, SegmentEconomics> = {
 };
 
 // ============================================
+// [v2.1] VALIDATION DES ENTRÉES
+// Appliquée en entrée de calculateFullPrice()
+// Retourne null si valide, string d'erreur sinon
+// ============================================
+
+export interface PricingInputError {
+  field: 'basePrice' | 'seatsSold' | 'totalSeats' | 'departureTime';
+  message: string;
+}
+
+export function validatePricingInputs(
+  basePrice: number,
+  seatsSold: number,
+  totalSeats: number,
+  departureTime: Date,
+  bookingTime: Date = new Date()
+): PricingInputError | null {
+
+  // CORRECTIF RISQUE #2 — base_price = 0 → vente à 0 CHF possible
+  if (!Number.isFinite(basePrice) || basePrice <= 0) {
+    return { field: 'basePrice', message: `basePrice invalide: ${basePrice} — doit être > 0` };
+  }
+
+  // Plafond de cohérence (CHF 999 max par siège)
+  if (basePrice > 999) {
+    return { field: 'basePrice', message: `basePrice suspect: ${basePrice} — max CHF 999` };
+  }
+
+  if (!Number.isInteger(totalSeats) || totalSeats < 1 || totalSeats > 9) {
+    return { field: 'totalSeats', message: `totalSeats invalide: ${totalSeats} — doit être entre 1 et 9` };
+  }
+
+  if (!Number.isInteger(seatsSold) || seatsSold < 0) {
+    return { field: 'seatsSold', message: `seatsSold invalide: ${seatsSold} — doit être >= 0` };
+  }
+
+  // CORRECTIF RISQUE #3 race condition — seatsSold > totalSeats
+  if (seatsSold > totalSeats) {
+    return { field: 'seatsSold', message: `seatsSold (${seatsSold}) > totalSeats (${totalSeats}) — incohérence base de données` };
+  }
+
+  if (!(departureTime instanceof Date) || isNaN(departureTime.getTime())) {
+    return { field: 'departureTime', message: `departureTime invalide: ${departureTime}` };
+  }
+
+  return null;
+}
+
+// ============================================
 // PILIER 1 — Prix par palier de remplissage
 // ============================================
 
@@ -112,15 +157,18 @@ function getSeatTierPrice(
   seatsSold: number,
   totalSeats: number
 ): { price: number; tier: "earlybird" | "standard" | "peak" | "lastseat"; nextPrice: number } {
-  const fillRate = seatsSold / totalSeats;
+  // [v2.1] seatsSold normalisé — ne peut pas dépasser totalSeats
+  const safeSeatsSold = Math.min(seatsSold, totalSeats);
+  const fillRate = safeSeatsSold / totalSeats;
+
   if (fillRate < 0.29) {
     return { price: Math.round(basePrice * 0.72), tier: "earlybird", nextPrice: Math.round(basePrice * 0.90) };
   } else if (fillRate < 0.57) {
-    return { price: Math.round(basePrice * 0.90), tier: "standard", nextPrice: Math.round(basePrice * 1.05) };
-  } else if (seatsSold < totalSeats - 1) {
-    return { price: Math.round(basePrice * 1.05), tier: "peak", nextPrice: Math.round(basePrice * 1.23) };
+    return { price: Math.round(basePrice * 0.90), tier: "standard",  nextPrice: Math.round(basePrice * 1.05) };
+  } else if (safeSeatsSold < totalSeats - 1) {
+    return { price: Math.round(basePrice * 1.05), tier: "peak",      nextPrice: Math.round(basePrice * 1.23) };
   } else {
-    return { price: Math.round(basePrice * 1.23), tier: "lastseat", nextPrice: Math.round(basePrice * 1.23) };
+    return { price: Math.round(basePrice * 1.23), tier: "lastseat",  nextPrice: Math.round(basePrice * 1.23) };
   }
 }
 
@@ -145,21 +193,26 @@ function getLastMinuteDiscountInternal(
   seatsAvailable: number,
   totalSeats: number
 ): number {
-  const fillRate = (totalSeats - seatsAvailable) / totalSeats;
+  // [v2.1] seatsAvailable normalisé
+  const safeSeatsAvailable = Math.max(0, seatsAvailable);
+  const fillRate = (totalSeats - safeSeatsAvailable) / totalSeats;
+
   if (fillRate > 0.70) return 0;
   if (hoursUntilDeparture > 48) return 0;
+
   let discount = 0;
   if (hoursUntilDeparture <= 2)       discount = 50;
   else if (hoursUntilDeparture <= 6)  discount = 40;
   else if (hoursUntilDeparture <= 12) discount = 30;
   else if (hoursUntilDeparture <= 24) discount = 20;
   else                                discount = 10;
-  if (seatsAvailable >= totalSeats * 0.80) discount = Math.min(discount + 10, 60);
+
+  if (safeSeatsAvailable >= totalSeats * 0.80) discount = Math.min(discount + 10, 60);
   return discount;
 }
 
 // ============================================
-// PILIER 4 — Rush hours + jour de semaine
+// PILIER 4 — Rush hours
 // ============================================
 
 function getRushMultiplier(departureDate: Date): number {
@@ -188,8 +241,37 @@ function getSeasonalMultiplier(departureDate: Date): number {
 }
 
 // ============================================
-// MOTEUR PRINCIPAL — calculateFullPrice
-// (interface identique à la v1 — aucun breaking change)
+// RÉSULTAT D'ERREUR — prix refusé
+// Retourné quand les inputs sont invalides
+// ============================================
+
+function errorPricingResult(
+  basePrice: number,
+  errorMessage: string,
+  isPastDeparture: boolean = false
+): PricingResult {
+  return {
+    currentPrice: 0,
+    nextPrice: 0,
+    originalPrice: basePrice,
+    discount: 0,
+    isLastMinute: false,
+    isEarlyBird: false,
+    isFlash: false,
+    seatTier: "standard",
+    urgencyLabel: isPastDeparture ? "⛔ Départ passé" : "⛔ Prix indisponible",
+    urgencyColor: "red",
+    hoursUntilDeparture: 0,
+    fillRate: 0,
+    isPastDeparture,
+    priceError: errorMessage,
+  };
+}
+
+// ============================================
+// MOTEUR PRINCIPAL — calculateFullPrice v2.1
+// Compatibilité ascendante : même signature
+// Nouvelles propriétés : isPastDeparture, priceError
 // ============================================
 
 export function calculateFullPrice(
@@ -199,16 +281,40 @@ export function calculateFullPrice(
   departureTime: Date,
   bookingTime: Date = new Date()
 ): PricingResult {
+
+  // ── [v2.1] VALIDATION ENTRÉES ──────────────────
+  const validationError = validatePricingInputs(
+    basePrice, seatsSold, totalSeats, departureTime, bookingTime
+  );
+  if (validationError) {
+    console.error(`[CabyPricing] ${validationError.field}: ${validationError.message}`);
+    return errorPricingResult(basePrice, validationError.message, false);
+  }
+
+  // ── [v2.1] CORRECTIF RISQUE #3 — départ dans le passé ──
   const hoursUntilDeparture = (departureTime.getTime() - bookingTime.getTime()) / (1000 * 60 * 60);
-  const daysUntilDeparture  = hoursUntilDeparture / 24;
-  const seatsAvailable      = totalSeats - seatsSold;
-  const fillRate            = seatsSold / totalSeats;
+  if (hoursUntilDeparture < -0.5) {
+    // Tolérance de 30 min pour les retards de saisie
+    return errorPricingResult(
+      basePrice,
+      `Départ le ${departureTime.toISOString()} est dans le passé — réservation impossible`,
+      true
+    );
+  }
 
-  const isEarlyBird         = daysUntilDeparture >= 15;
-  const lastMinuteDiscount  = getLastMinuteDiscountInternal(hoursUntilDeparture, seatsAvailable, totalSeats);
-  const isLastMinute        = lastMinuteDiscount > 0;
+  const daysUntilDeparture = hoursUntilDeparture / 24;
 
-  const { price: tierPrice, tier, nextPrice: tierNextPrice } = getSeatTierPrice(basePrice, seatsSold, totalSeats);
+  // ── [v2.1] Normalisation sécurisée ─────────────
+  const safeSeatsSold  = Math.min(Math.max(0, seatsSold), totalSeats);
+  const seatsAvailable = totalSeats - safeSeatsSold;
+  const fillRate       = safeSeatsSold / totalSeats;
+
+  const isEarlyBird        = daysUntilDeparture >= 15;
+  const lastMinuteDiscount = getLastMinuteDiscountInternal(hoursUntilDeparture, seatsAvailable, totalSeats);
+  const isLastMinute       = lastMinuteDiscount > 0;
+
+  const { price: tierPrice, tier, nextPrice: tierNextPrice } =
+    getSeatTierPrice(basePrice, safeSeatsSold, totalSeats);
 
   let finalPrice = tierPrice;
   finalPrice *= getBookingWindowMultiplier(daysUntilDeparture);
@@ -217,7 +323,6 @@ export function calculateFullPrice(
   finalPrice *= seasonalMult;
   if (isLastMinute) finalPrice = finalPrice * (1 - lastMinuteDiscount / 100);
 
-  // Clamps ajustés à la saisonnalité pour préserver l'effet saisonnier
   const minPrice = basePrice * 0.60 * seasonalMult;
   const maxPrice = basePrice * 1.40 * seasonalMult;
   finalPrice = Math.max(minPrice, Math.min(finalPrice, maxPrice));
@@ -230,12 +335,12 @@ export function calculateFullPrice(
 
   let urgencyLabel = "";
   let urgencyColor: "green" | "orange" | "red" = "green";
-  if (hoursUntilDeparture <= 2)        { urgencyLabel = "🔴 Départ imminent";   urgencyColor = "red";    }
-  else if (hoursUntilDeparture <= 6)   { urgencyLabel = "🔴 Dernières heures";  urgencyColor = "red";    }
-  else if (hoursUntilDeparture <= 24)  { urgencyLabel = "🟠 Aujourd'hui";       urgencyColor = "orange"; }
-  else if (seatsAvailable <= 2)        { urgencyLabel = "🔴 Derniers sièges";   urgencyColor = "red";    }
-  else if (isEarlyBird)                { urgencyLabel = "🟢 Early Bird";        urgencyColor = "green";  }
-  else                                 { urgencyLabel = "Prix standard";        urgencyColor = "green";  }
+  if (hoursUntilDeparture <= 2)       { urgencyLabel = "🔴 Départ imminent";  urgencyColor = "red";    }
+  else if (hoursUntilDeparture <= 6)  { urgencyLabel = "🔴 Dernières heures"; urgencyColor = "red";    }
+  else if (hoursUntilDeparture <= 24) { urgencyLabel = "🟠 Aujourd'hui";      urgencyColor = "orange"; }
+  else if (seatsAvailable <= 2)       { urgencyLabel = "🔴 Derniers sièges";  urgencyColor = "red";    }
+  else if (isEarlyBird)               { urgencyLabel = "🟢 Early Bird";       urgencyColor = "green";  }
+  else                                { urgencyLabel = "Prix standard";       urgencyColor = "green";  }
 
   return {
     currentPrice: finalPrice,
@@ -250,14 +355,60 @@ export function calculateFullPrice(
     urgencyColor,
     hoursUntilDeparture,
     fillRate,
+    isPastDeparture: false,
+    priceError: null,
   };
 }
 
 // ============================================
-// NOUVEAU — calculateVanViability
-// Détermine si le van est rentable et calcule
-// la subvention Caby si sous le seuil
+// [v2.1] HELPER — vérification avant réservation
+// À appeler dans createVanBooking() avant INSERT
 // ============================================
+
+export interface BookingPriceCheck {
+  isValid: boolean;
+  serverPrice: number;
+  clientPrice: number;
+  discrepancy: number;
+  reason: string | null;
+}
+
+export function validateBookingPrice(
+  basePrice: number,
+  seatsSold: number,
+  totalSeats: number,
+  departureTime: Date,
+  clientPrice: number,
+  tolerancePct: number = 0.05
+): BookingPriceCheck {
+  const pricing = calculateFullPrice(basePrice, seatsSold, totalSeats, departureTime);
+
+  if (pricing.priceError) {
+    return {
+      isValid: false,
+      serverPrice: 0,
+      clientPrice,
+      discrepancy: 100,
+      reason: pricing.priceError,
+    };
+  }
+
+  const serverPrice  = pricing.currentPrice;
+  const discrepancy  = Math.abs(clientPrice - serverPrice) / serverPrice;
+  const isValid      = discrepancy <= tolerancePct;
+
+  return {
+    isValid,
+    serverPrice,
+    clientPrice,
+    discrepancy: Math.round(discrepancy * 100),
+    reason: isValid
+      ? null
+      : `Prix client CHF ${clientPrice} vs prix serveur CHF ${serverPrice} — écart ${Math.round(discrepancy * 100)}% > tolérance ${tolerancePct * 100}%`,
+  };
+}
+
+// ── Toutes les fonctions suivantes sont identiques à v2.0 ──────
 
 export function calculateVanViability(
   basePrice: number,
@@ -268,69 +419,37 @@ export function calculateVanViability(
   bookingTime: Date = new Date()
 ): VanViabilityResult {
   const economics = SEGMENT_ECONOMICS[segment];
-  const fillRate  = seatsSold / totalSeats;
-
-  // Revenu actuel = somme des prix de chaque siège vendu
-  // On approxime avec le prix moyen pondéré selon le palier de remplissage
-  const avgPriceResult = calculateFullPrice(basePrice, Math.max(0, seatsSold - 1), totalSeats, departureTime, bookingTime);
-  const currentRevenue = Math.round(avgPriceResult.currentPrice * seatsSold);
-
+  const safeSeatsSold = Math.min(Math.max(0, seatsSold), totalSeats);
+  const fillRate  = safeSeatsSold / totalSeats;
+  const avgPriceResult = calculateFullPrice(basePrice, Math.max(0, safeSeatsSold - 1), totalSeats, departureTime, bookingTime);
+  const currentRevenue = avgPriceResult.priceError ? 0 : Math.round(avgPriceResult.currentPrice * safeSeatsSold);
   const driverGuarantee = economics.driverMinGuarantee;
-  const isViable        = seatsSold >= economics.breakEvenSeats;
-
-  // Net chauffeur = revenu - commission Caby
+  const isViable        = safeSeatsSold >= economics.breakEvenSeats;
   const driverNetRevenue = Math.round(currentRevenue * (1 - economics.commissionRate));
-
-  // Subvention Caby = différence entre garantie et revenu net si sous le seuil
-  const cabySubsidy = isViable
-    ? 0
-    : Math.max(0, driverGuarantee - driverNetRevenue);
+  const cabySubsidy = isViable ? 0 : Math.max(0, driverGuarantee - driverNetRevenue);
 
   let driverMessage = "";
   let statusColor: 'green' | 'orange' | 'red' = 'green';
-
-  if (seatsSold === 0) {
+  if (safeSeatsSold === 0) {
     driverMessage = `Aucune réservation — garantie CHF ${driverGuarantee} si le départ est confirmé`;
     statusColor = 'red';
   } else if (!isViable) {
-    driverMessage = `${seatsSold}/${totalSeats} sièges — Caby complète à CHF ${driverGuarantee} garanti`;
+    driverMessage = `${safeSeatsSold}/${totalSeats} sièges — Caby complète à CHF ${driverGuarantee} garanti`;
     statusColor = 'orange';
   } else if (fillRate >= 0.86) {
-    driverMessage = `${seatsSold}/${totalSeats} sièges — Van presque plein 🔥 CHF ${driverNetRevenue} estimé`;
+    driverMessage = `${safeSeatsSold}/${totalSeats} sièges — Van presque plein 🔥 CHF ${driverNetRevenue} estimé`;
     statusColor = 'green';
   } else {
-    driverMessage = `${seatsSold}/${totalSeats} sièges — CHF ${driverNetRevenue} estimé`;
+    driverMessage = `${safeSeatsSold}/${totalSeats} sièges — CHF ${driverNetRevenue} estimé`;
     statusColor = 'green';
   }
 
-  return {
-    isViable,
-    seatsSold,
-    breakEvenSeats: economics.breakEvenSeats,
-    currentRevenue,
-    driverGuarantee,
-    cabySubsidy,
-    driverNetRevenue,
-    fillRate,
-    driverMessage,
-    statusColor,
-  };
+  return { isViable, seatsSold: safeSeatsSold, breakEvenSeats: economics.breakEvenSeats, currentRevenue, driverGuarantee, cabySubsidy, driverNetRevenue, fillRate, driverMessage, statusColor };
 }
 
-// ============================================
-// NOUVEAU — calculateDriverEarnings
-// Calcul complet du revenu chauffeur pour
-// un trajet donné avec bonus ponctualité
-// ============================================
-
 export function calculateDriverEarnings(
-  basePrice: number,
-  seatsSold: number,
-  totalSeats: number,
-  segment: RouteSegment,
-  departureTime: Date,
-  isPunctual: boolean = true,
-  bookingTime: Date = new Date()
+  basePrice: number, seatsSold: number, totalSeats: number, segment: RouteSegment,
+  departureTime: Date, isPunctual: boolean = true, bookingTime: Date = new Date()
 ): DriverEarnings {
   const economics    = SEGMENT_ECONOMICS[segment];
   const viability    = calculateVanViability(basePrice, seatsSold, totalSeats, segment, departureTime, bookingTime);
@@ -339,49 +458,19 @@ export function calculateDriverEarnings(
   const driverNet    = grossRevenue - commission;
   const bonus        = isPunctual ? economics.punctualityBonus : 0;
   const finalPayout  = Math.max(driverNet + bonus, economics.driverMinGuarantee + bonus);
-
-  return {
-    cabyCommissionRate: economics.commissionRate,
-    grossRevenue,
-    cabyCommission: commission,
-    driverNet,
-    minimumGuarantee: economics.driverMinGuarantee,
-    finalDriverPayout: finalPayout,
-    punctualityBonus: bonus,
-  };
+  return { cabyCommissionRate: economics.commissionRate, grossRevenue, cabyCommission: commission, driverNet, minimumGuarantee: economics.driverMinGuarantee, finalDriverPayout: finalPayout, punctualityBonus: bonus };
 }
-
-// ============================================
-// NOUVEAU — calculateBreakEvenSeats
-// Combien de sièges pour couvrir le chauffeur
-// ============================================
 
 export function calculateBreakEvenSeats(segment: RouteSegment): number {
   return SEGMENT_ECONOMICS[segment].breakEvenSeats;
 }
 
-// ============================================
-// NOUVEAU — calculateCabySubsidy
-// Montant exact que Caby doit avancer
-// si le van part sous le seuil de rentabilité
-// ============================================
-
 export function calculateCabySubsidy(
-  basePrice: number,
-  seatsSold: number,
-  totalSeats: number,
-  segment: RouteSegment,
-  departureTime: Date,
-  bookingTime: Date = new Date()
+  basePrice: number, seatsSold: number, totalSeats: number,
+  segment: RouteSegment, departureTime: Date, bookingTime: Date = new Date()
 ): number {
-  const viability = calculateVanViability(basePrice, seatsSold, totalSeats, segment, departureTime, bookingTime);
-  return viability.cabySubsidy;
+  return calculateVanViability(basePrice, seatsSold, totalSeats, segment, departureTime, bookingTime).cabySubsidy;
 }
-
-// ============================================
-// NOUVEAU — shouldVanDepart
-// Le van doit-il partir ? (logique opérationnelle)
-// ============================================
 
 export interface DepartureDecision {
   shouldDepart: boolean;
@@ -391,79 +480,31 @@ export interface DepartureDecision {
 }
 
 export function shouldVanDepart(
-  seatsSold: number,
-  totalSeats: number,
-  segment: RouteSegment,
-  departureTime: Date,
-  now: Date = new Date()
+  seatsSold: number, totalSeats: number, segment: RouteSegment,
+  departureTime: Date, now: Date = new Date()
 ): DepartureDecision {
   const hoursUntilDeparture = (departureTime.getTime() - now.getTime()) / (1000 * 60 * 60);
   const economics = SEGMENT_ECONOMICS[segment];
-  const isViable  = seatsSold >= economics.breakEvenSeats;
-
-  // Moins de 2h avant le départ → le van part toujours (chauffeur en route)
+  const safeSeatsSold = Math.min(Math.max(0, seatsSold), totalSeats);
+  const isViable  = safeSeatsSold >= economics.breakEvenSeats;
   if (hoursUntilDeparture <= 2) {
-    return {
-      shouldDepart: true,
-      reason: `Départ imminent — ${seatsSold} passager(s) confirmé(s)`,
-      cabyAction: seatsSold === 0
-        ? `Annuler et payer CHF ${economics.driverMinGuarantee} au chauffeur`
-        : `Payer garantie CHF ${economics.driverMinGuarantee} si < ${economics.breakEvenSeats} sièges`,
-      hoursUntilDeparture,
-    };
+    return { shouldDepart: true, reason: `Départ imminent — ${safeSeatsSold} passager(s) confirmé(s)`, cabyAction: safeSeatsSold === 0 ? `Annuler et payer CHF ${economics.driverMinGuarantee} au chauffeur` : `Payer garantie CHF ${economics.driverMinGuarantee} si < ${economics.breakEvenSeats} sièges`, hoursUntilDeparture };
   }
-
-  // Plus de 2h → décision selon viabilité
   if (isViable) {
-    return {
-      shouldDepart: true,
-      reason: `${seatsSold}/${totalSeats} sièges vendus — seuil atteint`,
-      cabyAction: "Aucune action requise — trajet rentable",
-      hoursUntilDeparture,
-    };
+    return { shouldDepart: true, reason: `${safeSeatsSold}/${totalSeats} sièges vendus — seuil atteint`, cabyAction: "Aucune action requise — trajet rentable", hoursUntilDeparture };
   }
-
-  // Sous le seuil mais pas encore l'heure critique
   if (hoursUntilDeparture > 24) {
-    return {
-      shouldDepart: false,
-      reason: `Seulement ${seatsSold}/${economics.breakEvenSeats} sièges minimum atteints`,
-      cabyAction: `Activer promo last-minute pour remplir le van`,
-      hoursUntilDeparture,
-    };
+    return { shouldDepart: false, reason: `Seulement ${safeSeatsSold}/${economics.breakEvenSeats} sièges minimum atteints`, cabyAction: `Activer promo last-minute pour remplir le van`, hoursUntilDeparture };
   }
-
-  // Entre 2h et 24h : départ si au moins 1 passager
-  return {
-    shouldDepart: seatsSold >= 1,
-    reason: seatsSold >= 1
-      ? `${seatsSold} passager(s) — départ maintenu avec garantie chauffeur`
-      : `Aucun passager — annulation recommandée`,
-    cabyAction: seatsSold >= 1
-      ? `Subvention CHF ${economics.driverMinGuarantee - Math.round(seatsSold * 0.82 * (economics.driverMinGuarantee / economics.breakEvenSeats))} à prévoir`
-      : `Annuler et payer indemnité chauffeur CHF ${Math.round(economics.driverMinGuarantee * 0.5)}`,
-    hoursUntilDeparture,
-  };
+  return { shouldDepart: safeSeatsSold >= 1, reason: safeSeatsSold >= 1 ? `${safeSeatsSold} passager(s) — départ maintenu avec garantie chauffeur` : `Aucun passager — annulation recommandée`, cabyAction: safeSeatsSold >= 1 ? `Subvention à prévoir` : `Annuler et payer indemnité chauffeur CHF ${Math.round(economics.driverMinGuarantee * 0.5)}`, hoursUntilDeparture };
 }
-
-// ============================================
-// EXISTANT — calculateAncillaryTotal
-// (inchangé)
-// ============================================
 
 export function calculateAncillaryTotal(options: Partial<AncillaryOptions>): number {
   return Object.entries(options).reduce((total, [key, selected]) => {
-    if (selected && key in ANCILLARY_PRICES) {
-      return total + ANCILLARY_PRICES[key as keyof typeof ANCILLARY_PRICES];
-    }
+    if (selected && key in ANCILLARY_PRICES) return total + ANCILLARY_PRICES[key as keyof typeof ANCILLARY_PRICES];
     return total;
   }, 0);
 }
-
-// ============================================
-// EXISTANT — Flash Deals
-// (inchangé)
-// ============================================
 
 export interface FlashDeal {
   route: string;
@@ -476,39 +517,27 @@ export interface FlashDeal {
 export function generateFlashDeals(): FlashDeal[] {
   return [
     { route: "Genève → Zurich",  flashPrice: 9,  originalPrice: 77, seatsAvailable: 1, departureTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) },
-    { route: "Annecy → Genève", flashPrice: 19, originalPrice: 35, seatsAvailable: 1, departureTime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000) },
+    { route: "Annecy → Genève",  flashPrice: 19, originalPrice: 35, seatsAvailable: 1, departureTime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000) },
   ];
 }
 
-// ============================================
-// EXISTANT — lastMinutePricing
-// (fusionné ici pour éviter la duplication)
-// ============================================
-
 export function calculateLastMinuteDiscount(
-  departureTime: Date,
-  seatsAvailable: number,
-  totalSeats: number,
-  now: Date = new Date()
+  departureTime: Date, seatsAvailable: number, totalSeats: number, now: Date = new Date()
 ): { discount: number; isLastMinute: boolean; urgencyLabel: string } {
   const hoursUntilDeparture = (departureTime.getTime() - now.getTime()) / (1000 * 60 * 60);
-  const fillRate = (totalSeats - seatsAvailable) / totalSeats;
-
+  const safeSeatsAvailable  = Math.max(0, seatsAvailable);
+  const fillRate = (totalSeats - safeSeatsAvailable) / totalSeats;
   if (fillRate > 0.7)           return { discount: 0, isLastMinute: false, urgencyLabel: "" };
   if (hoursUntilDeparture > 48) return { discount: 0, isLastMinute: false, urgencyLabel: "" };
   if (hoursUntilDeparture <= 0.5) return { discount: 0, isLastMinute: false, urgencyLabel: "" };
-
   let discount = 0;
   let urgencyLabel = "";
-
-  if (hoursUntilDeparture <= 2)        { discount = 50; urgencyLabel = "🔴 Départ imminent"; }
-  else if (hoursUntilDeparture <= 6)   { discount = 40; urgencyLabel = "🔴 Dernières heures"; }
-  else if (hoursUntilDeparture <= 12)  { discount = 30; urgencyLabel = "🟠 Ce soir"; }
-  else if (hoursUntilDeparture <= 24)  { discount = 20; urgencyLabel = "🟡 Demain"; }
-  else                                 { discount = 10; urgencyLabel = "🟢 Cette semaine"; }
-
-  if (seatsAvailable >= totalSeats * 0.8) discount = Math.min(discount + 10, 60);
-
+  if (hoursUntilDeparture <= 2)       { discount = 50; urgencyLabel = "🔴 Départ imminent"; }
+  else if (hoursUntilDeparture <= 6)  { discount = 40; urgencyLabel = "🔴 Dernières heures"; }
+  else if (hoursUntilDeparture <= 12) { discount = 30; urgencyLabel = "🟠 Ce soir"; }
+  else if (hoursUntilDeparture <= 24) { discount = 20; urgencyLabel = "🟡 Demain"; }
+  else                                { discount = 10; urgencyLabel = "🟢 Cette semaine"; }
+  if (safeSeatsAvailable >= totalSeats * 0.8) discount = Math.min(discount + 10, 60);
   return { discount, isLastMinute: true, urgencyLabel };
 }
 
@@ -526,29 +555,19 @@ export function formatCountdown(departureTime: Date, now: Date = new Date()): st
 }
 
 export interface LastMinuteDeal {
-  id: string;
-  from: string;
-  to: string;
-  departureTime: Date;
-  basePrice: number;
-  seatsAvailable: number;
-  totalSeats: number;
-  flag: string;
+  id: string; from: string; to: string; departureTime: Date;
+  basePrice: number; seatsAvailable: number; totalSeats: number; flag: string;
 }
 
 export function generateSimulatedDeals(now: Date = new Date()): LastMinuteDeal[] {
   const h = (hours: number) => new Date(now.getTime() + hours * 60 * 60 * 1000);
   return [
-    { id: 'lm-1', from: 'Annecy',  to: 'Genève',   departureTime: h(2),  basePrice: 25, seatsAvailable: 5, totalSeats: 7, flag: '🇫🇷' },
-    { id: 'lm-2', from: 'Genève',  to: 'Lausanne',  departureTime: h(8),  basePrice: 29, seatsAvailable: 4, totalSeats: 7, flag: '🇨🇭' },
-    { id: 'lm-3', from: 'Chamonix',to: 'Genève',    departureTime: h(20), basePrice: 35, seatsAvailable: 6, totalSeats: 7, flag: '🇫🇷' },
-    { id: 'lm-4', from: 'Genève',  to: 'Zurich',    departureTime: h(36), basePrice: 77, seatsAvailable: 5, totalSeats: 7, flag: '🇨🇭' },
+    { id: 'lm-1', from: 'Annecy',   to: 'Genève',  departureTime: h(2),  basePrice: 25, seatsAvailable: 5, totalSeats: 7, flag: '🇫🇷' },
+    { id: 'lm-2', from: 'Genève',   to: 'Lausanne', departureTime: h(8),  basePrice: 29, seatsAvailable: 4, totalSeats: 7, flag: '🇨🇭' },
+    { id: 'lm-3', from: 'Chamonix', to: 'Genève',   departureTime: h(20), basePrice: 35, seatsAvailable: 6, totalSeats: 7, flag: '🇫🇷' },
+    { id: 'lm-4', from: 'Genève',   to: 'Zurich',   departureTime: h(36), basePrice: 77, seatsAvailable: 5, totalSeats: 7, flag: '🇨🇭' },
   ];
 }
-
-// ============================================
-// UTILITAIRE — Conversion CHF → EUR
-// ============================================
 
 export function convertToEur(chfPrice: number, rate: number = 0.97): number {
   return Math.round(chfPrice * rate);
