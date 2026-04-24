@@ -459,7 +459,7 @@ const CabyVanPage: React.FC = () => {
     const p = new URLSearchParams();
     p.set('from', from);
     p.set('to', to);
-    p.set('passengers', String(passengerCount || 1));
+    p.set('passengers', String(passengers || 1));
     p.set('price', String(slot.basePrice));
     p.set('time', slot.departure);
     p.set('arrivalTime', slot.arrivalEstimate);
